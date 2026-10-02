@@ -1,0 +1,8 @@
+CODE-0041A safety-restoration follow-up
+
+Current source was audited after the user/Codex safety pass.
+Confirmed: teleport fail-closed, glider flight disabled, live Auto Loot startup/canary-only.
+Remaining blocker: multiple F7 C# NativeMemoryEngine mutations still occur before canonical capability gating, including gravity, survival compound actions, generic patchKeyMap fallback, Easy Parry direct UI mutation, and panic/reset direct mutation.
+
+Do not runtime test yet.
+Next task: run CODEX_PROMPT_CODE0041A_FINISH_SAFETY.txt, then re-audit before registry/layout migration.

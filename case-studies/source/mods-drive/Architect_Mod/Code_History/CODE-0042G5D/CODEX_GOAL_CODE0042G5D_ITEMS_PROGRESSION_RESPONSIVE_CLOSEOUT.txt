@@ -1,0 +1,689 @@
+CODE-0042G5D — AUTONOMOUS GOAL: ITEMS & PROGRESSION RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Fully migrate the F7 `Items & Progression` page to the established responsive F7 framework, preserving every current action/event/safety contract, and close G5D with one final verification report.
+
+The page is rendered by BOTH:
+
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+
+The page dispatcher must continue to invoke them in this order:
+
+`Render-InventoryItemsPage; Render-CraftingProgressionPage`
+
+Work autonomously toward the goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded test paths, stale source-pattern assertions, fixture-version mismatches, missing TEMP-only support artifacts, formatting differences, or assertions that can be proven to represent obsolete fixed-pixel UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5D satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting SHA-256:
+
+`0E856F05E1B079C5528B14783CB5C93391B962CDB650B4BC2D590D4B5DFDAC90`
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry SHA-256:
+
+`7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+
+Required registry state:
+
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- start gameplay/runtime research
+- start G5E/Combat or later pages
+- start F8 work
+- enable any currently disabled Items/Progression action
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a UI/responsive migration, not a gameplay-feature implementation.
+
+Preserve working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+SCOPE BOUNDARY
+
+Expected product-source edits are limited to:
+
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+
+Keep these unchanged unless a demonstrated defect makes a change absolutely necessary:
+
+- `Update-InventorySpawnList`
+- `Render-ProgressionGearPage`
+- page dispatch / `Show-AdminPage`
+- responsive helper functions
+- action dispatch/backend code
+- registry
+- other page renderers
+
+`Render-ProgressionGearPage` must continue to delegate to `Render-CraftingProgressionPage`.
+
+If a shared helper or dispatch/backend change appears necessary:
+
+STOP and report why before making it.
+
+PRE/POST HASH GUARDS
+
+Before editing, record exact source/function hashes for at least:
+
+- full `ArchitectRuntime.ps1`
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+
+After editing:
+
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Combat hash unchanged
+- Inventory/Items hash may change
+- Crafting/Progression hash may change
+- unrelated renderer/function hashes unchanged
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use existing:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Respect helper contracts:
+
+- percentage columns for `New-F7ResponsiveTable`
+- numeric row heights are absolute heights
+- only `{Type='Percent';Value=...}` is the special percent-row form
+- never introduce `{Type='Absolute';Value=...}` row-height hashtables
+
+Prefer:
+
+- Dock / Anchor
+- percentage-column tables
+- bounded minimum sizes
+- AutoEllipsis for compressible labels
+- FlowLayoutPanel-compatible top-down cards
+- stretched lists/search fields
+
+Avoid rebuilding the page as fixed X/Y coordinates.
+
+Do not redesign styling beyond what is necessary for responsive layout.
+
+CURRENT ITEMS & PROGRESSION SEMANTIC CONTRACT — PRESERVE EXACTLY
+
+============================================================
+A. INVENTORY / ACTIVE ITEM SECTION
+============================================================
+
+Preserve the source of status/capabilities:
+
+- `Get-CheatCorrelationStatus`
+- `Get-AdminCapabilities`
+
+Preserve the active item pointer display semantics:
+
+- use `$status.activeItemPtr` when available
+- otherwise display `0x00000000`
+
+Preserve the user-facing guidance meaning about selecting/dragging a weapon/shield/armor item before reroll.
+
+ITEM REROLL
+
+ActionId:
+
+`cheat.item.reroll`
+
+EventId:
+
+`f7.items.reroll.click`
+
+Page:
+
+`Items & Progression`
+
+Preserve:
+
+- `$caps["itemReroll"].canExecute` presentation gating
+- disabled styling when unavailable
+- tooltip reason from capability model
+- handler-side recheck of `itemReroll`
+- `Send-CheatCommand "cheat.item.reroll"`
+- existing status-message meaning
+
+Do NOT enable this action.
+
+Canonical registry truth:
+
+`cheat.item.reroll`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- mutation risk
+- failureReason = selected-item write path is not independently qualified
+
+`Register-AdminActionEvent` canonical gating must remain authoritative even if local capability diagnostics look optimistic.
+
+UNSUPPORTED ACTIVE-ITEM CONTROLS
+
+Preserve these as disabled + unbound presentation-only controls:
+
+- `DUPLICATE ITEM (UNSUPPORTED)`
+- `REPAIR ITEM (UNSUPPORTED)`
+
+Do not assign ActionIds/EventIds.
+Do not attach handlers.
+
+============================================================
+B. INVENTORY BATCH ACTIONS
+============================================================
+
+Preserve as disabled + unbound:
+
+- `REPAIR ALL (UNSUPPORTED)`
+- `AUTO-SORT (UNSUPPORTED)`
+- `AUTO-LOOT AURA (UNSUPPORTED)`
+- `CLEAR BACKPACK (UNSUPPORTED)`
+
+Do not create action identities for them.
+Do not attach raw or canonical events.
+
+Do not change Auto Loot ownership semantics. Live F7 Auto Loot remains unsupported; this migration must not create a bypass.
+
+============================================================
+C. ITEM SPAWNER / CODEX BROWSER
+============================================================
+
+Preserve database resolution:
+
+- `$script:codexDbFile` when present
+- otherwise `Join-Path $PSScriptRoot "codex_database.json"`
+
+Preserve JSON load behavior and fallback-item behavior if the database is unavailable/empty.
+
+Preserve category collection/population and selected index initialization.
+
+Preserve the quantity control semantics:
+
+- minimum = 1
+- maximum = 9999
+- default = 100
+
+Preserve:
+
+- `$script:filteredSpawnItems`
+- `Update-InventorySpawnList`
+
+Preserve these UI_ONLY EventIds exactly:
+
+`f7.items.spawn.category.changed`
+
+`f7.items.spawn.search.changed`
+
+They must remain `Register-F7UiEvent`, not canonical mutation actions.
+
+Preserve `GetNewClosure()` behavior.
+
+The item list must remain horizontally responsive and usable.
+
+SPAWN ITEM
+
+Preserve:
+
+`SPAWN ITEM (UNSUPPORTED - NO NATIVE BACKEND)`
+
+as disabled + unbound.
+
+Do not create a spawn backend.
+Do not create an ActionId/EventId.
+Do not infer one from old plans.
+
+============================================================
+D. CRAFTING OVERRIDES
+============================================================
+
+Preserve as disabled + unbound:
+
+- `FREE CRAFTING (UNSUPPORTED - RELAY UNPROVEN)`
+- `UNLOCK RECIPES (UNSUPPORTED)`
+
+Do not add action bindings.
+
+Preserve Production Speed preset values exactly:
+
+- 1.0
+- 2.0
+- 5.0
+- 10.0
+
+All Production Speed controls remain disabled + unbound.
+
+============================================================
+E. SKILL POINTS
+============================================================
+
+Preserve status read:
+
+`$status = Get-CheatCorrelationStatus`
+
+Preserve:
+
+`$caps = Get-AdminCapabilities`
+
+Skill numeric control:
+
+- minimum = 1
+- maximum = 999
+- current value from `$status.skillPoints` when available, clamped to at least 1
+- otherwise default = 114
+- enabled presentation follows `$caps["skillPoints"].canExecute`
+
+APPLY SKILL POINTS
+
+ActionId:
+
+`cheat.skills.set`
+
+EventId:
+
+`f7.crafting.skillPoints.apply.click`
+
+Preserve:
+
+- `$btnSetSP.Tag = $spNum`
+- handler resolves numeric source from Tag / `$spNum`
+- publishes integer `value`
+- status-message meaning about opening Skill Tree to apply
+
+SKILL POINT PRESETS
+
+Values must remain exactly:
+
+- 10
+- 50
+- 114
+- 999
+
+Each runtime button uses:
+
+ActionId:
+
+`cheat.skills.set`
+
+Dynamic EventId source-equivalent to:
+
+`f7.crafting.skillPoints.preset.<invariant integer>.click`
+
+Preserve:
+
+- invariant integer formatting
+- Tag data containing preset + numeric control
+- preset updates the NumericUpDown
+- handler publishes the same integer value
+- closure-safe behavior
+
+FREE SKILL RESET
+
+ActionId:
+
+`cheat.skills.reset`
+
+EventId:
+
+`f7.crafting.skillReset.click`
+
+Preserve existing handler/status meaning.
+
+CANONICAL FAIL-CLOSED REQUIREMENT
+
+Do NOT enable skill actions.
+
+Registry truth:
+
+`cheat.skills.set`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- failureReason = skill point write backend not qualified
+
+`cheat.skills.reset`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- failureReason = skill reset backend not qualified
+
+Preserve `Send-CheatCommand` defense-in-depth rejections:
+
+`SKILL_POINTS_UNSOLVED`
+
+`SKILL_RESET_UNSOLVED`
+
+Do not modify those dispatch branches in this UI migration.
+
+============================================================
+F. LEVEL / EXPERIENCE PLACEHOLDERS
+============================================================
+
+Preserve Character Level numeric control:
+
+- minimum = 1
+- maximum = 100
+- default = 25
+
+Preserve:
+
+`APPLY LEVEL (UNSUPPORTED)`
+
+as disabled + unbound.
+
+Preserve XP addition display values exactly:
+
+- 1000
+- 5000
+- 25000
+
+All remain disabled + unbound.
+
+Preserve XP Multiplier display values exactly:
+
+- 1.0
+- 2.0
+- 5.0
+
+All remain disabled + unbound.
+
+Do not create progression/XP backends.
+
+============================================================
+G. EVENT LIFECYCLE / ZERO-GAP
+============================================================
+
+Do not introduce direct:
+
+- `.add_Click`
+- `.add_SelectedIndexChanged`
+- `.add_TextChanged`
+- `.add_ValueChanged`
+- or other raw F7 event registrations
+
+Use only established:
+
+- `Register-AdminActionEvent`
+- `Register-F7UiEvent`
+
+No `[scriptblock]::Create`.
+
+Preserve G4A zero-gap lifecycle rules.
+
+RESPONSIVE DESIGN TARGET
+
+Rebuild the page using responsive cards/tables while preserving the same conceptual hierarchy:
+
+Inventory portion:
+1. Inventory header
+2. Active Item Forge / Perk Reroller
+3. Backpack Management / Batch Actions
+4. Codex Item Spawner / Resource Dispatch
+
+Progression portion:
+5. Crafting / Progression header
+6. Crafting Overrides / Workbench Rules
+7. Skill Points Injector
+8. Level / Experience Scaling
+
+The exact table decomposition is yours to design.
+
+At minimum:
+
+- major cards stretch with content width
+- long unsupported labels do not overlap
+- active-item explanatory text remains readable
+- batch actions distribute responsively
+- category/search/quantity row allocates width proportionally
+- item list stretches horizontally
+- spawn unsupported button stretches
+- free-crafting/unlock controls share available width cleanly
+- production-speed presets distribute without fixed X positions
+- skill input/apply/reset controls remain usable at narrower widths
+- preset buttons distribute responsively
+- level/XP controls do not overlap when width changes
+- vertical page ordering remains correct in the FlowLayoutPanel
+
+Do not claim exact geometry is proven unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- make bounded product edits inside the two G5D renderer functions
+- create TEMP staging roots
+- create a TEMP-only G5D parity fixture
+- adapt TEMP copies of test fixtures for toolkit-root/path issues
+- update TEMP-only stale fixed-pixel/source-pattern assertions when the semantic invariant is independently proven preserved
+- rerun tests as many times as needed
+- fix parse/layout-construction errors introduced by your migration
+- iterate on responsive table/card decomposition
+- inspect Current source/registry/archive evidence
+
+Do not ask the user for intermediate approval for those recoverable issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- authoritative Current hash differs before the first edit
+- a required behavior cannot be preserved without changing backend/gameplay semantics
+- current evidence contradicts canonical registry/safety state
+- a change outside the two bounded renderers is genuinely required
+- `Update-InventorySpawnList` must change for behavior rather than layout
+- a shared responsive helper must change
+- completing the task requires recreating H:
+- completing the task requires enabling a disabled action
+- completing the task requires inventing an API, address, signature, pointer, layout, calling convention, runtime mechanism, or game behavior
+- a safety-sensitive ambiguity cannot be resolved from existing evidence/tests
+
+Do NOT stop merely because a TEMP test fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified lineage established during G5B/G5C:
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native sources to the old archive generation.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+G5D PARITY FIXTURE
+
+Create a TEMP-only Items & Progression parity fixture.
+
+Verify at least these independent groups:
+
+1. page dispatcher still invokes Inventory then Crafting/Progression
+2. active item pointer display semantics preserved
+3. reroll ActionId/EventId unchanged
+4. reroll capability/tooltip/handler recheck semantics preserved
+5. Duplicate Item disabled/unbound
+6. Repair Item disabled/unbound
+7. Repair All disabled/unbound
+8. Auto-Sort disabled/unbound
+9. Auto-Loot Aura disabled/unbound
+10. Clear Backpack disabled/unbound
+11. Codex DB path resolution preserved
+12. fallback item behavior preserved
+13. quantity min/max/default = 1/9999/100
+14. category UI_ONLY EventId unchanged
+15. search UI_ONLY EventId unchanged
+16. category/search still use `Register-F7UiEvent`
+17. category/search closure behavior preserved
+18. item list still populated through `Update-InventorySpawnList`
+19. Spawn Item remains disabled/unbound
+20. Free Crafting placeholder disabled/unbound
+21. Unlock Recipes placeholder disabled/unbound
+22. Production Speed values 1/2/5/10 unchanged + disabled/unbound
+23. skill NumericUpDown bounds/default/status-read semantics preserved
+24. skill apply ActionId/EventId unchanged
+25. skill apply Tag/handler integer-value semantics preserved
+26. skill presets 10/50/114/999 unchanged
+27. dynamic preset EventId invariant construction preserved
+28. preset Tag/Num/closure semantics preserved
+29. skill reset ActionId/EventId unchanged
+30. registry still disables `cheat.item.reroll`
+31. registry still disables `cheat.skills.set`
+32. registry still disables `cheat.skills.reset`
+33. `SKILL_POINTS_UNSOLVED` direct dispatch rejection preserved
+34. `SKILL_RESET_UNSOLVED` direct dispatch rejection preserved
+35. level NumericUpDown min/max/default = 1/100/25
+36. Apply Level disabled/unbound
+37. XP additions 1000/5000/25000 unchanged + disabled/unbound
+38. XP multipliers 1/2/5 unchanged + disabled/unbound
+39. no raw direct F7 event registration introduced in either renderer
+40. `Render-ProgressionGearPage` delegation unchanged
+41. Home hash unchanged
+42. Player hash unchanged
+43. Mobility hash unchanged
+44. Combat hash unchanged
+45. both target renderers use responsive card/table infrastructure
+46. no invalid Absolute row-height hashtable introduced
+
+You may split or strengthen checks.
+Do not reduce coverage merely to get green.
+
+SUCCESS CRITERIA
+
+G5D is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only intended Items/Progression layout source changed
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Combat hash unchanged
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- G5D parity fixture fully PASS
+- existing G5B Player parity remains 18/18 PASS
+- existing G5C Mobility parity remains fully PASS
+- truthfulness fully PASS after only justified TEMP semantic refreshes
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new direct F7 event sites
+- final Current runtime SHA recorded
+- H: remains absent
+- no gameplay/runtime mechanism changed or promoted to PROVEN
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA
+- ending SHA
+- Home hash before/after
+- Player hash before/after
+- Mobility hash before/after
+- Inventory renderer hash before/after
+- Crafting/Progression renderer hash before/after
+- Combat hash before/after
+- concise responsive layout architecture
+- product-source files changed
+- TEMP-only test files changed
+- full G5D parity result
+- Player parity result
+- Mobility parity result
+- truthfulness result
+- UI smoke result
+- UI error count
+- catalog count
+- lifecycle result
+- schema/source-consolidation result
+- prohibited-mutation result
+- G4A result
+- stable-definition refs
+- registry counts
+- geometry status
+- any justified TEMP assertion refreshes and evidence
+- confirmation H: was not recreated
+- confirmation G5E/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5D Items & Progression responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay behavior PROVEN from these tests.

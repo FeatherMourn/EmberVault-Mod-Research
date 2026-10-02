@@ -1,0 +1,955 @@
+CODE-0042G5I — AUTONOMOUS GOAL: MODS & CONFIGURATION RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Fully migrate the F7 `Render-SettingsDevPage` renderer from its fixed-pixel layout to the established responsive F7 framework while preserving every current navigation, hotkey, preference, panic-reset, event-lifecycle, and fail-closed semantic contract.
+
+Close G5I with one final source/static verification report.
+
+This milestone covers the TOP-LEVEL `Mods & Configuration` renderer only.
+
+Do NOT migrate or redesign:
+- `Render-RolePresetsPage`
+- `Render-DiagnosticsPage`
+
+Those functions are subpage targets and are protected during G5I.
+
+Work autonomously toward the goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded fixture paths, stale fixed-pixel source assertions, fixture-version mismatches, missing TEMP support artifacts, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5I satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting identity:
+
+- Length: `448538` bytes
+- SHA-256:
+  `F67E9DEA0A7549966A9118385816E1AECDE4B1ACEC3799DE0E902F48E04D3A07`
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry SHA-256:
+
+`7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+
+Required registry state:
+
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- modify backend/dispatch logic
+- modify keybinding persistence helpers
+- modify preference persistence semantics
+- modify `Render-RolePresetsPage`
+- modify `Render-DiagnosticsPage`
+- start G5J or any later F7 responsive milestone
+- start F8 work
+- enable the canonical Panic Reset action
+- invent new ActionIds/EventIds
+- convert UI_ONLY settings actions into gameplay/native actions
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a UI/responsive migration, not a hotkey-system redesign, preference-system redesign, native diagnostics redesign, preset redesign, or survival-reset implementation.
+
+Preserve working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+CURRENT G5I STARTING FUNCTION IDENTITIES
+
+Independent extraction from the verified Current source produced:
+
+- `Render-SettingsDevPage`
+  `678348E5FD08C34A461211B3C28EC7EA57B20C4A22CA47C6DD94D89D848A1654`
+
+Protected adjacent/subpage renderers:
+
+- `Render-RolePresetsPage`
+  `4F85385E794C0C487840103DEE28B390A9A3A273F093F6B1EDDF2069E55449E2`
+
+- `Render-DiagnosticsPage`
+  `BE583D36F3079940E1B12A2F129C47A3E4D642BAB8C50FB06E58862A76201A16`
+
+Closed prior responsive baselines include G5B through repaired G5H.
+
+Do not compare function hashes using a different extraction convention without accounting for that convention. Within your own before/after run, use one consistent extraction method.
+
+SCOPE BOUNDARY
+
+Expected product-source edit:
+
+- `Render-SettingsDevPage`
+
+Do not alter:
+
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+- `Render-BuildingEntitiesPage`
+- `Render-MultiplayerQuestsPage`
+- `Render-RolePresetsPage`
+- `Render-DiagnosticsPage`
+- `Update-CodexDetails`
+- page dispatch
+- responsive helper functions
+- keybinding load/save helpers
+- virtual-key map helpers
+- `Send-CheatCommand`
+- registry
+- native runtime
+- Lua/EML
+- F8
+
+Do not add a `Render-SettingsDevPageLegacy` or any other backup/duplicate renderer to Current.
+
+If a shared helper, dispatch, registry, persistence helper, preset renderer, diagnostics renderer, or backend change appears necessary:
+
+STOP and report why before making it.
+
+PRE/POST HASH GUARDS
+
+Before editing, record exact hashes for at least:
+
+- full `ArchitectRuntime.ps1`
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+- `Render-BuildingEntitiesPage`
+- `Render-MultiplayerQuestsPage`
+- `Render-SettingsDevPage`
+- `Render-RolePresetsPage`
+- `Render-DiagnosticsPage`
+- `Save-ArchitectKeybindings`
+- `Get-KeyNameFromCode`
+- `Get-CodeFromKeyName`
+
+After editing:
+
+- only `Render-SettingsDevPage` should differ
+- every protected renderer/helper hash must remain unchanged
+- no legacy/backup settings renderer may exist
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use existing proven helpers:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Respect helper contracts:
+
+- percentage columns for `New-F7ResponsiveTable`
+- numeric row heights are absolute heights
+- only `{Type='Percent';Value=...}` is the special percent-row form
+- never introduce `{Type='Absolute';Value=...}` row-height hashtables
+
+Prefer:
+
+- Dock / Anchor
+- percentage-column tables
+- responsive button groups
+- bounded minimum sizes
+- AutoEllipsis where appropriate
+- FlowLayoutPanel-compatible vertical cards
+- table-contained ComboBoxes and CheckBoxes instead of fixed Location/Size
+
+Avoid recreating the page as fixed X/Y positioning.
+
+Do not redesign styling beyond what is necessary for responsive layout.
+
+CURRENT MODS & CONFIGURATION SEMANTIC CONTRACT — PRESERVE EXACTLY
+
+============================================================
+A. PAGE ROUTING / TITLE
+============================================================
+
+Preserve dispatcher routing:
+
+`"Mods & Configuration" { Render-SettingsDevPage }`
+
+Preserve page title meaning:
+
+`SYSTEM SETTINGS, PRESETS & DIAGNOSTICS`
+
+Do not rename the nav page or route it elsewhere.
+
+============================================================
+B. SUBNAV — HOTKEYS
+============================================================
+
+Preserve visible control:
+
+`HOTKEYS`
+
+This is the active/current subview.
+
+Current behavior:
+- selected visual state
+- NO click event registration in this renderer
+- no rerender/navigation action
+
+Do not invent an EventId or handler for the active HOTKEYS button.
+
+Preserve selected visual semantics equivalent to current active color:
+
+`FromArgb(60, 80, 110)`
+
+Responsive layout may change dimensions only.
+
+============================================================
+C. SUBNAV — ROLE PRESETS
+============================================================
+
+Preserve visible control:
+
+`ROLE PRESETS`
+
+EventId:
+
+`f7.settings.subnav.presets.click`
+
+Registration:
+
+`Register-F7UiEvent`
+
+Page:
+
+`Mods & Configuration`
+
+Operation:
+
+`Open Role Presets`
+
+LifetimeScope:
+
+`PAGE`
+
+Handler semantics:
+
+`Clear-AdminContent; Render-RolePresetsPage`
+
+Preserve UI_ONLY navigation behavior.
+
+Do not convert to `Register-AdminActionEvent`.
+
+Do not modify `Render-RolePresetsPage`.
+
+Preserve inactive button visual meaning equivalent to:
+
+`FromArgb(35, 45, 60)`
+
+============================================================
+D. SUBNAV — NATIVE DIAGNOSTICS
+============================================================
+
+Preserve visible control:
+
+`NATIVE DIAGNOSTICS`
+
+EventId:
+
+`f7.settings.subnav.diagnostics.click`
+
+Registration:
+
+`Register-F7UiEvent`
+
+Page:
+
+`Mods & Configuration`
+
+Operation:
+
+`Open Native Diagnostics`
+
+LifetimeScope:
+
+`PAGE`
+
+Handler semantics:
+
+`Clear-AdminContent; Render-DiagnosticsPage`
+
+Preserve UI_ONLY navigation behavior.
+
+Do not convert to `Register-AdminActionEvent`.
+
+Do not modify `Render-DiagnosticsPage`.
+
+Preserve inactive visual meaning equivalent to:
+
+`FromArgb(35, 45, 60)`
+
+============================================================
+E. PANIC RESET — FAIL CLOSED
+============================================================
+
+Preserve visible control:
+
+`PANIC RESET`
+
+ActionId:
+
+`cheat.survival.disable_all`
+
+EventId:
+
+`f7.settings.panicReset.click`
+
+Registration:
+
+`Register-AdminActionEvent`
+
+Page:
+
+`Mods & Configuration`
+
+Operation:
+
+`Panic Reset`
+
+LifetimeScope:
+
+`PAGE`
+
+Preserve current handler semantics exactly in meaning:
+
+1. call:
+   `Send-CheatCommand "cheat.survival.disable_all"`
+2. if the result is unsuccessful:
+   - show the returned error via `Set-AdminStatus`
+   - return immediately
+3. only after success:
+   - report:
+     `EMERGENCY PANIC: Reset all patches to Vanilla.`
+
+Do NOT report success on a failed dispatch.
+
+Do NOT bypass canonical binder gating.
+
+Do NOT use `AllowDisabled`.
+
+Canonical registry truth:
+
+`cheat.survival.disable_all`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- authority = unknown
+- risk = mutation
+- failureReason = `No PowerShell-side mutation fallback is permitted.`
+
+`Send-CheatCommand` also explicitly rejects:
+
+- `cheat.survival.disable_all`
+- `survival.disable_all`
+
+with UNSUPPORTED semantics:
+
+`Survival reset requires the authoritative native backend; no F7 fallback is permitted.`
+
+Preserve that defense-in-depth rejection.
+
+Do not modify `Send-CheatCommand`.
+
+Preserve panic visual emphasis equivalent to:
+
+`FromArgb(140, 30, 30)`
+
+Canonical binder should keep this action fail-closed/disabled from the registry definition.
+
+============================================================
+F. HOTKEY MANAGER HEADING
+============================================================
+
+Preserve heading:
+
+`HOTKEY REBINDING MANAGER`
+
+Preserve `$comboMap = @{}` behavior.
+
+Responsive migration may replace X/Y metadata with row/column layout metadata, but it must preserve all seven binding definitions, order, keys, and user-facing names.
+
+============================================================
+G. HOTKEY BINDING DEFINITIONS
+============================================================
+
+Preserve exact binding order and semantic pairs:
+
+1. `toggle_admin_codex`
+   - `Admin Menu (F7)`
+
+2. `toggle_architect_hud`
+   - `Creative HUD (F8)`
+
+3. `preset_slot_1`
+   - `Creative Preset (F9)`
+
+4. `preset_slot_2`
+   - `Explorer Preset (F10)`
+
+5. `preset_slot_3`
+   - `Combat Preset (F11)`
+
+6. `panic_reset_vanilla`
+   - `Panic Vanilla (Pause)`
+
+7. `toggle_drawer`
+   - `Drawer Toggle (~)`
+
+Do not add/remove/reorder hotkey definitions during G5I.
+
+The old `X`/`Y` fields are layout-only and may be removed/replaced by responsive row/column metadata.
+
+============================================================
+H. COMBOBOX CONSTRUCTION / VALUE SEMANTICS
+============================================================
+
+Preserve:
+
+`$allKeyNames = @($script:virtualKeyMap.Keys)`
+
+For each binding preserve:
+
+- a WinForms ComboBox
+- `DropDownStyle = DropDownList`
+- dark background / white foreground presentation
+- Segoe UI 8 equivalent
+- population from `$allKeyNames`
+- current code from:
+  `$script:activeKeybindings[$b.Key]`
+- current name from:
+  `Get-KeyNameFromCode $curCode`
+- selected item = current key name
+- `$comboMap[$b.Key] = $cb`
+
+Do not change virtual-key semantics.
+Do not add direct SelectedIndexChanged handlers.
+Do not persist changes until SAVE KEYBINDINGS is invoked.
+
+============================================================
+I. SAVE KEYBINDINGS
+============================================================
+
+Preserve visible control:
+
+`SAVE KEYBINDINGS`
+
+EventId:
+
+`f7.settings.hotkeys.save.click`
+
+Registration:
+
+`Register-F7UiEvent`
+
+Page:
+
+`Mods & Configuration`
+
+Operation:
+
+`Save Keybindings`
+
+LifetimeScope:
+
+`PAGE`
+
+Preserve closure-safe handler semantics:
+
+For every `$bKey` in `$comboMap.Keys`:
+
+- read selected key name from the ComboBox
+- resolve code through `Get-CodeFromKeyName`
+- only if `$code -gt 0`:
+  - write `$script:activeKeybindings[$bKey] = $code`
+
+Then preserve:
+
+- `Save-ArchitectKeybindings`
+- status label text:
+  `Keybindings saved and active.`
+- admin status:
+  `Keybindings updated and saved to hotkeys.json`
+
+Preserve optional HUD close-hint refresh:
+
+if `$hudCloseHint` exists:
+
+`$hudCloseHint.Text = (Get-KeyNameFromCode $script:activeKeybindings.toggle_architect_hud) + " Close HUD"`
+
+Do not turn combo selection into immediate persistence.
+Do not remove `.GetNewClosure()`.
+
+============================================================
+J. HOTKEY SAVE STATUS LABEL
+============================================================
+
+Preserve a status label associated with the save button.
+
+Initial text remains empty.
+
+After save it becomes:
+
+`Keybindings saved and active.`
+
+Responsive positioning may change freely.
+
+============================================================
+K. IMMERSION / THEATRIC PREFERENCES HEADING
+============================================================
+
+Preserve heading:
+
+`THEATRIC ITEM HOOKS & IMMERSION`
+
+Do not reinterpret these as game settings or authoritative Enshrouded settings.
+
+They remain Architect preferences.
+
+============================================================
+L. AUTO-SUMMON PREFERENCE
+============================================================
+
+Preserve checkbox text:
+
+`Auto-Summon F8 HUD when Architect Wand / Building Hammer equipped`
+
+Preserve checked source:
+
+`$script:activePreferences.theatric_auto_summon_wand`
+
+Preserve preference key exactly:
+
+`theatric_auto_summon_wand`
+
+Do not attach a direct event.
+Do not immediately persist on checkbox state change.
+
+============================================================
+M. AUTO-DOCK PREFERENCE
+============================================================
+
+Preserve checkbox text:
+
+`Auto-Collapse / Dock HUD drawer when switching back to weapons`
+
+Preserve checked source:
+
+`$script:activePreferences.auto_dock_on_holster`
+
+Preserve preference key exactly:
+
+`auto_dock_on_holster`
+
+Do not attach a direct event.
+Do not immediately persist on checkbox state change.
+
+============================================================
+N. APPLY PREFERENCES
+============================================================
+
+Preserve visible control:
+
+`APPLY PREFERENCES`
+
+EventId:
+
+`f7.settings.preferences.apply.click`
+
+Registration:
+
+`Register-F7UiEvent`
+
+Page:
+
+`Mods & Configuration`
+
+Operation:
+
+`Apply Preferences`
+
+LifetimeScope:
+
+`PAGE`
+
+Preserve closure-safe handler semantics:
+
+- assign:
+  `$script:activePreferences.theatric_auto_summon_wand = $chkSummon.Checked`
+- assign:
+  `$script:activePreferences.auto_dock_on_holster = $chkDock.Checked`
+- call:
+  `Save-ArchitectKeybindings`
+- report:
+  `Immersion preferences updated.`
+
+Do not add gameplay/native commands.
+Do not remove `.GetNewClosure()`.
+
+============================================================
+O. EVENT LIFECYCLE / ZERO-GAP
+============================================================
+
+Inside the active `Render-SettingsDevPage`, preserve the source-level event model:
+
+UI_ONLY `Register-F7UiEvent` source sites:
+
+1. Role Presets subnav
+2. Native Diagnostics subnav
+3. Save Keybindings
+4. Apply Preferences
+
+Canonical `Register-AdminActionEvent` source sites:
+
+1. Panic Reset
+
+Preserve:
+- raw `.Add_Click(...)` = 0
+- raw `.add_Click(...)` = 0
+- raw SelectedIndexChanged handlers = 0
+- raw CheckedChanged handlers = 0
+- direct `Register-SafeUiEvent` = 0
+- `[scriptblock]::Create` = 0
+
+Do not let whole-file matches satisfy renderer-specific parity checks.
+Scope G5I parity assertions to the active `Render-SettingsDevPage` AST/function extent.
+
+============================================================
+P. NO LEGACY DUPLICATE
+============================================================
+
+Learning from G5H:
+
+Do not create any dead fixed-pixel backup renderer.
+
+Final source must contain:
+
+- exactly one `Render-SettingsDevPage` definition
+- zero `Render-SettingsDevPageLegacy` definitions
+- zero backup/old/copy variants introduced for G5I
+
+Code History already preserves the pre-G5I implementation.
+
+RESPONSIVE DESIGN TARGET
+
+Rebuild `Render-SettingsDevPage` using responsive cards/tables while preserving this conceptual hierarchy:
+
+1. System Settings, Presets & Diagnostics header
+2. responsive sub-navigation row
+3. Hotkey Rebinding Manager card
+4. Theatric Item Hooks & Immersion card
+
+Suggested design constraints:
+
+- page header stretches with content width
+- subnav uses percentage columns
+- HOTKEYS / ROLE PRESETS / NATIVE DIAGNOSTICS / PANIC RESET remain readable without overlap
+- hotkey bindings use responsive rows/columns rather than fixed Point/Size
+- each label and ComboBox remains associated unambiguously
+- use two-column binding groups where practical, with the seventh entry spanning or occupying a safe final slot
+- SAVE KEYBINDINGS and status label share responsive space cleanly
+- checkbox text remains readable and can use full-width rows
+- APPLY PREFERENCES remains clearly associated with the two checkboxes
+- no fixed 590px-width dependency remains in the active migrated renderer
+- long text does not collide at narrower widths
+- vertical order remains stable in the F7 FlowLayoutPanel
+
+Do not claim exact geometry is proven unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- make bounded product edits inside `Render-SettingsDevPage`
+- create TEMP staging roots
+- create a TEMP-only G5I Mods & Configuration parity fixture
+- adapt TEMP copies of test fixtures for toolkit-root/path issues
+- update TEMP-only stale fixed-pixel/source-pattern assertions only when semantic invariants are independently proven preserved
+- rerun tests as many times as needed
+- fix parse/layout-construction errors introduced by your migration
+- fix renderer-local responsive overlap/clipping issues discovered by UI smoke
+- iterate on responsive table/card decomposition
+- inspect Current source, registry, closed responsive baselines, and relevant historical event audits
+
+Do not ask the user for intermediate approval for those recoverable issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- authoritative Current hash differs before first edit
+- a required settings/hotkey/preference behavior cannot be preserved without changing persistence semantics
+- a change outside `Render-SettingsDevPage` is genuinely required
+- a shared responsive helper must change
+- page dispatch must change
+- `Render-RolePresetsPage` or `Render-DiagnosticsPage` must change
+- keybinding helper functions must change
+- preference/keybinding persistence must change
+- `Send-CheatCommand` or registry must change
+- completing the task requires recreating H:
+- completing the task requires enabling Panic Reset
+- completing the task requires inventing an API, address, signature, pointer, layout, calling convention, runtime behavior, or native backend
+- a safety-sensitive ambiguity cannot be resolved from existing evidence/tests
+
+Do NOT stop merely because a TEMP test fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified lineage from G5B through repaired G5H.
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native sources to the older archive generation.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+If prior TEMP parity fixtures are unavailable, recreate equivalent TEMP checks from their closed invariants rather than stopping.
+
+G5I PARITY FIXTURE
+
+Create a TEMP-only Mods & Configuration parity fixture.
+
+It MUST scope renderer-specific assertions to the ACTIVE `Render-SettingsDevPage` AST/function extent.
+
+Verify at least these independent groups:
+
+1. `Mods & Configuration` still routes to `Render-SettingsDevPage`
+2. exactly one active `Render-SettingsDevPage` definition exists
+3. zero legacy/backup SettingsDev renderer definitions exist
+4. page title meaning preserved
+5. HOTKEYS label preserved
+6. HOTKEYS remains the selected/current subview
+7. HOTKEYS has no event registration
+8. Role Presets label preserved
+9. Role Presets EventId exact
+10. Role Presets remains UI_ONLY `Register-F7UiEvent`
+11. Role Presets Page/Operation/PAGE lifetime preserved
+12. Role Presets handler clears content and calls only `Render-RolePresetsPage`
+13. Native Diagnostics label preserved
+14. Native Diagnostics EventId exact
+15. Native Diagnostics remains UI_ONLY `Register-F7UiEvent`
+16. Native Diagnostics Page/Operation/PAGE lifetime preserved
+17. Native Diagnostics handler clears content and calls only `Render-DiagnosticsPage`
+18. Panic Reset label preserved
+19. Panic Reset ActionId exact
+20. Panic Reset EventId exact
+21. Panic Reset Page/Operation/PAGE lifetime preserved
+22. Panic Reset remains `Register-AdminActionEvent`
+23. panic handler calls `Send-CheatCommand "cheat.survival.disable_all"`
+24. panic failure path reports returned error and returns
+25. panic success status is emitted only after successful result
+26. registry still disables `cheat.survival.disable_all`
+27. registry panic action remains UNSOLVED/backend NONE/runtime UNAVAILABLE
+28. direct dispatch rejection for `cheat.survival.disable_all` preserved
+29. direct dispatch alias rejection for `survival.disable_all` preserved
+30. hotkey heading preserved
+31. `$comboMap` behavior preserved
+32. exact seven hotkey binding keys preserved
+33. exact seven hotkey display names preserved
+34. hotkey binding order preserved
+35. ComboBoxes remain DropDownList
+36. key choices still come from `$script:virtualKeyMap.Keys`
+37. current selection still resolves via `Get-KeyNameFromCode`
+38. combo map remains keyed by binding key
+39. no direct ComboBox selection-change handlers added
+40. SAVE KEYBINDINGS label preserved
+41. save EventId exact
+42. save event remains UI_ONLY / PAGE lifetime
+43. save handler resolves code through `Get-CodeFromKeyName`
+44. save handler writes only codes greater than zero
+45. save handler calls `Save-ArchitectKeybindings`
+46. save status-label text preserved
+47. save admin-status text preserved
+48. HUD close-hint refresh behavior preserved
+49. save handler remains closure-safe
+50. immersion heading preserved
+51. Auto-Summon checkbox text/key/source preserved
+52. Auto-Dock checkbox text/key/source preserved
+53. neither checkbox gains a direct event
+54. APPLY PREFERENCES label preserved
+55. preference EventId exact
+56. preference event remains UI_ONLY / PAGE lifetime
+57. preference handler writes exactly the two current preference keys
+58. preference handler calls `Save-ArchitectKeybindings`
+59. preference status text preserved
+60. preference handler remains closure-safe
+61. renderer raw direct event registrations remain zero
+62. renderer direct `Register-SafeUiEvent` sites remain zero
+63. renderer UI_ONLY `Register-F7UiEvent` source sites remain exactly four
+64. renderer canonical `Register-AdminActionEvent` source sites remain exactly one
+65. `Render-RolePresetsPage` hash unchanged
+66. `Render-DiagnosticsPage` hash unchanged
+67. Home hash unchanged
+68. Player hash unchanged
+69. Mobility hash unchanged
+70. Inventory hash unchanged
+71. Crafting/Progression hash unchanged
+72. Combat hash unchanged
+73. World/Camera hash unchanged
+74. Building hash unchanged
+75. Multiplayer/Quests hash unchanged
+76. keybinding helper hashes unchanged
+77. renderer now uses responsive card/table infrastructure
+78. no invalid Absolute row-height hashtable introduced
+79. registry unchanged
+80. no backend/dispatch/native/Lua changes occurred
+
+You may split or strengthen checks.
+
+Do not reduce coverage merely to get green.
+
+REGRESSION / SUCCESS CRITERIA
+
+G5I is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only intended `Render-SettingsDevPage` changed
+- all G5B-G5H protected renderer hashes unchanged
+- `Render-RolePresetsPage` hash unchanged
+- `Render-DiagnosticsPage` hash unchanged
+- keybinding helper hashes unchanged
+- exactly one active SettingsDev renderer
+- zero SettingsDev legacy/backup copies
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- G5I Mods & Configuration parity fixture fully PASS
+- G5B Player parity remains 18/18 PASS
+- G5C Mobility parity remains fully PASS
+- G5D Items/Progression parity remains fully PASS
+- G5E Combat parity remains fully PASS
+- G5F World/Camera parity remains fully PASS
+- G5G Building parity remains fully PASS
+- repaired G5H active-AST parity remains fully PASS
+- truthfulness fully PASS after only justified TEMP semantic refreshes
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new direct F7 event sites
+- no Panic Reset enablement or fallback added
+- final Current runtime SHA recorded
+- H: remains absent
+- no gameplay/runtime mechanism changed or promoted to PROVEN
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA/length
+- ending SHA/length
+- `Render-SettingsDevPage` hash before/after
+- Home hash before/after
+- Player hash before/after
+- Mobility hash before/after
+- Inventory hash before/after
+- Crafting/Progression hash before/after
+- Combat hash before/after
+- World/Camera hash before/after
+- Building hash before/after
+- Multiplayer/Quests hash before/after
+- Role Presets hash before/after
+- Diagnostics hash before/after
+- keybinding helper hashes before/after
+- exact list of product functions changed
+- confirmation no SettingsDev legacy/backup renderer exists
+- concise responsive layout architecture
+- product-source files changed
+- TEMP-only test files changed
+- full G5I parity result
+- G5B-G5H parity results
+- truthfulness result
+- UI smoke result
+- UI error count
+- catalog count
+- lifecycle result
+- schema/source-consolidation result
+- prohibited-mutation result
+- G4A result
+- stable-definition refs
+- registry counts/hash
+- raw-event / UI_ONLY / canonical-event source-site counts
+- geometry status
+- any justified TEMP assertion refreshes and evidence
+- confirmation Panic Reset remains disabled/fail-closed
+- confirmation Role Presets and Diagnostics renderers were not changed
+- confirmation H: was not recreated
+- confirmation G5J/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5I Mods & Configuration responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay behavior PROVEN from these tests.

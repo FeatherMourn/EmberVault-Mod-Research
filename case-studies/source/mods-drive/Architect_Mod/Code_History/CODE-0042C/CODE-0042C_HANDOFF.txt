@@ -1,0 +1,18 @@
+CODE-0042C HANDOFF
+
+Status: partial binding-instrumentation progress; no runtime claim.
+
+Verified useful changes:
+- Get-F7ActionBindingAudit added.
+- startup page normalized to Home.
+- 40-entry registry preserved.
+- two diagnostics bindings preserved.
+- 224-entry CT catalog preserved.
+- safety restrictions preserved.
+
+Key finding:
+Get-F7ActionBindingAudit currently enumerates only already-bound controls and therefore cannot prove zero-gap coverage. The next pass must create an independent ACTION/UI_ONLY event-control inventory and migrate all F7 action-producing handlers to explicit canonical ActionIds.
+
+Dynamic Player Vitals action IDs expose at least 11 registry gaps that literal Send-CheatCommand scanning missed.
+
+Next task: CODE-0042D binding closure. No responsive page migration yet.

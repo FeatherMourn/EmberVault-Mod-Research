@@ -1,0 +1,158 @@
+CODE-0042G1C3 — FINISH EVENT LIFECYCLE + REPEATED HOME TEST
+
+Scope: Architect Toolkit F7 Admin
+Game build: Enshrouded 1076226
+Source: current Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+DO NOT migrate Player Vitals, Mobility, other pages, responsive layout, or gameplay capabilities in this pass.
+
+GOAL
+
+Finish the lifecycle foundation that was partially implemented in G1C2, then prove it with a repeated Home traversal test.
+
+CURRENT SOURCE STATE
+
+Good:
+- `$script:f7EventDefinitions` exists as stable EventId-keyed metadata.
+- `$script:f7ActiveBindings` exists as the current live binding map.
+- `Clear-AdminContent` clears active bindings and `$script:adminActionControls`.
+- `staleOrDisposedActiveBindings` is computed.
+- Home raw direct-event count is zero.
+- Registry remains 53 actions.
+
+Still wrong:
+1. `$script:f7EventInventory` still exists as an ArrayList.
+2. `Register-AdminActionEvent` still appends a record containing `Control=$Control` to it.
+3. `Register-F7UiEvent` still appends a record containing `Control=$Control` to it.
+4. `Clear-AdminContent` does not clear that legacy inventory.
+5. `Bind-AdminActionControl` relies on caller-scope variables `EventId`, `EventName`, and `Operation` even though they are not parameters.
+6. `Register-F7EventDefinition` uses a grouped/array-style `-ne` comparison instead of explicit field-by-field comparison.
+7. The repeated Home traversal assertion has not been added.
+
+IMPLEMENTATION REQUIREMENTS
+
+A. Remove legacy strong-reference inventory
+
+Search all references to `$script:f7EventInventory`.
+
+If it has no required reader/consumer:
+- remove the collection entirely;
+- remove ACTION/UI_ONLY append operations from both registration helpers.
+
+If a real compatibility consumer exists:
+- preserve only metadata;
+- it MUST NOT retain live WinForms Control objects;
+- EventId is the identity.
+
+Do not keep a write-only strong-reference compatibility list.
+
+B. Make registration flow explicit
+
+Preferred structure:
+
+`Register-AdminActionEvent`:
+1. validate/register stable definition with EventId;
+2. call `Bind-AdminActionControl` with all identity needed explicitly, OR have Bind operate only on Control + ActionId after the caller sets stable identity;
+3. refresh `$script:f7ActiveBindings[$EventId]`;
+4. register safe WinForms event.
+
+`Register-F7UiEvent`:
+1. validate/register stable UI_ONLY definition;
+2. refresh `$script:f7ActiveBindings[$EventId]`;
+3. register safe WinForms event.
+
+Do not rely on PowerShell caller/dynamic scope for EventId/EventName/Operation.
+
+C. Stable conflict detection
+
+In `Register-F7EventDefinition`, compare the old and proposed definition explicitly:
+
+- Page
+- Classification
+- ActionId
+- EventName
+- Operation
+
+Normal re-registration of the exact same EventId + same metadata must be idempotent.
+
+If the same EventId is reused with conflicting metadata:
+- record/report ambiguity deterministically;
+- fail closed for that binding;
+- do not silently overwrite the canonical definition.
+
+Do not use display text or Control.Name as stable identity.
+
+D. Active binding lifecycle
+
+`Clear-AdminContent` / page transitions must remove all outgoing live bindings before/while controls are cleared.
+
+After transition:
+- no outgoing controls remain reachable through event lifecycle structures;
+- `$script:adminActionControls` contains only controls represented by current active bindings;
+- current active bindings are keyed by EventId.
+
+E. Add dedicated repeated Home traversal test
+
+Add or extend an appropriate headless/UI smoke test in the reconstructed full workspace.
+
+Exercise equivalent of:
+1. render Home;
+2. snapshot Home definitions;
+3. clear/navigate away;
+4. render Home again;
+5. render Home again or repeat navigation cycle.
+
+Assert:
+- Home stable definition count remains identical;
+- Home EventId set remains identical;
+- duplicateEventIds for Home = 0;
+- ambiguousBindings for Home = 0;
+- missingRegistryIds for Home = 0;
+- staleOrDisposedActiveBindings = 0;
+- active Home EventIds correspond only to current live Home controls;
+- no legacy/history collection contains live controls from prior renders;
+- `Render-DashboardPage` direct raw event count remains 0.
+
+If the test harness cannot instantiate the complete WinForms page in headless mode, implement the strongest deterministic test possible against the helpers and a minimal disposable test Control set. Clearly distinguish that from in-game proof.
+
+PRESERVE
+
+- Registry count 53; no new action identities.
+- `admin.preset.apply` disabled / ORCHESTRATION_ONLY.
+- teleport fail-closed under ADM-TEST-0002.
+- Auto Loot STARTUP_CANARY_ONLY.
+- Glider Flight disabled/unqualified.
+- glider-stamina semantic block.
+- no direct F7 calls to TogglePatch, EnableAllSurvival, DisableAllSurvival, WritePlayerCoordinates, ToggleAutoLoot, ToggleGliderFlight.
+- source-consolidation catalog.
+- CT catalog count 224.
+- existing truthfulness behavior.
+- Home EventIds and classifications.
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. F7 truthfulness.
+3. UI smoke.
+4. UI errors.
+5. CT catalog count = 224.
+6. Home raw event count = 0.
+7. New repeated Home lifecycle test.
+8. Static search confirming no legacy strong-reference event inventory remains.
+9. Static prohibited-mutation scan.
+
+REPORT
+
+Return:
+- files changed;
+- exact lifecycle structures after repair;
+- whether `$script:f7EventInventory` was removed or why it remains;
+- whether Bind-AdminActionControl has any caller-scope dependency;
+- Home definition count and EventId set before/after repeated traversal;
+- active binding counts through the traversal;
+- duplicate/ambiguous/stale metrics;
+- test results;
+- remaining Player/Mobility migration.
+
+Do not stop after analysis. Implement and test this lifecycle repair completely unless there is a concrete source-level blocker.

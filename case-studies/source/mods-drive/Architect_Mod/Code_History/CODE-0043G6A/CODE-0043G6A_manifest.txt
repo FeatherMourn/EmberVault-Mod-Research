@@ -1,0 +1,27 @@
+CODE-0043G6A OFFLINE GATE-A CANDIDATE
+Status: OFFLINE_QUALIFIED / RUNTIME_TEST_REQUIRED
+Build: Enshrouded 1076226
+Authoritative baseline: architect_toolkit.zip
+Baseline SHA256: 768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC
+Baseline length: 66748786
+Candidate package: architect_toolkit_CODE-0043G6A_candidate_INC0062_final_20260921.zip
+Package SHA256: 67B08A63835B4D0FF31F7F03F746D9F2E22BD31014042B1CCB15A8AC4F161A44
+Package length: 66270786
+Baseline Current runtime SHA256 at start: 9EF34615CD233BFBA2AFB885C7EA84D71343E019F4FA1647B93C004AC42585E9
+Baseline Current registry SHA256: 7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8
+Candidate registry: 55 total, 17 enabled, 38 disabled, 55 unique commandId values
+Candidate runtime SHA256 after G6A: 3128F92DF2A50700B63DBDE7D34117BED3B1443A61A9823D8D1BDAD790EA9087
+Candidate buildId: architect-v040-hybrid-admin-code0043g6a-20260921
+Rebuilt candidate DLL SHA256: 1C73C7B920C7EDBE2615467BCE30FE0105119F488A03DE6FD74089FDCCCDA4CC
+CheatCorrelationHarness.c SHA256: 2F79C7CCADCD39BCD892EAF540FAF60C0BB2EF5E71A36FF72B5D4BB004553832
+CheatCorrelationHarness.h SHA256: 0647D729A5D1A662043BF17DA1FB5D0A3E98602DF141389A31E42B6360773D40
+Native/analyzer tests: 14 passed
+Cross-layer contract: PASS
+F7 truthfulness suite: 72/72 passed using the current G5 truthfulness harness; freecraft expectation verifies the current unsupported hook-site fail-closed gate.
+Source-consolidation suite: 12/12 passed using the current G5 source-consolidation contract.
+Fresh INC-0062 reconstruction workspace: C:\Users\JoelT\AppData\Local\Temp\architect-code0043-g6a-inc0062-01\architect_toolkit
+Source-consolidation catalog: preserved
+CT catalog: preserved, 224 entries
+Runtime test required: yes
+Gate B mutation work: not performed
+Live/gameplay proof: not claimed

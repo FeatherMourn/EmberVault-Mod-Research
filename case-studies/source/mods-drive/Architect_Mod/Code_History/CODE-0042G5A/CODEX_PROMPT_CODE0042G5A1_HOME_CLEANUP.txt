@@ -1,0 +1,178 @@
+CODE-0042G5A1 — HOME RESPONSIVE CLEANUP / PRESERVE PRE-G5A HANDLER SEMANTICS
+
+Scope:
+- `Render-DashboardPage`
+- removal of one non-executable legacy reference function
+- no additional F7 page migration
+- no gameplay/native work
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- DO NOT change `admin_action_registry.json`
+- must remain 55 / 17 enabled / 38 disabled
+
+BACKGROUND
+
+G5A successfully introduced the responsive Home structure, but source audit found three bounded deviations:
+
+1. a block-commented `Render-DashboardPage.LegacyFixed` copy was retained in Current;
+2. the three instant-action handlers changed semantics/status text via `[scriptblock]::Create(...)`;
+3. telemetry 2x2 cells are ordered differently from the intended responsive mapping.
+
+This is a repair-only slice.
+
+DO NOT:
+- migrate Player/Mobility/other pages;
+- change any EventId or ActionId;
+- enable any disabled action;
+- redesign action truthfulness;
+- add runtime/gameplay behavior;
+- touch F8;
+- add responsive behavior outside Home/helpers.
+
+A. REMOVE LEGACY FIXED SOURCE COPY
+
+Delete the entire:
+
+`function Render-DashboardPage.LegacyFixed { ... }`
+
+including its block-commented old Home implementation.
+
+Do not replace it with another embedded source copy.
+
+Prior source is already preserved in Code_History; Current should contain only the active implementation.
+
+Acceptance:
+- source contains exactly one `function Render-DashboardPage {`
+- source contains zero `Render-DashboardPage.LegacyFixed`
+- old `$bx = 10 + ...` formula is absent from active/current Home source and not retained in a legacy comment copy
+
+B. RESTORE EXACT PRE-G5A INSTANT-ACTION HANDLERS
+
+Keep the responsive 5-column table and current button layout.
+
+Replace generated `[scriptblock]::Create(...)` handlers with explicit handlers matching the pre-G5A source exactly.
+
+Health:
+- ActionId: `player.health.fill`
+- EventId: `f7.home.health.fill.click`
+- handler:
+  `[void](Send-CheatCommand "player.health.fill"); Set-AdminStatus "Player health restored to 100%."`
+
+Stamina:
+- ActionId: `player.stamina.fill`
+- EventId: `f7.home.stamina.fill.click`
+- handler:
+  `[void](Send-CheatCommand "player.stamina.fill"); Set-AdminStatus "Player stamina restored to 100%."`
+
+Mana:
+- ActionId: `player.mana.fill`
+- EventId: `f7.home.mana.fill.click`
+- handler:
+  `[void](Send-CheatCommand "player.mana.fill"); Set-AdminStatus "Player mana restored to 100%."`
+
+Requirements:
+- do not use `[scriptblock]::Create`
+- do not change command/result semantics in this repair
+- do not alter canonical gating
+- disabled placeholders remain disabled/unbound
+
+C. FIX TELEMETRY CELL MAPPING EXPLICITLY
+
+Keep:
+- responsive telemetry card
+- 2 columns x 2 rows
+- 50% / 50%
+- existing text/colors/alignment
+
+Use explicit cell placement:
+
+- Engine -> column 0, row 0
+- Coordinates -> column 0, row 1
+- Local Quest Flag -> column 1, row 0
+- Watchdog -> column 1, row 1
+
+Do not use `$i % 2` / `Floor($i/2)` indexing for these four semantic cells.
+
+All labels:
+- Dock Fill
+- AutoEllipsis true
+- current padding preserved
+- left labels MiddleLeft
+- right labels MiddleRight
+
+D. PRESERVE RESPONSIVE FOUNDATION
+
+Keep unchanged:
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren` PerformLayout refresh
+- responsive header
+- quick-preset table
+- instant-action table
+- hotkey card
+- full-width restore button
+
+Do not expand the helper API in this repair unless required to fix a concrete parse/layout issue.
+
+E. EVENT/REGISTRY PRESERVATION
+
+Preserve exact Home identities:
+
+- dynamic `f7.home.preset.apply.<presetId>` -> `admin.preset.apply`
+- `f7.home.presets.manage.click`
+- `f7.home.health.fill.click` -> `player.health.fill`
+- `f7.home.stamina.fill.click` -> `player.stamina.fill`
+- `f7.home.mana.fill.click` -> `player.mana.fill`
+- `f7.home.restoreVanilla.click` -> `cheat.survival.disable_all`
+
+No new EventIds.
+
+No deleted EventIds.
+
+Registry unchanged 55 / 17 / 38.
+
+F. TESTS
+
+Run:
+
+1. PowerShell parse
+2. lifecycle/static fixture
+3. F7 truthfulness
+4. UI smoke
+5. UI errors
+6. CT catalog = 224
+7. corrected G4A zero-gap audit
+8. registry import = 55 unique
+9. prohibited mutation scan
+10. static assertion: no `Render-DashboardPage.LegacyFixed`
+11. static assertion: exactly one active `Render-DashboardPage`
+12. static assertion: no `[scriptblock]::Create` in `Render-DashboardPage`
+13. exact three instant-action handler/status assertions
+14. exact telemetry cell mapping assertions
+15. exact Home EventId/ActionId preservation assertions
+
+If WinForms responsive geometry harness remains unavailable:
+- report `SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+- do not claim runtime geometry proof
+
+REPORT
+
+Return:
+- file changed
+- legacy fixed-source removal result
+- instant-action handler preservation result
+- telemetry cell mapping
+- Home EventId/ActionId preservation
+- G4A zero-gap result
+- registry counts
+- standard tests
+- exact geometry-harness status
+- explicit statement that no other F7 page was migrated
+- explicit statement that no gameplay/runtime mechanism was changed or proven
+
+Do not start G5B in this pass.

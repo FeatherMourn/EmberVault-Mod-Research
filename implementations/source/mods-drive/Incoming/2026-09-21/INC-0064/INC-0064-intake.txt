@@ -1,0 +1,13 @@
+Intake ID: INC-0064
+Date: 2026-09-21
+Source: ChatGPT conversation upload
+Purpose: EML Lua capability mapping / reflected type schema
+Files:
+- base.lua
+  Size: 96560 bytes
+  SHA-256: 98847ab86a8d73a18ae2b78c53fb73db0c406e776d426d26e36048cb4142c1d0
+- types.lua
+  Size: 1295957 bytes
+  SHA-256: ff345a2eeaf939d13599ce25c4b8cc24aaabe8e36dfcd5ad255533e4637a1c81
+Classification: Untrusted staging / technical evidence
+Notes: Exact original uploads preserved. Do not treat reflected field existence alone as runtime behavior proof.

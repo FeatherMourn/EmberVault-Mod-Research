@@ -1,0 +1,617 @@
+CODE-0042G3E — MAP / WAYFINDER EVENT MIGRATION + LOCAL PERSISTENCE LIFECYCLE
+
+Scope:
+- `Update-WaypointDetails`
+- `Render-MapWayfinderPage`
+- narrow Wayfinder DETAIL/DIALOG binding cleanup
+- existing local waypoint persistence only
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- DO NOT change `admin_action_registry.json`.
+- Must remain 55 actions / 17 enabled / 38 disabled.
+
+DO NOT:
+- implement teleport or fast travel;
+- add a waypoint gameplay/native backend;
+- read/write player transform memory;
+- migrate Blueprint Browser or later G3 surfaces;
+- begin responsive layout work;
+- create registry ActionIds for local waypoint file/UI operations.
+
+GOAL
+
+Close all remaining direct event registrations in the Wayfinder slice and make its local persistence/lifecycle truthful and deterministic.
+
+CURRENT RAW SOURCE SITES
+
+`Update-WaypointDetails`
+- 1 `.Add_TextChanged(...)`
+- 1 `.Add_Click(...)`
+
+`Render-MapWayfinderPage`
+- 3 `Register-SafeUiEvent`
+- 6 `.Add_Click(...)`
+
+Total direct source sites: 11.
+
+After G3E:
+- raw `.Add_Click(...)` = 0 in both functions
+- raw `.Add_TextChanged(...)` = 0 in both functions
+- raw `Register-SafeUiEvent` = 0 in both functions
+
+All migrated operations are UI_ONLY/local Architect state.
+
+A. WAYPOINT DETAIL LIFECYCLE
+
+`Update-WaypointDetails` clears/rebuilds `$pnlDetail` repeatedly without clearing the full PAGE.
+
+Before `$pnlDetail.Controls.Clear()`, remove only active bindings where:
+
+- Page = `Map & Wayfinder`
+- LifetimeScope = `DETAIL`
+
+Use a snapshot of keys, same narrow pattern as the Codex DETAIL cleanup.
+
+Do NOT:
+- remove SHELL bindings;
+- remove unrelated PAGE/DIALOG bindings;
+- delete stable event definitions.
+
+Then clear/rebuild the detail controls.
+
+B. DETAIL EMPTY-STATE TRUTHFULNESS
+
+Replace:
+
+`Select a waypoint to view coordinates & fast travel.`
+
+with truthful local-only wording such as:
+
+`Select a waypoint to view local coordinates, notes, and file metadata.`
+
+Do not imply teleport/fast-travel functionality.
+
+Keep the Teleport button disabled and handler-free:
+`>> TELEPORT (UNSUPPORTED)`
+
+Do NOT attach an EventId to Teleport.
+
+C. WAYPOINT NOTES
+
+Current direct:
+`$txtNotes.Add_TextChanged(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.wayfinder.detail.notes.changed`
+
+EventName:
+`TextChanged`
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Edit Waypoint Notes`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-F7UiEvent`
+
+Preserve current behavior:
+- update the selected in-memory waypoint object's `.notes`
+- do NOT auto-save to disk on every keystroke
+
+Use a closure-safe handler for:
+- current `$wp`
+- current `$txtNotes`
+
+This is one visible detail slot, so use the fixed EventId above rather than a per-waypoint dynamic EventId.
+
+D. DELETE WAYPOINT
+
+Current direct:
+`$btnDelete.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.wayfinder.detail.delete.click`
+
+EventName:
+`Click`
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Delete Local Waypoint`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-F7UiEvent`
+
+For a stable non-empty waypoint id:
+preserve:
+- remove matching waypoint from `$script:waypointDb`
+- `Save-WaypointsFile $pathWp`
+- update list/detail via existing helpers
+- truthful status message
+
+Use a closure-safe handler for current:
+- `$wp`
+- `$pathWp`
+- `$lbFolders`
+- `$lbWaypoints`
+- `$pnlDetail`
+
+MISSING-ID FAIL-CLOSED RULE
+
+If `$wp.id` is blank/missing:
+- do NOT register delete handler;
+- disable button;
+- neutral disabled styling;
+- tooltip/accessibility:
+  `Waypoint delete unavailable: stable waypoint id is missing.`
+- do not invent an id during render.
+
+Notes editing may remain available because it edits the currently selected in-memory object only.
+
+E. PAGE-LEVEL SELECTION / SEARCH EVENTS
+
+Replace the 3 raw `Register-SafeUiEvent` sites with `Register-F7UiEvent`.
+
+1. Folder selection
+
+EventId:
+`f7.wayfinder.folder.selection.changed`
+
+EventName:
+`SelectedIndexChanged`
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Select Waypoint Folder`
+
+LifetimeScope:
+PAGE
+
+Preserve:
+- `$script:selectedFolder`
+- `Update-WaypointsList`
+
+2. Waypoint selection
+
+EventId:
+`f7.wayfinder.waypoint.selection.changed`
+
+EventName:
+`SelectedIndexChanged`
+
+Operation:
+`Select Waypoint`
+
+LifetimeScope:
+PAGE
+
+Preserve:
+- lookup through `$script:filteredWaypoints`
+- `Update-WaypointDetails`
+
+3. Search text
+
+EventId:
+`f7.wayfinder.search.text.changed`
+
+EventName:
+`TextChanged`
+
+Operation:
+`Search Waypoints`
+
+LifetimeScope:
+PAGE
+
+Preserve:
+- `$script:wpSearchQuery`
+- `Update-WaypointsList`
+
+All use closure-safe handlers.
+
+F. SAVE FILE BUTTON — REPAIR DEAD CONTROL
+
+The visible `$btnSaveDisk` currently has no handler.
+
+Bind it as UI_ONLY.
+
+EventId:
+`f7.wayfinder.save.click`
+
+EventName:
+`Click`
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Save Waypoints File`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Handler:
+`Save-WaypointsFile $wpPath`
+
+Use closure-safe `$wpPath`.
+
+Do not create a registry ActionId.
+
+G. ADD WAYPOINT — OPEN DIALOG
+
+Replace outer raw:
+`$btnAddWp.Add_Click(...)`
+
+with:
+
+EventId:
+`f7.wayfinder.addWaypoint.open.click`
+
+Classification:
+UI_ONLY
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Open Add Waypoint Dialog`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Preserve the dialog fields and current coordinate defaults.
+
+This dialog remains local waypoint-file authoring only.
+
+H. ADD WAYPOINT DIALOG BUTTONS
+
+Replace the two inner raw click handlers.
+
+Save button:
+
+EventId:
+`f7.wayfinder.dialog.waypoint.save.click`
+
+Classification:
+UI_ONLY
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Save New Local Waypoint`
+
+LifetimeScope:
+DIALOG
+
+Use:
+`Register-F7UiEvent`
+
+Preserve creation of a generated local waypoint id:
+`wp-custom-<guid8>`
+
+Preserve fields:
+- name
+- folder
+- x/y/z
+- notes
+- color
+- icon
+
+REPAIR CURRENT BROKEN HELPER REFERENCES
+
+Do NOT call:
+- `$script:saveWaypointsToDisk`
+- `$script:refreshFolders`
+- `$script:refreshWaypoints`
+
+Use existing concrete helpers directly:
+
+1. append new waypoint to `$script:waypointDb`
+2. `Save-WaypointsFile $wpPath`
+3. `Update-WaypointFolders $lstFolders`
+4. `Update-WaypointsList $lstFolders $lstWaypoints $detailPanel $txtSearch $wpPath`
+5. close dialog
+
+Use a closure-safe handler capturing the dialog controls and parent page controls.
+
+Cancel button:
+
+EventId:
+`f7.wayfinder.dialog.waypoint.cancel.click`
+
+Classification:
+UI_ONLY
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Cancel Add Waypoint`
+
+LifetimeScope:
+DIALOG
+
+Handler:
+close dialog only.
+
+I. ADD FOLDER — OPEN DIALOG
+
+Replace outer raw:
+`$btnAddFolder.Add_Click(...)`
+
+with:
+
+EventId:
+`f7.wayfinder.addFolder.open.click`
+
+Classification:
+UI_ONLY
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Open Add Folder Dialog`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+J. ADD FOLDER DIALOG BUTTONS
+
+Create button:
+
+EventId:
+`f7.wayfinder.dialog.folder.create.click`
+
+Classification:
+UI_ONLY
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Create Local Waypoint Folder`
+
+LifetimeScope:
+DIALOG
+
+Use:
+`Register-F7UiEvent`
+
+Preserve current folder model:
+- if non-empty name and not already listed
+- set `$script:selectedFolder`
+- create the current local placeholder waypoint used to persist folder membership
+
+Do not redesign folder storage in this pass.
+
+REPAIR helper calls exactly as in section H:
+- `Save-WaypointsFile $wpPath`
+- `Update-WaypointFolders $lstFolders`
+- `Update-WaypointsList $lstFolders $lstWaypoints $detailPanel $txtSearch $wpPath`
+
+Then close dialog.
+
+Cancel button:
+
+EventId:
+`f7.wayfinder.dialog.folder.cancel.click`
+
+Classification:
+UI_ONLY
+
+Page:
+`Map & Wayfinder`
+
+Operation:
+`Cancel Add Folder`
+
+LifetimeScope:
+DIALOG
+
+Handler:
+close dialog only.
+
+K. DIALOG ACTIVE-BINDING CLEANUP
+
+`ShowDialog()` is synchronous.
+
+Immediately after each dialog's:
+
+`$diag.ShowDialog() | Out-Null`
+
+remove active bindings where:
+- Page = `Map & Wayfinder`
+- LifetimeScope = `DIALOG`
+
+Use a snapshot of keys.
+
+Do not remove stable event definitions.
+
+This ensures repeated open/close cycles do not leave stale disposed dialog controls in `$script:f7ActiveBindings`.
+
+Also, before opening a new Wayfinder dialog, it is acceptable to defensively remove any stale Wayfinder DIALOG active bindings first.
+
+L. EXPECTED EVENT DEFINITIONS
+
+PAGE:
+- `f7.wayfinder.folder.selection.changed`
+- `f7.wayfinder.waypoint.selection.changed`
+- `f7.wayfinder.search.text.changed`
+- `f7.wayfinder.save.click`
+- `f7.wayfinder.addWaypoint.open.click`
+- `f7.wayfinder.addFolder.open.click`
+
+DETAIL:
+- `f7.wayfinder.detail.notes.changed`
+- `f7.wayfinder.detail.delete.click`
+
+DIALOG:
+- `f7.wayfinder.dialog.waypoint.save.click`
+- `f7.wayfinder.dialog.waypoint.cancel.click`
+- `f7.wayfinder.dialog.folder.create.click`
+- `f7.wayfinder.dialog.folder.cancel.click`
+
+All:
+- Classification = UI_ONLY
+- ActionId = null
+- Page = `Map & Wayfinder`
+
+No ActionIds are added.
+
+M. SAFETY / TRUTHFULNESS
+
+Wayfinder remains a LOCAL FILE/UI feature.
+
+Do not claim:
+- teleport works;
+- coordinates are written into Enshrouded;
+- player transform ownership is known;
+- waypoint state is game/save state.
+
+The disabled Teleport control must remain disabled.
+
+Preserve ADM-TEST-0002 and the generic canonical gates.
+
+N. PRESERVE
+
+Keep unchanged:
+- registry 55 / enabled 17 / disabled 38
+- G1/G2 closure
+- G3A/G3B/G3C/G3D closure
+- G3D0 enabled gates
+- Codex DETAIL lifecycle
+- local quest semantics
+- scanner/position/preset/skills/parry/world/building fail-closed routes
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- CT catalog = 224
+- schema/adaptor validity
+
+O. TESTS
+
+Run existing:
+1. real registry import -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. prohibited mutation scan
+11. G1/G2/G3A/G3B/G3C/G3D raw closure preserved
+
+Wayfinder-specific:
+
+12. `Update-WaypointDetails`
+- `.Add_Click`: 1 -> 0
+- `.Add_TextChanged`: 1 -> 0
+- raw `Register-SafeUiEvent`: 0
+
+13. `Render-MapWayfinderPage`
+- `.Add_Click`: 6 -> 0
+- raw `Register-SafeUiEvent`: 3 -> 0
+- raw `.Add_TextChanged`: 0
+
+14. exact 12 EventId assertions and lifetime classifications
+
+15. detail lifecycle stress:
+- select waypoint A
+- waypoint B
+- no selection
+- waypoint A again
+- active DETAIL bindings only target current detail controls
+- stale/disposed binding count = 0
+- no ambiguous definitions
+
+16. missing waypoint id:
+- Delete button disabled
+- no delete handler
+- no fake/generated id
+- Notes control behavior remains local-only
+
+17. Save File:
+- button has canonical UI_ONLY binding
+- calls `Save-WaypointsFile`
+- no gameplay command/publisher
+
+18. Add Waypoint dialog:
+- save creates one local waypoint
+- saves file through `Save-WaypointsFile`
+- refreshes folders/list via concrete helpers
+- undefined `$script:saveWaypointsToDisk` / `$script:refreshFolders` / `$script:refreshWaypoints` references are gone from Wayfinder code
+- cancel changes no waypoint data
+
+19. Add Folder dialog:
+- create preserves current placeholder-marker model
+- persists through concrete helpers
+- cancel changes no data
+
+20. dialog lifecycle stress:
+- open/cancel Add Waypoint repeatedly
+- open/cancel Add Folder repeatedly
+- active DIALOG binding count returns to 0 after each dialog closes
+- no stale/disposed DIALOG bindings
+- no ambiguous definitions
+
+21. teleport:
+- remains disabled
+- no event definition/handler
+- no call to `Send-CheatCommand` / `Dispatch-AdminCommand`
+
+22. truthfulness:
+- no `fast travel` implication in empty detail text
+- local-only semantics remain clear
+
+REPORT
+
+Return:
+- files changed
+- Wayfinder raw counts before/after
+- exact 12 EventIds + PAGE/DETAIL/DIALOG lifetime
+- Save File repair result
+- undefined scriptblock-helper repair result
+- missing-id behavior
+- DETAIL/DIALOG lifecycle stress results
+- teleport remains disabled/unbound
+- registry counts unchanged
+- existing suite results
+- remaining G3 raw counts
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start Blueprint Browser/G3F or responsive migration in this pass.

@@ -1,0 +1,3372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>32660</ID>
+      <Description>"infinite health"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-27
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(health,enshrouded_server.exe,4C 8D 5C 24 70 48 8B C3 49 8B 5B 10 49 8B 6B 18 49 8B 73 20 49 8B 7B 28) // should be unique
+alloc(newmem,$1000,health)
+
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rcx+rdx*4+00000014],00000320
+  je hero_code
+
+code:
+  add [rcx+rdx*4],edi
+  lea rcx,[rsp+30]
+  jmp return
+
+hero_code:
+  sub [rcx+rdx*4],edi
+  lea rcx,[rsp+30]
+  jmp return
+
+health+86:
+  jmp newmem
+  nop 3
+return:
+registersymbol(health)
+
+[DISABLE]
+
+health+86:
+  db 01 3C 91 48 8D 4C 24 30
+
+unregistersymbol(health)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+31EA22
+
+enshrouded.exe+31E9F8: 0F B6 06        - movzx eax,byte ptr [rsi]
+enshrouded.exe+31E9FB: 48 8B CB        - mov rcx,rbx
+enshrouded.exe+31E9FE: 4C 8B 4C 24 48  - mov r9,[rsp+48]
+enshrouded.exe+31EA03: 4C 8B 44 24 58  - mov r8,[rsp+58]
+enshrouded.exe+31EA08: 48 8B 54 24 68  - mov rdx,[rsp+68]
+enshrouded.exe+31EA0D: 48 89 7C 24 28  - mov [rsp+28],rdi
+enshrouded.exe+31EA12: 88 44 24 20     - mov [rsp+20],al
+enshrouded.exe+31EA16: E8 F5 FB FF FF  - call enshrouded.exe+31E610
+enshrouded.exe+31EA1B: EB 05           - jmp enshrouded.exe+31EA22
+enshrouded.exe+31EA1D: 66 C7 03 00 00  - mov word ptr [rbx],0000
+// ---------- INJECTING HERE ----------
+enshrouded.exe+31EA22: 4C 8D 5C 24 70  - lea r11,[rsp+70]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+31EA27: 48 8B C3        - mov rax,rbx
+enshrouded.exe+31EA2A: 49 8B 5B 10     - mov rbx,[r11+10]
+enshrouded.exe+31EA2E: 49 8B 6B 18     - mov rbp,[r11+18]
+enshrouded.exe+31EA32: 49 8B 73 20     - mov rsi,[r11+20]
+enshrouded.exe+31EA36: 49 8B 7B 28     - mov rdi,[r11+28]
+enshrouded.exe+31EA3A: 49 8B E3        - mov rsp,r11
+enshrouded.exe+31EA3D: 41 5E           - pop r14
+enshrouded.exe+31EA3F: C3              - ret 
+enshrouded.exe+31EA40: 48 89 5C 24 10  - mov [rsp+10],rbx
+enshrouded.exe+31EA45: 48 89 6C 24 18  - mov [rsp+18],rbp
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32711</ID>
+      <Description>"infinite health and fast kill"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-12-17
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(infinite_health,enshrouded_server.exe,49 8B E3 41 5E C3 48 89 5C 24 10) // should be unique
+
+infinite_health+124:
+  mov eax,[esi+34] // 500 for hero, 0 for enemies
+  nop
+
+registersymbol(infinite_health)
+
+[DISABLE]
+
+infinite_health+124:
+  mov eax,[rsp+24]
+
+unregistersymbol(infinite_health)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+3201FA
+
+enshrouded.exe+3201D2: 88 44 24 20     - mov [rsp+20],al
+enshrouded.exe+3201D6: E8 F5 FB FF FF  - call enshrouded.exe+31FDD0
+enshrouded.exe+3201DB: EB 05           - jmp enshrouded.exe+3201E2
+enshrouded.exe+3201DD: 66 C7 03 00 00  - mov word ptr [rbx],0000
+enshrouded.exe+3201E2: 4C 8D 5C 24 70  - lea r11,[rsp+70]
+enshrouded.exe+3201E7: 48 8B C3        - mov rax,rbx
+enshrouded.exe+3201EA: 49 8B 5B 10     - mov rbx,[r11+10]
+enshrouded.exe+3201EE: 49 8B 6B 18     - mov rbp,[r11+18]
+enshrouded.exe+3201F2: 49 8B 73 20     - mov rsi,[r11+20]
+enshrouded.exe+3201F6: 49 8B 7B 28     - mov rdi,[r11+28]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+3201FA: 49 8B E3        - mov rsp,r11
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+3201FD: 41 5E           - pop r14
+enshrouded.exe+3201FF: C3              - ret 
+enshrouded.exe+320200: 48 89 5C 24 10  - mov [rsp+10],rbx
+enshrouded.exe+320205: 48 89 6C 24 18  - mov [rsp+18],rbp
+enshrouded.exe+32020A: 48 89 74 24 20  - mov [rsp+20],rsi
+enshrouded.exe+32020F: 57              - push rdi
+enshrouded.exe+320210: 48 83 EC 60     - sub rsp,60
+enshrouded.exe+320214: 41 8B F8        - mov edi,r8d
+enshrouded.exe+320217: 48 8B DA        - mov rbx,rdx
+enshrouded.exe+32021A: 4C 8B C2        - mov r8,rdx
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32570</ID>
+      <Description>"infinite stamina"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-13
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(stamina,enshrouded_server.exe,8B 04 91 89 44 24 40 * * C6 44 24) // should be unique
+alloc(newmem,$1000,stamina)
+
+label(code)
+label(return)
+
+newmem:
+  push ebx
+  mov ebx,[rcx+rdx*4+8]
+  mov [rcx+rdx*4],ebx
+  pop ebx
+
+code:
+  mov eax,[rcx+rdx*4]
+  mov [rsp+40],eax
+  jmp return
+
+stamina:
+  jmp newmem
+  nop 2
+return:
+registersymbol(stamina)
+
+[DISABLE]
+
+stamina:
+  db 8B 04 91 89 44 24 40
+
+unregistersymbol(stamina)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+20716D
+
+enshrouded.exe+20714A: 48 8B 8D 78 03 00 00  - mov rcx,[rbp+00000378]
+enshrouded.exe+207151: 8B 03                 - mov eax,[rbx]
+enshrouded.exe+207153: 39 01                 - cmp [rcx],eax
+enshrouded.exe+207155: 74 07                 - je enshrouded.exe+20715E
+enshrouded.exe+207157: C6 44 24 20 2C        - mov byte ptr [rsp+20],2C
+enshrouded.exe+20715C: EB 1D                 - jmp enshrouded.exe+20717B
+enshrouded.exe+20715E: 0F B7 51 0C           - movzx edx,word ptr [rcx+0C]
+enshrouded.exe+207162: 8B 4B 08              - mov ecx,[rbx+08]
+enshrouded.exe+207165: 48 03 CB              - add rcx,rbx
+enshrouded.exe+207168: C6 44 24 20 00        - mov byte ptr [rsp+20],00
+// ---------- INJECTING HERE ----------
+enshrouded.exe+20716D: 8B 04 91              - mov eax,[rcx+rdx*4]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+207170: 89 44 24 40           - mov [rsp+40],eax
+enshrouded.exe+207174: EB 09                 - jmp enshrouded.exe+20717F
+enshrouded.exe+207176: C6 44 24 20 16        - mov byte ptr [rsp+20],16
+enshrouded.exe+20717B: 89 7C 24 40           - mov [rsp+40],edi
+enshrouded.exe+20717F: 48 8B 5D 70           - mov rbx,[rbp+70]
+enshrouded.exe+207183: 48 85 DB              - test rbx,rbx
+enshrouded.exe+207186: 74 59                 - je enshrouded.exe+2071E1
+enshrouded.exe+207188: F6 43 10 01           - test byte ptr [rbx+10],01
+enshrouded.exe+20718C: 74 53                 - je enshrouded.exe+2071E1
+enshrouded.exe+20718E: 4C 8B 85 A0 00 00 00  - mov r8,[rbp+000000A0]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32578</ID>
+      <Description>"infinite oxygen"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-14
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(oxygen,enshrouded_server.exe,4C 03 C3 41 29 04 88 E9) // should be unique
+
+oxygen+3:
+  add [r8+rcx*4],eax
+
+registersymbol(oxygen)
+
+[DISABLE]
+
+oxygen+3:
+  db 41 29 04 88
+
+unregistersymbol(oxygen)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+1CE7CF
+
+enshrouded.exe+1CE7A7: EB 08              - jmp enshrouded.exe+1CE7B1
+enshrouded.exe+1CE7A9: 48 8B 45 E0        - mov rax,[rbp-20]
+enshrouded.exe+1CE7AD: 0F B7 40 0C        - movzx eax,word ptr [rax+0C]
+enshrouded.exe+1CE7B1: 0F B7 C8           - movzx ecx,ax
+enshrouded.exe+1CE7B4: 48 85 DB           - test rbx,rbx
+enshrouded.exe+1CE7B7: 0F 84 7C 01 00 00  - je enshrouded.exe+1CE939
+enshrouded.exe+1CE7BD: F6 43 10 01        - test byte ptr [rbx+10],01
+enshrouded.exe+1CE7C1: 0F 84 72 01 00 00  - je enshrouded.exe+1CE939
+enshrouded.exe+1CE7C7: 44 8B 43 08        - mov r8d,[rbx+08]
+enshrouded.exe+1CE7CB: F3 0F 2C C6        - cvttss2si eax,xmm6
+// ---------- INJECTING HERE ----------
+enshrouded.exe+1CE7CF: 4C 03 C3           - add r8,rbx
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+1CE7D2: 41 29 04 88        - sub [r8+rcx*4],eax
+enshrouded.exe+1CE7D6: E9 53 01 00 00     - jmp enshrouded.exe+1CE92E
+enshrouded.exe+1CE7DB: 48 8B 54 24 60     - mov rdx,[rsp+60]
+enshrouded.exe+1CE7E0: 48 85 D2           - test rdx,rdx
+enshrouded.exe+1CE7E3: 74 08              - je enshrouded.exe+1CE7ED
+enshrouded.exe+1CE7E5: F0 FF 02           - lock inc [rdx]
+enshrouded.exe+1CE7E8: 48 8B 54 24 60     - mov rdx,[rsp+60]
+enshrouded.exe+1CE7ED: 4C 8B 44 24 58     - mov r8,[rsp+58]
+enshrouded.exe+1CE7F2: 4D 85 C0           - test r8,r8
+enshrouded.exe+1CE7F5: 74 18              - je enshrouded.exe+1CE80F
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32519</ID>
+      <Description>"infinite mana"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-10
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(mana,enshrouded_server.exe,D7 33 F6 8B 1C 91) // should be unique
+alloc(newmem,$1000,mana)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  xor esi,esi
+  mov ebx,[rcx+rdx*4]
+  mov [rcx+rdx*4],(int)100
+  jmp return
+
+mana+01:
+  jmp newmem
+return:
+registersymbol(mana)
+
+[DISABLE]
+
+mana+01:
+  db 33 F6 8B 1C 91
+
+unregistersymbol(mana)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+1CDF61
+
+enshrouded.exe+1CDF3E: F0 41 FF 01     - lock inc [r9]
+enshrouded.exe+1CDF42: 4C 8B 4D AF     - mov r9,[rbp-51]
+enshrouded.exe+1CDF46: 4C 8B 45 A7     - mov r8,[rbp-59]
+enshrouded.exe+1CDF4A: 4D 85 C0        - test r8,r8
+enshrouded.exe+1CDF4D: 74 19           - je enshrouded.exe+1CDF68
+enshrouded.exe+1CDF4F: 41 F6 40 10 01  - test byte ptr [r8+10],01
+enshrouded.exe+1CDF54: 74 12           - je enshrouded.exe+1CDF68
+enshrouded.exe+1CDF56: 41 8B 48 08     - mov ecx,[r8+08]
+enshrouded.exe+1CDF5A: 49 03 C8        - add rcx,r8
+enshrouded.exe+1CDF5D: 41 0F B7 D7     - movzx edx,r15w
+// ---------- INJECTING HERE ----------
+enshrouded.exe+1CDF61: 33 F6           - xor esi,esi
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+1CDF63: 8B 1C 91        - mov ebx,[rcx+rdx*4]
+enshrouded.exe+1CDF66: EB 04           - jmp enshrouded.exe+1CDF6C
+enshrouded.exe+1CDF68: 33 F6           - xor esi,esi
+enshrouded.exe+1CDF6A: 8B DE           - mov ebx,esi
+enshrouded.exe+1CDF6C: 4D 85 C9        - test r9,r9
+enshrouded.exe+1CDF6F: 74 0C           - je enshrouded.exe+1CDF7D
+enshrouded.exe+1CDF71: F0 41 FF 01     - lock inc [r9]
+enshrouded.exe+1CDF75: 4C 8B 4D AF     - mov r9,[rbp-51]
+enshrouded.exe+1CDF79: 4C 8B 45 A7     - mov r8,[rbp-59]
+enshrouded.exe+1CDF7D: 4D 85 C0        - test r8,r8
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32661</ID>
+      <Description>"infinite frost timer"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-27
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(frost,enshrouded_server.exe,48 8B 45 EF 0F B7 40 0C 0F B7 C8 48 85 DB) // should be unique
+
+frost+24:
+  add [r8+rcx*4],eax
+
+registersymbol(frost)
+
+[DISABLE]
+
+frost+24:
+  db 41 29 04 88
+
+unregistersymbol(frost)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+24A719
+
+enshrouded.exe+24A6F6: 48 8B 5D 97     - mov rbx,[rbp-69]
+enshrouded.exe+24A6FA: 48 8D 4D E7     - lea rcx,[rbp-19]
+enshrouded.exe+24A6FE: 4C 8B C7        - mov r8,rdi
+enshrouded.exe+24A701: BA 1D AF AE C7  - mov edx,C7AEAF1D
+enshrouded.exe+24A706: E8 15 AF C1 00  - call enshrouded.exe+E65620
+enshrouded.exe+24A70B: 0F B6 4D E7     - movzx ecx,byte ptr [rbp-19]
+enshrouded.exe+24A70F: 84 C9           - test cl,cl
+enshrouded.exe+24A711: 74 06           - je enshrouded.exe+24A719
+enshrouded.exe+24A713: 41 0F B7 C6     - movzx eax,r14w
+enshrouded.exe+24A717: EB 30           - jmp enshrouded.exe+24A749
+// ---------- INJECTING HERE ----------
+enshrouded.exe+24A719: 48 8B 45 EF     - mov rax,[rbp-11]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+24A71D: 0F B7 40 0C     - movzx eax,word ptr [rax+0C]
+enshrouded.exe+24A721: 0F B7 C8        - movzx ecx,ax
+enshrouded.exe+24A724: 48 85 DB        - test rbx,rbx
+enshrouded.exe+24A727: 74 20           - je enshrouded.exe+24A749
+enshrouded.exe+24A729: F6 43 10 01     - test byte ptr [rbx+10],01
+enshrouded.exe+24A72D: 74 1A           - je enshrouded.exe+24A749
+enshrouded.exe+24A72F: 44 8B 43 08     - mov r8d,[rbx+08]
+enshrouded.exe+24A733: 48 8B D7        - mov rdx,rdi
+enshrouded.exe+24A736: F3 0F 2C C6     - cvttss2si eax,xmm6
+enshrouded.exe+24A73A: 4C 03 C3        - add r8,rbx
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32521</ID>
+      <Description>"remove fall damage"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-10
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(fall_damage,enshrouded_server.exe,45 89 0C 88 48 8B CB) // should be unique
+
+fall_damage:
+  add [r8+rcx*4],r9d
+
+registersymbol(fall_damage)
+
+[DISABLE]
+
+fall_damage:
+  db 45 89 0C 88
+
+unregistersymbol(fall_damage)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+2054F2
+
+enshrouded.exe+2054D1: 0F B7 40 0C           - movzx eax,word ptr [rax+0C]
+enshrouded.exe+2054D5: 0F B7 C8              - movzx ecx,ax
+enshrouded.exe+2054D8: 48 85 DB              - test rbx,rbx
+enshrouded.exe+2054DB: 74 21                 - je enshrouded.exe+2054FE
+enshrouded.exe+2054DD: F6 43 10 01           - test byte ptr [rbx+10],01
+enshrouded.exe+2054E1: 74 1B                 - je enshrouded.exe+2054FE
+enshrouded.exe+2054E3: 44 8B 43 08           - mov r8d,[rbx+08]
+enshrouded.exe+2054E7: 48 8B D7              - mov rdx,rdi
+enshrouded.exe+2054EA: F3 44 0F 2C CE        - cvttss2si r9d,xmm6
+enshrouded.exe+2054EF: 4C 03 C3              - add r8,rbx
+// ---------- INJECTING HERE ----------
+enshrouded.exe+2054F2: 45 89 0C 88           - mov [r8+rcx*4],r9d
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+2054F6: 48 8B CB              - mov rcx,rbx
+enshrouded.exe+2054F9: E8 12 38 FC FF        - call enshrouded.exe+1C8D10
+enshrouded.exe+2054FE: 48 8B 4C 24 68        - mov rcx,[rsp+68]
+enshrouded.exe+205503: 48 83 C1 08           - add rcx,08
+enshrouded.exe+205507: 48 8B 41 08           - mov rax,[rcx+08]
+enshrouded.exe+20550B: 48 0B 01              - or rax,[rcx]
+enshrouded.exe+20550E: 74 5C                 - je enshrouded.exe+20556C
+enshrouded.exe+205510: E8 9B 49 FB FF        - call enshrouded.exe+1B9EB0
+enshrouded.exe+205515: 48 8D 95 A0 00 00 00  - lea rdx,[rbp+000000A0]
+enshrouded.exe+20551C: 49 8B CE              - mov rcx,r14
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32668</ID>
+      <Description>"high speed"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-11
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(speed_a,enshrouded_server.exe,F2 0F 10 08 F2 41 0F 59 C2) // should be unique
+aobscanmodule(speed_b,enshrouded_server.exe,F3 0F 59 58 08 F3 0F 59) // should be unique
+alloc(newmem_a,$1000,speed_a)
+alloc(newmem_b,$1000,speed_b)
+
+label(hero_code_a)
+label(hero_code_b)
+
+newmem_a:
+  cmp [rax+00000208],3f666666
+  je hero_code_a
+  movsd xmm1,[rax]
+  mulsd xmm0,xmm10
+  jmp speed_a+09
+
+hero_code_a:
+  movsd xmm1,[rax]
+  mov [rax+20],(float)2.5
+  mulss xmm1,[rax+20]
+  mulsd xmm0,xmm10
+  jmp speed_a+09
+
+newmem_b:
+  cmp [rax+00000208],3f666666
+  je hero_code_b
+  mulss xmm3,[rax+08]
+  jmp speed_b+05
+
+hero_code_b:
+  mulss xmm3,[rax+08]
+  mov [rax+20],(float)2.5
+  mulss xmm3,[rax+20]
+  jmp speed_b+05
+
+speed_a:
+  jmp newmem_a
+  nop 4
+
+speed_b:
+  jmp newmem_b
+
+registersymbol(speed_a)
+registersymbol(speed_b)
+
+[DISABLE]
+
+speed_a:
+  db F2 0F 10 08 F2 41 0F 59 C2
+
+speed_b:
+  db F3 0F 59 58 08
+
+unregistersymbol(speed_a)
+unregistersymbol(speed_b)
+dealloc(newmem_a)
+dealloc(newmem_b)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+20DC7D
+
+enshrouded.exe+20DC43: 44 0F 29 54 24 60              - movaps [rsp+60],xmm10
+enshrouded.exe+20DC49: F2 44 0F 10 15 6E 15 F0 00     - movsd xmm10,[enshrouded.exe+110F1C0]
+enshrouded.exe+20DC52: 0F 1F 40 00                    - nop dword ptr [rax+00]
+enshrouded.exe+20DC56: 66 66 0F 1F 84 00 00 00 00 00  - nop word ptr [rax+rax+00000000]
+enshrouded.exe+20DC60: 48 8D 94 24 C8 00 00 00        - lea rdx,[rsp+000000C8]
+enshrouded.exe+20DC68: 48 8B CB                       - mov rcx,rbx
+enshrouded.exe+20DC6B: E8 C0 4E 62 00                 - call enshrouded.exe+832B30
+enshrouded.exe+20DC70: 0F 57 C0                       - xorps xmm0,xmm0
+enshrouded.exe+20DC73: F2 48 0F 2A 00                 - cvtsi2sd xmm0,[rax]
+enshrouded.exe+20DC78: 48 8B 44 24 40                 - mov rax,[rsp+40]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+20DC7D: F2 0F 10 08                    - movsd xmm1,[rax]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+20DC81: F2 41 0F 59 C2                 - mulsd xmm0,xmm10
+enshrouded.exe+20DC86: 66 0F 5A D8                    - cvtpd2ps xmm3,xmm0
+enshrouded.exe+20DC8A: 0F 28 C1                       - movaps xmm0,xmm1
+enshrouded.exe+20DC8D: 0F C6 C0 55                    - shufps xmm0,xmm0,55
+enshrouded.exe+20DC91: 0F 28 EB                       - movaps xmm5,xmm3
+enshrouded.exe+20DC94: F3 0F 59 E9                    - mulss xmm5,xmm1
+enshrouded.exe+20DC98: 0F 28 E3                       - movaps xmm4,xmm3
+enshrouded.exe+20DC9B: F3 0F 59 58 08                 - mulss xmm3,[rax+08]
+enshrouded.exe+20DCA0: F3 0F 59 E0                    - mulss xmm4,xmm0
+enshrouded.exe+20DCA4: 0F 28 D5                       - movaps xmm2,xmm5
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32855</ID>
+      <Description>"high jump"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-04-24
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(high_jump,enshrouded_server.exe,3C F3 41 0F 11 4E 04) // should be unique
+alloc(newmem,$1000,high_jump)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [r14+24],(float)2.0
+  mulss xmm1,[r14+24]
+  movss [r14+04],xmm1
+  jmp return
+
+high_jump+01:
+  jmp newmem
+  nop
+return:
+registersymbol(high_jump)
+
+[DISABLE]
+
+high_jump+01:
+  db F3 41 0F 11 4E 04
+
+unregistersymbol(high_jump)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+173772
+
+enshrouded_server.exe+17373F: 48 8D 54 24 20     - lea rdx,[rsp+20]
+enshrouded_server.exe+173744: E8 07 59 46 00     - call enshrouded_server.exe+5D9050
+enshrouded_server.exe+173749: 48 8B 08           - mov rcx,[rax]
+enshrouded_server.exe+17374C: 48 89 4F 50        - mov [rdi+50],rcx
+enshrouded_server.exe+173750: F3 0F 10 44 24 34  - movss xmm0,[rsp+34]
+enshrouded_server.exe+173756: F3 0F 10 4C 24 38  - movss xmm1,[rsp+38]
+enshrouded_server.exe+17375C: F3 41 0F 58 06     - addss xmm0,[r14]
+enshrouded_server.exe+173761: F3 41 0F 58 4E 04  - addss xmm1,[r14+04]
+enshrouded_server.exe+173767: F3 41 0F 11 06     - movss [r14],xmm0
+enshrouded_server.exe+17376C: F3 0F 10 44 24 3C  - movss xmm0,[rsp+3C]
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+173772: F3 41 0F 11 4E 04  - movss [r14+04],xmm1
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+173778: 0F 57 C9           - xorps xmm1,xmm1
+enshrouded_server.exe+17377B: F3 41 0F 58 46 08  - addss xmm0,[r14+08]
+enshrouded_server.exe+173781: F3 41 0F 11 46 08  - movss [r14+08],xmm0
+enshrouded_server.exe+173787: 48 8B 46 50        - mov rax,[rsi+50]
+enshrouded_server.exe+17378B: F2 0F 10 00        - movsd xmm0,[rax]
+enshrouded_server.exe+17378F: 8B 50 08           - mov edx,[rax+08]
+enshrouded_server.exe+173792: F2 0F 11 44 24 20  - movsd [rsp+20],xmm0
+enshrouded_server.exe+173798: 41 83 FF 11        - cmp r15d,11
+enshrouded_server.exe+17379C: 0F 87 99 01 00 00  - ja enshrouded_server.exe+17393B
+enshrouded_server.exe+1737A2: 49 63 C7           - movsxd  rax,r15d
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32851</ID>
+      <Description>"flying (for build mode)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-10
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(flying,enshrouded_server.exe,F3 0F 11 50 04 F3 0F 11 40) // should be unique
+alloc(newmem,$1000,flying)
+
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rax+00000208],3f666666
+  je hero_code
+
+code:
+  movss [rax+04],xmm2
+  jmp return
+
+hero_code:
+  mov [rax+04],(float)0.03
+  jmp return
+
+flying:
+  jmp newmem
+return:
+registersymbol(flying)
+
+[DISABLE]
+
+flying:
+  db F3 0F 11 50 04
+
+unregistersymbol(flying)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+227B26
+
+enshrouded.exe+227AFC: 66 0F 5A C8     - cvtpd2ps xmm1,xmm0
+enshrouded.exe+227B00: 66 0F 6E C2     - movd xmm0,edx
+enshrouded.exe+227B04: F3 0F 59 C4     - mulss xmm0,xmm4
+enshrouded.exe+227B08: F3 0F 59 D9     - mulss xmm3,xmm1
+enshrouded.exe+227B0C: F3 0F 59 D1     - mulss xmm2,xmm1
+enshrouded.exe+227B10: F3 0F 58 18     - addss xmm3,[rax]
+enshrouded.exe+227B14: F3 0F 59 C1     - mulss xmm0,xmm1
+enshrouded.exe+227B18: F3 0F 58 50 04  - addss xmm2,[rax+04]
+enshrouded.exe+227B1D: F3 0F 58 40 08  - addss xmm0,[rax+08]
+enshrouded.exe+227B22: F3 0F 11 18     - movss [rax],xmm3
+// ---------- INJECTING HERE ----------
+enshrouded.exe+227B26: F3 0F 11 50 04  - movss [rax+04],xmm2
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+227B2B: F3 0F 11 40 08  - movss [rax+08],xmm0
+enshrouded.exe+227B30: 48 8B 4C 24 38  - mov rcx,[rsp+38]
+enshrouded.exe+227B35: E8 56 3C 12 00  - call enshrouded.exe+34B790
+enshrouded.exe+227B3A: 48 8B 44 24 58  - mov rax,[rsp+58]
+enshrouded.exe+227B3F: 48 85 C0        - test rax,rax
+enshrouded.exe+227B42: 74 08           - je enshrouded.exe+227B4C
+enshrouded.exe+227B44: F0 FF 00        - lock inc [rax]
+enshrouded.exe+227B47: 48 8B 44 24 58  - mov rax,[rsp+58]
+enshrouded.exe+227B4C: 48 8B 4C 24 50  - mov rcx,[rsp+50]
+enshrouded.exe+227B51: 0F 57 C7        - xorps xmm0,xmm7
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32850</ID>
+      <Description>"flying alt (require activate pitch angle)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2026-01-10
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(flying_alt,enshrouded_server.exe,F3 0F 58 50 04 F3 0F 58 40) // should be unique
+alloc(newmem,$1000,flying_alt)
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rax+00000208],3f666666
+  je hero_code
+
+code:
+  addss xmm2,[rax+04]
+  jmp return
+
+hero_code:
+  addss xmm2,[enshrouded_server.exe+14D0000]
+  mov [rax+28],(float)7.5
+  mulss xmm2,[rax+28]
+  jmp return
+
+flying_alt:
+  jmp newmem
+return:
+registersymbol(flying_alt)
+
+[DISABLE]
+
+flying_alt:
+  db F3 0F 58 50 04
+
+unregistersymbol(flying_alt)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+226638
+
+enshrouded.exe+22660F: F3 0F 59 DC     - mulss xmm3,xmm4
+enshrouded.exe+226613: F2 41 0F 59 C0  - mulsd xmm0,xmm8
+enshrouded.exe+226618: F3 0F 59 D4     - mulss xmm2,xmm4
+enshrouded.exe+22661C: 66 0F 5A C8     - cvtpd2ps xmm1,xmm0
+enshrouded.exe+226620: 66 0F 6E C2     - movd xmm0,edx
+enshrouded.exe+226624: F3 0F 59 C4     - mulss xmm0,xmm4
+enshrouded.exe+226628: F3 0F 59 D9     - mulss xmm3,xmm1
+enshrouded.exe+22662C: F3 0F 59 D1     - mulss xmm2,xmm1
+enshrouded.exe+226630: F3 0F 58 18     - addss xmm3,[rax]
+enshrouded.exe+226634: F3 0F 59 C1     - mulss xmm0,xmm1
+// ---------- INJECTING HERE ----------
+enshrouded.exe+226638: F3 0F 58 50 04  - addss xmm2,[rax+04]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+22663D: F3 0F 58 40 08  - addss xmm0,[rax+08]
+enshrouded.exe+226642: F3 0F 11 18     - movss [rax],xmm3
+enshrouded.exe+226646: F3 0F 11 50 04  - movss [rax+04],xmm2
+enshrouded.exe+22664B: F3 0F 11 40 08  - movss [rax+08],xmm0
+enshrouded.exe+226650: 48 8B 4C 24 38  - mov rcx,[rsp+38]
+enshrouded.exe+226655: E8 66 60 12 00  - call enshrouded.exe+34C6C0
+enshrouded.exe+22665A: 48 8B 44 24 58  - mov rax,[rsp+58]
+enshrouded.exe+22665F: 48 85 C0        - test rax,rax
+enshrouded.exe+226662: 74 08           - je enshrouded.exe+22666C
+enshrouded.exe+226664: F0 FF 00        - lock inc [rax]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32854</ID>
+      <Description>"pitch angle"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-02-15
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(pitch_angle,enshrouded_server.exe,F3 0F 11 4F 24 F3 0F 11 57 18 F3 0F 11 5F 28 48 83 C4 30 5F C3 CC CC 48) // should be unique
+alloc(newmem,$1000,pitch_angle)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  movss [rdi+24],xmm1
+  mov [enshrouded_server.exe+14D0008],(float)0.5
+  movss xmm12,[enshrouded_server.exe+14D0008]
+  addss xmm1,xmm12
+  movss [enshrouded_server.exe+14D0000],xmm1
+  jmp return
+
+pitch_angle:
+  jmp newmem
+return:
+registersymbol(pitch_angle)
+
+[DISABLE]
+
+pitch_angle:
+  db F3 0F 11 4F 24
+
+unregistersymbol(pitch_angle)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+6DAE59
+
+enshrouded_server.exe+6DAE2B: F3 0F 59 4F 14  - mulss xmm1,[rdi+14]
+enshrouded_server.exe+6DAE30: F3 0F 59 57 18  - mulss xmm2,[rdi+18]
+enshrouded_server.exe+6DAE35: F3 0F 11 47 10  - movss [rdi+10],xmm0
+enshrouded_server.exe+6DAE3A: 0F 28 C3        - movaps xmm0,xmm3
+enshrouded_server.exe+6DAE3D: F3 0F 59 47 20  - mulss xmm0,[rdi+20]
+enshrouded_server.exe+6DAE42: F3 0F 11 4F 14  - movss [rdi+14],xmm1
+enshrouded_server.exe+6DAE47: 0F 28 CB        - movaps xmm1,xmm3
+enshrouded_server.exe+6DAE4A: F3 0F 59 4F 24  - mulss xmm1,[rdi+24]
+enshrouded_server.exe+6DAE4F: F3 0F 59 5F 28  - mulss xmm3,[rdi+28]
+enshrouded_server.exe+6DAE54: F3 0F 11 47 20  - movss [rdi+20],xmm0
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+6DAE59: F3 0F 11 4F 24  - movss [rdi+24],xmm1
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+6DAE5E: F3 0F 11 57 18  - movss [rdi+18],xmm2
+enshrouded_server.exe+6DAE63: F3 0F 11 5F 28  - movss [rdi+28],xmm3
+enshrouded_server.exe+6DAE68: 48 83 C4 30     - add rsp,30
+enshrouded_server.exe+6DAE6C: 5F              - pop rdi
+enshrouded_server.exe+6DAE6D: C3              - ret 
+enshrouded_server.exe+6DAE6E: CC              - int 3 
+enshrouded_server.exe+6DAE6F: CC              - int 3 
+enshrouded_server.exe+6DAE70: 48 8B C4        - mov rax,rsp
+enshrouded_server.exe+6DAE73: 48 89 58 08     - mov [rax+08],rbx
+enshrouded_server.exe+6DAE77: 57              - push rdi
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32616</ID>
+      <Description>"low gravity"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-22
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(gravity,enshrouded_server.exe,59 42 0C F3 0F 11 42 0C) // should be unique
+alloc(newmem,$1000,gravity)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rdx+0C],(float)5 // vanilla = 25
+  jmp return
+
+gravity+03:
+  jmp newmem
+return:
+registersymbol(gravity)
+
+[DISABLE]
+
+gravity+03:
+  db F3 0F 11 42 0C
+
+unregistersymbol(gravity)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+2281B8
+
+enshrouded.exe+228192: 48 8B 54 24 30     - mov rdx,[rsp+30]
+enshrouded.exe+228197: 80 7A 10 00        - cmp byte ptr [rdx+10],00
+enshrouded.exe+22819B: 74 20              - je enshrouded.exe+2281BD
+enshrouded.exe+22819D: 48 8B 44 24 28     - mov rax,[rsp+28]
+enshrouded.exe+2281A2: F3 0F 10 00        - movss xmm0,[rax]
+enshrouded.exe+2281A6: 48 85 C9           - test rcx,rcx
+enshrouded.exe+2281A9: 74 08              - je enshrouded.exe+2281B3
+enshrouded.exe+2281AB: F0 FF 01           - lock inc [rcx]
+enshrouded.exe+2281AE: 48 8B 54 24 30     - mov rdx,[rsp+30]
+enshrouded.exe+2281B3: F3 0F 59 42 0C     - mulss xmm0,[rdx+0C]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+2281B8: F3 0F 11 42 0C     - movss [rdx+0C],xmm0
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+2281BD: 41 B8 20 00 00 00  - mov r8d,00000020
+enshrouded.exe+2281C3: 48 8D 54 24 20     - lea rdx,[rsp+20]
+enshrouded.exe+2281C8: 48 8B CB           - mov rcx,rbx
+enshrouded.exe+2281CB: E8 B0 9A 60 00     - call enshrouded.exe+831C80
+enshrouded.exe+2281D0: 84 C0              - test al,al
+enshrouded.exe+2281D2: 75 AC              - jne enshrouded.exe+228180
+enshrouded.exe+2281D4: 48 83 C4 40        - add rsp,40
+enshrouded.exe+2281D8: 5B                 - pop rbx
+enshrouded.exe+2281D9: C3                 - ret 
+enshrouded.exe+2281DA: CC                 - int 3 
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32525</ID>
+      <Description>"fall speed max(imitate low gravity)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-11
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(fall_speed,enshrouded_server.exe,48 83 C4 28 C3 CC CC CC CC CC CC CC CC CC F3 0f 10) // should be unique
+alloc(newmem,$1000,fall_speed)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [r8+00000100],(float)0.15 // vanilla = 20.0
+  mulss xmm0,[r8+00000100]
+  add rsp,28
+  ret 
+  jmp return
+
+fall_speed:
+  jmp newmem
+return:
+registersymbol(fall_speed)
+
+[DISABLE]
+
+fall_speed:
+  db 48 83 C4 28 C3
+
+unregistersymbol(fall_speed)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+34B7B2
+
+enshrouded.exe+34B78E: CC                       - int 3 
+enshrouded.exe+34B78F: CC                       - int 3 
+enshrouded.exe+34B790: 48 83 EC 28              - sub rsp,28
+enshrouded.exe+34B794: E8 57 9E E6 FF           - call enshrouded.exe+1B55F0
+enshrouded.exe+34B799: 84 C0                    - test al,al
+enshrouded.exe+34B79B: 74 0D                    - je enshrouded.exe+34B7AA
+enshrouded.exe+34B79D: F3 0F 10 05 77 7E DC 00  - movss xmm0,[enshrouded.exe+111361C]
+enshrouded.exe+34B7A5: 48 83 C4 28              - add rsp,28
+enshrouded.exe+34B7A9: C3                       - ret 
+enshrouded.exe+34B7AA: F3 0F 10 05 CE C9 F1 00  - movss xmm0,[enshrouded.exe+1268180]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+34B7B2: 48 83 C4 28              - add rsp,28
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+34B7B6: C3                       - ret 
+enshrouded.exe+34B7B7: CC                       - int 3 
+enshrouded.exe+34B7B8: CC                       - int 3 
+enshrouded.exe+34B7B9: CC                       - int 3 
+enshrouded.exe+34B7BA: CC                       - int 3 
+enshrouded.exe+34B7BB: CC                       - int 3 
+enshrouded.exe+34B7BC: CC                       - int 3 
+enshrouded.exe+34B7BD: CC                       - int 3 
+enshrouded.exe+34B7BE: CC                       - int 3 
+enshrouded.exe+34B7BF: CC                       - int 3 
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32509</ID>
+      <Description>"infinite silent jumps (press E)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-10
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(flying,enshrouded_server.exe,F3 0F 11 50 04 F3 0F 11 40) // should be unique
+alloc(newmem,$1000,flying)
+
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rax+00000208],3f666666
+  je hero_code
+
+code:
+  movss [rax+04],xmm2
+  jmp return
+
+hero_code:
+  mov [rax+04],(float)10
+  jmp return
+
+flying:
+  jmp newmem
+return:
+registersymbol(flying)
+
+[DISABLE]
+
+flying:
+  db F3 0F 11 50 04
+
+unregistersymbol(flying)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+227B26
+
+enshrouded.exe+227AFC: 66 0F 5A C8     - cvtpd2ps xmm1,xmm0
+enshrouded.exe+227B00: 66 0F 6E C2     - movd xmm0,edx
+enshrouded.exe+227B04: F3 0F 59 C4     - mulss xmm0,xmm4
+enshrouded.exe+227B08: F3 0F 59 D9     - mulss xmm3,xmm1
+enshrouded.exe+227B0C: F3 0F 59 D1     - mulss xmm2,xmm1
+enshrouded.exe+227B10: F3 0F 58 18     - addss xmm3,[rax]
+enshrouded.exe+227B14: F3 0F 59 C1     - mulss xmm0,xmm1
+enshrouded.exe+227B18: F3 0F 58 50 04  - addss xmm2,[rax+04]
+enshrouded.exe+227B1D: F3 0F 58 40 08  - addss xmm0,[rax+08]
+enshrouded.exe+227B22: F3 0F 11 18     - movss [rax],xmm3
+// ---------- INJECTING HERE ----------
+enshrouded.exe+227B26: F3 0F 11 50 04  - movss [rax+04],xmm2
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+227B2B: F3 0F 11 40 08  - movss [rax+08],xmm0
+enshrouded.exe+227B30: 48 8B 4C 24 38  - mov rcx,[rsp+38]
+enshrouded.exe+227B35: E8 56 3C 12 00  - call enshrouded.exe+34B790
+enshrouded.exe+227B3A: 48 8B 44 24 58  - mov rax,[rsp+58]
+enshrouded.exe+227B3F: 48 85 C0        - test rax,rax
+enshrouded.exe+227B42: 74 08           - je enshrouded.exe+227B4C
+enshrouded.exe+227B44: F0 FF 00        - lock inc [rax]
+enshrouded.exe+227B47: 48 8B 44 24 58  - mov rax,[rsp+58]
+enshrouded.exe+227B4C: 48 8B 4C 24 50  - mov rcx,[rsp+50]
+enshrouded.exe+227B51: 0F 57 C7        - xorps xmm0,xmm7
+}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey OnlyWhileDown="1">
+          <Action>Activate</Action>
+          <Keys>
+            <Key>69</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32583</ID>
+      <Description>"force infinite silent jumps (press E)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-14
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(force_jump,enshrouded_server.exe,0F 97 C0 88 43 4E 0F) // should be unique
+alloc(newmem,$1000,force_jump)
+
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rbx+08],3f666666
+  je hero_code
+
+code:
+  seta al
+  mov [rbx+4E],al
+  jmp return
+
+hero_code:
+  seta al
+  mov [rbx+4E],al
+  mov byte ptr [rbx+4E],00
+  jmp return
+
+force_jump:
+  jmp newmem
+  nop
+return:
+registersymbol(force_jump)
+
+[DISABLE]
+
+force_jump:
+  db 0F 97 C0 88 43 4E
+
+unregistersymbol(force_jump)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+20F110
+
+enshrouded.exe+20F0E0: F3 0F 58 C2              - addss xmm0,xmm2
+enshrouded.exe+20F0E4: F3 44 0F 5D E8           - minss xmm13,xmm0
+enshrouded.exe+20F0E9: EB 08                    - jmp enshrouded.exe+20F0F3
+enshrouded.exe+20F0EB: F3 0F 10 35 BD F6 EF 00  - movss xmm6,[enshrouded.exe+110E7B0]
+enshrouded.exe+20F0F3: 45 84 E4                 - test r12b,r12b
+enshrouded.exe+20F0F6: 74 0B                    - je enshrouded.exe+20F103
+enshrouded.exe+20F0F8: 44 0F 2F 4B 40           - comiss xmm9,[rbx+40]
+enshrouded.exe+20F0FD: 0F 87 88 FE FF FF        - ja enshrouded.exe+20EF8B
+enshrouded.exe+20F103: 41 81 FF FE 03 00 00     - cmp r15d,000003FE
+enshrouded.exe+20F10A: F3 44 0F 11 4B 40        - movss [rbx+40],xmm9
+// ---------- INJECTING HERE ----------
+enshrouded.exe+20F110: 0F 97 C0                 - seta al
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+20F113: 88 43 4E                 - mov [rbx+4E],al
+enshrouded.exe+20F116: 0F 86 90 00 00 00        - jbe enshrouded.exe+20F1AC
+enshrouded.exe+20F11C: 48 83 7E 18 00           - cmp qword ptr [rsi+18],00
+enshrouded.exe+20F121: 0F 84 85 00 00 00        - je enshrouded.exe+20F1AC
+enshrouded.exe+20F127: 48 8B 4D 10              - mov rcx,[rbp+10]
+enshrouded.exe+20F12B: 48 85 C9                 - test rcx,rcx
+enshrouded.exe+20F12E: 74 27                    - je enshrouded.exe+20F157
+enshrouded.exe+20F130: F2 0F 10 01              - movsd xmm0,[rcx]
+enshrouded.exe+20F134: 48 8B BD B0 03 00 00     - mov rdi,[rbp+000003B0]
+enshrouded.exe+20F13B: F2 0F 11 07              - movsd [rdi],xmm0
+}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey OnlyWhileDown="1">
+          <Action>Activate</Action>
+          <Keys>
+            <Key>69</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32547</ID>
+      <Description>"infinite weapon durability"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-12
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(weapon_durability,enshrouded_server.exe,44 01 2C 91 48 8D 4D B7) // should be unique
+
+weapon_durability:
+  sub [rcx+rdx*4],r13d
+
+registersymbol(weapon_durability)
+
+[DISABLE]
+
+weapon_durability:
+  db 44 01 2C 91
+
+unregistersymbol(weapon_durability)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+2EEF5A
+
+enshrouded.exe+2EEF2B: 83 F8 50                 - cmp eax,50
+enshrouded.exe+2EEF2E: 0F 83 00 02 00 00        - jae enshrouded.exe+2EF134
+enshrouded.exe+2EEF34: 41 0F B7 54 24 08        - movzx edx,word ptr [r12+08]
+enshrouded.exe+2EEF3A: 4D 8B 44 24 18           - mov r8,[r12+18]
+enshrouded.exe+2EEF3F: 4C 89 B4 24 E8 00 00 00  - mov [rsp+000000E8],r14
+enshrouded.exe+2EEF47: 45 33 F6                 - xor r14d,r14d
+enshrouded.exe+2EEF4A: F6 47 10 01              - test byte ptr [rdi+10],01
+enshrouded.exe+2EEF4E: 0F 84 D2 00 00 00        - je enshrouded.exe+2EF026
+enshrouded.exe+2EEF54: 8B 4F 08                 - mov ecx,[rdi+08]
+enshrouded.exe+2EEF57: 48 03 CF                 - add rcx,rdi
+// ---------- INJECTING HERE ----------
+enshrouded.exe+2EEF5A: 44 01 2C 91              - add [rcx+rdx*4],r13d
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+2EEF5E: 48 8D 4D B7              - lea rcx,[rbp-49]
+enshrouded.exe+2EEF62: 8B 17                    - mov edx,[rdi]
+enshrouded.exe+2EEF64: E8 97 20 B7 00           - call enshrouded.exe+E61000
+enshrouded.exe+2EEF69: 44 38 75 B7              - cmp [rbp-49],r14b
+enshrouded.exe+2EEF6D: 0F 85 B3 00 00 00        - jne enshrouded.exe+2EF026
+enshrouded.exe+2EEF73: 4C 89 BC 24 A0 00 00 00  - mov [rsp+000000A0],r15
+enshrouded.exe+2EEF7B: 4C 8B 7D BF              - mov r15,[rbp-41]
+enshrouded.exe+2EEF7F: 41 8B 47 10              - mov eax,[r15+10]
+enshrouded.exe+2EEF83: 83 E8 01                 - sub eax,01
+enshrouded.exe+2EEF86: 4C 63 F0                 - movsxd  r14,eax
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1675</ID>
+      <Description>"infinite fog timer"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2024-04-04
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(fog_timer,enshrouded_server.exe,41 01 04 88 48 8B CB E8 * * * * 48 8B 44 24 40) // should be unique
+alloc(newmem,$1000,fog_timer)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [r8+rcx*4],(int)300
+  mov rcx,rbx
+  jmp return
+
+fog_timer:
+  jmp newmem
+  nop 2
+return:
+registersymbol(fog_timer)
+
+[DISABLE]
+
+fog_timer:
+  db 41 01 04 88 48 8B CB
+
+unregistersymbol(fog_timer)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+224AD2
+
+enshrouded.exe+224AB1: 48 8B 45 F0                       - mov rax,[rbp-10]
+enshrouded.exe+224AB5: 0F B7 48 0C                       - movzx ecx,word ptr [rax+0C]
+enshrouded.exe+224AB9: 48 85 DB                          - test rbx,rbx
+enshrouded.exe+224ABC: 74 20                             - je enshrouded.exe+224ADE
+enshrouded.exe+224ABE: F6 43 10 01                       - test byte ptr [rbx+10],01
+enshrouded.exe+224AC2: 74 1A                             - je enshrouded.exe+224ADE
+enshrouded.exe+224AC4: 44 8B 43 08                       - mov r8d,[rbx+08]
+enshrouded.exe+224AC8: 48 8B D7                          - mov rdx,rdi
+enshrouded.exe+224ACB: F3 0F 2C C6                       - cvttss2si eax,xmm6
+enshrouded.exe+224ACF: 4C 03 C3                          - add r8,rbx
+// ---------- INJECTING HERE ----------
+enshrouded.exe+224AD2: 41 01 04 88                       - add [r8+rcx*4],eax
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+224AD6: 48 8B CB                          - mov rcx,rbx
+enshrouded.exe+224AD9: E8 02 6C FA FF                    - call enshrouded.exe+1CB6E0
+enshrouded.exe+224ADE: 48 8B 44 24 40                    - mov rax,[rsp+40]
+enshrouded.exe+224AE3: 48 85 C0                          - test rax,rax
+enshrouded.exe+224AE6: 74 03                             - je enshrouded.exe+224AEB
+enshrouded.exe+224AE8: F0 FF 00                          - lock inc [rax]
+enshrouded.exe+224AEB: 48 8B 44 24 38                    - mov rax,[rsp+38]
+enshrouded.exe+224AF0: 48 81 88 60 04 00 00 00 20 00 00  - or qword ptr [rax+00000460],00002000
+enshrouded.exe+224AFB: 48 8B 44 24 50                    - mov rax,[rsp+50]
+enshrouded.exe+224B00: 4C 8B 44 24 78                    - mov r8,[rsp+78]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32856</ID>
+      <Description>"free craft and building"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-04-24
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(free_craft,enshrouded_server.exe,44 8B A5 08 01 00 00 4C 8B F9) // should be unique
+alloc(newmem,$1000,free_craft)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov r12d,(int)0
+  jmp return
+
+free_craft:
+  jmp newmem
+  nop 2
+return:
+registersymbol(free_craft)
+
+[DISABLE]
+
+free_craft:
+  db 44 8B A5 08 01 00 00
+
+unregistersymbol(free_craft)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+163C71
+
+enshrouded_server.exe+163C4F: CC                       - int 3 
+enshrouded_server.exe+163C50: 48 89 5C 24 18           - mov [rsp+18],rbx
+enshrouded_server.exe+163C55: 48 89 74 24 20           - mov [rsp+20],rsi
+enshrouded_server.exe+163C5A: 55                       - push rbp
+enshrouded_server.exe+163C5B: 57                       - push rdi
+enshrouded_server.exe+163C5C: 41 54                    - push r12
+enshrouded_server.exe+163C5E: 41 55                    - push r13
+enshrouded_server.exe+163C60: 41 57                    - push r15
+enshrouded_server.exe+163C62: 48 8D AC 24 50 FF FF FF  - lea rbp,[rsp-000000B0]
+enshrouded_server.exe+163C6A: 48 81 EC B0 01 00 00     - sub rsp,000001B0
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+163C71: 44 8B A5 08 01 00 00     - mov r12d,[rbp+00000108]
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+163C78: 4C 8B F9                 - mov r15,rcx
+enshrouded_server.exe+163C7B: 48 8B 0A                 - mov rcx,[rdx]
+enshrouded_server.exe+163C7E: 41 8B F9                 - mov edi,r9d
+enshrouded_server.exe+163C81: 48 8B 5A 18              - mov rbx,[rdx+18]
+enshrouded_server.exe+163C85: 41 8B F0                 - mov esi,r8d
+enshrouded_server.exe+163C88: 4C 8B EA                 - mov r13,rdx
+enshrouded_server.exe+163C8B: 48 8B 09                 - mov rcx,[rcx]
+enshrouded_server.exe+163C8E: E8 BD 0D 47 00           - call enshrouded_server.exe+5D4A50
+enshrouded_server.exe+163C93: 48 8B D0                 - mov rdx,rax
+enshrouded_server.exe+163C96: 48 8D 4C 24 70           - lea rcx,[rsp+70]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32555</ID>
+      <Description>"items in slots"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-12
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(slot_items,enshrouded_server.exe,41 89 47 04 48 8B D3) // should be unique
+alloc(newmem,$1000,slot_items)
+globalalloc(_items,4)
+label(code)
+label(return)
+
+newmem:
+  push rax
+  mov rax,_items
+  mov [rax],r15
+  pop rax
+
+code:
+  mov [r15+04],eax
+  mov rdx,rbx
+  jmp return
+
+slot_items:
+  jmp newmem
+  nop 2
+return:
+registersymbol(slot_items)
+
+[DISABLE]
+
+slot_items:
+  db 41 89 47 04 48 8B D3
+
+unregistersymbol(slot_items)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+340E00
+
+enshrouded.exe+340DD6: 41 89 07                 - mov [r15],eax
+enshrouded.exe+340DD9: 41 F6 86 76 05 00 00 02  - test byte ptr [r14+00000576],02
+enshrouded.exe+340DE1: 74 12                    - je enshrouded.exe+340DF5
+enshrouded.exe+340DE3: B8 01 00 00 00           - mov eax,00000001
+enshrouded.exe+340DE8: 89 79 20                 - mov [rcx+20],edi
+enshrouded.exe+340DEB: 66 89 41 24              - mov [rcx+24],ax
+enshrouded.exe+340DEF: 41 89 7F 08              - mov [r15+08],edi
+enshrouded.exe+340DF3: EB 0B                    - jmp enshrouded.exe+340E00
+enshrouded.exe+340DF5: 8B 84 24 88 00 00 00     - mov eax,[rsp+00000088]
+enshrouded.exe+340DFC: 66 89 41 24              - mov [rcx+24],ax
+// ---------- INJECTING HERE ----------
+enshrouded.exe+340E00: 41 89 47 04              - mov [r15+04],eax
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+340E04: 48 8B D3                 - mov rdx,rbx
+enshrouded.exe+340E07: C6 41 26 05              - mov byte ptr [rcx+26],05
+enshrouded.exe+340E0B: 48 8B CD                 - mov rcx,rbp
+enshrouded.exe+340E0E: E8 0D FB FF FF           - call enshrouded.exe+340920
+enshrouded.exe+340E13: 48 8B C6                 - mov rax,rsi
+enshrouded.exe+340E16: C7 46 04 00 00 00 00     - mov [rsi+04],00000000
+enshrouded.exe+340E1D: C6 06 00                 - mov byte ptr [rsi],00
+enshrouded.exe+340E20: 48 8B 5C 24 68           - mov rbx,[rsp+68]
+enshrouded.exe+340E25: 48 83 C4 30              - add rsp,30
+enshrouded.exe+340E29: 41 5F                    - pop r15
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1643</ID>
+          <Description>"items in slots"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>_items</Address>
+          <Offsets>
+            <Offset>04</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32671</ID>
+      <Description>"stack size"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-12-02
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(stack_size,enshrouded_server.exe,0F B7 40 14 3B C8) // should be unique
+alloc(newmem,$1000,stack_size)
+alloc(_stack_size,4)
+label(return)
+
+newmem:
+  mov [_stack_size],rax
+  movzx eax,word ptr [rax+14]
+  cmp ecx,eax
+  jmp return
+
+stack_size:
+  jmp newmem
+  nop
+return:
+registersymbol(stack_size)
+registersymbol(_stack_size)
+
+[DISABLE]
+
+stack_size:
+  db 0F B7 40 14 3B C8
+
+unregistersymbol(stack_size)
+unregistersymbol(_stack_size)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+33F858
+
+enshrouded.exe+33F840: 75 24           - jne enshrouded.exe+33F866
+enshrouded.exe+33F842: 83 7B 04 01     - cmp dword ptr [rbx+04],01
+enshrouded.exe+33F846: 75 E8           - jne enshrouded.exe+33F830
+enshrouded.exe+33F848: 83 7B 08 00     - cmp dword ptr [rbx+08],00
+enshrouded.exe+33F84C: 75 18           - jne enshrouded.exe+33F866
+enshrouded.exe+33F84E: 32 C0           - xor al,al
+enshrouded.exe+33F850: EB 1C           - jmp enshrouded.exe+33F86E
+enshrouded.exe+33F852: 8B 0E           - mov ecx,[rsi]
+enshrouded.exe+33F854: 85 C9           - test ecx,ecx
+enshrouded.exe+33F856: 74 12           - je enshrouded.exe+33F86A
+// ---------- INJECTING HERE ----------
+enshrouded.exe+33F858: 0F B7 40 14     - movzx eax,word ptr [rax+14]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+33F85C: 3B C8           - cmp ecx,eax
+enshrouded.exe+33F85E: 77 D0           - ja enshrouded.exe+33F830
+enshrouded.exe+33F860: 83 7B 08 00     - cmp dword ptr [rbx+08],00
+enshrouded.exe+33F864: 75 CA           - jne enshrouded.exe+33F830
+enshrouded.exe+33F866: B0 01           - mov al,01
+enshrouded.exe+33F868: EB 04           - jmp enshrouded.exe+33F86E
+enshrouded.exe+33F86A: 40 0F B6 C7     - movzx eax,dil
+enshrouded.exe+33F86E: 48 8B 5C 24 30  - mov rbx,[rsp+30]
+enshrouded.exe+33F873: 48 8B 6C 24 38  - mov rbp,[rsp+38]
+enshrouded.exe+33F878: 48 8B 74 24 40  - mov rsi,[rsp+40]
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>32672</ID>
+          <Description>"stack size"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>2 Bytes</VariableType>
+          <Address>_stack_size</Address>
+          <Offsets>
+            <Offset>14</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32504</ID>
+      <Description>"slope angle"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-10
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(slope_angle,enshrouded_server.exe,F3 0F 10 4B 08 0F 28 F0 F3 0F 59) // should be unique
+alloc(newmem,$1000,slope_angle)
+
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rbx+0c],(float)10
+  je hero_code
+
+code:
+  movss xmm1,[rbx+08]
+  jmp return
+
+hero_code:
+  movss xmm1,[rbx+08]
+  mov [rbx],(float)89.9996 // slope angle a=45
+  mov [rbx+04],(float)89.9997 // slope angle b=55
+  mov [rbx+08],(float)89.9998 // slope angle c=65
+  jmp return
+
+slope_angle:
+  jmp newmem
+return:
+registersymbol(slope_angle)
+
+[DISABLE]
+
+slope_angle:
+  db F3 0F 10 4B 08
+
+unregistersymbol(slope_angle)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+34C9F3
+
+enshrouded.exe+34C9CB: 33 D2                    - xor edx,edx
+enshrouded.exe+34C9CD: 48 8B CB                 - mov rcx,rbx
+enshrouded.exe+34C9D0: E8 EB 8F E6 FF           - call enshrouded.exe+1B59C0
+enshrouded.exe+34C9D5: 84 C0                    - test al,al
+enshrouded.exe+34C9D7: 74 6C                    - je enshrouded.exe+34CA45
+enshrouded.exe+34C9D9: 48 8B 9C 24 88 00 00 00  - mov rbx,[rsp+00000088]
+enshrouded.exe+34C9E1: 48 85 DB                 - test rbx,rbx
+enshrouded.exe+34C9E4: 74 5B                    - je enshrouded.exe+34CA41
+enshrouded.exe+34C9E6: 48 8B 8C 24 80 00 00 00  - mov rcx,[rsp+00000080]
+enshrouded.exe+34C9EE: E8 9D 02 00 00           - call enshrouded.exe+34CC90
+// ---------- INJECTING HERE ----------
+enshrouded.exe+34C9F3: F3 0F 10 4B 08           - movss xmm1,[rbx+08]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+34C9F8: 0F 28 F0                 - movaps xmm6,xmm0
+enshrouded.exe+34C9FB: F3 0F 59 0D 6D 6B DC 00  - mulss xmm1,[enshrouded.exe+1113570]
+enshrouded.exe+34CA03: 41 0F B6 7E 4C           - movzx edi,byte ptr [r14+4C]
+enshrouded.exe+34CA08: 0F 2F CE                 - comiss xmm1,xmm6
+enshrouded.exe+34CA0B: 77 10                    - ja enshrouded.exe+34CA1D
+enshrouded.exe+34CA0D: 40 0F B6 D7              - movzx edx,dil
+enshrouded.exe+34CA11: 48 8B CD                 - mov rcx,rbp
+enshrouded.exe+34CA14: E8 F7 7F 82 00           - call enshrouded.exe+B74A10
+enshrouded.exe+34CA19: 84 C0                    - test al,al
+enshrouded.exe+34CA1B: 74 28                    - je enshrouded.exe+34CA45
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1726</ID>
+      <Description>"fall damage height fixxx"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2024-11-05
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(fall_damage_height,enshrouded_server.exe,F3 0F 10 01 0F 2F 41 04) // should be unique
+alloc(newmem,$1000,fall_damage_height)
+globalalloc(_fall_damage_height,4)
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rcx-0000007c],3f3504f3
+  je hero_code
+
+code:
+  movss xmm0,[rcx]
+  comiss xmm0,[rcx+04]
+  jmp return
+
+hero_code:
+  movss xmm0,[rcx]
+  push rax
+  mov rax,_fall_damage_height
+  mov [rax],rcx
+  pop rax
+  comiss xmm0,[rcx+04]
+  jmp return
+
+fall_damage_height:
+  jmp newmem
+  nop 3
+return:
+registersymbol(fall_damage_height)
+
+[DISABLE]
+
+fall_damage_height:
+  db F3 0F 10 01 0F 2F 41 04
+
+unregistersymbol(fall_damage_height)
+dealloc(newmem)
+dealloc(_fall_damage_height)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+241A4A
+
+enshrouded.exe+241A1C: 84 C0                    - test al,al
+enshrouded.exe+241A1E: 0F 84 D9 00 00 00        - je enshrouded.exe+241AFD
+enshrouded.exe+241A24: 48 89 7C 24 70           - mov [rsp+70],rdi
+enshrouded.exe+241A29: 33 FF                    - xor edi,edi
+enshrouded.exe+241A2B: 0F 29 74 24 50           - movaps [rsp+50],xmm6
+enshrouded.exe+241A30: 0F 57 F6                 - xorps xmm6,xmm6
+enshrouded.exe+241A33: 0F 29 7C 24 40           - movaps [rsp+40],xmm7
+enshrouded.exe+241A38: F3 0F 10 3D E4 97 C8 00  - movss xmm7,[enshrouded.exe+ECB224]
+enshrouded.exe+241A40: 48 8B 4C 24 28           - mov rcx,[rsp+28]
+enshrouded.exe+241A45: 48 8B 44 24 38           - mov rax,[rsp+38]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+241A4A: F3 0F 10 01              - movss xmm0,[rcx]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+241A4E: 0F 2F 41 04              - comiss xmm0,[rcx+04]
+enshrouded.exe+241A52: 72 12                    - jb enshrouded.exe+241A66
+enshrouded.exe+241A54: 48 85 C0                 - test rax,rax
+enshrouded.exe+241A57: 74 03                    - je enshrouded.exe+241A5C
+enshrouded.exe+241A59: F0 FF 00                 - lock inc [rax]
+enshrouded.exe+241A5C: 48 8B 44 24 30           - mov rax,[rsp+30]
+enshrouded.exe+241A61: 89 78 0C                 - mov [rax+0C],edi
+enshrouded.exe+241A64: EB 6D                    - jmp enshrouded.exe+241AD3
+enshrouded.exe+241A66: 48 85 C0                 - test rax,rax
+enshrouded.exe+241A69: 74 0D                    - je enshrouded.exe+241A78
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1727</ID>
+          <Description>"min height"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_fall_damage_height</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1728</ID>
+          <Description>"max height"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_fall_damage_height</Address>
+          <Offsets>
+            <Offset>4</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32529</ID>
+      <Description>"coordinates"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-11
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(coordinates,enshrouded_server.exe,48 8B 42 08 48 2B 41 08 F3 48 0F 2A F0 48 8B 42 10 48 2B 41 10 F3 0F) // should be unique
+alloc(newmem,$1000,coordinates)
+globalalloc(_coordinates,4)
+label(code)
+label(return)
+
+newmem:
+  push rax
+  mov rax,_coordinates
+  mov [rax],rdx
+  pop rax
+
+code:
+  mov rax,[rdx+08]
+  sub rax,[rcx+08]
+  jmp return
+
+coordinates:
+  jmp newmem
+  nop 3
+return:
+registersymbol(coordinates)
+
+[DISABLE]
+
+coordinates:
+  db 48 8B 42 08 48 2B 41 08
+
+unregistersymbol(coordinates)
+dealloc(newmem)
+dealloc(_coordinates)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+290903
+
+enshrouded.exe+2908E3: 48 8B 10        - mov rdx,[rax]
+enshrouded.exe+2908E6: 48 85 D2        - test rdx,rdx
+enshrouded.exe+2908E9: 74 52           - je enshrouded.exe+29093D
+enshrouded.exe+2908EB: 48 8B 4D EF     - mov rcx,[rbp-11]
+enshrouded.exe+2908EF: 0F 57 F6        - xorps xmm6,xmm6
+enshrouded.exe+2908F2: 48 8B 02        - mov rax,[rdx]
+enshrouded.exe+2908F5: 0F 57 C9        - xorps xmm1,xmm1
+enshrouded.exe+2908F8: 0F 57 C0        - xorps xmm0,xmm0
+enshrouded.exe+2908FB: 48 2B 01        - sub rax,[rcx]
+enshrouded.exe+2908FE: F3 48 0F 2A C8  - cvtsi2ss xmm1,rax
+// ---------- INJECTING HERE ----------
+enshrouded.exe+290903: 48 8B 42 08     - mov rax,[rdx+08]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+290907: 48 2B 41 08     - sub rax,[rcx+08]
+enshrouded.exe+29090B: F3 48 0F 2A F0  - cvtsi2ss xmm6,rax
+enshrouded.exe+290910: 48 8B 42 10     - mov rax,[rdx+10]
+enshrouded.exe+290914: 48 2B 41 10     - sub rax,[rcx+10]
+enshrouded.exe+290918: F3 0F 59 CF     - mulss xmm1,xmm7
+enshrouded.exe+29091C: F3 0F 59 F7     - mulss xmm6,xmm7
+enshrouded.exe+290920: F3 48 0F 2A C0  - cvtsi2ss xmm0,rax
+enshrouded.exe+290925: F3 0F 59 F6     - mulss xmm6,xmm6
+enshrouded.exe+290929: F3 0F 59 C9     - mulss xmm1,xmm1
+enshrouded.exe+29092D: F3 0F 59 C7     - mulss xmm0,xmm7
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>65</ID>
+          <Description>"x"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>04</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>69</ID>
+          <Description>"y (UP for increase DOWN for decrease)"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>0c</Offset>
+          </Offsets>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Increase Value</Action>
+              <Keys>
+                <Key>38</Key>
+              </Keys>
+              <Value>1</Value>
+              <ID>0</ID>
+            </Hotkey>
+            <Hotkey>
+              <Action>Decrease Value</Action>
+              <Keys>
+                <Key>40</Key>
+              </Keys>
+              <Value>1</Value>
+              <ID>1</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>70</ID>
+          <Description>"z"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>14</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32619</ID>
+          <Description>"gravity 25"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>170c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32633</ID>
+          <Description>"flying speed 6.5"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>276c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1816</ID>
+          <Description>"move speed multiplier"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>2be8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1817</ID>
+          <Description>"crouch speed 2"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>2bec</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1818</ID>
+          <Description>"run speed 5"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>2bf4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1819</ID>
+          <Description>"sprint speed 8"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>2bf8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32624</ID>
+          <Description>"swimming on water speed 2"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>2c14</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32636</ID>
+          <Description>"swimming under water speed 2"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_coordinates</Address>
+          <Offsets>
+            <Offset>2c1c</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32527</ID>
+      <Description>"build area size"</Description>
+      <Options moHideChildren="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-11
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(build_area,enshrouded_server.exe,F2 0F 10 04 82) // should be unique
+alloc(newmem,$1000,build_area)
+globalalloc(_area,4)
+label(code)
+label(return)
+
+newmem:
+  push rax
+  mov rax,_area
+  mov [rax],rdx
+  pop rax
+
+code:
+  movsd xmm0,[rdx+rax*4]
+  jmp return
+
+build_area:
+  jmp newmem
+return:
+registersymbol(build_area)
+
+[DISABLE]
+
+build_area:
+  db F2 0F 10 04 82
+
+unregistersymbol(build_area)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+B5CD27
+
+enshrouded.exe+B5CD07: 73 32                 - jae enshrouded.exe+B5CD3B
+enshrouded.exe+B5CD09: 49 81 C1 78 01 00 00  - add r9,00000178
+enshrouded.exe+B5CD10: 49 63 01              - movsxd  rax,dword ptr [r9]
+enshrouded.exe+B5CD13: 85 C0                 - test eax,eax
+enshrouded.exe+B5CD15: 75 04                 - jne enshrouded.exe+B5CD1B
+enshrouded.exe+B5CD17: 33 D2                 - xor edx,edx
+enshrouded.exe+B5CD19: EB 04                 - jmp enshrouded.exe+B5CD1F
+enshrouded.exe+B5CD1B: 49 8D 14 01           - lea rdx,[r9+rax]
+enshrouded.exe+B5CD1F: 4B 8D 04 40           - lea rax,[r8+r8*2]
+enshrouded.exe+B5CD23: C6 41 0C 01           - mov byte ptr [rcx+0C],01
+// ---------- INJECTING HERE ----------
+enshrouded.exe+B5CD27: F2 0F 10 04 82        - movsd xmm0,[rdx+rax*4]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+B5CD2C: 8B 44 82 08           - mov eax,[rdx+rax*4+08]
+enshrouded.exe+B5CD30: F2 0F 11 01           - movsd [rcx],xmm0
+enshrouded.exe+B5CD34: 89 41 08              - mov [rcx+08],eax
+enshrouded.exe+B5CD37: 48 8B C1              - mov rax,rcx
+enshrouded.exe+B5CD3A: C3                    - ret 
+enshrouded.exe+B5CD3B: C6 41 0C 00           - mov byte ptr [rcx+0C],00
+enshrouded.exe+B5CD3F: 48 8B C1              - mov rax,rcx
+enshrouded.exe+B5CD42: C3                    - ret 
+enshrouded.exe+B5CD43: CC                    - int 3 
+enshrouded.exe+B5CD44: CC                    - int 3 
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>575</ID>
+          <Description>"x"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>0c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>577</ID>
+          <Description>"y"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>10</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>576</ID>
+          <Description>"z"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>14</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>578</ID>
+          <Description>"x"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>18</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>579</ID>
+          <Description>"y"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>1c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>580</ID>
+          <Description>"z"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>20</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>581</ID>
+          <Description>"x"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>24</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>582</ID>
+          <Description>"y"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>28</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>583</ID>
+          <Description>"z"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>2c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>584</ID>
+          <Description>"x"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>30</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>585</ID>
+          <Description>"y"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>34</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>586</ID>
+          <Description>"z"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>38</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32639</ID>
+          <Description>"x"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>3c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32638</ID>
+          <Description>"y"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>40</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32637</ID>
+          <Description>"z"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_area</Address>
+          <Offsets>
+            <Offset>44</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32861</ID>
+      <Description>"altar far"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-04-24
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(altar_far,enshrouded_server.exe,88 56 69 48 83 BD 60 02 00 00 00) // should be unique
+alloc(newmem,$1000,altar_far)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rsi+69],dl
+  mov byte ptr [rsi+69],04
+  cmp qword ptr [rbp+00000260],00
+  jmp return
+
+altar_far:
+  jmp newmem
+  nop 6
+return:
+registersymbol(altar_far)
+
+[DISABLE]
+
+altar_far:
+  db 88 56 69 48 83 BD 60 02 00 00 00
+
+unregistersymbol(altar_far)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+7AB7F
+
+enshrouded_server.exe+7AB5B: 48 8B 8D E0 01 00 00     - mov rcx,[rbp+000001E0]
+enshrouded_server.exe+7AB62: E8 A9 48 7C 00           - call enshrouded_server.exe+83F410
+enshrouded_server.exe+7AB67: 0F B6 56 69              - movzx edx,byte ptr [rsi+69]
+enshrouded_server.exe+7AB6B: 0F B6 CA                 - movzx ecx,dl
+enshrouded_server.exe+7AB6E: 80 CA 04                 - or dl,04
+enshrouded_server.exe+7AB71: 80 E1 FB                 - and cl,-05
+enshrouded_server.exe+7AB74: 0F B6 D2                 - movzx edx,dl
+enshrouded_server.exe+7AB77: 84 C0                    - test al,al
+enshrouded_server.exe+7AB79: 0F B6 C9                 - movzx ecx,cl
+enshrouded_server.exe+7AB7C: 0F 44 D1                 - cmove edx,ecx
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+7AB7F: 88 56 69                 - mov [rsi+69],dl
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+7AB82: 48 83 BD 60 02 00 00 00  - cmp qword ptr [rbp+00000260],00
+enshrouded_server.exe+7AB8A: 74 5B                    - je enshrouded_server.exe+7ABE7
+enshrouded_server.exe+7AB8C: 48 8D 95 04 01 00 00     - lea rdx,[rbp+00000104]
+enshrouded_server.exe+7AB93: 49 8B CC                 - mov rcx,r12
+enshrouded_server.exe+7AB96: E8 15 9D 55 00           - call enshrouded_server.exe+5D48B0
+enshrouded_server.exe+7AB9B: 48 8B 8D 60 02 00 00     - mov rcx,[rbp+00000260]
+enshrouded_server.exe+7ABA2: 8B 10                    - mov edx,[rax]
+enshrouded_server.exe+7ABA4: E8 07 E8 14 00           - call enshrouded_server.exe+1C93B0
+enshrouded_server.exe+7ABA9: 44 0F B6 46 69           - movzx r8d,byte ptr [rsi+69]
+enshrouded_server.exe+7ABAE: 49 8B D7                 - mov rdx,r15
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32853</ID>
+      <Description>"altar area"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-02-14
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(altar_area,enshrouded_server.exe,41 83 0F 02 48 8B 85 A0 01 00 00) // should be unique
+
+altar_area:
+  or dword ptr [r15],00
+  mov rax,[rbp+000001A0]
+
+registersymbol(altar_area)
+
+[DISABLE]
+
+altar_area:
+  db 41 83 0F 02 48 8B 85 A0 01 00 00
+
+unregistersymbol(altar_area)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+65D50
+
+enshrouded_server.exe+65D25: 75 04                    - jne enshrouded_server.exe+65D2B
+enshrouded_server.exe+65D27: 41 83 0F 08              - or dword ptr [r15],08
+enshrouded_server.exe+65D2B: 80 7F 30 00              - cmp byte ptr [rdi+30],00
+enshrouded_server.exe+65D2F: 74 23                    - je enshrouded_server.exe+65D54
+enshrouded_server.exe+65D31: F3 0F 10 15 2B A6 A7 00  - movss xmm2,[enshrouded_server.exe+AE0364]
+enshrouded_server.exe+65D39: 48 8D 95 80 00 00 00     - lea rdx,[rbp+00000080]
+enshrouded_server.exe+65D40: 48 8B 8E 08 01 00 00     - mov rcx,[rsi+00000108]
+enshrouded_server.exe+65D47: E8 D4 36 79 00           - call enshrouded_server.exe+7F9420
+enshrouded_server.exe+65D4C: 84 C0                    - test al,al
+enshrouded_server.exe+65D4E: 75 04                    - jne enshrouded_server.exe+65D54
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+65D50: 41 83 0F 02              - or dword ptr [r15],02
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+65D54: 48 8B 85 A0 01 00 00     - mov rax,[rbp+000001A0]
+enshrouded_server.exe+65D5B: 0F B6 00                 - movzx eax,byte ptr [rax]
+enshrouded_server.exe+65D5E: A8 08                    - test al,08
+enshrouded_server.exe+65D60: 74 18                    - je enshrouded_server.exe+65D7A
+enshrouded_server.exe+65D62: A8 04                    - test al,04
+enshrouded_server.exe+65D64: 75 1B                    - jne enshrouded_server.exe+65D81
+enshrouded_server.exe+65D66: 48 8B 8E 08 01 00 00     - mov rcx,[rsi+00000108]
+enshrouded_server.exe+65D6D: 48 8D 55 D0              - lea rdx,[rbp-30]
+enshrouded_server.exe+65D71: E8 2A 3C 79 00           - call enshrouded_server.exe+7F99A0
+enshrouded_server.exe+65D76: 84 C0                    - test al,al
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32649</ID>
+      <Description>"fog area"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-27
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(fog_area,enshrouded_server.exe,41 83 0F 04 F3 0F 10 44 24 60) // should be unique
+
+fog_area:
+  or dword ptr [r15],00
+  movss xmm0,[rsp+60]
+
+registersymbol(fog_area)
+
+[DISABLE]
+
+fog_area:
+  db 41 83 0F 04 F3 0F 10 44 24 60
+
+unregistersymbol(fog_area)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+21FB69
+
+enshrouded.exe+21FB44: 48 8D 4D 20        - lea rcx,[rbp+20]
+enshrouded.exe+21FB48: 0F 29 45 A0        - movaps [rbp-60],xmm0
+enshrouded.exe+21FB4C: F2 0F 11 4D B0     - movsd [rbp-50],xmm1
+enshrouded.exe+21FB51: E8 5A 51 C1 00     - call enshrouded.exe+E34CB0
+enshrouded.exe+21FB56: 80 7D 20 00        - cmp byte ptr [rbp+20],00
+enshrouded.exe+21FB5A: 75 11              - jne enshrouded.exe+21FB6D
+enshrouded.exe+21FB5C: 48 8D 4D 24        - lea rcx,[rbp+24]
+enshrouded.exe+21FB60: E8 1B 51 C1 00     - call enshrouded.exe+E34C80
+enshrouded.exe+21FB65: 84 C0              - test al,al
+enshrouded.exe+21FB67: 75 04              - jne enshrouded.exe+21FB6D
+// ---------- INJECTING HERE ----------
+enshrouded.exe+21FB69: 41 83 0F 04        - or dword ptr [r15],04
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+21FB6D: F3 0F 10 44 24 60  - movss xmm0,[rsp+60]
+enshrouded.exe+21FB73: 0F 2F 44 24 50     - comiss xmm0,[rsp+50]
+enshrouded.exe+21FB78: 0F 82 C1 00 00 00  - jb enshrouded.exe+21FC3F
+enshrouded.exe+21FB7E: F3 0F 10 44 24 64  - movss xmm0,[rsp+64]
+enshrouded.exe+21FB84: 0F 2F 44 24 54     - comiss xmm0,[rsp+54]
+enshrouded.exe+21FB89: 0F 82 B0 00 00 00  - jb enshrouded.exe+21FC3F
+enshrouded.exe+21FB8F: F3 0F 10 44 24 68  - movss xmm0,[rsp+68]
+enshrouded.exe+21FB95: 0F 2F 44 24 58     - comiss xmm0,[rsp+58]
+enshrouded.exe+21FB9A: 0F 82 9F 00 00 00  - jb enshrouded.exe+21FC3F
+enshrouded.exe+21FBA0: 0F B6 47 32        - movzx eax,byte ptr [rdi+32]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32852</ID>
+      <Description>"crypt area"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-02-14
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(crypt_area,enshrouded_server.exe,F3 0F 10 45 E0 0F 2F) // should be unique
+
+crypt_area-06:
+  or dword ptr [r15],00
+
+registersymbol(crypt_area)
+
+[DISABLE]
+
+crypt_area-06:
+  db 41 83 0F 10
+
+unregistersymbol(crypt_area)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+66504
+
+enshrouded_server.exe+664E7: 0F B6 44 24 30        - movzx eax,byte ptr [rsp+30]
+enshrouded_server.exe+664EC: A8 02                 - test al,02
+enshrouded_server.exe+664EE: 74 04                 - je enshrouded_server.exe+664F4
+enshrouded_server.exe+664F0: 41 83 0F 20           - or dword ptr [r15],20
+enshrouded_server.exe+664F4: 80 7F 44 00           - cmp byte ptr [rdi+44],00
+enshrouded_server.exe+664F8: 75 65                 - jne enshrouded_server.exe+6655F
+enshrouded_server.exe+664FA: A8 01                 - test al,01
+enshrouded_server.exe+664FC: 74 61                 - je enshrouded_server.exe+6655F
+enshrouded_server.exe+664FE: 41 83 0F 10           - or dword ptr [r15],10
+enshrouded_server.exe+66502: EB 5B                 - jmp enshrouded_server.exe+6655F
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+66504: F3 0F 10 45 E0        - movss xmm0,[rbp-20]
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+66509: 0F 2F 45 D0           - comiss xmm0,[rbp-30]
+enshrouded_server.exe+6650D: 72 50                 - jb enshrouded_server.exe+6655F
+enshrouded_server.exe+6650F: F3 0F 10 45 E4        - movss xmm0,[rbp-1C]
+enshrouded_server.exe+66514: 0F 2F 45 D4           - comiss xmm0,[rbp-2C]
+enshrouded_server.exe+66518: 72 45                 - jb enshrouded_server.exe+6655F
+enshrouded_server.exe+6651A: F3 0F 10 45 E8        - movss xmm0,[rbp-18]
+enshrouded_server.exe+6651F: 0F 2F 45 D8           - comiss xmm0,[rbp-28]
+enshrouded_server.exe+66523: 72 3A                 - jb enshrouded_server.exe+6655F
+enshrouded_server.exe+66525: 0F B6 47 32           - movzx eax,byte ptr [rdi+32]
+enshrouded_server.exe+66529: 4C 8D 8D 80 01 00 00  - lea r9,[rbp+00000180]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1762</ID>
+      <Description>"Glider Flight"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>32857</ID>
+          <Description>"upward pitch angle"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-04-24
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(upward_pitch_angle,enshrouded_server.exe,F2 0F 11 4C 24 40 77) // should be unique
+alloc(newmem,$1000,upward_pitch_angle)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rdx+000000a0],(float)-1.25
+  movss xmm0,[rdx+000000a0] // vanilla = 0.08726646
+  movsd [rsp+40],xmm1
+  jmp return
+
+upward_pitch_angle:
+  jmp newmem
+  nop
+return:
+registersymbol(upward_pitch_angle)
+
+[DISABLE]
+
+upward_pitch_angle:
+  db F2 0F 11 4C 24 40
+
+unregistersymbol(upward_pitch_angle)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+64799
+
+enshrouded_server.exe+6476B: 48 8B 55 C8              - mov rdx,[rbp-38]
+enshrouded_server.exe+6476F: 48 8D 8D C0 0E 00 00     - lea rcx,[rbp+00000EC0]
+enshrouded_server.exe+64776: E8 85 4F 0B 00           - call enshrouded_server.exe+119700
+enshrouded_server.exe+6477B: F2 0F 10 08              - movsd xmm1,[rax]
+enshrouded_server.exe+6477F: 8B 40 08                 - mov eax,[rax+08]
+enshrouded_server.exe+64782: 0F 28 C1                 - movaps xmm0,xmm1
+enshrouded_server.exe+64785: 0F C6 C0 55              - shufps xmm0,xmm0,55
+enshrouded_server.exe+64789: 41 0F 2F C3              - comiss xmm0,xmm11
+enshrouded_server.exe+6478D: 89 44 24 48              - mov [rsp+48],eax
+enshrouded_server.exe+64791: F3 0F 10 05 53 F0 AE 00  - movss xmm0,[enshrouded_server.exe+B537EC]
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+64799: F2 0F 11 4C 24 40        - movsd [rsp+40],xmm1
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+6479F: 77 15                    - ja enshrouded_server.exe+647B6
+enshrouded_server.exe+647A1: 41 0F 2F C1              - comiss xmm0,xmm9
+enshrouded_server.exe+647A5: 77 0F                    - ja enshrouded_server.exe+647B6
+enshrouded_server.exe+647A7: F3 0F 10 35 85 76 AE 00  - movss xmm6,[enshrouded_server.exe+B4BE34]
+enshrouded_server.exe+647AF: F3 41 0F 5D F1           - minss xmm6,xmm9
+enshrouded_server.exe+647B4: EB 03                    - jmp enshrouded_server.exe+647B9
+enshrouded_server.exe+647B6: 0F 28 F0                 - movaps xmm6,xmm0
+enshrouded_server.exe+647B9: F3 0F 10 97 B4 04 00 00  - movss xmm2,[rdi+000004B4]
+enshrouded_server.exe+647C1: F3 41 0F 5C FA           - subss xmm7,xmm10
+enshrouded_server.exe+647C6: F3 0F 10 25 8A 78 AE 00  - movss xmm4,[enshrouded_server.exe+B4C058]
+}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32858</ID>
+          <Description>"downward pitch angle"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-04-24
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(downward_pitch_angle,enshrouded_server.exe,F3 41 0F 5D F1 EB) // should be unique
+alloc(newmem,$1000,downward_pitch_angle)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rdx+000000a4],(float)0
+  movss xmm6,[rdx+000000a4]
+  minss xmm6,xmm9
+  jmp return
+
+downward_pitch_angle:
+  jmp newmem
+return:
+registersymbol(downward_pitch_angle)
+
+[DISABLE]
+
+downward_pitch_angle:
+  db F3 41 0F 5D F1
+
+unregistersymbol(downward_pitch_angle)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+647AF
+
+enshrouded_server.exe+64782: 0F 28 C1                 - movaps xmm0,xmm1
+enshrouded_server.exe+64785: 0F C6 C0 55              - shufps xmm0,xmm0,55
+enshrouded_server.exe+64789: 41 0F 2F C3              - comiss xmm0,xmm11
+enshrouded_server.exe+6478D: 89 44 24 48              - mov [rsp+48],eax
+enshrouded_server.exe+64791: F3 0F 10 05 53 F0 AE 00  - movss xmm0,[enshrouded_server.exe+B537EC]
+enshrouded_server.exe+64799: F2 0F 11 4C 24 40        - movsd [rsp+40],xmm1
+enshrouded_server.exe+6479F: 77 15                    - ja enshrouded_server.exe+647B6
+enshrouded_server.exe+647A1: 41 0F 2F C1              - comiss xmm0,xmm9
+enshrouded_server.exe+647A5: 77 0F                    - ja enshrouded_server.exe+647B6
+enshrouded_server.exe+647A7: F3 0F 10 35 85 76 AE 00  - movss xmm6,[enshrouded_server.exe+B4BE34]
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+647AF: F3 41 0F 5D F1           - minss xmm6,xmm9
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+647B4: EB 03                    - jmp enshrouded_server.exe+647B9
+enshrouded_server.exe+647B6: 0F 28 F0                 - movaps xmm6,xmm0
+enshrouded_server.exe+647B9: F3 0F 10 97 B4 04 00 00  - movss xmm2,[rdi+000004B4]
+enshrouded_server.exe+647C1: F3 41 0F 5C FA           - subss xmm7,xmm10
+enshrouded_server.exe+647C6: F3 0F 10 25 8A 78 AE 00  - movss xmm4,[enshrouded_server.exe+B4C058]
+enshrouded_server.exe+647CE: F3 0F 10 9D F8 13 00 00  - movss xmm3,[rbp+000013F8]
+enshrouded_server.exe+647D6: F3 0F 59 D4              - mulss xmm2,xmm4
+enshrouded_server.exe+647DA: 0F 28 CF                 - movaps xmm1,xmm7
+enshrouded_server.exe+647DD: 0F 28 C7                 - movaps xmm0,xmm7
+enshrouded_server.exe+647E0: 41 0F 57 CC              - xorps xmm1,xmm12
+}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32588</ID>
+          <Description>" turn angle"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-20
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule( turn_angle,enshrouded_server.exe,F3 0F 59 D4 0F 28 CF 0F) // should be unique
+alloc(newmem,$1000, turn_angle)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rdx+000000a8],(float)0.036
+  movss xmm4,[rdx+000000a8]
+  mulss xmm2,xmm4
+  movaps xmm1,xmm7
+  jmp return
+
+ turn_angle:
+  jmp newmem
+  nop 2
+return:
+registersymbol( turn_angle)
+
+[DISABLE]
+
+ turn_angle:
+  db F3 0F 59 D4 0F 28 CF
+
+unregistersymbol( turn_angle)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+1FDB64
+
+enshrouded.exe+1FDB30: 41 0F 2F C3              - comiss xmm0,xmm11
+enshrouded.exe+1FDB34: 77 0F                    - ja enshrouded.exe+1FDB45
+enshrouded.exe+1FDB36: F3 0F 10 35 FA A5 05 01  - movss xmm6,[enshrouded.exe+1258138]
+enshrouded.exe+1FDB3E: F3 41 0F 5D F3           - minss xmm6,xmm11
+enshrouded.exe+1FDB43: EB 03                    - jmp enshrouded.exe+1FDB48
+enshrouded.exe+1FDB45: 0F 28 F0                 - movaps xmm6,xmm0
+enshrouded.exe+1FDB48: F3 0F 10 9D 90 13 00 00  - movss xmm3,[rbp+00001390]
+enshrouded.exe+1FDB50: F3 0F 10 97 C0 04 00 00  - movss xmm2,[rdi+000004C0]
+enshrouded.exe+1FDB58: F3 0F 5C FB              - subss xmm7,xmm3
+enshrouded.exe+1FDB5C: F3 0F 10 25 EC 49 F1 00  - movss xmm4,[enshrouded.exe+1112550]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+1FDB64: F3 0F 59 D4              - mulss xmm2,xmm4
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+1FDB68: 0F 28 CF                 - movaps xmm1,xmm7
+enshrouded.exe+1FDB6B: 0F 28 C7                 - movaps xmm0,xmm7
+enshrouded.exe+1FDB6E: 41 0F 57 CA              - xorps xmm1,xmm10
+enshrouded.exe+1FDB72: F3 41 0F 59 D6           - mulss xmm2,xmm14
+enshrouded.exe+1FDB77: F3 0F 5F C1              - maxss xmm0,xmm1
+enshrouded.exe+1FDB7B: 0F 2F C2                 - comiss xmm0,xmm2
+enshrouded.exe+1FDB7E: 76 26                    - jna enshrouded.exe+1FDBA6
+enshrouded.exe+1FDB80: 41 0F 2E F9              - ucomiss xmm7,xmm9
+enshrouded.exe+1FDB84: 7A 08                    - jp enshrouded.exe+1FDB8E
+enshrouded.exe+1FDB86: 75 06                    - jne enshrouded.exe+1FDB8E
+}
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32859</ID>
+      <Description>"glider"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version: 
+  Date   : 2026-04-24
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(glider,enshrouded_server.exe,F3 41 0F 10 84 24 A4 04 00 00) // should be unique
+alloc(newmem,$1000,glider)
+globalalloc(_glider,4)
+label(code)
+label(return)
+
+newmem:
+  push rax
+  mov rax,_glider
+  mov [rax],r12
+  pop rax
+
+code:
+  movss xmm0,[r12+000004A4]
+  jmp return
+
+glider:
+  jmp newmem
+  nop 5
+return:
+registersymbol(glider)
+
+[DISABLE]
+
+glider:
+  db F3 41 0F 10 84 24 A4 04 00 00
+
+unregistersymbol(glider)
+dealloc(newmem)
+dealloc(_glider)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+17F54C
+
+enshrouded_server.exe+17F520: F2 48 0F 2A C0                 - cvtsi2sd xmm0,rax
+enshrouded_server.exe+17F525: F2 0F 59 05 4B 95 9C 00        - mulsd xmm0,[enshrouded_server.exe+B48A78]
+enshrouded_server.exe+17F52D: 66 0F 5A C8                    - cvtpd2ps xmm1,xmm0
+enshrouded_server.exe+17F531: F3 0F 59 0D 47 95 9C 00        - mulss xmm1,[enshrouded_server.exe+B48A80]
+enshrouded_server.exe+17F539: 44 0F 2F C9                    - comiss xmm9,xmm1
+enshrouded_server.exe+17F53D: 72 05                          - jb enshrouded_server.exe+17F544
+enshrouded_server.exe+17F53F: 0F 57 D2                       - xorps xmm2,xmm2
+enshrouded_server.exe+17F542: EB 08                          - jmp enshrouded_server.exe+17F54C
+enshrouded_server.exe+17F544: 41 0F 28 D2                    - movaps xmm2,xmm10
+enshrouded_server.exe+17F548: F3 0F 5D D1                    - minss xmm2,xmm1
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+17F54C: F3 41 0F 10 84 24 A4 04 00 00  - movss xmm0,[r12+000004A4]
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+17F556: 4C 8D AE C0 00 00 00           - lea r13,[rsi+000000C0]
+enshrouded_server.exe+17F55D: F3 44 0F 10 7C 24 44           - movss xmm15,[rsp+44]
+enshrouded_server.exe+17F564: 4C 8D A6 B8 00 00 00           - lea r12,[rsi+000000B8]
+enshrouded_server.exe+17F56B: 49 8B 45 00                    - mov rax,[r13+00]
+enshrouded_server.exe+17F56F: 48 8D 9E 98 00 00 00           - lea rbx,[rsi+00000098]
+enshrouded_server.exe+17F576: 41 0F 28 CA                    - movaps xmm1,xmm10
+enshrouded_server.exe+17F57A: 41 0F 28 DC                    - movaps xmm3,xmm12
+enshrouded_server.exe+17F57E: F3 0F 59 D8                    - mulss xmm3,xmm0
+enshrouded_server.exe+17F582: F3 0F 5C CF                    - subss xmm1,xmm7
+enshrouded_server.exe+17F586: 41 0F 28 FE                    - movaps xmm7,xmm14
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1775</ID>
+          <Description>"move speed 0.8"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_glider</Address>
+          <Offsets>
+            <Offset>4a4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1776</ID>
+          <Description>"lift speed 0.39"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_glider</Address>
+          <Offsets>
+            <Offset>4a8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1777</ID>
+          <Description>"descend speed 0.7125"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_glider</Address>
+          <Offsets>
+            <Offset>4b0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1778</ID>
+          <Description>"turn speed 70"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>_glider</Address>
+          <Offsets>
+            <Offset>4b4</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32697</ID>
+      <Description>"id building block fixxx"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded_server.exe
+  Version:
+  Date   : 2026-02-14
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(id_building_block,enshrouded_server.exe,44 0F B6 A0 48 04 00 00) // should be unique
+alloc(newmem,$1000,id_building_block)
+alloc(_block_id,4)
+label(code)
+label(return)
+
+newmem:
+  mov [_block_id],rax
+
+code:
+  movzx r12d,byte ptr [rax+00000448]
+  jmp return
+
+id_building_block:
+  jmp newmem
+  nop 3
+return:
+registersymbol(id_building_block)
+registersymbol(_block_id)
+
+[DISABLE]
+
+id_building_block:
+  db 44 0F B6 A0 48 04 00 00
+
+unregistersymbol(id_building_block)
+unregistersymbol(_block_id)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded_server.exe+64838
+
+enshrouded_server.exe+6480A: 48 89 4C 24 28           - mov [rsp+28],rcx
+enshrouded_server.exe+6480F: 48 8B 8D 50 01 00 00     - mov rcx,[rbp+00000150]
+enshrouded_server.exe+64816: 48 89 4C 24 20           - mov [rsp+20],rcx
+enshrouded_server.exe+6481B: 49 8B CF                 - mov rcx,r15
+enshrouded_server.exe+6481E: E8 ED 83 13 00           - call enshrouded_server.exe+19CC10
+enshrouded_server.exe+64823: 48 85 C0                 - test rax,rax
+enshrouded_server.exe+64826: 74 24                    - je enshrouded_server.exe+6484C
+enshrouded_server.exe+64828: 48 8B 88 40 04 00 00     - mov rcx,[rax+00000440]
+enshrouded_server.exe+6482F: 48 0B 88 38 04 00 00     - or rcx,[rax+00000438]
+enshrouded_server.exe+64836: 74 14                    - je enshrouded_server.exe+6484C
+// ---------- INJECTING HERE ----------
+enshrouded_server.exe+64838: 44 0F B6 A0 48 04 00 00  - movzx r12d,byte ptr [rax+00000448]
+// ---------- DONE INJECTING  ----------
+enshrouded_server.exe+64840: 44 88 A5 90 08 00 00     - mov [rbp+00000890],r12b
+enshrouded_server.exe+64847: 45 33 E4                 - xor r12d,r12d
+enshrouded_server.exe+6484A: EB 07                    - jmp enshrouded_server.exe+64853
+enshrouded_server.exe+6484C: C6 85 90 08 00 00 00     - mov byte ptr [rbp+00000890],00
+enshrouded_server.exe+64853: 48 8B 8D C0 00 00 00     - mov rcx,[rbp+000000C0]
+enshrouded_server.exe+6485A: E8 41 7B 78 00           - call enshrouded_server.exe+7EC3A0
+enshrouded_server.exe+6485F: 48 8B 8D F0 00 00 00     - mov rcx,[rbp+000000F0]
+enshrouded_server.exe+64866: 8B D8                    - mov ebx,eax
+enshrouded_server.exe+64868: E8 53 74 11 00           - call enshrouded_server.exe+17BCC0
+enshrouded_server.exe+6486D: 0F B6 56 69              - movzx edx,byte ptr [rsi+69]
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>32584</ID>
+          <Description>"id building block"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Byte</VariableType>
+          <Address>_block_id</Address>
+          <Offsets>
+            <Offset>448</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32698</ID>
+      <Description>"swimming in air (need do one jump) fixxx"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-12-16
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(swimming,enshrouded_server.exe,88 41 3D 48 8B 4D 98) // should be unique
+alloc(newmem,$1000,swimming)
+
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rcx+000000bc],40d00000 // comparing with flying speed
+  je hero_code
+
+code:
+  mov [rcx+3D],al
+  mov rcx,[rbp-68]
+  jmp return
+
+hero_code:
+  mov [rcx+3D],al
+  mov byte ptr [rcx+3D],0a
+  mov rcx,[rbp-68]
+  jmp return
+
+swimming:
+  jmp newmem
+  nop 2
+return:
+registersymbol(swimming)
+
+[DISABLE]
+
+swimming:
+  db 88 41 3D 48 8B 4D 98
+
+unregistersymbol(swimming)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+35F971
+
+enshrouded.exe+35F94E: 48 89 44 24 20     - mov [rsp+20],rax
+enshrouded.exe+35F953: E8 98 DE FE FF     - call enshrouded.exe+34D7F0
+enshrouded.exe+35F958: 48 8B 4D 98        - mov rcx,[rbp-68]
+enshrouded.exe+35F95C: 38 41 3D           - cmp [rcx+3D],al
+enshrouded.exe+35F95F: 74 17              - je enshrouded.exe+35F978
+enshrouded.exe+35F961: 48 8B 55 A0        - mov rdx,[rbp-60]
+enshrouded.exe+35F965: 48 85 D2           - test rdx,rdx
+enshrouded.exe+35F968: 74 07              - je enshrouded.exe+35F971
+enshrouded.exe+35F96A: F0 FF 02           - lock inc [rdx]
+enshrouded.exe+35F96D: 48 8B 4D 98        - mov rcx,[rbp-68]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+35F971: 88 41 3D           - mov [rcx+3D],al
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+35F974: 48 8B 4D 98        - mov rcx,[rbp-68]
+enshrouded.exe+35F978: 40 84 F6           - test sil,sil
+enshrouded.exe+35F97B: 0F 85 9E 02 00 00  - jne enshrouded.exe+35FC1F
+enshrouded.exe+35F981: 80 79 3D 01        - cmp byte ptr [rcx+3D],01
+enshrouded.exe+35F985: 0F 85 94 02 00 00  - jne enshrouded.exe+35FC1F
+enshrouded.exe+35F98B: 48 8B 54 24 68     - mov rdx,[rsp+68]
+enshrouded.exe+35F990: 48 8D 4D B0        - lea rcx,[rbp-50]
+enshrouded.exe+35F994: E8 C7 96 80 00     - call enshrouded.exe+B69060
+enshrouded.exe+35F999: 48 8B 45 90        - mov rax,[rbp-70]
+enshrouded.exe+35F99D: 48 85 C0           - test rax,rax
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32700</ID>
+      <Description>"walking in air (use with flying) fixxx"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-12-16
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(walking,enshrouded_server.exe,88 41 3D 48 8B 4D 98) // should be unique
+alloc(newmem,$1000,walking)
+
+label(code)
+label(hero_code)
+label(return)
+
+newmem:
+  cmp [rcx+000000bc],40d00000 // comparing with flying speed
+  je hero_code
+
+code:
+  mov [rcx+3D],al
+  mov rcx,[rbp-68]
+  jmp return
+
+hero_code:
+  mov [rcx+3D],al
+  mov byte ptr [rcx+3D],00
+  mov rcx,[rbp-68]
+  jmp return
+
+walking:
+  jmp newmem
+  nop 2
+return:
+registersymbol(walking)
+
+[DISABLE]
+
+walking:
+  db 88 41 3D 48 8B 4D 98
+
+unregistersymbol(walking)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+35F971
+
+enshrouded.exe+35F94E: 48 89 44 24 20     - mov [rsp+20],rax
+enshrouded.exe+35F953: E8 98 DE FE FF     - call enshrouded.exe+34D7F0
+enshrouded.exe+35F958: 48 8B 4D 98        - mov rcx,[rbp-68]
+enshrouded.exe+35F95C: 38 41 3D           - cmp [rcx+3D],al
+enshrouded.exe+35F95F: 74 17              - je enshrouded.exe+35F978
+enshrouded.exe+35F961: 48 8B 55 A0        - mov rdx,[rbp-60]
+enshrouded.exe+35F965: 48 85 D2           - test rdx,rdx
+enshrouded.exe+35F968: 74 07              - je enshrouded.exe+35F971
+enshrouded.exe+35F96A: F0 FF 02           - lock inc [rdx]
+enshrouded.exe+35F96D: 48 8B 4D 98        - mov rcx,[rbp-68]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+35F971: 88 41 3D           - mov [rcx+3D],al
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+35F974: 48 8B 4D 98        - mov rcx,[rbp-68]
+enshrouded.exe+35F978: 40 84 F6           - test sil,sil
+enshrouded.exe+35F97B: 0F 85 9E 02 00 00  - jne enshrouded.exe+35FC1F
+enshrouded.exe+35F981: 80 79 3D 01        - cmp byte ptr [rcx+3D],01
+enshrouded.exe+35F985: 0F 85 94 02 00 00  - jne enshrouded.exe+35FC1F
+enshrouded.exe+35F98B: 48 8B 54 24 68     - mov rdx,[rsp+68]
+enshrouded.exe+35F990: 48 8D 4D B0        - lea rcx,[rbp-50]
+enshrouded.exe+35F994: E8 C7 96 80 00     - call enshrouded.exe+B69060
+enshrouded.exe+35F999: 48 8B 45 90        - mov rax,[rbp-70]
+enshrouded.exe+35F99D: 48 85 C0           - test rax,rax
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32646</ID>
+      <Description>"walking under water"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-25
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(walking_underwater,enshrouded_server.exe,F3 0F 10 C1 0F C6 C0 E1 F2 41) // should be unique
+alloc(newmem,$1000,walking_underwater)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  subss xmm0,xmm1
+  shufps xmm0,xmm0,-1F
+  jmp return
+
+walking_underwater:
+  jmp newmem
+  nop 3
+return:
+registersymbol(walking_underwater)
+
+[DISABLE]
+
+walking_underwater:
+  db F3 0F 10 C1 0F C6 C0 E1
+
+unregistersymbol(walking_underwater)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+34BAFB
+
+enshrouded.exe+34BACD: F3 41 0F 10 38           - movss xmm7,[r8]
+enshrouded.exe+34BAD2: EB 03                    - jmp enshrouded.exe+34BAD7
+enshrouded.exe+34BAD4: 0F 57 FF                 - xorps xmm7,xmm7
+enshrouded.exe+34BAD7: F2 41 0F 10 01           - movsd xmm0,[r9]
+enshrouded.exe+34BADC: 4C 8D 44 24 20           - lea r8,[rsp+20]
+enshrouded.exe+34BAE1: 0F C6 C0 E1              - shufps xmm0,xmm0,-1F
+enshrouded.exe+34BAE5: 48 8D 4C 24 40           - lea rcx,[rsp+40]
+enshrouded.exe+34BAEA: 0F 28 CF                 - movaps xmm1,xmm7
+enshrouded.exe+34BAED: F3 0F 58 0D DB 88 DC 00  - addss xmm1,[enshrouded.exe+11143D0]
+enshrouded.exe+34BAF5: F3 41 0F 58 49 04        - addss xmm1,[r9+04]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+34BAFB: F3 0F 10 C1              - movss xmm0,xmm1
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+34BAFF: 0F C6 C0 E1              - shufps xmm0,xmm0,-1F
+enshrouded.exe+34BB03: F2 41 0F 11 01           - movsd [r9],xmm0
+enshrouded.exe+34BB08: 41 8B 41 08              - mov eax,[r9+08]
+enshrouded.exe+34BB0C: 45 33 C9                 - xor r9d,r9d
+enshrouded.exe+34BB0F: F2 0F 11 44 24 20        - movsd [rsp+20],xmm0
+enshrouded.exe+34BB15: 89 44 24 28              - mov [rsp+28],eax
+enshrouded.exe+34BB19: E8 32 CC A3 00           - call enshrouded.exe+D88750
+enshrouded.exe+34BB1E: 0F B6 4C 24 4C           - movzx ecx,byte ptr [rsp+4C]
+enshrouded.exe+34BB23: 84 C9                    - test cl,cl
+enshrouded.exe+34BB25: 75 0A                    - jne enshrouded.exe+34BB31
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32655</ID>
+      <Description>"swimming in air alt"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-27
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(swimming_air,enshrouded_server.exe,B0 02 0F 28 74 24 30) // should be unique
+
+swimming_air:
+  mov al,0a
+  movaps xmm6,[rsp+30]
+
+registersymbol(swimming_air)
+
+[DISABLE]
+
+swimming_air:
+  db B0 02 0F 28 74 24 30
+
+unregistersymbol(swimming_air)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+34B765
+
+enshrouded.exe+34B748: 48 8B D3        - mov rdx,rbx
+enshrouded.exe+34B74B: 0F 94 C0        - sete al
+enshrouded.exe+34B74E: 48 8B CD        - mov rcx,rbp
+enshrouded.exe+34B751: 88 44 24 20     - mov [rsp+20],al
+enshrouded.exe+34B755: E8 06 09 00 00  - call enshrouded.exe+34C060
+enshrouded.exe+34B75A: 84 C0           - test al,al
+enshrouded.exe+34B75C: 0F 95 C0        - setne al
+enshrouded.exe+34B75F: EB 06           - jmp enshrouded.exe+34B767
+enshrouded.exe+34B761: 32 C0           - xor al,al
+enshrouded.exe+34B763: EB 02           - jmp enshrouded.exe+34B767
+// ---------- INJECTING HERE ----------
+enshrouded.exe+34B765: B0 02           - mov al,02
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+34B767: 0F 28 74 24 30  - movaps xmm6,[rsp+30]
+enshrouded.exe+34B76C: 48 8B 5C 24 50  - mov rbx,[rsp+50]
+enshrouded.exe+34B771: 48 8B 6C 24 58  - mov rbp,[rsp+58]
+enshrouded.exe+34B776: 48 8B 74 24 60  - mov rsi,[rsp+60]
+enshrouded.exe+34B77B: 48 8B 7C 24 68  - mov rdi,[rsp+68]
+enshrouded.exe+34B780: 48 83 C4 40     - add rsp,40
+enshrouded.exe+34B784: 41 5E           - pop r14
+enshrouded.exe+34B786: C3              - ret 
+enshrouded.exe+34B787: CC              - int 3 
+enshrouded.exe+34B788: CC              - int 3 
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32656</ID>
+      <Description>"walking in air alt"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-27
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(walking_air,enshrouded_server.exe,B0 02 0F 28 74 24 30) // should be unique
+
+walking_air:
+  mov al,00
+  movaps xmm6,[rsp+30]
+
+registersymbol(walking_air)
+
+[DISABLE]
+
+walking_air:
+  db B0 02 0F 28 74 24 30
+
+unregistersymbol(walking_air)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+34B765
+
+enshrouded.exe+34B748: 48 8B D3        - mov rdx,rbx
+enshrouded.exe+34B74B: 0F 94 C0        - sete al
+enshrouded.exe+34B74E: 48 8B CD        - mov rcx,rbp
+enshrouded.exe+34B751: 88 44 24 20     - mov [rsp+20],al
+enshrouded.exe+34B755: E8 06 09 00 00  - call enshrouded.exe+34C060
+enshrouded.exe+34B75A: 84 C0           - test al,al
+enshrouded.exe+34B75C: 0F 95 C0        - setne al
+enshrouded.exe+34B75F: EB 06           - jmp enshrouded.exe+34B767
+enshrouded.exe+34B761: 32 C0           - xor al,al
+enshrouded.exe+34B763: EB 02           - jmp enshrouded.exe+34B767
+// ---------- INJECTING HERE ----------
+enshrouded.exe+34B765: B0 02           - mov al,02
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+34B767: 0F 28 74 24 30  - movaps xmm6,[rsp+30]
+enshrouded.exe+34B76C: 48 8B 5C 24 50  - mov rbx,[rsp+50]
+enshrouded.exe+34B771: 48 8B 6C 24 58  - mov rbp,[rsp+58]
+enshrouded.exe+34B776: 48 8B 74 24 60  - mov rsi,[rsp+60]
+enshrouded.exe+34B77B: 48 8B 7C 24 68  - mov rdi,[rsp+68]
+enshrouded.exe+34B780: 48 83 C4 40     - add rsp,40
+enshrouded.exe+34B784: 41 5E           - pop r14
+enshrouded.exe+34B786: C3              - ret 
+enshrouded.exe+34B787: CC              - int 3 
+enshrouded.exe+34B788: CC              - int 3 
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32662</ID>
+      <Description>"walking under water alt"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2025-11-28
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(walking_underwater_alt,enshrouded_server.exe,48 8B 43 30 0F 57 C0 F3) // should be unique
+
+walking_underwater_alt-15:
+  mov al,00
+
+walking_underwater_alt+15:
+  mov al,00
+
+registersymbol(walking_underwater_alt)
+
+[DISABLE]
+
+walking_underwater_alt-15:
+  db B0 28
+
+walking_underwater_alt+15:
+  db B0 27
+
+unregistersymbol(walking_underwater_alt)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+3498BE
+
+enshrouded.exe+34989B: F3 0F 10 05 85 86 F4 00  - movss xmm0,[enshrouded.exe+1291F28]
+enshrouded.exe+3498A3: 0F 2F 40 04              - comiss xmm0,[rax+04]
+enshrouded.exe+3498A7: 72 07                    - jb enshrouded.exe+3498B0
+enshrouded.exe+3498A9: B0 28                    - mov al,28
+enshrouded.exe+3498AB: E9 F9 FE FF FF           - jmp enshrouded.exe+3497A9
+enshrouded.exe+3498B0: 48 8B 0B                 - mov rcx,[rbx]
+enshrouded.exe+3498B3: B2 01                    - mov dl,01
+enshrouded.exe+3498B5: E8 16 A5 E6 FF           - call enshrouded.exe+1B3DD0
+enshrouded.exe+3498BA: 84 C0                    - test al,al
+enshrouded.exe+3498BC: 74 15                    - je enshrouded.exe+3498D3
+// ---------- INJECTING HERE ----------
+enshrouded.exe+3498BE: 48 8B 43 30              - mov rax,[rbx+30]
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+3498C2: 0F 57 C0                 - xorps xmm0,xmm0
+enshrouded.exe+3498C5: F3 0F 10 48 04           - movss xmm1,[rax+04]
+enshrouded.exe+3498CA: 0F 2F C8                 - comiss xmm1,xmm0
+enshrouded.exe+3498CD: 0F 87 D4 FE FF FF        - ja enshrouded.exe+3497A7
+enshrouded.exe+3498D3: B0 27                    - mov al,27
+enshrouded.exe+3498D5: E9 CF FE FF FF           - jmp enshrouded.exe+3497A9
+enshrouded.exe+3498DA: CC                       - int 3 
+enshrouded.exe+3498DB: CC                       - int 3 
+enshrouded.exe+3498DC: CC                       - int 3 
+enshrouded.exe+3498DD: CC                       - int 3 
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32725</ID>
+      <Description>"invisibility (before detection) fixxx"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2026-01-07
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(invisibility,enshrouded_server.exe,41 89 4C 24 60) // should be unique
+alloc(newmem,$1000,invisibility)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [r12+60],ecx
+  mov byte ptr [r12+60],00
+  jmp return
+
+invisibility:
+  jmp newmem
+return:
+registersymbol(invisibility)
+
+[DISABLE]
+
+invisibility:
+  db 41 89 4C 24 60
+
+unregistersymbol(invisibility)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+38B9FA
+
+enshrouded.exe+38B9CD: 41 39 7C 24 60              - cmp [r12+60],edi
+enshrouded.exe+38B9D2: 0F 85 13 01 00 00           - jne enshrouded.exe+38BAEB
+enshrouded.exe+38B9D8: 8B 4E 34                    - mov ecx,[rsi+34]
+enshrouded.exe+38B9DB: 41 8B 44 24 60              - mov eax,[r12+60]
+enshrouded.exe+38B9E0: 3B C1                       - cmp eax,ecx
+enshrouded.exe+38B9E2: 0F 84 E5 00 00 00           - je enshrouded.exe+38BACD
+enshrouded.exe+38B9E8: 80 FA 03                    - cmp dl,03
+enshrouded.exe+38B9EB: 0F 82 DC 00 00 00           - jb enshrouded.exe+38BACD
+enshrouded.exe+38B9F1: 4C 3B C3                    - cmp r8,rbx
+enshrouded.exe+38B9F4: 0F 8C D3 00 00 00           - jl enshrouded.exe+38BACD
+// ---------- INJECTING HERE ----------
+enshrouded.exe+38B9FA: 41 89 4C 24 60              - mov [r12+60],ecx
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+38B9FF: 33 D2                       - xor edx,edx
+enshrouded.exe+38BA01: 66 41 FF 84 24 80 00 00 00  - inc word ptr [r12+00000080]
+enshrouded.exe+38BA0A: 48 8D 8D C0 02 00 00        - lea rcx,[rbp+000002C0]
+enshrouded.exe+38BA11: 41 88 BC 24 82 00 00 00     - mov [r12+00000082],dil
+enshrouded.exe+38BA19: E8 A2 F7 37 00              - call enshrouded.exe+70B1C0
+enshrouded.exe+38BA1E: 48 8D 95 C0 02 00 00        - lea rdx,[rbp+000002C0]
+enshrouded.exe+38BA25: 49 8B CD                    - mov rcx,r13
+enshrouded.exe+38BA28: E8 53 15 4B 00              - call enshrouded.exe+83CF80
+enshrouded.exe+38BA2D: 41 B8 00 65 CD 1D           - mov r8d,1DCD6500
+enshrouded.exe+38BA33: 48 8D 8D C0 02 00 00        - lea rcx,[rbp+000002C0]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32728</ID>
+      <Description>"invisibility alt (after detection)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : enshrouded.exe
+  Version: 
+  Date   : 2026-01-07
+  Author : SERGEJ
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(invisibility_alt,enshrouded_server.exe,89 42 34 0F B6 46 10) // should be unique
+alloc(newmem,$1000,invisibility_alt)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [rdx+34],eax
+  mov byte ptr [rdx+34],00
+  movzx eax,byte ptr [rsi+10]
+  jmp return
+
+invisibility_alt:
+  jmp newmem
+  nop 2
+return:
+registersymbol(invisibility_alt)
+
+[DISABLE]
+
+invisibility_alt:
+  db 89 42 34 0F B6 46 10
+
+unregistersymbol(invisibility_alt)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: enshrouded.exe+389E06
+
+enshrouded.exe+389DDE: 49 8B CF           - mov rcx,r15
+enshrouded.exe+389DE1: E8 CA B9 F6 FF     - call enshrouded.exe+2F57B0
+enshrouded.exe+389DE6: 49 6B D6 70        - imul rdx,r14,70
+enshrouded.exe+389DEA: 49 03 D7           - add rdx,r15
+enshrouded.exe+389DED: 48 85 D2           - test rdx,rdx
+enshrouded.exe+389DF0: 0F 84 C6 00 00 00  - je enshrouded.exe+389EBC
+enshrouded.exe+389DF6: 0F B6 4A 30        - movzx ecx,byte ptr [rdx+30]
+enshrouded.exe+389DFA: 80 F9 01           - cmp cl,01
+enshrouded.exe+389DFD: 0F 84 B9 00 00 00  - je enshrouded.exe+389EBC
+enshrouded.exe+389E03: 8B 46 0C           - mov eax,[rsi+0C]
+// ---------- INJECTING HERE ----------
+enshrouded.exe+389E06: 89 42 34           - mov [rdx+34],eax
+// ---------- DONE INJECTING  ----------
+enshrouded.exe+389E09: 0F B6 46 10        - movzx eax,byte ptr [rsi+10]
+enshrouded.exe+389E0D: 88 42 58           - mov [rdx+58],al
+enshrouded.exe+389E10: 84 C9              - test cl,cl
+enshrouded.exe+389E12: 75 45              - jne enshrouded.exe+389E59
+enshrouded.exe+389E14: 38 4A 48           - cmp [rdx+48],cl
+enshrouded.exe+389E17: 75 38              - jne enshrouded.exe+389E51
+enshrouded.exe+389E19: F3 0F 10 4A 20     - movss xmm1,[rdx+20]
+enshrouded.exe+389E1E: F3 0F 58 4E 08     - addss xmm1,[rsi+08]
+enshrouded.exe+389E23: 0F 28 C1           - movaps xmm0,xmm1
+enshrouded.exe+389E26: 0F 57 C7           - xorps xmm0,xmm7
+}
+</AssemblerScript>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>_coordinates</Name>
+      <Address>1B13ACB0020</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>_area</Name>
+      <Address>1B13ACB0040</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>_items</Name>
+      <Address>1B13ACB0000</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>_fall_damage_height</Name>
+      <Address>1B13ACB0010</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>_glider</Name>
+      <Address>1B13ACB0030</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+</CheatTable>

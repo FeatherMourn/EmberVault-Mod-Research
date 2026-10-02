@@ -1,0 +1,17 @@
+CODE-0015 — Flame Altar Tweaks enabled/increased
+
+Purpose:
+- Enable the existing Flame Altar tweak module.
+- Raise per-Flame-level altar allowance to 5x the vanilla table values.
+- Cap the resulting count at 100.
+- Keep a higher safety clamp (20x) so later tuning can be increased without rewriting the patch logic.
+
+Files:
+- Flame_Altar_Tweaks_Enabled.lua — exact delivered file
+- CODE-0015-MANIFEST.json — hashes and change record
+
+Validation:
+- Exact diff reviewed.
+- Existing patch logic left unchanged.
+- Lua compiler/interpreter was not available in the execution environment.
+- Enshrouded runtime behavior remains EXPERIMENTAL until tested in-game.

@@ -1,0 +1,7 @@
+ARCHITECT TOOLKIT CODE-0014 TEST ONLY
+
+This sibling mod is opt-in and preview-only. It must never replace
+architect_toolkit or Architect_Mod/Current. Do not place canaries.
+
+Enable by placing this complete directory under the game's mods directory.
+Disable by moving/removing this directory after archiving it.

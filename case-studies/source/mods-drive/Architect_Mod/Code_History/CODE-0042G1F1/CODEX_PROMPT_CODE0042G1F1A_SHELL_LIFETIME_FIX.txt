@@ -1,0 +1,176 @@
+CODE-0042G1F1A — CLOSE SHELL UI-ONLY GAP + FIX ACTIVE-BINDING PRUNING
+
+Scope: Architect Toolkit F7 shell lifecycle only
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+DO NOT:
+- migrate/canonicalize the AOB Scanner in this pass;
+- change admin_action_registry.json;
+- migrate other F7 pages;
+- begin responsive layout conversion;
+- add gameplay/native functionality.
+
+GOAL
+
+Finish G1F1 correctly by:
+1. migrating the one missed UI-only shell event (`adminContent.SizeChanged`);
+2. fixing `Clear-AdminContent` so PAGE/stale bindings are pruned deterministically and only live SHELL bindings survive.
+
+REGISTRY
+
+Must remain exactly 54 unique actions.
+No action metadata or enablement changes.
+
+A. MIGRATE THE MISSED SHELL EVENT
+
+Current raw site:
+
+`$adminContent.Add_SizeChanged({ Resize-AdminPageChildren })`
+
+Classification:
+UI_ONLY
+
+Replace it with `Register-F7UiEvent`:
+
+- EventId: `f7.shell.content.sizeChanged`
+- EventName: `SizeChanged`
+- Page: `Shell`
+- Operation: `ResizeAdminPageChildren`
+- LifetimeScope: `SHELL`
+- Handler: preserve exact current behavior (`Resize-AdminPageChildren`)
+
+After this:
+- no raw UI-only event registration should remain in the F7 shell.
+
+B. FIX CLEAR-ADMIN-CONTENT PRUNING
+
+Current logic is wrong because it removes only non-SHELL bindings whose Control exists and is not disposed.
+
+That leaves stale entries when:
+- PAGE control is disposed;
+- PAGE control is null;
+- SHELL control is disposed.
+
+Implement deterministic pruning with this semantic order:
+
+For every active binding:
+1. Determine whether the bound object is still live.
+2. If the object is missing/null -> remove it.
+3. If it exposes an `IsDisposed` property and `IsDisposed == true` -> remove it.
+4. If it is live and `LifetimeScope != "SHELL"` -> remove it.
+5. Preserve only live `SHELL` bindings.
+
+IMPORTANT:
+Some shell event sources (for example `System.Windows.Forms.Timer`) may not expose `IsDisposed` the same way as `Control`.
+Do not blindly dereference `.IsDisposed` for every object.
+
+Use property-safe logic, e.g. inspect:
+`$binding.Control.PSObject.Properties['IsDisposed']`
+before reading the property.
+
+Then rebuild `$script:adminActionControls` from surviving active bindings only:
+- only entries with nonempty ActionId;
+- only live surviving controls/components appropriate for action controls;
+- do not retain stale page controls.
+
+C. AUDIT
+
+Add or strengthen deterministic shell raw-event reporting.
+
+At minimum expose/report:
+- shellUiOnlyRawRegistrations
+- shellActionRawRegistrations
+- shellTotalRawRegistrations
+
+Define the F7 shell scope explicitly around:
+- admin form/header/content/navigation/bounds timer lifecycle registrations;
+- exclude the separate F8 `$form` handlers.
+
+After this pass acceptance is:
+
+- shellUiOnlyRawRegistrations = 0
+- shellActionRawRegistrations = 1
+- shellTotalRawRegistrations = 1
+
+The one remaining raw shell registration must be exactly:
+`Register-SafeUiEvent $script:btnScannerToggle "Click" ...`
+
+Do NOT exclude scanner just to make the count zero.
+
+D. LIFECYCLE TEST
+
+Extend the existing lifecycle test or add a narrow deterministic helper test.
+
+Test at least:
+1. create/register representative live SHELL UI-only controls/components;
+2. create/register representative PAGE binding;
+3. dispose one PAGE control before clear;
+4. optionally create a disposed SHELL control;
+5. call `Clear-AdminContent` or the extracted pruning helper;
+6. assert:
+   - live SHELL bindings survive;
+   - all PAGE bindings are gone, including already-disposed/null PAGE entries;
+   - disposed SHELL binding is gone;
+   - no stale/disposed active binding remains;
+   - action-control map contains only surviving live ACTION controls;
+   - `f7.shell.content.sizeChanged` definition/binding survives page clear;
+   - shell navigation definitions remain stable.
+
+If the full UI cannot run headless, test the actual pruning helper/data structures with representative WinForms controls/components.
+
+E. PRESERVE
+
+Keep unchanged:
+- registry = 54;
+- movement.position.read disabled / UNSOLVED / backend NONE / runtime UNAVAILABLE / risk mutation;
+- teleport disabled ADM-TEST-0002;
+- Auto Loot STARTUP_CANARY_ONLY;
+- Glider Flight disabled/unqualified;
+- glider-stamina semantic block;
+- Home raw direct events = 0;
+- Player raw direct events = 0;
+- Mobility raw direct events = 0;
+- source-consolidation catalog;
+- CT catalog = 224;
+- no direct F7 calls to:
+  TogglePatch
+  EnableAllSurvival
+  DisableAllSurvival
+  WritePlayerCoordinates
+  ToggleAutoLoot
+  ToggleGliderFlight
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. lifecycle test.
+3. F7 truthfulness.
+4. UI smoke.
+5. UI errors.
+6. CT catalog count = 224.
+7. registry unique count = 54.
+8. Home raw count = 0.
+9. Player raw count = 0.
+10. Mobility raw count = 0.
+11. shell UI-only raw = 0.
+12. shell ACTION raw = 1 (scanner only).
+13. stale/disposed active bindings = 0 after lifecycle test.
+14. prohibited mutation scan.
+
+REPORT
+
+Return:
+- files changed;
+- exact `Clear-AdminContent` pruning behavior before/after;
+- `f7.shell.content.sizeChanged` migration details;
+- shell raw-event metrics before/after;
+- PAGE/SHELL/stale binding counts through lifecycle test;
+- confirmation scanner remains the one raw shell ACTION;
+- all test results;
+- explicit statement that no runtime/gameplay proof is claimed.
+
+Do not migrate scanner in this pass.

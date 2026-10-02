@@ -1,0 +1,266 @@
+CODE-0042G4A — REPAIR F7 AUDIT BOUNDARY / REVALIDATE STATIC ZERO-GAP
+
+Scope:
+- `Get-F7DirectEventAudit`
+- one explicit source-boundary comment
+- temporary lifecycle/static fixture
+- no product-feature migration
+- no responsive-layout work
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Temporary fixture:
+- reconstructed `tests/test_f7_event_lifecycle.ps1`
+
+Registry:
+- DO NOT change `admin_action_registry.json`.
+- Must remain 55 actions / 17 enabled / 38 disabled.
+
+WHY THIS REPAIR IS REQUIRED
+
+Current G4 code uses:
+
+`$ast.Extent.Text.IndexOf('# F8 BUILDER HUD - THE CREATIVE WORKSPACE OVERLAY')`
+
+But that same text appears inside `Get-F7DirectEventAudit` as a string literal before the real banner comment.
+
+Therefore `IndexOf` chooses the wrong boundary and the current `fullF7 = 0` result does not audit the actual F7 source region.
+
+DO NOT claim G4 zero-gap closed until this repair passes.
+
+A. ADD A UNIQUE SEMANTIC BOUNDARY COMMENT
+
+Immediately before the two existing F8 form-shell registrations:
+
+```powershell
+$form.Add_KeyDown(...)
+$form.Add_FormClosing(...)
+```
+
+insert exactly:
+
+`# F7 EVENT AUDIT BOUNDARY: F8 SHELL BEGINS`
+
+Do NOT move or rewrite those F8 handlers in this pass.
+Do NOT create new F8 EventIds.
+Do NOT move the existing later F8 banner.
+
+The new comment defines the end of the F7/shared audit region.
+
+B. LOCATE THE BOUNDARY BY COMMENT TOKEN, NOT RAW TEXT
+
+`Get-F7DirectEventAudit` already obtains parser `$tokens`.
+
+Find boundary candidates only from parser tokens where:
+
+- token kind is Comment
+- trimmed token text exactly equals:
+  `# F7 EVENT AUDIT BOUNDARY: F8 SHELL BEGINS`
+
+Use the token's `Extent.StartOffset` as the boundary.
+
+Do NOT use:
+- `IndexOf`
+- `LastIndexOf`
+- regex over the entire source text
+- line-number constants
+
+FAIL CLOSED:
+
+If matching boundary-comment token count != 1:
+- throw or return an explicit audit failure object;
+- do not silently default to end-of-file;
+- do not return a misleading zero.
+
+Recommended:
+
+```powershell
+$boundaryTokens = @($tokens | Where-Object {
+    [string]$_.Kind -eq 'Comment' -and
+    $_.Text.Trim() -eq '# F7 EVENT AUDIT BOUNDARY: F8 SHELL BEGINS'
+})
+
+if ($boundaryTokens.Count -ne 1) {
+    throw "F7_AUDIT_BOUNDARY_INVALID: expected exactly one F7/F8 boundary comment; found $($boundaryTokens.Count)."
+}
+
+$boundary = $boundaryTokens[0].Extent.StartOffset
+```
+
+Equivalent fail-closed implementation is acceptable.
+
+C. PRESERVE AST EVENT DETECTION
+
+Keep the G4 detection model:
+
+1. Legacy helper:
+- `CommandAst`
+- `GetCommandName() -eq "Register-SafeUiEvent"`
+
+2. Direct .NET event adds:
+- `InvokeMemberExpressionAst`
+- member matches `^Add_[A-Za-z0-9_]+$`
+
+Keep infrastructure exclusions:
+- `Register-SafeUiEvent`
+- `Register-AdminActionEvent`
+- `Register-F7UiEvent`
+- `Get-F7DirectEventAudit`
+
+Keep top-level owner identity:
+`<TOP_LEVEL>`
+
+D. ADD BOUNDARY DIAGNOSTICS
+
+Preserve all existing output properties:
+- `batch1`
+- `fullF7`
+- `legacySafeUiCount`
+- `directAddEventCount`
+- `sites`
+
+Add:
+- `boundaryLine`
+- `boundaryMarkerCount`
+- `boundaryKind`
+
+Expected:
+- `boundaryMarkerCount = 1`
+- `boundaryKind = "COMMENT_TOKEN"`
+- boundary line is immediately before the F8 `$form.Add_KeyDown(...)` registration
+
+Do not hard-code the line number.
+
+E. REGRESSION TEST THE SELF-MATCH BUG
+
+The source necessarily still contains the marker string inside audit code/tests.
+
+Add a fixture assertion proving that a string literal with the same marker text does NOT become the boundary.
+
+Test parser tokens:
+- there is exactly one matching COMMENT token;
+- raw source may contain the text more than once;
+- chosen boundary is the COMMENT token offset.
+
+This specifically prevents regression to `IndexOf`.
+
+F. REVALIDATE TRUE F7 STATIC ZERO-GAP
+
+After boundary repair assert:
+
+- `fullF7 == 0`
+- `legacySafeUiCount == 0`
+- `directAddEventCount == 0`
+- `sites.Count == 0`
+
+Independently parse the pre-boundary region in the fixture using the same semantic boundary and verify zero raw registration sites outside excluded canonical infrastructure.
+
+If any site appears:
+- print line
+- kind
+- owner function
+- event member
+- excerpt
+- FAIL
+
+Do not suppress unexpected sites.
+
+G. EXPLICIT F8 EXCLUSION ASSERTION
+
+The two existing F8 form-shell direct registrations immediately after the boundary:
+
+- `$form.Add_KeyDown(...)`
+- `$form.Add_FormClosing(...)`
+
+are OUTSIDE this F7 audit by design.
+
+Add a static assertion that:
+- they occur after the F7 boundary;
+- they are not counted in `fullF7`.
+
+Do NOT migrate them in this pass.
+
+This makes the product boundary explicit instead of accidentally hiding them.
+
+H. G4 LIFECYCLE RESULT SEMANTICS
+
+Preserve the user's truthful G4 result:
+
+The 11-page x3 traversal was not available in the current harness.
+
+Therefore continue to report:
+
+`SKIPPED_NO_WINFORMS_HARNESS`
+
+for:
+- 33-call traversal
+- definition plateau cycles
+- per-page binding-signature plateau
+- repeated non-nav subview runtime traversal
+- SHELL runtime stability proof
+
+Static fixture checks may PASS.
+
+Do NOT convert skipped traversal to PASS.
+
+I. PRESERVE
+
+Keep unchanged:
+- registry 55 / 17 / 38
+- all existing EventIds
+- G3D0 canonical execution gates
+- G1/G2/G3 source migrations
+- local quest semantics
+- local Wayfinder semantics
+- Blueprint Browser local-selection semantics
+- Teleport disabled / ADM-TEST-0002
+- CT catalog = 224
+- source-consolidation catalog
+- no Current designation changes
+- no gameplay/native behavior
+
+J. STANDARD TESTS
+
+Run:
+
+1. PowerShell parse
+2. real registry import -> 55 unique
+3. lifecycle/static fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema/adaptor validation
+9. prohibited mutation scan
+10. boundary COMMENT token count = 1
+11. self-match regression test
+12. fullF7 raw count = 0
+13. legacySafeUiCount = 0
+14. directAddEventCount = 0
+15. sites.Count = 0
+16. stable-definition Control refs = 0
+17. stable-definition Handler refs = 0
+18. F8 `$form.Add_KeyDown` / `$form.Add_FormClosing` proven after boundary
+19. 11-page x3 traversal result remains explicit PASS only if real harness ran; otherwise SKIPPED
+
+REPORT
+
+Return:
+- files changed
+- old broken boundary behavior
+- new boundary method
+- boundaryMarkerCount / boundaryKind
+- comprehensive F7 raw counts
+- any sites if nonzero
+- stable-definition reference counts
+- explicit F8-exclusion assertion result
+- standard suite results
+- exact WinForms traversal status
+- registry unchanged
+- explicit statement that responsive work was NOT started
+- explicit statement that no gameplay/runtime behavior was proven
+
+Do not start responsive migration until this repair is clean.

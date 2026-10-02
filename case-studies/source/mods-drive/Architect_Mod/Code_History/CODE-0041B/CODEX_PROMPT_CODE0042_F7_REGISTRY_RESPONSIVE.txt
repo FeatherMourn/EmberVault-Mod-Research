@@ -1,0 +1,338 @@
+CODE-0042 — F7 canonical registry + responsive page migration
+
+SOURCE / BASELINE
+Work from the current Architect_Mod/Current runtime files, which now contain the CODE-0041B safety cleanup. For complete offline tests and preserved source/catalog assets, use the user-provided Architect Toolkit 0.42.0 package from INC-0062 as the full-package baseline and overlay the current cleaned files into a TEMPORARY TEST WORKSPACE. Do not replace Architect_Mod/Current wholesale with the baseline archive.
+
+Before editing, read the project Core Method and current F7 evidence. Follow observe -> capture -> map -> validate -> minimally modify -> verify.
+
+PRIMARY GOAL
+Finish the F7 foundation that prior passes only scaffolded:
+1. canonical ActionId coverage for every executable F7 control;
+2. actual ActionId -> Control binding call sites;
+3. actual page-internal responsive WinForms layouts;
+4. truthful 11-page product structure;
+5. restoration/preservation of Source Map, source-consolidation provenance, and the full 224-entry enshrouded_1013216 CT catalog under Developer & Diagnostics;
+6. stronger offline truthfulness + resize tests.
+
+DO NOT ADD NEW GAMEPLAY MUTATIONS IN THIS TASK.
+
+HARD SAFETY INVARIANTS — MUST PRESERVE
+The current cleaned ArchitectRuntime.ps1 intentionally has zero active F7 calls to:
+- NativeMemoryEngine::TogglePatch
+- NativeMemoryEngine::EnableAllSurvival
+- NativeMemoryEngine::DisableAllSurvival
+- NativeMemoryEngine::WritePlayerCoordinates
+- NativeMemoryEngine::ToggleAutoLoot
+- NativeMemoryEngine::ToggleGliderFlight
+
+Do not reintroduce them.
+
+Preserve:
+- ADM-TEST-0002 teleport fail-closed behavior.
+- Auto Loot as STARTUP_CANARY_ONLY; no live F7 pickup simulation.
+- Glider Flight disabled/unqualified.
+- glider-stamina semantic mismatch block.
+- CODE-0022B unsafe attribute hooks disarmed/crash-guarded.
+- authoritative native backend ownership for mutation.
+- no PowerShell-side patch fallback.
+- capability gate before canonical command publication.
+- no success/ON claim without authoritative ACK/readback where required.
+
+If a UI control has no proven backend, it may exist as disabled/planned UI but must not dispatch.
+
+==================================================
+PHASE 0 — BUILD A COMPLETE OFFLINE WORKSPACE
+==================================================
+The Drive Current mirror is sparse and does not contain the complete test/native source tree.
+
+Create a temporary working/test directory from the complete INC-0062 Architect Toolkit 0.42.0 archive.
+Overlay ONLY the current cleaned versions of files that have changed in Current, especially:
+- runtime/ArchitectRuntime.ps1
+- runtime/admin_action_registry.json
+and any other files you can independently confirm were intentionally changed after INC-0062.
+
+Do not silently replace current files with baseline copies.
+Do not designate or rewrite Architect_Mod/Current as part of workspace construction.
+
+Run tests from this complete temporary workspace so missing-path failures are not confused with code failures.
+
+==================================================
+PHASE 1 — CANONICAL ACTION REGISTRY
+==================================================
+admin_action_registry.json currently has only 20 actions. Expand it so EVERY executable F7 user control maps to exactly one canonical command/action entry.
+
+Required rules:
+- One user-visible capability -> one canonical ActionId.
+- Aliases may map to that canonical ActionId, but controls must not depend on parsing click-handler closure text.
+- Unsupported/planned controls still get registry entries with enabled=false and truthful metadata.
+- Do NOT bulk-enable anything while expanding the registry.
+- Do NOT invent backend support.
+
+Each action should preserve/use fields compatible with the current schema, including as appropriate:
+- commandId
+- displayName
+- category
+- subcategory
+- description
+- controlType
+- valueType
+- minimum / maximum / step
+- vanillaValue / currentValue where meaningful
+- evidenceStatus
+- backendAdapter
+- backend
+- backendCandidates where useful
+- runtimeMode: LIVE / SESSION / RELOAD / RESTART / UNAVAILABLE etc.
+- authority
+- persistence
+- risk
+- readbackVerification
+- revertSupport
+- failureReason
+- enabled
+
+Reconcile actionFamilies metadata against higher-authority current evidence. Family-level historical claims must not make an executable action appear proven when the current action is blocked.
+
+Special cases:
+- teleport: disabled, ADM-TEST-0002 / local-player transform ownership unresolved.
+- auto loot: disabled for live F7; STARTUP_CANARY_ONLY.
+- glider flight: disabled/unqualified.
+- glider stamina: preserve partial semantic mismatch; do not label Infinite Glider Stamina.
+- Attributes / Derived Stats: product-required editable eventually, but current write backend is UNSOLVED; render disabled/planned.
+- CODE-0022B attribute observer: unsafe/crash-guarded; no ARM action exposed as normal user functionality.
+
+==================================================
+PHASE 2 — REAL ACTIONID -> CONTROL BINDING
+==================================================
+Bind-AdminActionControl currently has no call sites. Fix that.
+
+Every executable F7 control must be explicitly bound to its canonical ActionId at construction time.
+
+Preferred outcome:
+- one reliable ActionId -> Control map used by UI capability refresh and tests;
+- each executable Button/CheckBox/Numeric Apply control/Combo action etc. can be inspected without parsing closure source text;
+- disabled informational labels do not need fake action IDs;
+- composite widgets may bind their executable child controls to the same action with a role, or to distinct canonical actions when semantics differ.
+
+You may extend Register-SafeUiEvent with an optional -ActionId or introduce an adjacent helper, but do not create two competing binding systems.
+
+Add tests that assert:
+- every enabled executable F7 control has an ActionId;
+- every bound ActionId exists in admin_action_registry.json;
+- no ActionId binds to a missing/undefined capability;
+- disabled planned controls still bind to their disabled registry entry when they are intended future actions;
+- no executable control bypasses canonical dispatch.
+
+==================================================
+PHASE 3 — RESTORE SOURCE PROVENANCE / CT CATALOG
+==================================================
+The 0.42.0 baseline contains:
+- runtime/source_consolidation_catalog.json
+- runtime/cheat_table_1013216_catalog.json
+- Source Map / CT Catalog presentation logic
+
+Restore/preserve these data sources in the current F7 product without restoring the old top-level nav.
+
+Under Developer & Diagnostics provide subsections/tabs/cards for:
+- Diagnostics
+- Source Map / External Source Consolidation
+- Cheat Table Catalog
+- Codex / Research status as appropriate
+
+Requirements:
+- all 224 entries/groups/children from enshrouded_1013216.CT remain accounted for as metadata;
+- do not create one executable control per CT row;
+- fixed teleport destinations remain destination data, not 117 separate actions;
+- source artifacts are provenance/hypotheses, not proof of current-build capability;
+- do not reintroduce old unsafe action semantics while restoring presentation.
+
+==================================================
+PHASE 4 — ACTUAL RESPONSIVE PAGE MIGRATION
+==================================================
+Current responsive helpers exist but have no call sites. Use them or replace them with a single coherent responsive layout system.
+
+The outer window is already sizable/docked. The defect is page internals.
+
+Migrate actual F7 page renderers away from fixed-position panels/controls.
+
+Use WinForms layout containers such as:
+- TableLayoutPanel
+- FlowLayoutPanel
+- Dock = Fill / Top
+- AutoSize / AutoScroll
+- percentage columns/rows
+- AutoSizeMode / Fill for grids
+
+Do not merely stretch a 590-700px fixed panel to a larger width.
+Controls inside must reflow or resize.
+
+Build reusable section/row helpers for:
+- read-only status
+- toggle/action
+- numeric editable setting
+- numeric multiplier
+- dropdown/choice
+- restart-required config setting
+- status/evidence badge
+
+At minimum migrate all 11 product pages to responsive internals:
+1. Home
+2. Player
+3. Mobility & Navigation
+4. Items & Progression
+5. Combat & AI
+6. World & Environment
+7. Building & World Editing
+8. Entities & Authority
+9. Camera & Presentation
+10. Mods & Configuration
+11. Developer & Diagnostics
+
+Do not route two top-level pages to the exact same legacy renderer just to satisfy navigation labels. Shared subcomponents are fine, but each page needs truthful ownership and layout.
+
+==================================================
+PLAYER PAGE PRODUCT STRUCTURE
+==================================================
+Prepare responsive sections for:
+- Vitals
+- Attributes
+- Derived Combat Stats
+- Critical Stats
+- Regeneration
+- Survival / Status
+
+Attributes:
+Strength, Constitution, Dexterity, Endurance, Intelligence, Spirit.
+
+Derived stats:
+Wand Damage, Staff Damage, One-Handed Damage, Two-Handed Damage, Bow Damage, Dagger Damage, Melee Damage, Ranged Damage, Magic Damage.
+
+Critical:
+Melee, Ranged, Magic critical chance.
+
+Regeneration:
+Health/Stamina/Mana regen and delays.
+
+PRODUCT REQUIREMENT: these are intended to become editable.
+CURRENT ENGINEERING STATE: write paths are not proven. Therefore render the editable form structure disabled with truthful UNSOLVED/PLANNED status. Do not reconnect CODE-0022B hooks.
+
+==================================================
+MODS & CONFIGURATION
+==================================================
+Build responsive UI foundation for:
+- Lua Configurations
+- Gem Configuration
+- Mod Profiles
+- Pending Changes
+- Configuration Files
+- Backup / Restore
+- Advanced Raw Configuration
+
+Do not implement arbitrary Lua execution/editor behavior in this task.
+If no proven save backend exists, controls remain disabled/planned.
+
+==================================================
+ITEMS & PROGRESSION
+==================================================
+Prepare responsive areas for:
+- Inventory
+- Item Browser
+- Selected Item Editor
+- Loot Pickup / Auto Pickup
+- Crafting
+- XP / Level
+- Skill Points
+- Unlocks
+
+Auto Pickup must remain startup/canary-only and disabled for live F7.
+
+==================================================
+WORLD & ENVIRONMENT
+==================================================
+Prepare separate responsive sections for:
+- Time
+- World/game settings
+- Resources
+- Plant Growth
+- Loot & Chests
+- Weather / Fog
+
+Keep Loot Generation separate from Auto Pickup.
+Do not implement new chest-quality/loot mutation in this task.
+
+==================================================
+REAL DATASETS -> REAL GRIDS
+==================================================
+Use DataGridView or equivalent where the content is genuinely tabular, including where practical:
+- CT Catalog
+- Source Map / capability provenance
+- Active Changes
+- Command History
+- Waypoint/Destination data
+
+Configure columns to use available width and remain usable at smaller sizes.
+Do not hand-place hundreds of label rows.
+
+==================================================
+PHASE 5 — TESTS
+==================================================
+Use the complete temporary workspace to run existing tests.
+
+Do not simply delete or weaken a failing assertion.
+For each failure classify it:
+- current code regression
+- stale test contradicting accepted current evidence
+- missing workspace artifact
+- environment limitation
+
+The prior freecraft assertion must be investigated against current authoritative native/backend evidence. If stale, update it narrowly and document why. If it exposes a real mismatch, fix the code instead.
+
+Strengthen test_f7_truthfulness.ps1 so it verifies canonical bindings/metadata rather than brittle closure/source patterns where possible.
+
+Strengthen test_ui_smoke.ps1 / related headless tests to exercise each of the 11 pages at multiple client sizes, approximately:
+- 1000x700
+- 1280x720
+- 1366x768
+- 1600x900
+- 1920x1080
+
+Assert at minimum:
+- page root fills available area;
+- responsive sections consume additional width on larger windows;
+- no sibling overlap at minimum size;
+- controls do not remain stranded in a fixed ~700px upper-left region;
+- scroll support exists when minimum size cannot display all content;
+- grids resize with content area;
+- navigation remains usable;
+- every executable control has canonical ActionId binding;
+- unsupported/crash-guarded actions remain disabled;
+- no prohibited direct F7 mutation calls are present.
+
+Also run:
+- PowerShell AST/parse
+- relevant C#/native compile tests from full workspace
+- existing CODE-0036/CODE-0037 regressions
+- command routing
+- teleport disarmament
+- hook-off baseline
+- patch engine lifecycle/readiness tests where supported by full workspace
+
+==================================================
+DELIVERABLE
+==================================================
+Return a complete implementation-ready change set plus:
+1. files changed/added;
+2. final registry action count;
+3. list of every executable control that was bound;
+4. any intentionally disabled/planned controls;
+5. old page renderer -> new page/section mapping;
+6. proof Source Map + full 224-entry CT catalog remain available;
+7. responsive layout architecture and helper call-site count;
+8. test results with every failure explained;
+9. static safety search proving prohibited mutation calls remain absent;
+10. exact in-game F7 acceptance steps.
+
+Do not claim runtime success. Runtime proof requires the user's in-game test.
+
+FIRST ACTION
+Inspect the current cleaned ArchitectRuntime.ps1 and registry, build the complete temporary test workspace, and produce a short plan. Then implement the full registry/binding/responsive migration without stopping unless a genuine evidence/safety blocker is encountered.

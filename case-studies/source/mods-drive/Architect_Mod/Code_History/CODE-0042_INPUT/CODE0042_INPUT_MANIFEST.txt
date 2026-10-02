@@ -1,0 +1,27 @@
+CODE-0042 INPUT MANIFEST
+
+Baseline full package:
+Google Drive: /Google Drive/Enshrouded Mods/Incoming/2026-09-20/INC-0062/architect_toolkit.zip
+Windows Drive mirror: I:\My Drive\Enshrouded Mods\Incoming\2026-09-20\INC-0062\architect_toolkit.zip
+SHA-256: 768ac907e33038d8a5efe4535ae1d3745abe4308de06a7d7694060068538b5ec
+Size: 66,748,786 bytes
+Archive entries: 5,117
+
+Verified required baseline assets:
+architect_toolkit/runtime/source_consolidation_catalog.json
+architect_toolkit/runtime/cheat_table_1013216_catalog.json
+architect_toolkit/runtime/admin_action_registry.json
+architect_toolkit/runtime/ArchitectRuntime.ps1
+architect_toolkit/tests/test_ui_smoke.ps1
+architect_toolkit/tests/test_f7_truthfulness.ps1
+architect_toolkit/runtime/native/source/ArchitectPatchEngine.c
+
+Current cleaned overlay source:
+/Google Drive/Enshrouded Mods/Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+SHA-256: dc0d6ea5fe3ae96a71e73b0236a87caf3f64800abb95556c2f25384828b6639f
+
+Current registry overlay:
+/Google Drive/Enshrouded Mods/Architect_Mod/Current/runtime/admin_action_registry.json
+SHA-256: 092b83c5146a0a2ab7c63306534a5f0c5938729999e60980be2619dde194c8b3
+
+Do not use Architect_Mod/Current/architect_toolkit.zip as the full-package baseline for CODE-0042.

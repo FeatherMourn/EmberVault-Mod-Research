@@ -1,0 +1,46 @@
+INTAKE RECORD
+=============
+Intake_ID: INC-0055
+Received: 2026-09-19
+Filename: enshrouded_1013216.CT
+Type: EXTERNAL_CHEAT_TABLE (Cheat Engine, CheatTableVersion 45)
+SHA256: 31CCA4A726F7D305F281FC4DF3AF54C550C7A847149BB0B57090DE93C71F6EEA
+Size_Bytes: 361670
+Source: User-provided attachment from F:\Cheat Engine Tables\Enshrouded\enshrouded_1013216.CT
+Table_Author_Metadata: "cfemon" (per in-script author fields); scripts dated 2025-11-11
+Table_Target_Build: 1013216 (per filename and "Enable 1013216" activation script)
+Current_Project_Build: 1076226
+
+CLASSIFICATION
+==============
+UNTRUSTED_STAGING / EXTERNAL_ARTIFACT_EVIDENCE
+Locator/hypothesis source for the CODE-0032 Working Cheat Sprint
+(CHEAT-SPRINT-STATE-0001). Not canonical. Architect implementation
+remains original: AOB patterns from this table are treated as candidate
+signatures to independently revalidate against build 1076226 before any
+Architect patch/hook uses them.
+
+USER CONFIRMATION (highest authority class, scope-limited)
+==========================================================
+On 2026-09-19 the user confirmed this table WORKS with the current
+version of the game (build 1076226), despite the table being authored
+for 1013216. Scope of confirmation: the entries the user personally
+exercised; not a per-script validation of all entries. Individual
+signatures must still be re-validated by Architect's own scanner
+(signature match + sanity checks + readback + revert) before promotion
+to named adapter capabilities.
+
+PROMOTION STATUS
+================
+Promoted_To: None (staged for research/correlation only)
+Related: INC-0010 (prior external CE/mod artifacts), CHEAT-SPRINT-STATE-0001,
+CODE-0032 Working Cheat Sprint, ADM-BACKEND-STATE-0001 (BackendRouter /
+NativeMemoryAdapter framework).
+
+HANDLING NOTES
+==============
+- Original preserved byte-exact; hash verified after copy on 2026-09-19.
+- Do not execute the table or its scripts as part of Architect delivery;
+  extract technical lessons only (per Core Method artifact-research policy).
+- Keep "observed in external artifact" separate from "confirmed in
+  Enshrouded by Architect evidence".

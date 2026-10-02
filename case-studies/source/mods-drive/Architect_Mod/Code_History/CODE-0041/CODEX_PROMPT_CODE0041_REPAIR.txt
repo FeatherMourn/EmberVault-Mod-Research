@@ -1,0 +1,233 @@
+You are repairing the first F7 responsive-foundation pass for Architect Toolkit.
+
+IMPORTANT BASELINES
+- Game build: Enshrouded 1076226.
+- The user-provided Architect Toolkit 0.42.0 intake (INC-0062, SHA-256 768ac907e33038d8a5efe4535ae1d3745abe4308de06a7d7694060068538b5ec) is the authoritative PRE-REFACTOR safety/behavior baseline.
+- The currently edited `Architect_Mod/Current/runtime/ArchitectRuntime.ps1` is a CANDIDATE containing useful UI work plus regressions.
+- Do not treat PowerShell parse success as runtime or safety proof.
+
+Read the Core Method and current project state first. Use observe → capture → map → validate → minimally modify → verify.
+
+PRIMARY GOAL
+Salvage the intended F7 navigation/responsive-layout work while restoring all fail-closed behavior and completing the canonical control/action binding foundation. Do NOT add new gameplay features or new mutation backends.
+
+PHASE 0 — DIFF FIRST
+Before editing, diff the current modified `ArchitectRuntime.ps1` against the INC-0062 0.42.0 baseline `runtime/ArchitectRuntime.ps1`.
+Classify every behavioral change as one of:
+- REQUIRED_UI_REFACTOR
+- REQUIRED_ACTION_BINDING
+- INTENTIONAL_TRUTHFULNESS_FIX
+- UNRELATED_REGRESSION
+- UNSURE
+
+Any behavioral/mutation change not necessary for the UI/action-binding task must default to the 0.42.0 baseline behavior.
+
+PHASE 1 — RESTORE SAFETY REGRESSIONS
+Restore the following baseline contracts before continuing:
+
+1. TELEPORT
+- `Invoke-PlayerTeleport` must remain fail-closed.
+- `Send-CheatCommand` must reject teleport actions without any coordinate write.
+- `Dispatch-AdminCommand` must reject teleport actions without any coordinate write.
+- Remove/revert any `NativeMemoryEngine::WritePlayerCoordinates` path introduced by this refactor.
+- Preserve ADM-TEST-0002 semantics: local-player transform ownership unresolved.
+
+2. AUTO LOOT
+- F7 live `loot.auto` / `cheat.autoloot.toggle` must reject as `STARTUP_CANARY_ONLY`.
+- Do not call `NativeMemoryEngine::ToggleAutoLoot()` from the F7 live command path.
+- Startup/resource canary remains the only current Auto Loot owner.
+
+3. CODE-0036 MUTATION OWNERSHIP
+- Restore the rule that the in-process native runtime is sole mutation owner.
+- Do not reintroduce C# cross-process mutation fallbacks merely because a `NativeMemoryEngine` method exists.
+- Capability readiness must come from the authoritative current native/runtime evidence, not fallback existence.
+
+4. GLIDER FLIGHT
+- Restore unproven Glider Flight to unavailable/disabled unless current canonical evidence independently proves it.
+- Do not call `NativeMemoryEngine::ToggleGliderFlight()` as a direct F7 bypass.
+
+5. GLIDER STAMINA
+- Restore the semantic safety block: the existing patch is not equivalent to infinite glider stamina. Keep it disabled under the current evidence state.
+
+6. HEADLESS TEST MODE
+- Restore the baseline `ARCHITECT_HEADLESS_TEST` mutex bypass unless you can prove a necessary reason to change it.
+
+7. SOURCE CONSOLIDATION / CT CATALOG
+Restore loading and validation of:
+- `source_consolidation_catalog.json`
+- `cheat_table_1013216_catalog.json`
+Preserve the source-consolidation summary and all 224 CT entries.
+Do not delete these pages/features. Move their presentation under Developer & Diagnostics.
+
+8. CODE-0022B ATTRIBUTE RESEARCH
+- Preserve the crash-guarded/disarmed evidence state.
+- Do NOT re-enable ARM HOOKS or the old crashy hook path.
+- Do not silently discard its provenance.
+- Present Attributes / Derived Stats as planned editable controls, disabled with a truthful reason until a newly qualified backend exists.
+
+PHASE 2 — MAKE CANONICAL ACTION BINDING REAL
+The candidate added `Bind-AdminActionControl`, but it currently has zero call sites.
+
+Complete this architecture:
+- Every executable F7 control must have exactly one canonical ActionId.
+- The ActionId must resolve through `admin_action_registry.json`.
+- Bind the control through `Bind-AdminActionControl` (or a single equivalent helper) when it is created.
+- Store canonical identity in a testable property/map (`Tag`, AccessibleName, or dedicated binding table).
+- Display text must not be used as action identity.
+- Do not infer ActionIds in tests from click-handler source strings.
+- Navigation-only, filter/search-only, and purely local non-gameplay controls may use explicit non-action operation IDs and should not pretend to be admin mutation actions.
+
+Extend `Register-SafeUiEvent` only if useful, but keep event safety and action identity conceptually separate.
+
+PHASE 3 — EXPAND THE REGISTRY TRUTHFULLY
+`admin_action_registry.json` currently has only 20 actions.
+
+Enumerate every existing executable F7 gameplay/admin action and add a canonical registry entry.
+For unsupported/planned actions use `enabled=false`; DO NOT enable anything new.
+Each action should include the existing schema fields as applicable:
+- commandId
+- displayName
+- category/subcategory
+- description
+- controlType/valueType/range where meaningful
+- evidenceStatus
+- backend/backendAdapter/backendCandidates
+- runtimeMode
+- authority
+- persistence
+- risk
+- readbackVerification
+- revertSupport
+- failureReason
+- enabled
+
+Do not use an actionFamily entry as executable truth when no concrete action exists.
+
+PHASE 4 — RESPONSIVE PAGE CONTENT, NOT JUST RESPONSIVE OUTER SHELL
+The candidate correctly uses a FlowLayoutPanel for `$adminContent`, but the child renderers still use fixed coordinates.
+The helper functions `New-AdminPageRoot`, `New-AdminSection`, and `New-AdminResponsiveGrid` currently have zero call sites.
+
+Actually migrate page internals.
+
+Required approach:
+- Each top-level page renders one responsive root container.
+- Use TableLayoutPanel / FlowLayoutPanel sections with Dock/AutoSize/Percent sizing.
+- No main section should depend on a fixed ~590–700 px width.
+- Legacy absolute-position control groups must be incrementally replaced with reusable setting rows/sections.
+- Do not simply set a fixed panel's Width to the viewport; its children must participate in layout.
+- At minimum migrate all content visible from the 11 top-level pages in this pass.
+
+Create reusable row patterns for:
+- toggle
+- numeric editable/planned setting
+- multiplier
+- choice/dropdown
+- read-only status
+- restart-required config
+
+Unsupported controls may render disabled, but must still lay out responsively.
+
+PHASE 5 — 11-PAGE OWNERSHIP
+Keep these top-level pages:
+1. Home
+2. Player
+3. Mobility & Navigation
+4. Items & Progression
+5. Combat & AI
+6. World & Environment
+7. Building & World Editing
+8. Entities & Authority
+9. Camera & Presentation
+10. Mods & Configuration
+11. Developer & Diagnostics
+
+Do not merely map multiple categories to the same old renderer unless the internal sections are explicitly filtered for the selected page.
+
+Specific preservation:
+- Source Map -> Developer & Diagnostics
+- CT Catalog -> Developer & Diagnostics
+- Codex/Search diagnostics remain reachable
+- Player contains Vitals / Attributes / Derived Stats / Critical / Regeneration / Survival sections
+- Attributes and Derived Stats are product-required editable eventually, but remain disabled until backend proof exists
+- Mods & Configuration contains the UI foundation for supported Lua config editing; no arbitrary Lua execution in this pass
+
+PHASE 6 — TRUTHFULNESS ORDERING
+Capability checks must occur BEFORE any mutation/direct handler.
+No code path may:
+- mutate first, then discover capability=false;
+- return COMPLETED from a local variable or direct call without authoritative contract/readback;
+- show ACTIVE merely because a control toggled.
+
+Audit `Send-CheatCommand` and `Dispatch-AdminCommand` ordering specifically.
+
+PHASE 7 — TESTS
+Use the full INC-0062 source tree, not the sparse Drive mirror, as the test-layout reference.
+Do not conclude tests are unavailable merely because `Architect_Mod/Current` contains only a partial mirrored tree.
+
+Run/preserve relevant suites from the full package:
+- PowerShell AST/parse
+- C# compilation
+- native compilation where unchanged/available
+- command routing
+- CODE-0036/0037 regressions
+- teleport disarmament
+- hook-off baseline
+- F7 truthfulness
+- headless WinForms UI smoke
+
+Strengthen F7 truthfulness tests to assert:
+- every enabled executable F7 control has exactly one canonical ActionId;
+- every ActionId resolves to a registry action;
+- disabled registry actions cannot be executable in UI;
+- teleport is rejected at every dispatcher path;
+- live Auto Loot is rejected before ToggleAutoLoot can run;
+- no UI action uses actionFamily-only metadata as executable truth.
+
+Strengthen UI smoke tests at minimum client sizes:
+- 1000x700
+- 1280x720
+- 1366x768
+- 1600x900
+- 1920x1080
+
+For every page assert:
+- responsive root fills available content area;
+- section width increases materially when client width increases;
+- no sibling overlap at minimum size;
+- controls do not clip outside parent without scroll support;
+- larger widths are actually consumed by page content;
+- grids/lists fill available width;
+- navigation remains usable;
+- resize/maximize/restore does not throw UI errors.
+
+PHASE 8 — DELIVERABLE
+Return a coherent implementation-ready source change set and report:
+1. files changed;
+2. safety regressions restored;
+3. number of canonical registry actions before/after;
+4. number of executable controls bound to ActionIds;
+5. any executable controls still unbound (must be zero before completion);
+6. responsive page migrations completed;
+7. Source Map / CT Catalog preservation;
+8. exact tests run and PASS/FAIL counts;
+9. unresolved blockers;
+10. exact in-game acceptance steps.
+
+STOP CONDITIONS
+Do not runtime-enable new mutations.
+Do not invent offsets/signatures/pointers/APIs.
+Do not re-enable CODE-0022B hook installation.
+Do not implement live Auto Loot.
+Do not implement teleport writes.
+Do not modify F8 behavior.
+Do not change native DLL/bridge behavior unless strictly required to restore an accidentally regressed contract; prefer restoring PowerShell to the baseline behavior.
+
+SUCCESS CRITERIA FOR THIS PASS
+- Safety behavior is no weaker than the INC-0062 0.42.0 baseline.
+- 11-page navigation exists.
+- Source Map and CT Catalog remain reachable.
+- Every executable F7 control has canonical ActionId binding.
+- Registry covers every executable F7 action truthfully.
+- Page internals actually reflow/resize.
+- Truthfulness + UI smoke suites pass from the full package.
+- No runtime gameplay success is claimed until the user confirms the in-game acceptance test.

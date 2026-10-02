@@ -1,0 +1,281 @@
+CODE-0042G5H1 — AUTONOMOUS CLOSEOUT REPAIR: ENTITIES & AUTHORITY
+
+Build scope:
+Enshrouded 1076226
+
+STATUS AT START
+
+G5H was reported closed, but independent source comparison found a source/parity blocker in Current.
+
+Authoritative Current to repair:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting identity for this repair:
+
+- Length: 458779 bytes
+- SHA-256: `B88E1388EDFE7CA6412C695667E1237CA7B4CA8D0EF29FC8B14844F8979A6AC0`
+
+G5G baseline for comparison:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042G5G\runtime\ArchitectRuntime.ps1`
+
+Baseline SHA-256:
+
+`D82ECDA9A9EAAC7837B22B640235D1C4DC63FF947A88B843D06537F1DCC0BB1B`
+
+PRIMARY GOAL
+
+Repair the G5H source so that:
+
+1. only the intended responsive `Render-MultiplayerQuestsPage` remains as the G5H product change relative to G5G;
+2. the dead fixed-pixel duplicate `Render-MultiplayerQuestsPageLegacy` is removed;
+3. active responsive quest UI preserves the pre-G5H visual/state semantics that were accidentally left only in the legacy copy;
+4. the G5H parity fixture is hardened so it validates the active renderer specifically and cannot pass by matching dead/legacy source;
+5. all existing safety/local-only semantics and all prior G5B-G5G baselines remain intact;
+6. one final closeout report is returned only after the corrected source/static suite is green.
+
+DO NOT START G5I OR F8.
+
+INDEPENDENTLY OBSERVED BLOCKERS
+
+A. OUT-OF-SCOPE LEGACY DUPLICATE
+
+Current contains:
+
+`function Render-MultiplayerQuestsPageLegacy { ... }`
+
+This function was not present in the G5G baseline and is outside the allowed G5H product scope.
+
+It appears to retain the old fixed-pixel implementation.
+
+Remove it completely.
+
+Do not rename it, hide it, comment it out, or leave another stale backup function in Current.
+
+The exact old implementation remains available in Code History through the G5G baseline; Current must not carry a duplicate backup copy.
+
+B. PARITY-FIXTURE CONTAMINATION RISK
+
+The legacy duplicate retains old source patterns and styling semantics.
+
+A whole-file regex/string fixture can therefore report PASS while the active responsive `Render-MultiplayerQuestsPage` has semantic drift.
+
+Harden the TEMP G5H parity fixture so every renderer-specific assertion is scoped to the AST/function extent of the ACTIVE function:
+
+`Render-MultiplayerQuestsPage`
+
+Do not let `Render-MultiplayerQuestsPageLegacy`, comments, unrelated functions, or duplicate strings satisfy active-renderer assertions.
+
+After removing the legacy function, add an explicit assertion:
+
+- exactly one function named `Render-MultiplayerQuestsPage`
+- zero functions matching `Render-MultiplayerQuestsPageLegacy`
+
+C. ACTIVE RENDERER LOST STATE-DEPENDENT PRESENTATION SEMANTICS
+
+Restore these semantics in the ACTIVE responsive renderer while preserving the responsive layout:
+
+1. GLOBAL QUARANTINE TOGGLE COLOR
+
+Pre-G5H behavior:
+- quarantine ON button background: `FromArgb(60, 80, 100)`
+- quarantine OFF button background: `FromArgb(0, 137, 123)`
+
+Current responsive code uses the ON color unconditionally.
+
+Restore state-dependent button color.
+
+2. SELECTED CATEGORY FILTER HIGHLIGHT
+
+Pre-G5H behavior:
+- selected category: `FromArgb(60, 80, 110)`
+- unselected category: `FromArgb(35, 44, 58)`
+
+Current responsive code gives every category the unselected color.
+
+Restore selected-category highlighting based on:
+
+`$script:questFilterCategory -eq <category>`
+
+3. STATUS BADGE COLOR MAPPING
+
+Pre-G5H behavior:
+
+- `Completed` -> `FromArgb(46, 125, 50)`
+- `In Progress` -> `FromArgb(230, 140, 20)`
+- `Locked` -> `FromArgb(100, 110, 120)`
+- default -> `FromArgb(160, 175, 195)`
+
+Current active responsive renderer uses a fixed neutral status color.
+
+Restore the exact semantic mapping in the active renderer and feed the selected color to the status badge.
+
+4. PER-QUEST QUARANTINE BUTTON COLOR
+
+Pre-G5H behavior:
+- quarantined -> `FromArgb(0, 121, 107)`
+- not quarantined -> `FromArgb(38, 48, 64)`
+
+Current active responsive renderer uses the unquarantined color unconditionally.
+
+Restore state-dependent color.
+
+5. PER-QUEST STATUS BUTTON COLOR
+
+Pre-G5H behavior:
+- current status `Completed` / reset action -> `FromArgb(80, 50, 50)`
+- otherwise / mark complete -> `FromArgb(38, 80, 50)`
+
+Current active responsive renderer uses the non-completed color unconditionally.
+
+Restore state-dependent color.
+
+6. MISSING-QUEST-ID DISABLED STYLING
+
+For BOTH per-quest buttons, the pre-G5H fail-closed path used:
+
+- `.Enabled = $false`
+- `.BackColor = FromArgb(45, 45, 52)`
+- `.ForeColor = FromArgb(140, 140, 150)`
+- truthful AccessibleDescription
+- truthful tooltip
+- no event registration
+
+Current responsive code preserves disabled/accessibility/tooltip but dropped the disabled BackColor/ForeColor styling.
+
+Restore the disabled styling in the active renderer.
+
+Do not weaken missing-ID fail-closed behavior.
+
+SCOPE
+
+Allowed product edit:
+
+- `Render-MultiplayerQuestsPage`
+- removal of the accidentally added `Render-MultiplayerQuestsPageLegacy` function
+
+No other product-source function may change.
+
+TEMP verification files may be updated as needed.
+
+DO NOT CHANGE:
+
+- Home
+- Player
+- Mobility
+- Inventory
+- Crafting/Progression
+- Combat
+- World/Camera
+- Building
+- Mods/Configuration
+- `Load-QuestDatabase`
+- `Load-QuestState`
+- `Save-QuestState`
+- dispatch
+- registry
+- native
+- Lua/EML
+- F8
+
+Do not change local-only quest semantics, EventIds, storage semantics, handler logic, or any gameplay/runtime mechanism.
+
+REQUIRED SOURCE COMPARISON
+
+Compare final product source against archived G5G baseline.
+
+After normalization of irrelevant final blank-line differences, the only functional product-source difference must be:
+
+`Render-MultiplayerQuestsPage`
+
+There must be no added legacy/backup function.
+
+If any other named function differs, STOP and report it instead of declaring closure.
+
+PARITY FIXTURE HARDENING
+
+The repaired G5H TEMP parity fixture must directly assert active-function semantics for at least:
+
+- responsive helper use
+- global quarantine state-dependent button colors
+- selected/unselected filter colors
+- status badge color switch/mapping
+- per-quest quarantine state-dependent colors
+- per-quest status state-dependent colors
+- missing-ID disabled BackColor/ForeColor
+- exact EventIds
+- UI_ONLY registration
+- missing-ID no registration
+- exact filter/category semantics
+- exact local state update semantics
+- exact local-only truthfulness
+- zero `Register-AdminActionEvent` in active renderer
+- zero raw direct events in active renderer
+- zero legacy renderer function definitions
+
+Do not accept broad whole-file matches for these checks.
+
+FULL REGRESSION
+
+Rerun:
+
+- PowerShell parse
+- repaired G5H parity
+- Player 18/18
+- Mobility 31/31
+- Items/Progression 46-group parity
+- Combat 40-group parity
+- World/Camera parity
+- Building parity
+- truthfulness 72/72
+- UI smoke 30/30
+- UI errors = 0
+- lifecycle/static
+- source consolidation/schema 12/12
+- CT catalog 224
+- prohibited mutation scan
+- G4A zero-gap/lifecycle
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- registry 55 / 17 / 38 / 55 unique
+
+Geometry remains:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION
+
+Work through recoverable TEMP fixture/path/source-pattern issues without returning to the user.
+
+Stop only if:
+- Current start hash differs from the required repair start hash;
+- correcting active parity requires a semantic/backend/helper change outside allowed scope;
+- another named product function must change;
+- a safety/runtime unknown requires guessing;
+- H deployment would be required.
+
+FINAL REPORT
+
+Return one final report with:
+
+- start/end runtime SHA and length
+- active renderer before/after hash
+- confirmation legacy function removed
+- exact list of product functions changed vs G5G baseline
+- restored state-dependent presentation semantics
+- repaired G5H parity count/result
+- evidence that fixture is scoped to active renderer
+- all regression results
+- protected function/helper hashes
+- registry counts/hash
+- H absent
+- geometry status
+- confirmation G5I/F8 not started
+- confirmation no gameplay/runtime mechanism changed or proven
+
+Only after all of the above is green state:
+
+`G5H Entities & Authority responsive/parity verification is closed at source/static level.`

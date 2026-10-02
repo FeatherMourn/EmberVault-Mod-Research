@@ -1,0 +1,21 @@
+-- Architect Toolkit - Single Blueprint Carrier startup selection
+--
+-- Change only the value below, then fully restart Enshrouded.
+-- The Hammer receives ONE stable Architect Blueprint item. Architect changes
+-- the carrier's startup geometry instead of permanently registering one item
+-- per catalog shape. Live in-session swapping is not enabled yet.
+--
+-- Available keys:
+--   hollow_ceiling_4m
+--   filled_circle_4m
+--   ring_4m
+--   cross_4m
+--   diamond_4m
+--   diagonal_cross_4m
+--   sphere_2m
+--   filled_cylinder_2m
+--   hollow_cube_2m
+--   stairs_2m
+--   pyramid_2m
+--   archway_2m
+ArchitectToolkit_ActiveShapeKey = "ring_4m"

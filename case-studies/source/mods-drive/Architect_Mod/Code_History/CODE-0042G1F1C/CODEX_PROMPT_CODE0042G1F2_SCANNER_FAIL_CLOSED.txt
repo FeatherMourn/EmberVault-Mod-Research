@@ -1,0 +1,296 @@
+CODE-0042G1F2 — CANONICALIZE AND FAIL-CLOSE THE AOB SCANNER
+
+Scope: Architect Toolkit F7 shell — final G1 closure
+Build: Enshrouded 1076226
+
+Primary files:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+- Architect_Mod/Current/runtime/admin_action_registry.json
+
+Read-only evidence:
+- runtime/NativeMemoryEngine.cs
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- enable the scanner;
+- modify NativeMemoryEngine scanner implementation;
+- add native hooks/signatures/offsets;
+- begin responsive migration;
+- migrate G2/G3 pages;
+- change unrelated action states.
+
+GOAL
+
+Remove the final raw F7 shell ACTION by giving the AOB Scanner a canonical disabled action identity and eliminating the direct PowerShell call to `NativeMemoryEngine.ToggleScanner()`.
+
+This is the final bounded G1 event-closure slice.
+
+SOURCE FACTS
+
+Current raw shell action:
+
+```powershell
+Register-SafeUiEvent $script:btnScannerToggle "Click" {
+    ...
+    $isActive = [NativeMemoryEngine]::ToggleScanner()
+    ...
+}
+```
+
+Native scanner behavior is mutation-coupled:
+
+- `ToggleScanner()` -> `EnableScanner()` / `DisableScanner()`
+- `EnableScanner()` may start `StartMemorySweeper()`
+- sweeper calls `ResolveAll()` and can tick active autorun/auto-loot paths
+- `DisableScanner()` calls:
+  - `StopMemorySweeper()`
+  - `UninstallPositionHook()`
+  - `RevertAll()`
+- `UninstallPositionHook()` can restore executable bytes / free remote storage
+- `RevertAll()` reverts all active registered patches and clears bridge toggles
+
+Therefore this is not a safe enabled diagnostic toggle.
+
+A. ADD ONE CANONICAL REGISTRY ACTION
+
+Add exactly one action:
+
+`diagnostics.aob_scanner.toggle`
+
+Use schema-valid v2 metadata:
+
+- `displayName`: `AOB Scanner (Unavailable)`
+- `category`: `Developer & Diagnostics`
+- `subcategory`: `Native Scanner`
+- `description`: explain that the legacy scanner mixes diagnostics with native hook/patch lifecycle and global revert behavior; it remains disarmed until scanner ownership is decomposed and validated.
+- `controlType`: `toggle`
+- `valueType`: `boolean`
+- `evidenceStatus`: `UNSOLVED`
+- `backendAdapter`: `DiagnosticsAdapter`
+- `backend`: `NONE`
+- `runtimeMode`: `UNAVAILABLE`
+- `authority`: `unknown`
+- `persistence`: `none`
+- `risk`: `mutation`
+- `readbackVerification`: `none`
+- `revertSupport`: `unsupported`
+- `enabled`: false
+
+`failureReason` must specifically preserve:
+- `ToggleScanner` starts/stops a memory sweeper;
+- disable invokes `UninstallPositionHook` and `RevertAll`;
+- scanner lifecycle is not isolated enough for safe F7 exposure.
+
+Do not use a custom enum value.
+Do not promote the action to EXPERIMENTAL/PROVEN.
+Do not assign `NATIVE_HOOK` or `NATIVE_MEMORY` as backend; accepted canonical execution is intentionally NONE.
+
+Expected registry:
+- before: 54 actions / 17 enabled / 37 disabled
+- after: 55 actions / 17 enabled / 38 disabled
+
+B. REPLACE THE RAW SHELL REGISTRATION
+
+Replace:
+
+`Register-SafeUiEvent $script:btnScannerToggle "Click" ...`
+
+with:
+
+`Register-AdminActionEvent`
+
+Required identity:
+
+- ActionId: `diagnostics.aob_scanner.toggle`
+- EventId: `f7.shell.scanner.toggle.click`
+- EventName: `Click`
+- Page: `Shell`
+- Operation: `Toggle AOB Scanner`
+- LifetimeScope: `SHELL`
+
+The canonical action is disabled, so normal F7 binding must disable the control.
+
+Do NOT use `AllowDisabled`.
+
+C. REMOVE DIRECT NATIVE TOGGLE FROM F7
+
+The scanner event handler must contain zero calls to:
+
+- `[NativeMemoryEngine]::ToggleScanner()`
+- `[NativeMemoryEngine]::EnableScanner()`
+- `[NativeMemoryEngine]::DisableScanner()`
+
+Preferred handler:
+
+```powershell
+[void](Send-CheatCommand "diagnostics.aob_scanner.toggle")
+```
+
+BUT this is only acceptable if `Send-CheatCommand` explicitly fails closed for this ActionId before any command publication.
+
+Add an explicit fail-closed branch near the other hard rejection routes:
+
+```powershell
+elseif ($Action -eq "diagnostics.aob_scanner.toggle") {
+    return @{
+        success = $false
+        state = "UNSUPPORTED"
+        error = "AOB_SCANNER_UNSOLVED: legacy scanner lifecycle is mutation-coupled and disabled."
+    }
+}
+```
+
+Also set admin status with the same truthful reason if consistent with existing rejection style.
+
+Do not allow the new action to fall through to `Publish-CheatCorrelationCommand`.
+
+This defense-in-depth is required even though the UI control is disabled.
+
+D. BUTTON PRESENTATION
+
+Change the default scanner control presentation from:
+
+`AOB SCANNER: STANDBY`
+
+to something truthful such as:
+
+`AOB SCANNER: UNAVAILABLE`
+
+Use a neutral/disabled color.
+
+Surface the canonical registry failure reason through tooltip/accessibility if the existing UI infrastructure supports it.
+
+Do not present the scanner as active/available just because the native `ScannerEnabled` property exists.
+
+E. UPDATE-ADMINCHEATBADGES
+
+Current `Update-AdminCheatBadges` updates scanner text based only on `NativeMemoryEngine.ScannerEnabled`.
+
+Change this so the canonical registry state wins.
+
+Required behavior:
+
+1. Resolve `diagnostics.aob_scanner.toggle`.
+2. If the canonical action is disabled:
+   - keep `$script:btnScannerToggle.Enabled = $false`;
+   - do not re-enable it;
+   - if native `ScannerEnabled` is false:
+     - show `AOB SCANNER: UNAVAILABLE`;
+   - if native `ScannerEnabled` is unexpectedly true from legacy/external state:
+     - show a truthful warning such as `AOB SCANNER: ACTIVE (LEGACY; CONTROL DISABLED)`;
+     - do NOT call DisableScanner/RevertAll automatically.
+3. Do not introduce any new native mutation from the badge updater.
+
+The read of `ScannerEnabled` may remain as diagnostic state display only.
+
+F. SHELL LIFETIME
+
+The scanner is a persistent shell control.
+
+Its active binding must use:
+
+`LifetimeScope = "SHELL"`
+
+Verify:
+- `Clear-AdminContent` preserves the live scanner SHELL binding;
+- disposed scanner binding would still be pruned by existing lifecycle logic;
+- no duplicate/ambiguous scanner EventId is created.
+
+G. DIRECT-EVENT / G1 CLOSURE GATE
+
+After this pass:
+
+- Home raw direct events = 0
+- Player raw direct events = 0
+- Mobility raw direct events = 0
+- shell UI-only raw events = 0
+- shell ACTION raw events = 0
+- raw scanner registration count = 0
+
+PowerShell direct calls:
+- `NativeMemoryEngine.ToggleScanner` = 0
+- `NativeMemoryEngine.EnableScanner` = 0
+- `NativeMemoryEngine.DisableScanner` = 0
+
+Do not count the C# method definitions themselves as a failure; native infrastructure remains intentionally untouched.
+
+H. TEST FIXTURE
+
+Update `tests/test_f7_event_lifecycle.ps1` for the intentional registry count change:
+
+- registry count = 55
+- enabled = 17
+- disabled = 38
+
+Add assertions:
+
+1. `diagnostics.aob_scanner.toggle` exists exactly once.
+2. scanner action:
+   - enabled = false
+   - evidenceStatus = `UNSOLVED`
+   - backend = `NONE`
+   - backendAdapter = `DiagnosticsAdapter`
+   - runtimeMode = `UNAVAILABLE`
+   - authority = `unknown`
+   - risk = `mutation`
+3. `f7.shell.scanner.toggle.click` exists as ACTION / SHELL.
+4. no raw scanner `Register-SafeUiEvent` remains.
+5. no PowerShell direct call to `NativeMemoryEngine.ToggleScanner` remains.
+6. `Send-CheatCommand` has an explicit fail-closed scanner route before publication.
+7. shell raw UI = 0.
+8. shell raw ACTION = 0.
+9. PAGE/SHELL lifecycle assertions remain green.
+10. schema enum/adaptor mismatch counts remain zero.
+
+Do not weaken existing assertions.
+
+I. PRESERVE
+
+Keep unchanged:
+- `movement.position.read` fail-closed;
+- `Get-CurrentPlayerPosition` returns `$null` and has no native coordinate read;
+- teleport disabled / ADM-TEST-0002;
+- Auto Loot live F7 action disabled / STARTUP_CANARY_ONLY prose retained;
+- Glider Flight disabled/unqualified;
+- glider-stamina semantic mismatch;
+- CT catalog = 224;
+- source-consolidation catalog;
+- all existing 17 enabled actions;
+- no responsive work.
+
+TESTS
+
+Run:
+1. real `Import-AdminActionRegistry` -> 55 unique actions;
+2. PowerShell parse;
+3. lifecycle fixture;
+4. F7 truthfulness;
+5. UI smoke;
+6. UI errors;
+7. CT catalog = 224;
+8. registry enabled/disabled counts = 17 / 38;
+9. schema violation counts = 0;
+10. adapter mismatch count = 0;
+11. Home/Player/Mobility raw = 0;
+12. shell UI-only raw = 0;
+13. shell ACTION raw = 0;
+14. direct PowerShell scanner-native-call count = 0;
+15. prohibited mutation scan.
+
+REPORT
+
+Return:
+- files changed;
+- scanner action metadata;
+- registry counts before/after;
+- scanner EventId / LifetimeScope;
+- raw shell counts before/after;
+- direct scanner-native call count before/after;
+- exact `Send-CheatCommand` fail-closed behavior;
+- lifecycle/schema/truthfulness/UI-smoke results;
+- explicit statement that G1 is source/offline closed if every gate passes;
+- explicit statement that no runtime/gameplay proof is claimed.
+
+Do not start G2 in this pass.

@@ -1,0 +1,375 @@
+CODE-0042G2D — WORLD / CAMERA EVENT MIGRATION ONLY
+
+Scope: Architect Toolkit F7 `Render-WorldCameraPage`
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change `admin_action_registry.json`.
+- Registry must remain 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate Building/Entities, Settings, Codex, Map, Blueprint Browser, or other pages;
+- begin responsive layout work;
+- add world/time/camera mutation backends;
+- add registry action IDs;
+- enable world time, time pause, or plant growth;
+- invent Freecam/FOV/timescale/yield/loot behavior.
+
+GOAL
+
+Remove all 9 raw source-level event registrations inside `Render-WorldCameraPage`.
+
+Current raw source count:
+- `Register-SafeUiEvent`: 3
+- `.Add_Click(...)`: 6
+- total: 9
+
+After this pass:
+- raw `Register-SafeUiEvent` = 0
+- raw `.Add_Click(...)` = 0
+- G1 / G2A / G2B / G2C zero-gap state remains unchanged
+
+THREE REAL CANONICAL ACTION FAMILIES
+
+A. TIME-OF-DAY PRESET LOOP
+
+Current loop creates four runtime buttons:
+
+- DAWN -> 6.0
+- NOON -> 12.0
+- DUSK -> 18.0
+- NIGHT -> 0.0
+
+Current action:
+`Send-CheatCommand "world.time_of_day" @{ hour = ... }`
+
+Classification:
+ACTION
+
+ActionId:
+`world.time_of_day`
+
+Use exact stable EventIds:
+
+- `f7.world.time.set.6.click`
+- `f7.world.time.set.12.click`
+- `f7.world.time.set.18.click`
+- `f7.world.time.set.0.click`
+
+Generate the numeric suffix with invariant formatting from the integral hour value.
+
+Page:
+`World & Camera`
+
+Operation:
+`Set World Time <hour>`
+
+Lifetime:
+PAGE
+
+Replace the raw loop registration with `Register-AdminActionEvent`.
+
+Preserve closure correctness:
+- each button must retain its own hour value;
+- do not capture the last loop item accidentally;
+- do not build EventId from transient Control identity or localized display text.
+
+Canonical registry truth:
+
+`world.time_of_day`
+- enabled=false
+- evidenceStatus=`UNSOLVED`
+- backend=`NONE`
+- runtimeMode=`LIVE`
+- authority=`unknown`
+- risk=`mutation`
+- failureReason says a qualified daytime hook capability is required
+
+Therefore all four time buttons must remain disabled by canonical binding even if `$caps["timeOfDay"].canExecute` is true.
+
+Do NOT use `AllowDisabled`.
+
+B. INSTANT PLANT GROWTH
+
+Current raw handler:
+`Send-CheatCommand "cheat.world.plant_growth"`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.world.plant_growth`
+
+EventId:
+`f7.world.plantGrowth.toggle.click`
+
+Page:
+`World & Camera`
+
+Operation:
+`Toggle Plant Growth`
+
+Lifetime:
+PAGE
+
+Use `Register-AdminActionEvent`.
+
+Canonical registry truth:
+- enabled=false
+- UNSOLVED
+- backend NONE
+- runtime UNAVAILABLE
+- mutation risk
+
+Canonical gating must keep the control disabled even if local patch capability reports ready.
+
+Do not add direct patch/native fallback.
+
+C. PAUSE WORLD TIME
+
+Current raw handler:
+- toggles `$script:timePaused`
+- changes the button text/color
+- calls `Send-CheatCommand "world.time_pause"`
+
+Classification:
+ACTION
+
+ActionId:
+`world.time_pause`
+
+EventId:
+`f7.world.time.pause.click`
+
+Page:
+`World & Camera`
+
+Operation:
+`Toggle Pause Time`
+
+Lifetime:
+PAGE
+
+Use `Register-AdminActionEvent`.
+
+IMPORTANT:
+Because the canonical action is disabled, normal UI interaction must not mutate local `$script:timePaused` presentation state.
+
+Refactor the handler so any local toggle/text/color change occurs only after a successful canonical command result.
+
+Recommended pattern:
+
+1. calculate the requested next state without committing it;
+2. call `Send-CheatCommand`;
+3. only if returned result reports success:
+   - assign `$script:timePaused`;
+   - update text/color;
+   - report Paused/Resumed;
+4. on failure:
+   - leave `$script:timePaused`, button text, and button color unchanged;
+   - report the canonical failure.
+
+Since the action is currently disabled/fail-closed, the normal result is no state change.
+
+Do not create a fake local pause state.
+
+D. DEFENSE-IN-DEPTH DISPATCH REJECTION
+
+Add explicit hard rejection branches in `Send-CheatCommand` BEFORE native command publication.
+
+Reject:
+
+1. time set aliases:
+   - `world.time_of_day`
+   - `cheat.time.set`
+
+Return truthful error such as:
+
+`WORLD_TIME_UNSOLVED: canonical world-time mutation backend is unavailable.`
+
+2. pause:
+   - `world.time_pause`
+
+Return:
+
+`WORLD_TIME_PAUSE_UNSOLVED: canonical world-time pause backend is unavailable.`
+
+3. plant growth:
+   - `cheat.world.plant_growth`
+
+Return:
+
+`PLANT_GROWTH_UNSOLVED: canonical plant-growth mutation backend is unavailable.`
+
+Equivalent wording is acceptable.
+
+Requirements:
+- branches occur before any `Publish-CheatCorrelationCommand`;
+- no pending native command is created;
+- no parameter remapping/publication occurs for a rejected time request;
+- no native patch fallback;
+- local capability optimism cannot bypass the rejection.
+
+E. REMOVE SIX UNSUPPORTED PLACEHOLDER HANDLERS
+
+These controls are disabled placeholders. Remove their raw handlers entirely.
+
+Do NOT canonicalize them.
+Do NOT create EventIds or ActionIds.
+Do NOT classify them UI_ONLY.
+
+1. Resource Yield multiplier loop
+   - remove `.Add_Click(...)`
+   - keep buttons disabled/presentation-only
+
+2. Loot Drop multiplier loop
+   - remove `.Add_Click(...)`
+   - keep disabled
+
+3. Freecam / Flycam
+   - remove `.Add_Click(...)`
+   - keep disabled
+
+4. Hide HUD
+   - remove `.Add_Click(...)`
+   - keep disabled
+
+5. FOV loop
+   - remove `.Add_Click(...)`
+   - keep disabled
+
+6. Timescale loop
+   - remove `.Add_Click(...)`
+   - keep disabled
+
+They may retain:
+- labels
+- colors
+- Tags
+- layout
+- explanatory “UNSUPPORTED” text
+
+They simply must not own event handlers.
+
+F. LIFECYCLE
+
+Expected canonical runtime definitions from this renderer:
+
+- `f7.world.time.set.6.click`
+- `f7.world.time.set.12.click`
+- `f7.world.time.set.18.click`
+- `f7.world.time.set.0.click`
+- `f7.world.plantGrowth.toggle.click`
+- `f7.world.time.pause.click`
+
+All are:
+- Classification = ACTION
+- LifetimeScope = PAGE
+
+Mappings:
+- four time EventIds -> `world.time_of_day`
+- plant growth -> `cheat.world.plant_growth`
+- pause -> `world.time_pause`
+
+Repeated rendering through either nav entry that uses `Render-WorldCameraPage` must remain idempotent:
+- `World & Environment`
+- `Camera & Presentation`
+
+Because the same renderer is used by both nav destinations, EventId metadata must be stable and identical on every render.
+
+Do not derive definition Page metadata dynamically from `$script:adminPage` if that would make the same EventId conflict between the two nav entries.
+
+Use stable explicit Page metadata:
+`World & Camera`
+
+G. STATIC ACCEPTANCE
+
+After migration:
+
+- World/Camera raw `Register-SafeUiEvent` = 0
+- World/Camera raw `.Add_Click(...)` = 0
+- exactly six canonical runtime EventIds are produced
+- all mappings above are exact
+- all three canonical actions remain disabled
+- all six unsupported placeholder source handlers are gone
+- no new registry action IDs
+- all three dispatch families reject before publication
+- pause local state is not changed on failed dispatch
+- registry remains 55 / 17 enabled / 38 disabled
+- Combat raw remains 0
+- Crafting raw remains 0
+- Inventory raw remains 0
+- G1 raw counts remain 0
+
+H. PRESERVE
+
+Keep unchanged:
+
+- `diagnostics.aob_scanner.toggle` disabled/fail-closed
+- `movement.position.read` disabled/fail-closed
+- `Get-CurrentPlayerPosition` returns `$null`
+- skills set/reset fail-closed
+- parry fail-closed
+- Inventory reroll disabled/unqualified
+- teleport fail-closed / ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch
+- CT catalog = 224
+- source-consolidation catalog
+- schema/adaptor validity
+
+TESTS
+
+Run:
+
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. World/Camera raw count: 9 -> 0
+11. Combat raw remains 0
+12. Crafting raw remains 0
+13. Inventory raw remains 0
+14. G1 raw counts remain 0
+15. exact six World/Camera EventId assertions
+16. four time preset uniqueness/value assertions
+17. canonical disabled-state assertions for time/plant/pause
+18. direct dispatch rejection assertions for:
+    - `world.time_of_day`
+    - `cheat.time.set`
+    - `world.time_pause`
+    - `cheat.world.plant_growth`
+    and assert no pending command/publication
+19. pause failed-dispatch state-preservation assertion
+20. unsupported-placeholder no-handler assertions for all six source sites
+21. prohibited mutation scan
+
+REPORT
+
+Return:
+
+- files changed
+- World/Camera raw count before/after
+- exact six EventIds and mappings
+- exact fail-closed dispatch behavior for time/pause/plant
+- confirmation failed pause does not change local UI/session state
+- six unsupported placeholder handlers removed
+- registry counts unchanged
+- lifecycle/truthfulness/UI-smoke results
+- remaining G2 raw count:
+  - Building/Entities 3
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G2E in this pass.

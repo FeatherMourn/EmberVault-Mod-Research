@@ -1,0 +1,624 @@
+CODE-0042G5E — AUTONOMOUS GOAL: COMBAT & AI RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Fully migrate F7 `Render-CombatAIPage` from its fixed-pixel layout to the established responsive F7 framework, preserve every current semantic/safety contract, and close G5E with one final verification report.
+
+Work autonomously toward that goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded fixture paths, stale fixed-pixel source assertions, fixture-version mismatches, missing TEMP support artifacts, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5E satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting SHA-256:
+
+`8CEBE9F8B3C273005A433031399663C130187AA92B5BDFDEA8FE50905B762228`
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry SHA-256:
+
+`7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+
+Required registry state:
+
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- modify backend/dispatch logic
+- start gameplay/runtime research
+- start G5F/World & Environment or later pages
+- start F8 work
+- enable any currently disabled Combat/AI action
+- invent new Combat/AI ActionIds for unsupported placeholders
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a UI/responsive migration, not a Combat/AI gameplay implementation.
+
+Preserve working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+CURRENT ENGINEERING BOUNDARY
+
+Combat/AI capability work remains PLANNED/UNMAPPED outside this UI migration.
+
+Current project evidence says:
+- damage authority is not mapped;
+- AI state ownership is not mapped;
+- spawn/despawn lifecycle is not mapped;
+- kill/despawn actions are not qualified;
+- reversible/resource-backed tuning and read-only AI/entity inspection are future research directions.
+
+Do not cross that evidence boundary during G5E.
+
+SCOPE BOUNDARY
+
+Expected product-source edit:
+
+- `Render-CombatAIPage`
+
+Do not alter:
+
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-WorldCameraPage`
+- page dispatch
+- responsive helper functions
+- `Send-CheatCommand`
+- registry
+- native runtime
+- Lua/EML
+- F8
+
+If a shared helper, dispatch, registry, capability model, or backend change appears necessary:
+
+STOP and report why before making it.
+
+PRE/POST HASH GUARDS
+
+Before editing, record exact hashes for at least:
+
+- full `ArchitectRuntime.ps1`
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+
+After editing:
+
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- World/Camera hash unchanged
+- Combat hash should change
+- unrelated function hashes remain source-identical
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use existing proven helpers:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Respect helper contracts:
+
+- percentage columns for `New-F7ResponsiveTable`
+- numeric row heights are absolute heights
+- only `{Type='Percent';Value=...}` is the special percent-row form
+- never introduce `{Type='Absolute';Value=...}` row-height hashtables
+
+Prefer:
+
+- Dock / Anchor
+- percentage-column tables
+- responsive button groups
+- bounded minimum sizes
+- AutoEllipsis for compressible text
+- FlowLayoutPanel-compatible vertical cards
+
+Avoid recreating the page as fixed X/Y positioning.
+
+Do not redesign styling beyond what is necessary for responsive layout.
+
+CURRENT COMBAT & AI SEMANTIC CONTRACT — PRESERVE EXACTLY
+
+============================================================
+A. PAGE / EVENT LIFECYCLE
+============================================================
+
+Page remains:
+
+`Combat & AI`
+
+Dispatcher must continue to route that page to:
+
+`Render-CombatAIPage`
+
+Current Combat renderer has:
+
+- raw `.Add_Click(...)` registrations: 0
+- raw `Register-SafeUiEvent` registrations: 0
+- canonical `Register-AdminActionEvent` sites: exactly 1
+
+Preserve that model.
+
+Do not introduce direct:
+
+- `.add_Click`
+- `.add_SelectedIndexChanged`
+- `.add_TextChanged`
+- `.add_ValueChanged`
+- other raw F7 event registration
+- `[scriptblock]::Create`
+
+Use canonical F7 event infrastructure only.
+
+============================================================
+B. PLAYER DAMAGE MULTIPLIERS — UNSUPPORTED
+============================================================
+
+Preserve heading meaning:
+
+`PLAYER DAMAGE & COMBAT MULTIPLIERS (UNSUPPORTED)`
+
+Player Damage presets must remain exactly:
+
+- 1.0
+- 2.0
+- 5.0
+- 10.0
+
+Presentation remains equivalent to labels:
+
+- 1x
+- 2x
+- 5x
+- 10x
+
+All Player Damage controls remain:
+
+- disabled
+- unbound
+- presentation-only
+- Tag/value semantics preserved if still retained
+
+Do not assign ActionIds/EventIds.
+Do not add handlers.
+Do not create a damage backend.
+
+============================================================
+C. ENEMY DAMAGE MULTIPLIERS — UNSUPPORTED
+============================================================
+
+Enemy Damage presets must remain exactly:
+
+- 0.1
+- 0.5
+- 1.0
+- 2.0
+
+Presentation remains equivalent to:
+
+- 0.1x
+- 0.5x
+- 1.0x
+- 2.0x
+
+All remain disabled + unbound.
+
+Do not create an enemy-damage mutation path.
+
+============================================================
+D. CRITICAL CHANCE — UNSUPPORTED
+============================================================
+
+Values must remain exactly:
+
+- 0.0
+- 0.25
+- 0.5
+- 1.0
+
+Visible labels must remain exactly/equivalently:
+
+- 0%
+- 25%
+- 50%
+- 100%
+
+Controls remain disabled + unbound.
+
+Preserve value/label pairing.
+
+Do not create a crit mutation path.
+
+============================================================
+E. EASY PARRY — ONLY CANONICAL COMBAT ACTION
+============================================================
+
+Visible control meaning must remain:
+
+`EASY PARRY WINDOW (STUN): TOGGLE`
+
+ActionId:
+
+`cheat.parry.toggle`
+
+EventId:
+
+`f7.combat.parry.toggle.click`
+
+Page:
+
+`Combat & AI`
+
+Operation meaning:
+
+`Toggle Easy Parry`
+
+Handler must continue to route only through:
+
+`Send-CheatCommand "cheat.parry.toggle"`
+
+Do not create any direct/native/UI fallback.
+
+Canonical registry truth:
+
+`cheat.parry.toggle`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- authority = unknown
+- risk = mutation
+- failureReason = capability/backend not currently proven
+
+Preserve canonical `Register-AdminActionEvent` fail-closed gating.
+
+Preserve `Send-CheatCommand` defense-in-depth rejection for both:
+
+- `combat.parry`
+- `cheat.parry.toggle`
+
+with:
+
+`PARRY_UNSOLVED`
+
+Do NOT modify that dispatch branch.
+
+Do NOT enable the control by bypassing the canonical binder.
+Do NOT use `AllowDisabled`.
+
+============================================================
+F. OTHER PLAYER COMBAT PLACEHOLDERS — UNSUPPORTED
+============================================================
+
+Preserve as disabled + unbound:
+
+`2.0x ATTACK SPEED (UNSUPPORTED)`
+
+`SUPER KNOCKBACK (UNSUPPORTED)`
+
+Do not attach handlers.
+Do not invent action identities.
+
+============================================================
+G. ENEMY AI CONTROL PLACEHOLDERS — UNSUPPORTED
+============================================================
+
+Preserve section meaning:
+
+`ENEMY AI, AGGRESSION & KILL RADIALS (UNSUPPORTED)`
+
+Preserve all four controls as disabled + unbound:
+
+- `FREEZE ALL ENEMY AI (UNSUPPORTED)`
+- `DISABLE ENEMY AGGRO (UNSUPPORTED)`
+- `KILL ALL ENEMIES IN RADIUS (UNSUPPORTED)`
+- `DESPAWN ENEMIES IN RADIUS (UNSUPPORTED)`
+
+Do not add radius selectors, entity queries, spawn/despawn APIs, or mutation handlers.
+
+Do not infer entity authority.
+
+============================================================
+H. BOSS HEALTH / DAMAGE — UNSUPPORTED
+============================================================
+
+Boss Health presets must remain exactly:
+
+- 0.2
+- 0.5
+- 1.0
+- 2.0
+
+Boss Damage presets must remain exactly:
+
+- 0.2
+- 0.5
+- 1.0
+- 2.0
+
+Visible formatting remains equivalent to:
+
+- 0.2x
+- 0.5x
+- 1.0x
+- 2.0x
+
+All remain disabled + unbound.
+
+Do not create boss-health or boss-damage backends.
+
+============================================================
+I. UNSUPPORTED PLACEHOLDER TRUTHFULNESS
+============================================================
+
+The prior G2C event cleanup deliberately removed 11 unsupported Combat/AI placeholder handler sites.
+
+Do NOT reintroduce them.
+
+Unsupported controls must remain disabled/presentation-only without fake ActionIds.
+
+The responsive refactor may change local variable names and source construction patterns, but semantic truthfulness must remain at least as strong.
+
+RESPONSIVE DESIGN TARGET
+
+Rebuild the page using responsive cards/tables while preserving the conceptual hierarchy:
+
+1. Combat & AI page header
+2. Player Damage & Combat Multipliers card
+3. Enemy AI / Aggression / Kill Radials card
+
+Suggested responsive decomposition is flexible.
+
+At minimum:
+
+- major cards stretch with content width
+- Player Damage preset group distributes responsively
+- Enemy Damage preset group distributes responsively
+- Critical Chance group distributes responsively
+- Easy Parry / Attack Speed / Knockback controls remain readable without overlap
+- Freeze/Aggro controls share width cleanly
+- Kill/Despawn controls share width cleanly
+- Boss Health and Boss Damage preset rows remain readable at narrower widths
+- long unsupported labels do not overlap neighboring controls
+- vertical order remains correct in the F7 FlowLayoutPanel
+
+Do not claim exact geometry is proven unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- make bounded product edits inside `Render-CombatAIPage`
+- create TEMP staging roots
+- create a TEMP-only G5E Combat parity fixture
+- adapt TEMP copies of test fixtures for toolkit-root/path issues
+- update TEMP-only stale fixed-pixel/source-pattern assertions only when semantic invariants are independently proven preserved
+- rerun tests as many times as needed
+- fix parse/layout-construction errors introduced by your migration
+- iterate on responsive table/card decomposition
+- inspect Current source/registry/archived G2C evidence
+
+Do not ask the user for intermediate approval for those recoverable issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- authoritative Current hash differs before the first edit
+- a required Combat/AI behavior cannot be preserved without changing backend/gameplay semantics
+- current evidence contradicts canonical registry/safety state
+- a change outside `Render-CombatAIPage` is genuinely required
+- a shared responsive helper must change
+- `Send-CheatCommand` or registry must change
+- completing the task requires recreating H:
+- completing the task requires enabling a disabled action
+- completing the task requires inventing an API, address, signature, pointer, layout, calling convention, AI owner, entity authority model, or runtime behavior
+- a safety-sensitive ambiguity cannot be resolved from existing evidence/tests
+
+Do NOT stop merely because a TEMP test fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified lineage from G5B–G5D:
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use the preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native sources to the older archive generation.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+If prior TEMP G5B/G5C/G5D parity fixtures are unavailable, recreate equivalent TEMP checks from their closed invariants rather than stopping.
+
+G5E PARITY FIXTURE
+
+Create a TEMP-only Combat & AI parity fixture.
+
+Verify at least these independent groups:
+
+1. `Combat & AI` dispatcher still invokes `Render-CombatAIPage`
+2. Player Damage values remain 1/2/5/10
+3. Player Damage controls disabled/unbound
+4. Enemy Damage values remain 0.1/0.5/1/2
+5. Enemy Damage controls disabled/unbound
+6. Critical values remain 0/0.25/0.5/1
+7. Critical labels remain 0%/25%/50%/100%
+8. Critical controls disabled/unbound
+9. Easy Parry visible text/meaning preserved
+10. Easy Parry ActionId remains `cheat.parry.toggle`
+11. Easy Parry EventId remains `f7.combat.parry.toggle.click`
+12. Easy Parry page/operation semantics preserved
+13. Easy Parry handler routes only through `Send-CheatCommand "cheat.parry.toggle"`
+14. registry still disables `cheat.parry.toggle`
+15. registry state remains UNSOLVED/backend NONE/runtime UNAVAILABLE
+16. `PARRY_UNSOLVED` rejection for `combat.parry` preserved
+17. `PARRY_UNSOLVED` rejection for `cheat.parry.toggle` preserved
+18. Attack Speed remains disabled/unbound
+19. Super Knockback remains disabled/unbound
+20. Freeze Enemy AI remains disabled/unbound
+21. Disable Enemy Aggro remains disabled/unbound
+22. Kill Enemies in Radius remains disabled/unbound
+23. Despawn Enemies in Radius remains disabled/unbound
+24. Boss Health values remain 0.2/0.5/1/2
+25. Boss Health controls disabled/unbound
+26. Boss Damage values remain 0.2/0.5/1/2
+27. Boss Damage controls disabled/unbound
+28. unsupported placeholder handler count remains zero
+29. Combat canonical `Register-AdminActionEvent` count remains exactly one
+30. raw direct F7 event registrations inside Combat remain zero
+31. no fake ActionIds/EventIds added to unsupported controls
+32. `Render-DashboardPage` hash unchanged
+33. `Render-PlayerVitalsPage` hash unchanged
+34. `Render-MobilityTravelPage` hash unchanged
+35. `Render-InventoryItemsPage` hash unchanged
+36. `Render-CraftingProgressionPage` hash unchanged
+37. `Render-WorldCameraPage` hash unchanged
+38. Combat renderer now uses responsive card/table infrastructure
+39. no invalid Absolute row-height hashtable introduced
+40. no backend/dispatch/registry/native/Lua changes occurred
+
+You may split or strengthen checks.
+Do not reduce coverage merely to get green.
+
+REGRESSION / SUCCESS CRITERIA
+
+G5E is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only intended Combat layout source changed
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- World/Camera hash unchanged
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- G5E Combat parity fixture fully PASS
+- G5B Player parity remains 18/18 PASS
+- G5C Mobility parity remains fully PASS
+- G5D Items/Progression parity remains fully PASS
+- truthfulness fully PASS after only justified TEMP semantic refreshes
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new direct F7 event sites
+- final Current runtime SHA recorded
+- H: remains absent
+- no gameplay/runtime mechanism changed or promoted to PROVEN
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA
+- ending SHA
+- Home hash before/after
+- Player hash before/after
+- Mobility hash before/after
+- Inventory hash before/after
+- Crafting/Progression hash before/after
+- Combat hash before/after
+- World/Camera hash before/after
+- concise responsive layout architecture
+- product-source files changed
+- TEMP-only test files changed
+- full G5E parity result
+- Player parity result
+- Mobility parity result
+- Items/Progression parity result
+- truthfulness result
+- UI smoke result
+- UI error count
+- catalog count
+- lifecycle result
+- schema/source-consolidation result
+- prohibited-mutation result
+- G4A result
+- stable-definition refs
+- registry counts
+- geometry status
+- any justified TEMP assertion refreshes and evidence
+- confirmation H: was not recreated
+- confirmation G5F/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5E Combat & AI responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay behavior PROVEN from these tests.

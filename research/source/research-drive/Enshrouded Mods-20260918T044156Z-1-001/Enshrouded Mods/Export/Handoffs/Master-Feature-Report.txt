@@ -1,0 +1,972 @@
+# Architect Toolkit — Master Feature Report
+
+## 1. Overall vision
+
+Architect Toolkit is intended to become more than a shape generator. The end goal is essentially an **Enshrouded creative building suite + administrator toolbox + quality-of-life runtime**, while still allowing the user to preserve normal progression.
+
+The main philosophy we settled on was **Creative With Progression**:
+
+| Preserve normal gameplay  | Give creative/admin convenience |
+| ------------------------- | ------------------------------- |
+| Quests                    | Building materials              |
+| Exploration               | Procedural construction         |
+| NPC discovery             | Furniture/decor placement       |
+| Flame progression         | Building tools                  |
+| Bosses                    | Terrain editing                 |
+| Skill progression         | Copy/paste and transformation   |
+| Equipment progression     | Blueprint tools                 |
+| World barriers by default | Optional admin bypasses         |
+| Protected quest zones     | Optional admin utilities        |
+
+So this is not supposed to become “everything unlocked and god mode all the time.” Those capabilities can exist, but they should be **optional administrator toggles**, separate from the normal Architect building experience.
+
+---
+
+# 2. Architect's Wand
+
+The Wand is the central interaction tool.
+
+### Current proven design
+
+The stable base is the normal weapon:
+
+**Weapon_T1_1H_Wand_01_Fire**
+
+Item ID:
+
+`1693828837`
+
+It currently inherits the visible name **Crackling Wand** because custom localization is not solved yet.
+
+We learned that making the Wand a vanilla `BuildTool`, Quickbuilder, or Construction Hammer causes Enshrouded to normalize it into those existing tool families. Therefore the Wand stays a normal weapon item.
+
+The architecture is:
+
+```text
+Architect Wand
+      ↓
+Architect Runtime
+      ↓
+F8 Builder UI
+      ↓
+Procedural / native backend
+      ↓
+Preview and placement
+```
+
+Eventually we discussed having **tiers of Architect Wand**, so progression could unlock stronger construction functionality without abandoning the normal game progression model.
+
+---
+
+# 3. F8 Architect Builder UI
+
+The custom F8 UI is intended to be the main construction interface.
+
+### Already working
+
+F8 currently:
+
+* opens the Architect Toolkit menu
+* releases the game's mouse capture
+* displays a usable cursor
+* stops player/camera input while the menu owns focus
+* allows clickable controls
+* closes with F8 or Esc
+* restores game input afterward
+
+Current sections are:
+
+| Section   | Purpose                                        |
+| --------- | ---------------------------------------------- |
+| Shapes    | Procedural geometry                            |
+| Structure | Walls, roads, stairs, arrays, etc.             |
+| Terrain   | Terrain sculpting/replacement                  |
+| Utility   | Copy/paste, measurement, admin utilities, etc. |
+
+Current controls include Shape, Size, Mode, Material, Preview, and Place.
+
+Longer term, the F8 UI should become contextual: the options shown should depend on which Architect tool/mode is selected.
+
+---
+
+# 4. F7 configuration/admin panel
+
+We also planned a broader **F7 configuration panel**.
+
+F7 is more appropriate for global settings, administrator options, movement, convenience features, compatibility information, and persistent configuration.
+
+Conceptually:
+
+```text
+F7 Toolkit Settings
+├─ Gameplay
+├─ Building
+├─ Movement
+├─ Inventory
+├─ World
+├─ Progression
+├─ Admin
+├─ Compatibility
+└─ Diagnostics
+```
+
+F8 remains the immediate **builder/wand interface**.
+
+F7 becomes the broader **toolkit control center**.
+
+---
+
+# 5. Procedural geometric tools
+
+These are the six shapes we have actually proven through the current safe EML backend:
+
+| Shape              | Status |
+| ------------------ | ------ |
+| Hollow Square 4m   | PROVEN |
+| Filled Circle 4m   | PROVEN |
+| Ring 4m            | PROVEN |
+| Sphere 2m          | PROVEN |
+| Filled Cylinder 2m | PROVEN |
+| Hollow Cube 2m     | PROVEN |
+
+The backend currently has an EML allocator limitation: compressed placement data larger than **8 bytes** can trigger `No allocator set in BaseDynamicArray`.
+
+That limits our current safe Lua-generated objects, but it does **not** represent the intended final limit of Architect Toolkit. The native layer gives us a route toward larger structures later.
+
+---
+
+# 6. Full Architect construction toolset
+
+The larger toolset we planned goes considerably beyond those six shapes.
+
+### Basic construction
+
+| Tool       | Intended behavior                                    |
+| ---------- | ---------------------------------------------------- |
+| Line       | Build a straight voxel/block line between two points |
+| Wall       | Create walls between endpoints                       |
+| Floor      | Generate rectangular/defined floor areas             |
+| Fill       | Fill a selected volume                               |
+| Replace    | Replace one material/block type with another         |
+| Paint      | Change material without changing geometry            |
+| Select     | Select buildings/regions/voxels                      |
+| Move       | Move selected geometry                               |
+| Rotate     | Rotate selection or blueprint                        |
+| Mirror     | Mirror across an axis                                |
+| Copy/Paste | Duplicate structures or voxel selections             |
+
+### Procedural architecture
+
+| Tool          | Intended behavior                         |
+| ------------- | ----------------------------------------- |
+| Circle        | Hollow circular structures                |
+| Filled Circle | Solid circular areas                      |
+| Cylinder      | Filled or hollow cylinders                |
+| Sphere        | Filled/hollow spherical structures        |
+| Dome          | Partial sphere / dome                     |
+| Arch          | Procedural architectural arches           |
+| Ramp          | Adjustable slopes                         |
+| Stairs        | Automatic staircase creation              |
+| Spiral Stairs | Procedural spiral staircase               |
+| Tunnel        | Excavate/build tunnels                    |
+| Road          | Generate roads between points             |
+| Bridge        | Eventually spline-based bridge generation |
+
+We also discussed **walls, roads and bridges following splines**, rather than being restricted to straight segments.
+
+---
+
+# 7. Advanced transformation tools
+
+These are closer to professional building/CAD functionality.
+
+### Planned
+
+* multi-object selection
+* region selection
+* magic select
+* copy
+* paste
+* duplicate
+* move
+* rotate
+* mirror
+* axis locking
+* snapping
+* alignment
+* distribution
+* arrays
+* repeated copies
+* radial arrays
+* linear arrays
+* symmetry mode
+* measurement HUD
+* precise dimensions
+* material eyedropper
+* material replacement
+* undo
+* redo
+
+Undo/redo is particularly important before we allow large procedural or terrain operations.
+
+---
+
+# 8. Blueprint system
+
+The Blueprint system was envisioned as a major feature rather than merely internal implementation.
+
+Planned capabilities include:
+
+### Blueprint Library
+
+Save structures into an Architect blueprint library.
+
+Potential metadata:
+
+```text
+Blueprint Name
+Author
+Dimensions
+Materials
+Voxel count
+Creation date
+Category
+Thumbnail
+Rotation
+Required unlocks
+```
+
+### Blueprint operations
+
+* save selected region
+* load blueprint
+* preview before committing
+* rotate
+* mirror
+* move ghost before placement
+* replace materials
+* inspect required materials
+* verify collisions
+* verify protected areas
+* blueprint hologram
+* blueprint validation/verifier
+* favorite blueprints
+* folders/categories
+
+We also discussed an eventual **Blueprint Tome** item as a thematic way of accessing saved designs.
+
+---
+
+# 9. Ghost / hologram preview
+
+A proper placement preview is a major target.
+
+We have already proven that Enshrouded separates:
+
+**final voxel placement data**
+
+from:
+
+**`keen::VoxelModelResource` ghost data**
+
+So eventually Preview should provide a true Architect hologram showing exactly what will be placed.
+
+Future ghost controls could include:
+
+* rotate
+* move
+* height adjust
+* mirror
+* snap
+* material preview
+* bounding box
+* collision warning
+* invalid-area indication
+* voxel count
+* dimensions
+* cost estimate
+
+---
+
+# 10. Terrain tools
+
+Terrain editing was always intended to become its own major section.
+
+Potential brushes/tools include:
+
+| Tool    | Purpose                       |
+| ------- | ----------------------------- |
+| Raise   | Raise terrain                 |
+| Lower   | Remove terrain                |
+| Flatten | Create a level surface        |
+| Smooth  | Smooth terrain gradients      |
+| Fill    | Fill holes/areas              |
+| Dig     | Excavation                    |
+| Tunnel  | Procedural excavation         |
+| Paint   | Change terrain material       |
+| Replace | Replace one terrain type      |
+| Level   | Level to sampled height       |
+| Slope   | Generate controlled gradients |
+
+Additional ideas included terrain material eyedropper, brush radius/strength/falloff, spherical brushes, box brushes, road grading, and terrain undo.
+
+The material replacement work we investigated elsewhere also suggested an eventual **terrain/block replacer** system.
+
+---
+
+# 11. Material tools
+
+We wanted building material manipulation to be much faster than vanilla.
+
+Planned functions:
+
+* material eyedropper
+* current-block sampling
+* replace material A → B
+* paint selection
+* replace only matching voxels
+* replace globally inside selection
+* favorite materials
+* material browser
+* searchable material list
+* recently used materials
+
+Potential later mode:
+
+```text
+Select building
+→ Find all Rough Stone
+→ Replace with Castle Wall Block
+```
+
+without changing the structure's geometry.
+
+---
+
+# 12. Administrator / Cheat-Engine-style features
+
+The Cheat Engine table we examined contained a much larger set of administrator-style capabilities. We did **not** decide that all of these should automatically be enabled. Rather, they give us a useful feature catalog for an optional Admin section.
+
+### Player survival controls
+
+The table contained concepts for:
+
+| Feature                | Toolkit equivalent                |
+| ---------------------- | --------------------------------- |
+| Full Health            | Restore / lock health             |
+| Full Stamina           | Restore / infinite stamina        |
+| Full Mana              | Restore / infinite mana           |
+| No Fall Damage         | Fall-damage toggle                |
+| No Shroud Decrease     | Shroud timer freeze               |
+| No Oxygen Decrease     | Oxygen timer freeze               |
+| No Cold Timer Decrease | Cold survival toggle              |
+| Stealth Mode           | Enemy detection/admin stealth     |
+| Easy Parry             | Parry-assist/admin combat setting |
+| Rested bonus override  | Adjustable rested bonus           |
+
+These should belong under **Admin / Gameplay**, not normal Architect building mode.
+
+---
+
+# 13. Movement/admin mobility
+
+The Cheat Engine material and our own planning produced a fairly extensive movement suite.
+
+### Planned concepts
+
+**Super Movement Speed**
+
+Adjust player movement speed.
+
+**Super Jump**
+
+Adjust jump force/height.
+
+**Flight**
+
+True controllable free-flight.
+
+**Vertical flight controls**
+
+The CE table included concepts resembling:
+
+```text
+R = enable
+Shift = up
+Ctrl = down
+```
+
+We don't need to reproduce that control scheme, but it demonstrates the desired functionality.
+
+**Glider flight**
+
+Shroudtopia Glider Flight demonstrated conceptually that persistent glider-style flight is possible. Our intended implementation must be original.
+
+We discussed:
+
+* endless gliding
+* adjustable glider speed
+* adjustable lift
+* reduced/no stamina requirement
+* controllable ascent/descent
+* possibly maintaining normal glider animation
+
+**Freecam**
+
+Detach camera from player for:
+
+* construction inspection
+* screenshots
+* placement
+* surveying large projects
+
+**Build Reach**
+
+Increase Architect interaction/placement range.
+
+---
+
+# 14. Autorun
+
+We specifically discussed an **MMO-style Num Lock autorun**.
+
+Desired behavior:
+
+```text
+Num Lock
+→ begin continuous forward movement
+
+Mouse / direction
+→ steer normally
+
+Backward input
+→ cancels autorun
+```
+
+This would be a runtime QoL feature rather than a building tool.
+
+---
+
+# 15. Teleport / Waypoints
+
+Teleport was another major administrator utility.
+
+The CE table demonstrated several categories:
+
+### Manual slots
+
+* Save Position 1
+* Load Position 1
+* Save Position 2
+* Load Position 2
+* Save Position 3
+* Load Position 3
+
+### Dynamic saved positions
+
+* Save Position
+* Load Position
+* Delete Position
+
+Our better version would likely provide a named waypoint manager:
+
+```text
+My Base
+Copper Mine
+Build Site
+Boss Arena
+Village
+Testing Area
+```
+
+### Fixed locations
+
+The CE table also contained predefined teleport destinations including categories such as:
+
+* Ancient Spires
+* Ancient Vaults
+* Hollow Halls
+* major settlements
+* mines
+* camps
+* dungeons
+* notable world locations
+
+We discussed eventually using our own **Wayfinder** tool/item for travel utilities.
+
+---
+
+# 16. Character/stat administrator tools
+
+The CE table exposed a number of stats we considered useful for an Inspector/Admin interface.
+
+Possible adjustable/readable attributes include:
+
+* Strength
+* Constitution
+* Dexterity
+* Endurance
+* Intelligence
+* Spirit
+* Health
+* Health regeneration
+* Health regeneration delay
+* Stamina
+* Stamina regeneration
+* Stamina regeneration delay
+* Mana
+* Mana regeneration
+* Mana regeneration delay
+* XP multiplier
+
+Combat modifiers exposed conceptually included:
+
+* Wand damage
+* Staff damage
+* Two-handed damage
+* One-handed damage
+* Bow damage
+* Dagger damage
+* Magic damage
+* Melee damage
+* Ranged damage
+* magic critical chance
+* melee critical chance
+* ranged critical chance
+
+These would fit better into an **Inspector / Character Admin** page than Architect building mode.
+
+---
+
+# 17. Skill administration
+
+The CE work also suggested:
+
+* set available skill points
+* reset used skill points
+* skill-point grants
+* skill reset/refund
+
+We also investigated normal balancing data such as **skill points per level**.
+
+Our Creative-With-Progression preset would normally leave skill progression untouched, while Admin mode could expose these controls.
+
+---
+
+# 18. Inventory and item inspector
+
+This was one of the more interesting Cheat Engine-derived feature groups.
+
+The table could conceptually access the item being manipulated in inventory and offered things like:
+
+* view item ID/hash
+* view amount
+* change amount
+* change item
+* reroll gear
+* inspect item level
+* change item level
+* inspect enhancements
+* change number of enhancements
+* unlock upgrades
+* delete item
+* print item hash
+
+A proper Architect Toolkit implementation could make this much cleaner through an **Item Inspector UI**.
+
+For example:
+
+```text
+Selected Item
+────────────────────
+Name: Legendary Sword
+Item ID: ...
+Level: 42
+Stack: 1
+Rarity: Legendary
+Enhancements: 3
+Durability: ...
+Resource GUID: ...
+```
+
+With administrator actions separated from read-only inspection.
+
+---
+
+# 19. Crafting / Creative building
+
+Several ideas from both our design and mod research fit here.
+
+### Creative building mode
+
+Potential functionality:
+
+* free building blocks
+* free furniture/decor
+* no resource consumption for construction
+* optional recipe-cost bypass
+* only apply creative rules to building/decor
+* preserve progression equipment/items
+
+This is preferable to indiscriminately enabling free crafting for everything.
+
+### Recipe browser
+
+We wanted a searchable recipe browser showing:
+
+* item
+* recipe
+* station
+* ingredients
+* unlock requirements
+* item IDs/resources
+* category
+
+An Admin toggle could optionally unlock recipes.
+
+---
+
+# 20. Storage and inventory convenience
+
+Candidate features include:
+
+* larger stacks
+* expanded storage
+* inventory management
+* quick deposit
+* resource lookup
+* crafting-storage integration
+* item inspector
+* auto-loot
+* configurable pickup behavior
+
+Some of these concepts were also present in the Ember feature set we reviewed, such as expanded magic storage and stack-size adjustment.
+
+Again, those are **feature inspiration only**; implementation must be ours.
+
+---
+
+# 21. Farming and gathering tools
+
+We also had a general **farming/utilities** category planned.
+
+Potential capabilities:
+
+* rapid harvest
+* configurable auto-loot
+* farming helpers
+* planting utilities
+* area harvesting
+* resource scanner/lens
+* resource highlighting
+
+One proposed thematic custom item was a **Resource Lens**.
+
+---
+
+# 22. Map and exploration tools
+
+Ideas included:
+
+* configurable fog-of-war reveal distance
+* improved discovery radius
+* map marker utilities
+* custom waypoints
+* location browser
+* teleport to selected saved waypoint
+* fast-travel enhancements
+* measurement/location coordinates
+
+We specifically wanted to be careful not to automatically reveal everything because exploration is part of progression.
+
+---
+
+# 23. World / server-style admin controls
+
+Potential Admin settings include:
+
+* build outside normal altar range
+* build in otherwise restricted terrain
+* optional no-build-zone bypass
+* optional protected-zone override
+* barrier bypass
+* altered Flame Altar count
+* increased build-zone size
+* world/building inspector
+* entity/resource inspection
+
+Our default Creative-With-Progression mode should **not** automatically remove quest protections or progression barriers.
+
+Admin mode could expose these explicitly with warnings.
+
+---
+
+# 24. Flame Altar / build-zone administration
+
+We researched the normal progression values and discussed adjustable base sizes.
+
+Potential Architect settings:
+
+* maximum Flame Altars
+* Flame Altar zone radius
+* larger build areas
+* optional progressive larger base sizes
+* visual zone boundaries
+* zone inspector
+* protected-zone detection
+
+One proposed progression curve we discussed was substantially larger late-game build zones while still tying them to Flame progression.
+
+---
+
+# 25. Glider and traversal tuning
+
+Besides true flight, we discussed configurable vanilla movement systems:
+
+* glider speed
+* lift
+* glide duration
+* stamina drain
+* Updraft behavior
+* launch force
+* vertical boost
+* fall handling
+
+The restricted flight mod we inspected is only evidence that glider-style flight can work. We should not reuse its DLL/code.
+
+---
+
+# 26. Game tuning inspired by the mods we reviewed
+
+The Ember materials exposed a number of useful categories we considered as potential **optional toolkit settings**, not code to copy.
+
+Those conceptual categories included:
+
+| Category            | Candidate Architect/Admin feature |
+| ------------------- | --------------------------------- |
+| Glider tuning       | Speed/lift/stamina                |
+| Terrain replacement | Terrain material tools            |
+| Block replacement   | Architect Replace/Paint           |
+| Terraforming        | Terrain strength/drop behavior    |
+| Custom blueprints   | Blueprint library/injector        |
+| Game settings       | Expanded F7 options               |
+| Fog                 | Visibility customization          |
+| Map                 | Discovery/travel settings         |
+| Updraft             | Movement tuning                   |
+| Gems                | Salvage/socket admin              |
+| Crafting            | Creative building/recipe control  |
+| Loot                | Drop multipliers                  |
+| Fishing             | Optional QoL tuning               |
+| Storage             | Expanded crafting/storage         |
+| Stack sizes         | Inventory convenience             |
+| Flame Altars        | Build-zone configuration          |
+| Placement           | Zone/restriction controls         |
+| Progression         | Level/skill customization         |
+| Shroud              | Timer customization               |
+| Slopes              | Movement/slope rules              |
+
+We deliberately decided **not to turn Architect Toolkit into an Ember clone**. These are just useful feature categories to inspire our own modular toolkit.
+
+---
+
+# 27. Inspector / developer tools
+
+This is an important piece because Architect Toolkit is also becoming a useful Enshrouded research/debug environment.
+
+Planned Inspector functionality includes:
+
+* inspect Item ID
+* inspect GUID
+* inspect resource type
+* inspect material
+* inspect selected building
+* inspect voxel object
+* inspect player position
+* inspect orientation
+* inspect world coordinates
+* inspect placement events
+* inspect entity/component information
+* copy hashes/GUIDs
+* search resources
+* recipe lookup
+* resource browser
+* live diagnostic logs
+
+We could eventually make this a proper **Developer/Inspector tab**.
+
+---
+
+# 28. Custom thematic items
+
+Besides the Architect's Wand, we discussed giving major systems thematic tools.
+
+| Item              | Intended role                    |
+| ----------------- | -------------------------------- |
+| Architect's Wand  | Building/procedural operations   |
+| Surveyor's Lens   | Selection/measurement            |
+| Terrain Shaper    | Terrain editing                  |
+| Blueprint Tome    | Blueprint library                |
+| Wayfinder         | Teleport/waypoints               |
+| Builder's Compass | Alignment/orientation            |
+| Resource Lens     | Resource/material identification |
+| Flight Rune       | Flight/traversal abilities       |
+
+These are long-term flavor/interface concepts rather than requirements for the underlying functionality.
+
+---
+
+# 29. Runtime/admin safety system
+
+The runtime should eventually have a proper compatibility page.
+
+Every dangerous native feature should follow roughly:
+
+```text
+Game build fingerprint
+        ↓
+signature scan
+        ↓
+sanity validation
+        ↓
+install feature
+        ↓
+monitor
+        ↓
+restore on unload
+```
+
+The toolkit should show whether individual systems are:
+
+**Compatible**, **Disabled**, **Experimental**, or **Signature mismatch**.
+
+That becomes especially important for:
+
+* flight hooks
+* teleport
+* placement hooks
+* freecam
+* player-stat modification
+* terrain operations
+
+---
+
+# 30. Current implementation status
+
+There is a major distinction between the **vision** and what already works.
+
+### PROVEN
+
+Architect Wand remains a normal usable weapon wand.
+
+Six procedural shapes work.
+
+Custom placement data works.
+
+Custom ghost/preview voxel models work.
+
+F8 runtime UI works.
+
+Mouse/input ownership works.
+
+UI → JSON bridge works.
+
+EML backend manifest works.
+
+Selecting shapes maps to the correct real backend Item IDs.
+
+Original native DLL injection works.
+
+Commands reach native code inside `enshrouded.exe`.
+
+The native `BuildingPlaceEvent` hook works.
+
+The event exposes the blueprint `trackingItemId`.
+
+Architect blueprint IDs have been observed passing through the real placement pipeline.
+
+### EXPERIMENTAL
+
+**v0.7 Armed Native Placement**
+
+The intended path is:
+
+```text
+F8
+→ choose Architect shape
+→ Place
+→ arm Item ID
+
+next legitimate hammer placement
+→ capture valid game placement context
+→ substitute Architect Item ID
+→ forward event
+→ disarm
+```
+
+We have **not yet declared this successful** until the resulting structure is confirmed to actually become the selected Architect blueprint.
+
+### UNSOLVED / FUTURE
+
+Large arbitrary procedural blueprints.
+
+Direct Architect placement without hammer trigger.
+
+Direct native ghost preview.
+
+Custom Wand localization.
+
+Large-scale terrain editing.
+
+Undo/redo.
+
+Copy/paste.
+
+Flight.
+
+Teleport.
+
+Freecam.
+
+Item/stat admin UI.
+
+Most of the administrator systems listed above.
+
+---
+
+## The eventual Toolkit in one picture
+
+The complete vision is roughly:
+
+```text
+                 ARCHITECT TOOLKIT
+                        │
+        ┌───────────────┴────────────────┐
+        │                                │
+     F8 BUILD                         F7 TOOLKIT
+        │                                │
+  Architect Wand                    Admin / Config
+        │                                │
+ ┌──────┼─────────┐             ┌────────┼─────────┐
+ │      │         │             │        │         │
+Shapes Structure Terrain      Player   World    Movement
+ │      │         │             │        │         │
+Sphere Walls    Sculpt       Stats    Zones     Flight
+Circle Roads    Paint        Items    Travel    Freecam
+Dome   Stairs   Replace      Skills   Map       Speed
+Arch   Bridge   Flatten      Craft    Altar     Autorun
+ │
+Selection / Transform
+ │
+Copy • Paste • Move • Rotate
+Mirror • Arrays • Symmetry
+ │
+Blueprint Library
+ │
+Preview → Validate → Place
+ │
+Undo / Redo
+```
+
+So yes — **Architect Toolkit was always intended to become much larger than a geometry mod**. The shapes are really just the first proof that we can take control of Enshrouded's building pipeline. The end product we envisioned is closer to a combined **advanced builder, world editor, creative-mode layer, administrator console, movement toolkit, blueprint system, and developer inspector**, with everything modular enough that someone who wants normal progression can leave the cheat/admin features disabled.
+
+One important caveat: from the Nexus/mod material currently available in this Project, I can specifically verify **Ember** and **Shroudtopia Glider Flight** as references. If we discussed additional Nexus mods in an older conversation that isn't represented in the current Project materials, I don't want to invent their names or features.

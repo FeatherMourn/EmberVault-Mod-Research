@@ -1,0 +1,166 @@
+CODE-0042G5K1 — AUTONOMOUS CLOSEOUT REPAIR: ROLE PRESETS
+
+Build scope:
+Enshrouded 1076226
+
+STATUS AT START
+
+G5K was reported closed, but independent comparison against the archived G5J baseline found one source/parity blocker in the active `Render-RolePresetsPage`.
+
+Authoritative Current to repair:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting identity for this repair:
+
+- Length: 449765 bytes
+- SHA-256:
+  `0CCE15A6FC9C8DF2DDA6B40CE86809A1A72B5F5B962D905651C2981477EF5E48`
+
+G5J baseline:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042G5J\runtime\ArchitectRuntime.ps1`
+
+Baseline SHA-256:
+
+`D510D65A3A25FB4080DC3BC466AD9D0736661FF0E2F3F291989721437F366EF8`
+
+PRIMARY GOAL
+
+Repair only the semantic drift in the responsive `Render-RolePresetsPage`, harden the G5K parity fixture so this exact drift cannot pass again, rerun the full G5K regression suite, and close G5K only after the corrected source/static evidence is green.
+
+INDEPENDENTLY OBSERVED BLOCKER
+
+The G5J baseline WORLD EXPLORER fallback description is:
+
+`Shroud Immunity, Underwater Breathing, Cold Immunity, Infinite Stamina, 2.5x Movement Speed.`
+
+The current G5K responsive renderer changed it to:
+
+`Shroud Immunity, Underwater Breathing, Cold Immunity, 2.5x Movement Speed.`
+
+`Infinite Stamina` was dropped.
+
+This is product semantic drift and violates the G5K goal, which explicitly required the four fallback preset definitions — including descriptions — to remain exact.
+
+REPAIR
+
+Restore the WORLD EXPLORER fallback description in the ACTIVE responsive renderer to exactly:
+
+`Shroud Immunity, Underwater Breathing, Cold Immunity, Infinite Stamina, 2.5x Movement Speed.`
+
+Do not change any other preset field or product behavior.
+
+SCOPE
+
+Allowed product edit:
+
+- `Render-RolePresetsPage` only
+
+Do not change:
+- `Load-ArchitectPresets`
+- `Save-ArchitectPresets`
+- `Invoke-ArchitectPreset`
+- Home
+- Settings
+- Diagnostics/Codex
+- any G5A–G5J closed renderer/helper
+- page dispatch/nav
+- registry
+- native
+- Lua/EML
+- F8
+
+`admin.preset.apply` must remain:
+- disabled
+- EXPERIMENTAL
+- backend NONE
+- runtimeMode SESSION
+- fail-closed
+
+Do not add a legacy/backup Role Presets renderer.
+
+PARITY FIXTURE HARDENING
+
+Update the TEMP-only G5K parity fixture so fallback preset assertions are scoped to the ACTIVE `Render-RolePresetsPage` AST/function extent and compare all semantic fallback fields exactly.
+
+At minimum assert exact WORLD EXPLORER fields:
+- id = `preset-world-explorer`
+- name = `WORLD EXPLORER`
+- desc = `Shroud Immunity, Underwater Breathing, Cold Immunity, Infinite Stamina, 2.5x Movement Speed.`
+- color = `#1565C0`
+- builtIn = true
+- hotkeyBinding = `preset_slot_2`
+
+Also keep exact assertions for all four fallback descriptions so a future token omission cannot be masked by broad substring checks.
+
+REQUIRED SOURCE COMPARISON
+
+Compare final source against archived G5J.
+
+After repair, top-level named-function comparison must show exactly one changed function:
+
+`Render-RolePresetsPage`
+
+All other top-level functions must remain source-identical.
+
+There must be:
+- exactly one `Render-RolePresetsPage`
+- zero RolePresets Legacy/Old/Backup/Copy variants
+
+FULL REGRESSION
+
+Rerun:
+- PowerShell parse
+- hardened G5K parity
+- G5B–G5J regression fixtures
+- Truthfulness 72/72
+- UI smoke 30/30
+- UI errors = 0
+- lifecycle/static
+- source consolidation/schema 12/12
+- CT catalog 224
+- prohibited mutation scan
+- corrected G4A zero-gap/lifecycle
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- registry 55 / 17 / 38 / 55 unique
+
+Geometry remains:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION
+
+Resolve recoverable TEMP fixture/path/source-pattern issues without returning to the user.
+
+Stop only if:
+- Current start hash differs from the required repair hash;
+- repair requires changing any protected product function;
+- registry/backend/native/Lua changes would be required;
+- H deployment would be required;
+- a safety-sensitive unknown requires guessing.
+
+FINAL REPORT
+
+Return one final report with:
+- start/end runtime SHA and length
+- Role Presets before/after hash
+- exact product functions changed vs G5J
+- confirmation WORLD EXPLORER description restored exactly
+- confirmation all four fallback presets compare exactly
+- hardened parity result/count
+- full regression results
+- preset helper hashes
+- registry hash/counts and `admin.preset.apply` state
+- no legacy renderer
+- H absent
+- geometry status
+- confirmation no gameplay/runtime mechanism changed or proven
+- confirmation F8/later work was not started
+
+Only after all of the above is green state:
+
+`G5K Role Presets responsive/parity verification is closed at source/static level.`

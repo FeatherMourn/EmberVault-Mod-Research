@@ -1,0 +1,148 @@
+CODE-0042G1C2 — EVENT LIFECYCLE FOUNDATION ONLY
+
+Scope: Architect Toolkit F7 Admin
+Game build: Enshrouded 1076226
+Source: current Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+This task follows the successful Home raw-event migration.
+
+DO NOT migrate Player Vitals, Mobility, or any other page in this pass.
+DO NOT begin responsive layout work.
+DO NOT add gameplay functionality.
+
+GOAL
+
+Fix the shared F7 event-inventory lifecycle so the already-migrated Home page remains stable across repeated rerenders and future page migrations can use a trustworthy denominator.
+
+CURRENT PROBLEM
+
+`Register-AdminActionEvent` and `Register-F7UiEvent` require EventId, but `$script:f7EventInventory` still stores strong WinForms Control references and appends rows on every render.
+
+`$script:adminActionControls` also stores live controls by ActionId.
+
+`Clear-AdminContent` clears visual controls only.
+
+`Get-F7ActionBindingAudit` currently hard-codes:
+    staleOrDisposedActiveBindings = 0
+
+Therefore repeated Home renders can produce duplicate EventIds and retained/disposed controls.
+
+REQUIRED ARCHITECTURE
+
+Use two distinct layers.
+
+1. Stable event-definition inventory
+
+Keyed by mandatory EventId.
+
+Definition metadata should include at least:
+- EventId
+- Page
+- Classification: ACTION or UI_ONLY
+- ActionId for ACTION
+- EventName
+- Operation
+
+The stable definition inventory MUST NOT use a live Control reference as its identity or denominator.
+
+Registering the same EventId again with the same definition must NOT append a duplicate definition.
+
+If the same EventId is registered with conflicting classification/action/page semantics, fail closed and expose the ambiguity in the audit.
+
+2. Active render binding map
+
+Keyed by EventId.
+
+Contains live render state such as:
+- current Control reference
+- Page
+- ActionId if applicable
+- render generation or equivalent current-render identity
+
+Re-registering the same EventId during a rerender should replace/refresh the active binding for that EventId.
+
+Active bindings from an outgoing page/render must be removed deterministically during Clear-AdminContent or page transition.
+
+Do not use historical active Control references as the project-wide event denominator.
+
+ADMIN ACTION CONTROL MAP
+
+If `$script:adminActionControls` remains necessary:
+- prevent stale control accumulation;
+- update/remove entries on page clear/rerender;
+- do not let old disposed controls remain as active bindings.
+
+Do not weaken `Bind-AdminActionControl` capability gating.
+
+AUDIT
+
+Update `Get-F7ActionBindingAudit` so:
+
+- totalEventDefinitions is derived from stable EventId definitions.
+- duplicateEventIds represents actual conflicting/duplicate stable definitions, not normal rerender.
+- activeBindings reports current active EventId bindings.
+- staleOrDisposedActiveBindings is COMPUTED from current active controls using disposal/handle/liveness checks appropriate for WinForms; do not hard-code zero.
+- ambiguousBindings uses EventId / stable identity, not Control.Name as its primary key.
+- existing direct-event metrics continue working.
+
+HOME ACCEPTANCE TEST
+
+Render/navigate to Home repeatedly (at least:
+Home -> another page -> Home -> Home or an equivalent headless render sequence).
+
+Then prove:
+- Home stable definition count is unchanged.
+- duplicate Home EventIds = 0.
+- missing Home registry IDs = 0.
+- ambiguous Home bindings = 0.
+- staleOrDisposedActiveBindings = 0.
+- active Home EventIds refer only to the current render.
+- `Render-DashboardPage` still has zero raw direct events.
+
+PRESERVE
+
+- Registry stays at 53 unless a lifecycle fix strictly requires metadata-only change. Do not add action identities.
+- `admin.preset.apply` stays disabled / ORCHESTRATION_ONLY.
+- teleport remains fail-closed under ADM-TEST-0002.
+- Auto Loot remains STARTUP_CANARY_ONLY.
+- Glider Flight remains disabled/unqualified.
+- glider-stamina semantic block remains.
+- no direct F7 calls to:
+  TogglePatch
+  EnableAllSurvival
+  DisableAllSurvival
+  WritePlayerCoordinates
+  ToggleAutoLoot
+  ToggleGliderFlight
+- source-consolidation catalog.
+- 224-entry CT catalog.
+- current truthfulness behavior.
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. F7 truthfulness suite.
+3. UI smoke suite.
+4. UI errors.
+5. CT catalog count = 224.
+6. Home raw direct-event count = 0.
+7. Repeated Home render lifecycle test described above.
+8. Prohibited mutation-call static scan.
+
+REPORT
+
+Return:
+- files changed;
+- exact event-inventory data structures before/after;
+- whether live Control references remain in stable definitions;
+- Home stable definition count;
+- Home active binding count;
+- duplicate EventIds;
+- ambiguous bindings;
+- stale/disposed active bindings;
+- direct Home raw-event count;
+- test results;
+- remaining Player/Mobility work.
+
+Do not stop after analysis. Implement this lifecycle-only slice completely unless there is a concrete source-level blocker.

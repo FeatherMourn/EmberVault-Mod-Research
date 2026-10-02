@@ -1,0 +1,172 @@
+CODE-0042C — Complete F7 canonical ActionId binding coverage
+
+Continue from the reconstructed CODE-0042 workspace and current cleaned overlays. Do NOT add new gameplay functionality and do NOT begin the broad responsive page-internal migration in this pass.
+
+PRIMARY GOAL
+Complete the canonical F7 executable-control binding model so every gameplay/admin action control has one explicit ActionId that resolves to `runtime/admin_action_registry.json`.
+
+CURRENT VERIFIED STATE
+- Registry: 40 actions (17 enabled / 23 disabled-planned).
+- All 22 literal `Send-CheatCommand` IDs currently observed in ArchitectRuntime.ps1 exist in the registry.
+- `Bind-AdminActionControl` exists.
+- `Register-AdminActionEvent` exists and binds before registering the UI event.
+- Only two real action-control bindings currently exist: `cheatcorrelation.begin` and `cheatcorrelation.status`.
+- CT catalog remains exactly 224 entries.
+- Source Map/catalog presentation is restored.
+- Teleport is fail-closed.
+- Auto Loot remains STARTUP_CANARY_ONLY and has no live F7 mutation path.
+- Glider Flight remains disabled/unqualified.
+- Glider stamina remains semantically blocked.
+- Direct PowerShell mutation fallbacks remain absent.
+
+IMPORTANT DISTINCTION
+Not every clickable/control event belongs in the canonical gameplay action registry.
+
+ACTION CONTROLS include any F7 control that can:
+- call `Send-CheatCommand`, `Dispatch-AdminCommand`, or equivalent gameplay/admin dispatcher;
+- request a backend operation that changes or observes Enshrouded/Architect runtime state;
+- arm/end/mark a runtime capture or diagnostic action represented in the canonical registry;
+- invoke a compound admin action/preset represented as an action.
+
+UI-ONLY CONTROLS include:
+- navigation buttons;
+- text search/filter boxes;
+- list/grid selection changes;
+- sorting/filtering/view changes;
+- opening an external URL;
+- local page navigation that does not invoke a game/admin capability.
+
+Do NOT invent fake ActionIds for UI-only controls merely to reach 100% coverage.
+
+TASK 1 — AUDIT THE WHOLE F7 CONTROL SURFACE
+Inspect every F7 renderer and every event registration in ArchitectRuntime.ps1, including dynamically created controls.
+
+Build a machine-readable audit containing at least:
+- page
+- control variable/name or generated control identity
+- display text
+- event type
+- classification: ACTION_CONTROL or UI_ONLY
+- canonical ActionId if ACTION_CONTROL
+- registry entry found yes/no
+- registry enabled state
+- evidence status
+- backend
+- failure reason
+
+Do not infer ActionIds from button text if the handler/dispatcher already provides a stronger identity. If a legacy control performs a logical action without a canonical registry entry, add a truthful disabled entry rather than guessing a working backend.
+
+TASK 2 — CONVERT ACTION EVENTS TO CANONICAL BINDING
+For every ACTION_CONTROL:
+- use `Register-AdminActionEvent` or an equivalent single canonical helper that internally calls `Bind-AdminActionControl`;
+- bind exactly one canonical ActionId;
+- preserve existing handler semantics and safety restrictions;
+- if the action is disabled in the registry, the control must remain disabled and show/use the registry failure reason rather than executing;
+- do not enable an action just because a UI control exists.
+
+Replace raw `Register-SafeUiEvent` or direct `.Add_Click` use only where it represents a gameplay/admin action. Leave UI-only handlers alone or convert them to an explicit UI-only helper if that makes testing clearer.
+
+Dynamic controls must also receive explicit canonical ActionIds. Do not leave action identity buried in closure text.
+
+TASK 3 — REGISTRY COMPLETENESS
+After the control audit, expand `admin_action_registry.json` only for genuinely missing canonical F7 action identities.
+
+Requirements for any new entry:
+- commandId
+- displayName
+- product page/category
+- subcategory
+- description
+- control/value type
+- evidenceStatus
+- backend/backendAdapter
+- runtimeMode
+- authority
+- persistence
+- risk
+- readbackVerification
+- revertSupport
+- enabled
+- explicit failureReason when disabled
+
+Do not bulk mark actions enabled.
+Do not promote evidence state.
+Do not treat action-family metadata as sufficient proof of an executable backend.
+
+TASK 4 — REMOVE IDENTITY AMBIGUITY
+At the end of this pass, an automated test must be able to determine the ActionId of every ACTION_CONTROL without parsing the event-handler script text.
+
+Preferred mechanisms:
+- the central `$script:adminActionControls` map and/or
+- stable metadata on the Control such as Tag plus a canonical binding record.
+
+Do not rely on button captions.
+
+TASK 5 — ADD/UPDATE BINDING COVERAGE TESTS
+Add a test that renders/constructs all F7 pages headlessly and verifies:
+1. Every ACTION_CONTROL has exactly one canonical binding.
+2. Every bound ActionId exists exactly once in the registry.
+3. Disabled registry actions cannot become enabled due to the UI binding.
+4. Every enabled action control has an enabled registry action.
+5. No bound control points to `NONE`/missing metadata in a way that implies a working mutation.
+6. UI-only controls are not required to have gameplay ActionIds.
+7. There are zero prohibited direct F7 mutation calls.
+8. CT catalog remains exactly 224 entries.
+
+Also add a static coverage assertion so future literal `Send-CheatCommand` action IDs cannot be added without a corresponding registry entry and explicit binding path.
+
+TASK 6 — SMALL SAFE NAVIGATION NORMALIZATION
+Change the startup call from:
+`Show-AdminPage "Dashboard"`
+to:
+`Show-AdminPage "Home"`
+so startup uses the canonical page identity instead of relying on default fallback.
+
+DO NOT DO IN THIS PASS
+- No new native hooks.
+- No new signatures/offsets/pointers.
+- No player/stat writes.
+- No teleport implementation.
+- No live Auto Loot.
+- No Glider Flight implementation.
+- No terrain/prop/entity/world mutation.
+- No arbitrary Lua editor execution.
+- No major responsive page-internal redesign yet.
+- Do not change F8 behavior.
+- Do not weaken truthfulness tests to obtain a pass.
+- Do not replace Architect_Mod/Current designation or archive history.
+
+PRESERVE
+- teleport ADM-TEST-0002 fail-closed behavior
+- Auto Loot STARTUP_CANARY_ONLY
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch block
+- native runtime as sole mutation owner
+- source consolidation catalog
+- full 224-entry CT catalog
+- current safety-cleanup state
+
+VERIFICATION
+Run from the reconstructed full package workspace:
+- PowerShell parse
+- F7 truthfulness suite
+- UI smoke suite
+- new binding-coverage suite
+- prohibited-mutation search
+- CT catalog count
+- UI errors check
+
+Report:
+- registry count before/after
+- ACTION_CONTROL count
+- UI_ONLY event-control count
+- bound ACTION_CONTROL count
+- unbound ACTION_CONTROL count (must be zero to call CODE-0042C complete)
+- enabled/disabled registry counts
+- exact tests/pass counts
+- any intentionally disabled actions and why
+- files changed
+
+Do not claim runtime/in-game proof.
+
+After CODE-0042C is complete and binding coverage is zero-gap, stop. The next separate task will migrate all 11 page internals to responsive layouts.

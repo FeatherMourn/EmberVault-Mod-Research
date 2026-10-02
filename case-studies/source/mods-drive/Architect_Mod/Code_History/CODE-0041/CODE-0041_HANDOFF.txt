@@ -1,0 +1,29 @@
+CODE-0041 — F7 responsive foundation candidate / post-Codex audit
+Date: 2026-09-20
+Status: IMPLEMENTED_PARTIAL / AUDIT_FAILED / DO_NOT_RUNTIME_TEST YET
+Game build: 1076226
+
+Exact Current file archived:
+runtime/ArchitectRuntime.ps1
+SHA-256 1bbb4e8f379d58a592f554a4e6defb194f89c475781a811144fb6ad3eb06e444
+
+Registry archived:
+runtime/admin_action_registry.json
+SHA-256 092b83c5146a0a2ab7c63306534a5f0c5938729999e60980be2619dde194c8b3
+
+Reference baseline:
+INC-0062 Architect Toolkit 0.42.0
+Baseline runtime/ArchitectRuntime.ps1 SHA-256 f2053aea8c14110c12a428149c524f9a38655e8cb70e9fe040da2f6a7a12ac62
+
+Reason not runtime-ready:
+- canonical ActionId binding helper has zero call sites
+- responsive layout helpers have zero call sites in page renderers
+- teleport coordinate write path was reintroduced
+- live Auto Loot bypass was reintroduced before capability gating
+- C# NativeMemoryEngine mutation fallbacks / unproven glider behavior were reintroduced
+- source consolidation + 224-entry CT catalog presentation removed
+- glider-stamina semantic disable removed
+- headless test mutex guard regressed
+- registry still only 20 actions
+
+See CODE-0041_POST_CODEX_AUDIT.md and CODEX_PROMPT_CODE0041_REPAIR.txt.

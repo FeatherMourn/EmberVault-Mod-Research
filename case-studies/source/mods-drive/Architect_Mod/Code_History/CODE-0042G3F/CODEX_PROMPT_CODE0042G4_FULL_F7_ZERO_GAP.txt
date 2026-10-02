@@ -1,0 +1,355 @@
+CODE-0042G4 — FULL F7 ZERO-GAP AUDIT + REPEATED LIFECYCLE TRAVERSAL
+
+Scope:
+- F7 event-audit instrumentation
+- temporary `tests/test_f7_event_lifecycle.ps1`
+- no product-feature migration
+- no responsive-layout changes
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Temporary fixture:
+- existing reconstructed `tests/test_f7_event_lifecycle.ps1`
+
+Registry:
+- DO NOT change `admin_action_registry.json`.
+- Must remain 55 actions / 17 enabled / 38 disabled.
+
+DO NOT:
+- add or change product EventIds;
+- alter action enabled states;
+- add gameplay/native backends;
+- change F7/F8 product architecture;
+- start responsive layout migration;
+- redesign working pages;
+- mutate Current designation.
+
+GOAL
+
+Convert the existing narrow direct-event metric into a comprehensive zero-gap audit, then prove repeated F7 page lifecycle stability across the complete 11-page navigation surface plus important non-nav subviews.
+
+This pass is audit/instrumentation only.
+
+A. REPLACE THE NARROW DIRECT-EVENT AUDIT
+
+Current `Get-F7DirectEventAudit` is insufficient because it:
+- uses a fixed renderer list;
+- only counts `Register-SafeUiEvent` and `.Add_Click(...)`;
+- misses direct `.Add_TextChanged`, `.Add_KeyDown`, `.Add_FormClosing`, `.Add_SelectedIndexChanged`, `.Add_ValueChanged`, `.Add_CheckedChanged`, `.Add_Tick`, and any future `.Add_<Event>(...)`;
+- omits helper/detail functions such as `Update-CodexDetails` and `Update-WaypointDetails`.
+
+Replace it with a comprehensive AST-based audit.
+
+DETECT TWO RAW REGISTRATION FAMILIES
+
+1. Legacy helper calls:
+   CommandAst where:
+   `GetCommandName() -eq "Register-SafeUiEvent"`
+
+2. Direct .NET event adds:
+   InvokeMemberExpressionAst where member name matches:
+   `^Add_[A-Za-z0-9_]+$`
+
+Do not rely on a hard-coded list of event names.
+
+B. AUDIT OWNERSHIP / SOURCE BOUNDARY
+
+Use the source boundary before:
+
+`# F8 BUILDER HUD - THE CREATIVE WORKSPACE OVERLAY`
+
+as the comprehensive F7/shared-dialog audit region.
+
+This intentionally includes:
+- F7 shell
+- F7 renderers
+- Codex helpers
+- Wayfinder helpers
+- Blueprint Browser modal shared event surface
+- top-level F7 shell setup
+
+Exclude raw registrations that exist only inside the canonical registration infrastructure itself:
+
+- `Register-SafeUiEvent`
+- `Register-AdminActionEvent`
+- `Register-F7UiEvent`
+- `Get-F7DirectEventAudit`
+
+Determine nearest owning FunctionDefinitionAst for each node by walking `.Parent`.
+
+Top-level raw event registrations before the F8 boundary have owner:
+`<TOP_LEVEL>`
+
+and MUST be counted.
+
+The resulting `fullF7` count must represent every raw direct/legacy event-registration site in the pre-F8 F7/shared region after those infrastructure exclusions.
+
+EXPECTED CURRENT RESULT:
+`fullF7 = 0`
+
+If nonzero, DO NOT silently ignore the site.
+Report:
+- line
+- registration kind
+- owner function
+- source excerpt
+
+and stop claiming zero-gap until classified/migrated.
+
+C. PRESERVE COMPATIBILITY + ADD DIAGNOSTICS
+
+Keep existing output properties:
+- `batch1`
+- `fullF7`
+
+so existing truthfulness/tests do not break.
+
+Add structured fields:
+- `legacySafeUiCount`
+- `directAddEventCount`
+- `sites`
+
+Each `sites` row should include at least:
+- `line`
+- `kind` (`LEGACY_SAFE_UI` or `DIRECT_ADD_EVENT`)
+- `ownerFunction`
+- `eventMember` when applicable
+- a short source `text`
+
+`batch1` may continue to represent Home/Player/Mobility, but use the same generic Add_* detection rather than only Add_Click.
+
+D. HARDEN THE BINDING AUDIT METRICS
+
+Preserve `Get-F7ActionBindingAudit` compatibility, but add these audit fields:
+
+- `stableDefinitionControlReferences`
+- `stableDefinitionHandlerReferences`
+- `activeShellBindings`
+- `activePageBindings`
+- `activeDetailBindings`
+- `activeDialogBindings`
+
+Stable event definitions MUST contain metadata only.
+
+Assert every non-ambiguous object in `$script:f7EventDefinitions` has no:
+- `Control`
+- `Handler`
+
+property/reference.
+
+Do not remove current fields.
+
+E. STATIC FULL-SOURCE ZERO-GAP ASSERTION
+
+In the lifecycle fixture, assert:
+
+- `Get-F7DirectEventAudit.fullF7 == 0`
+- `legacySafeUiCount == 0`
+- `directAddEventCount == 0`
+- `sites.Count == 0`
+
+Also independently parse source in the fixture and assert there is no raw pre-F8 event registration outside the excluded infrastructure functions.
+
+The test must fail with line/function/site details if anything appears.
+
+This is the new authoritative source-level zero-gap metric.
+
+F. 11-PAGE REPEATED TRAVERSAL
+
+Use the exact current navigation order:
+
+1. Home
+2. Player
+3. Mobility & Navigation
+4. Items & Progression
+5. Combat & AI
+6. World & Environment
+7. Building & World Editing
+8. Entities & Authority
+9. Camera & Presentation
+10. Mods & Configuration
+11. Developer & Diagnostics
+
+Run at least THREE complete cycles:
+33 calls to `Show-AdminPage`.
+
+Do not simulate success by only inspecting strings.
+Use the existing WinForms/lifecycle harness when available.
+
+After EVERY page render assert:
+
+- no `__AMBIGUOUS__*` definitions;
+- `duplicateEventIds.Count == 0`;
+- `ambiguousBindings.Count == 0`;
+- `staleOrDisposedActiveBindings == 0`;
+- every active binding has a live Control;
+- every active ACTION binding resolves exactly one canonical registry ActionId;
+- a canonical `enabled=false` ACTION control is not enabled;
+- no active DIALOG bindings exist unless a modal is actually open;
+- SHELL binding count is constant;
+- all non-SHELL active controls are current/live descendants of the current admin UI tree or a currently live detail panel.
+
+G. DEFINITION PLATEAU / IDEMPOTENCE
+
+Capture `f7EventDefinitions` count after the FIRST complete 11-page cycle.
+
+Cycles 2 and 3 must NOT increase the definition count.
+
+Dynamic definitions discovered during cycle 1 are acceptable.
+
+After cycle 1:
+- definition count must plateau;
+- no additional stable EventIds appear from simply revisiting the same pages;
+- no ambiguous variants are created.
+
+Report:
+- definition count after cycle 1
+- after cycle 2
+- after cycle 3
+
+Expected:
+same count for all three after cycle 1 is complete.
+
+H. PAGE ACTIVE-BINDING PLATEAU
+
+For each page name, record the active binding signature after its render during cycle 1:
+
+signature can be sorted tuples of:
+- EventId
+- LifetimeScope
+- Page
+- ActionId
+
+During cycles 2 and 3, rendering that same page must produce the same active-binding signature.
+
+This catches:
+- stale prior-page bindings;
+- duplicated controls;
+- non-idempotent event creation;
+- detail bindings that accumulate across revisits.
+
+I. NON-NAV F7 SUBVIEW TRAVERSAL
+
+After the 11-page cycles, explicitly exercise these current subviews with `Clear-AdminContent` before each direct render:
+
+1. `Render-RolePresetsPage`
+2. `Render-DiagnosticsPage`
+3. `Render-MapWayfinderPage`
+
+Render each at least twice.
+
+For each:
+- no stale active bindings;
+- no ambiguous definitions;
+- second render has same active binding signature as first;
+- definition count does not grow on second render;
+- raw source audit stays zero.
+
+For Wayfinder, exercise at least one detail rebuild if fixture data exists.
+
+Do not open Blueprint Browser in this G4 traversal unless the existing fixture can safely operate modal dialogs without blocking. G3F already owns its dedicated dialog lifecycle tests.
+
+J. DEVELOPER PAGE / CODEX STRESS
+
+`Developer & Diagnostics` is the heaviest current F7 page because it composes:
+- Diagnostics
+- Source Map grid
+- CT Catalog grid
+- Codex
+
+During the repeated traversal verify:
+- Codex PAGE EventIds remain idempotent;
+- any auto-rendered Codex DETAIL active bindings target live current controls only;
+- revisiting Developer & Diagnostics does not accumulate old DETAIL bindings;
+- CT catalog remains 224 entries;
+- source-consolidation catalog remains present.
+
+K. SHELL STABILITY
+
+Record the active SHELL EventIds before traversal.
+
+After all page/subview cycles:
+- exact same SHELL EventId set;
+- no duplicate shell bindings;
+- no disposed shell controls;
+- shell size/nav/escape/form-closing/scanner semantics unchanged.
+
+Do not change shell event behavior in this pass.
+
+L. WINFORMS HARNESS RESULT SEMANTICS
+
+If the existing environment cannot execute a real WinForms lifecycle traversal:
+
+- static source audit may still PASS;
+- lifecycle traversal must report:
+  `SKIPPED_NO_WINFORMS_HARNESS`
+  or equivalent;
+- DO NOT call the traversal runtime-proven.
+
+Do not fake a PASS from static source checks.
+
+The user's current Windows environment should run the existing fixture if WinForms is available; use that path when possible.
+
+M. PRESERVE
+
+Keep unchanged:
+- registry 55 / 17 / 38
+- all existing EventIds
+- G3D0 generic canonical execution gates
+- G1/G2/G3A/B/C/D/E/F source closure
+- local quest semantics
+- local Wayfinder semantics
+- Blueprint Browser local-selection truthfulness
+- Teleport disabled / ADM-TEST-0002
+- scanner/position/preset/skills/parry/world/building fail-closed routes
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- CT catalog = 224
+- source-consolidation catalog
+- no Current designation changes
+
+N. STANDARD TESTS
+
+Run:
+1. real registry import -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. prohibited mutation scan
+11. comprehensive raw-event audit = 0
+12. stable-definition Control references = 0
+13. stable-definition Handler references = 0
+14. 11-page x3 traversal
+15. definition plateau
+16. per-page active-binding signature plateau
+17. RolePresets/Diagnostics/Wayfinder repeated subview traversal
+18. SHELL EventId set stability
+
+REPORT
+
+Return:
+- files changed
+- old vs new direct-event audit behavior
+- fullF7 raw site count
+- legacy/direct sub-counts
+- stable-definition reference counts
+- 11-page traversal result
+- definition counts for cycles 1/2/3
+- any page whose active-binding signature changed
+- subview traversal results
+- shell stability result
+- registry counts unchanged
+- standard test results
+- explicit statement whether WinForms traversal actually ran or was skipped
+- explicit statement that responsive-layout work was NOT started
+- explicit statement that no gameplay/runtime behavior was proven by this pass
+
+Do not start responsive migration in this pass.

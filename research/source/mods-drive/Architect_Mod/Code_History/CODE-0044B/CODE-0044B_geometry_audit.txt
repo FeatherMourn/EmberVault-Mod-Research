@@ -1,0 +1,29 @@
+CODE-0044B procedural geometry audit
+
+Source algorithms: tools/ArchitectVoxel/architect_voxel.py (Python reference),
+ported to runtime/ArchitectBuildDesign.psm1 without a runtime Python dependency.
+Families: box/cuboid, sphere, cylinder, ring. Cylinder supports x/y/z axes;
+ring is restricted to ArchitectVoxel's horizontal X/Z plane.
+Occupancy order: x fastest, z next, y outer; LSB-first packed bytes.
+Occupancy hash: SHA-256 of packed bytes. Design ID: SHA-256 of normalized spec JSON.
+No timestamp enters deterministic identity. generatedUtc is informational only.
+
+Golden parity: 10/10 representative packed byte vectors and occupied counts
+(solid/hollow/flat box, solid/hollow sphere, solid/hollow cylinder, x/z-axis
+cylinders, ring), plus repeat hash and design-ID determinism.
+
+Bounded generation: each dimension <=256; bounding volume <=65,536 voxels.
+The volume guard executes before the occupancy byte array or nested loops.
+This conservative cap bounds worst-case work to 65,536 voxel visits. Generation
+is explicit, never on each keystroke. Orthographic projections are cached as
+three bitmaps with maximum 256x256 pixels each, drawn proportionally and disposed
+on reset, page rerender, or control disposal.
+
+Representative local offline timings (PowerShell, this workstation):
+  box 16x16x16: volume 4,096, occupied 4,096, 172 ms
+  sphere 32x32x32: volume 32,768, occupied 17,256, 127 ms
+  ring 64x1x64: volume 4,096, occupied 204, 10 ms
+  hollow sphere 40x40x40: volume 64,000, occupied 7,112, 456 ms
+  F8 maximum bounded box preview+refresh: volume 65,536, 767 ms
+
+These are offline UI/data timings, not game-runtime or placement evidence.

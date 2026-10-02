@@ -1,0 +1,466 @@
+CODE-0042G3F — BLUEPRINT BROWSER EVENT MIGRATION + TRUTHFUL LOCAL SELECTION
+
+Scope:
+- `Show-BlueprintBrowser`
+- Blueprint Browser event lifecycle only
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- DO NOT change `admin_action_registry.json`.
+- Must remain 55 actions / 17 enabled / 38 disabled.
+
+IMPORTANT PRODUCT BOUNDARY
+
+The Blueprint Browser is opened from the F8 `BLUEPRINTS` workspace.
+
+Use the shared canonical event-registration infrastructure, but use `f8.blueprints.*` EventIds so product identity remains correct.
+
+DO NOT:
+- add a placement backend;
+- claim the selected blueprint can be placed in-world;
+- wire world mutation;
+- change Current package designation;
+- migrate unrelated F8 HUD events;
+- begin responsive-layout work;
+- start G4 in this pass.
+
+GOAL
+
+Remove all 8 direct registration sites inside `Show-BlueprintBrowser`.
+
+Current source counts:
+- raw `Register-SafeUiEvent`: 3
+- raw `.Add_Click(...)`: 4
+- raw `.Add_KeyDown(...)`: 1
+
+After G3F:
+- all three counts = 0
+- canonical shared event bindings are used
+- Blueprint Browser DETAIL/DIALOG lifecycle is deterministic
+- false runtime-placement wording is removed
+
+A. BLUEPRINT DETAIL LIFECYCLE
+
+`$script:renderBlueprintDetails` repeatedly performs:
+
+`$pnlInspect.Controls.Clear()`
+
+Before clearing the inspector, remove only active bindings where:
+
+- Page = `Blueprint Library`
+- LifetimeScope = `DETAIL`
+
+Use a snapshot of keys.
+
+Do NOT:
+- remove SHELL bindings;
+- remove unrelated PAGE/DIALOG bindings;
+- delete stable event definitions.
+
+Then clear/rebuild the inspector.
+
+B. OPEN FOLDER
+
+Current raw:
+`$btnOpenFolder.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f8.blueprints.openFolder.click`
+
+EventName:
+`Click`
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Open Blueprint Folder`
+
+LifetimeScope:
+DIALOG
+
+Use:
+`Register-F7UiEvent`
+
+Preserve:
+`Start-Process explorer.exe $bpDir`
+
+Use a closure-safe handler.
+
+C. CLOSE BUTTON
+
+Current raw:
+`$btnClose.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f8.blueprints.close.click`
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Close Blueprint Library`
+
+LifetimeScope:
+DIALOG
+
+Use:
+`Register-F7UiEvent`
+
+Handler:
+`$bpForm.Close()`
+
+D. BLUEPRINT LIST SELECTION
+
+Replace raw `Register-SafeUiEvent`.
+
+EventId:
+`f8.blueprints.selection.changed`
+
+EventName:
+`SelectedIndexChanged`
+
+Classification:
+UI_ONLY
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Select Blueprint`
+
+LifetimeScope:
+DIALOG
+
+Use:
+`Register-F7UiEvent`
+
+Preserve:
+- selected-index bounds check
+- lookup through `$script:filteredBlueprints`
+- invoke current detail renderer
+
+Use closure-safe local controls.
+
+E. FILTER TEXT
+
+EventId:
+`f8.blueprints.filter.text.changed`
+
+EventName:
+`TextChanged`
+
+Classification:
+UI_ONLY
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Filter Blueprints Text`
+
+LifetimeScope:
+DIALOG
+
+Use:
+`Register-F7UiEvent`
+
+Preserve:
+`& $script:applyBpFilter`
+
+F. CATEGORY FILTER
+
+EventId:
+`f8.blueprints.filter.category.changed`
+
+EventName:
+`SelectedIndexChanged`
+
+Classification:
+UI_ONLY
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Filter Blueprints Category`
+
+LifetimeScope:
+DIALOG
+
+Use:
+`Register-F7UiEvent`
+
+Preserve:
+`& $script:applyBpFilter`
+
+G. ESCAPE KEY
+
+Replace:
+`$bpForm.Add_KeyDown(...)`
+
+with canonical UI event:
+
+EventId:
+`f8.blueprints.escape.keyDown`
+
+EventName:
+`KeyDown`
+
+Classification:
+UI_ONLY
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Escape Closes Blueprint Library`
+
+LifetimeScope:
+DIALOG
+
+Handler:
+- when Escape: close `$bpForm`
+- otherwise no action
+
+H. BLUEPRINT SELECT BUTTON — TRUTHFUL LOCAL SEMANTICS
+
+Current raw button text:
+`>> EQUIP TO ARCHITECT'S WAND`
+
+Current handler only assigns:
+`$script:selectedBlueprint = $bp`
+
+No other current-source consumer of `$script:selectedBlueprint` was found.
+
+Therefore this is UI/local selection only.
+
+Change button text to something truthful such as:
+
+`SELECT BLUEPRINT (LOCAL)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f8.blueprints.detail.select.click`
+
+EventName:
+`Click`
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Select Local Blueprint`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-F7UiEvent`
+
+Preserve:
+- `$script:selectedBlueprint = $bp`
+- voxel/dimension information if present
+- close dialog after selection
+
+REMOVE false claims such as:
+- `Equipped ... to Architect's Wand`
+- `Click in world to place!`
+
+Use truthful status, for example:
+
+`Selected blueprint '<name>' in Architect's local library. Runtime placement is not wired from this dialog.`
+
+HUD status may say:
+
+`Selected Blueprint [<name>] (<voxels> voxels) - placement adapter not wired.`
+
+Do not call:
+- `Send-CheatCommand`
+- `Dispatch-AdminCommand`
+- native placement
+- carrier equip
+- world mutation
+
+I. DELETE BLUEPRINT
+
+Current raw:
+`$btnDel.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f8.blueprints.detail.delete.click`
+
+EventName:
+`Click`
+
+Page:
+`Blueprint Library`
+
+Operation:
+`Delete Local Blueprint File`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-F7UiEvent`
+
+Preserve current local file behavior:
+- remove the blueprint JSON file
+- reload blueprint list
+- reapply filter
+- truthful status
+
+FAIL-CLOSED FILEPATH RULE
+
+If `[string]$bp.FilePath` is blank:
+- do not bind delete;
+- disable button;
+- neutral styling;
+- tooltip/accessibility:
+  `Blueprint delete unavailable: source file path is missing.`
+
+Do not invent a path.
+
+If the path is present but file no longer exists:
+- handler may report `Blueprint file is no longer present.`
+- do not claim deletion succeeded.
+
+Do not add gameplay ActionIds.
+
+J. DIALOG LIFECYCLE CLEANUP
+
+Immediately after:
+
+`$bpForm.ShowDialog() | Out-Null`
+
+remove active bindings where:
+- Page = `Blueprint Library`
+- LifetimeScope is `DIALOG` or `DETAIL`
+
+Use a snapshot of keys.
+
+Do not delete stable event definitions.
+
+Also clear stale scriptblock captures after dialog closes:
+
+- `$script:loadBlueprintsFromDisk = $null`
+- `$script:applyBpFilter = $null`
+- `$script:renderBlueprintDetails = $null`
+
+only if doing so does not break an existing post-dialog caller. Source inspection currently shows these are owned by this browser flow; preserve tests.
+
+K. EXPECTED CANONICAL EVENT IDS
+
+DIALOG:
+- `f8.blueprints.openFolder.click`
+- `f8.blueprints.close.click`
+- `f8.blueprints.selection.changed`
+- `f8.blueprints.filter.text.changed`
+- `f8.blueprints.filter.category.changed`
+- `f8.blueprints.escape.keyDown`
+
+DETAIL:
+- `f8.blueprints.detail.select.click`
+- `f8.blueprints.detail.delete.click`
+
+All:
+- Classification = UI_ONLY
+- ActionId = null
+- Page = `Blueprint Library`
+
+L. PRESERVE
+
+Keep unchanged:
+- registry 55 / 17 / 38
+- all G1/G2 closure
+- G3A/B/C/D/D0/E closure
+- G3D0 canonical execution gates
+- Wayfinder local-only semantics
+- Teleport disabled / ADM-TEST-0002
+- Current F8 tool workflow outside this dialog
+- CT catalog = 224
+- source-consolidation catalog
+- schema/adaptor validity
+
+M. TESTS
+
+Run existing:
+1. real registry import -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema/adaptor validation
+9. prohibited mutation scan
+10. prior G1/G2/G3 raw closure remains intact
+
+Blueprint Browser-specific:
+
+11. `Show-BlueprintBrowser`
+- raw `Register-SafeUiEvent`: 3 -> 0
+- raw `.Add_Click`: 4 -> 0
+- raw `.Add_KeyDown`: 1 -> 0
+
+12. exact 8 EventId assertions + lifetime assertions
+
+13. DETAIL stress:
+- blueprint A
+- blueprint B
+- no selection
+- blueprint A
+- active DETAIL bindings target only current inspector controls
+- stale/disposed DETAIL bindings = 0
+- no ambiguous EventIds
+
+14. dialog stress:
+- open/close with Close button repeatedly
+- open/close with Escape repeatedly
+- active Blueprint Library DIALOG/DETAIL binding count returns to 0 after close
+- stable definitions contain no live Control references
+
+15. local selection truthfulness:
+- selecting a blueprint sets `$script:selectedBlueprint`
+- no gameplay/native command occurs
+- status does not say equipped/placeable
+- HUD does not say `Click in world to place`
+- explicit placement-not-wired wording exists
+
+16. Delete malformed path:
+- blank FilePath -> disabled/no handler/no fake path
+- valid FilePath -> existing local deletion path preserved
+- missing-on-disk path -> no false deletion success
+
+17. no new registry IDs
+18. no changes to F8 HUD handlers outside `Show-BlueprintBrowser`
+
+REPORT
+
+Return:
+- files changed
+- raw counts before/after
+- exact 8 EventIds + DIALOG/DETAIL lifetime
+- DETAIL/DIALOG cleanup result
+- blueprint local-selection truthfulness result
+- malformed delete-path result
+- registry unchanged
+- existing suite results
+- explicit statement that G4/responsive work was NOT started
+- explicit statement that no runtime/gameplay proof is claimed

@@ -1,0 +1,255 @@
+Continue CODE-0042 from the already reconstructed full-package workspace:
+
+C:\Users\JoelT\AppData\Local\Temp\architect-code0042-35e945431cb14cfeb86ba1de87e42726\architect_toolkit
+
+If that temporary workspace no longer exists, rebuild it from the verified CODE-0042_INPUT baseline and overlays. Do NOT substitute Architect_Mod/Current/architect_toolkit.zip as the full baseline.
+
+This pass is CODE-0042B: CANONICAL ACTION REGISTRY + EXECUTABLE CONTROL BINDING.
+
+Do not perform the full remaining page-layout migration in this pass. The purpose is to make the UI action model trustworthy before moving all page internals.
+
+==================================================
+PRESERVE THE CURRENT SAFETY BASELINE
+==================================================
+
+Do not reintroduce any F7 direct mutation bypass.
+
+The following must remain absent from active F7 UI/command execution paths:
+- NativeMemoryEngine.TogglePatch
+- NativeMemoryEngine.EnableAllSurvival
+- NativeMemoryEngine.DisableAllSurvival
+- NativeMemoryEngine.WritePlayerCoordinates
+- NativeMemoryEngine.ToggleAutoLoot
+- NativeMemoryEngine.ToggleGliderFlight
+
+Preserve:
+- teleport ADM-TEST-0002 fail-closed behavior
+- Auto Loot STARTUP_CANARY_ONLY / no live F7 toggle
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch block
+- CODE-0022B crash guard
+- native runtime as authoritative mutation owner
+- existing source-consolidation and 224-entry CT catalog loading/presentation
+
+Do not add new hooks, signatures, offsets, pointers, gameplay writes, resource mutations, or mutation backends.
+
+==================================================
+PRIMARY GOAL
+==================================================
+
+Make every executable F7 Admin control have an explicit, stable canonical ActionId backed by one action entry in runtime/admin_action_registry.json.
+
+At completion, test code must be able to map a visible executable control to its canonical action definition WITHOUT parsing the text of its event-handler closure.
+
+`Bind-AdminActionControl` currently exists but is effectively unused. Fix that.
+
+==================================================
+1. INVENTORY EXECUTABLE CONTROLS
+==================================================
+
+Audit the full runtime PowerShell source, not just literal Send-CheatCommand calls.
+
+Identify every F7 user control that can initiate an operation, including controls routed through:
+- Send-CheatCommand
+- Dispatch-AdminCommand
+- Write-AdminCommand
+- scanner/observer commands
+- diagnostics/capture commands
+- item inspection/reroll paths
+- survival compound actions
+- time/movement/player actions
+- any indirect/dynamic action selection
+
+Exclude ordinary navigation-only controls from gameplay/admin action coverage unless the existing architecture intentionally models navigation as an action.
+
+Produce a machine-readable or test-consumable inventory of:
+- control identity/name
+- page
+- canonical ActionId
+- registry entry found/missing
+- enabled/disabled state
+- backend
+- evidence status
+
+Do not infer that a control is safe merely because it exists.
+
+==================================================
+2. EXPAND admin_action_registry.json TRUTHFULLY
+==================================================
+
+The registry currently has 20 actions and is incomplete.
+
+Preserve the existing valid 20 entries and add canonical entries for every currently executable F7 admin control/action.
+
+A static lower-bound audit already observed these registry-missing literal actions:
+
+- cheat.item.reroll
+- cheat.parry.toggle
+- cheat.skills.reset
+- cheat.skills.set
+- cheat.survival.disable_all
+- cheat.survival.enable_all
+- cheat.world.altar_area
+- cheat.world.altar_far
+- cheat.world.build_range
+- cheat.world.glider_stamina
+- cheat.world.plant_growth
+- movement.autorun
+- movement.gravity
+- movement.jump_height
+- movement.speed
+- player.health.fill
+- player.mana.fill
+- player.stamina.fill
+- world.time_of_day
+- world.time_pause
+
+This list is NOT complete. Discover indirect/dynamic actions too.
+
+For every new registry entry include truthful metadata consistent with the existing schema, including where applicable:
+- commandId
+- displayName
+- category/subcategory
+- description
+- controlType/valueType
+- evidenceStatus
+- backend/backendAdapter
+- runtimeMode
+- authority
+- persistence
+- risk
+- readbackVerification
+- revertSupport
+- failureReason
+- enabled
+
+CRITICAL:
+Adding an action to the registry does NOT authorize it.
+If the current backend/evidence is unsupported, crash-guarded, semantic-mismatch, startup-only, or otherwise unqualified, add the canonical entry with `enabled=false` and the real reason.
+
+Do not convert stale `actionFamilies` metadata into executable truth without checking current source/evidence.
+
+==================================================
+3. MAKE ACTIONID BINDING REAL
+==================================================
+
+Every executable F7 control must explicitly bind to its canonical ActionId.
+
+Use the existing `Bind-AdminActionControl` infrastructure or introduce a small adjacent wrapper that combines safe event registration and canonical binding.
+
+A good design is something equivalent to:
+
+Register-AdminActionEvent(Control, ActionId, Page, Event, Handler)
+
+which:
+1. resolves the canonical registry action;
+2. calls Bind-AdminActionControl;
+3. registers the safe UI event;
+4. refuses/visibly disables the control if the action identity is absent or invalid;
+5. does not silently invent a backend or action.
+
+The exact implementation may differ if a cleaner integration exists.
+
+Do not leave ActionIds hidden only inside click-handler closure strings.
+
+Binding metadata must be inspectable from the control itself or a deterministic control/action map so tests can validate it.
+
+==================================================
+4. CAPABILITY / REGISTRY CONSISTENCY
+==================================================
+
+Reconcile duplicate sources of truth without changing gameplay behavior.
+
+For each executable control verify:
+- canonical registry entry exists;
+- capability state agrees with registry enabled/disabled semantics;
+- disabled actions cannot publish a command;
+- enabled actions have a currently authoritative routing path;
+- no UI-local success state can override backend/capability truth.
+
+Particularly preserve truthful handling for:
+- Teleport: disabled/fail closed
+- Auto Loot: startup/canary-only, live F7 disabled
+- Glider Flight: disabled/unqualified
+- Gravity: no deprecated C# patch fallback
+- Glider Stamina: semantic mismatch remains blocked from claiming Infinite
+- CODE-0022B Attributes/Stats: crash-guarded research, not a writable live backend
+
+==================================================
+5. TESTS
+==================================================
+
+Keep all existing passing tests green.
+
+Add/strengthen tests that assert:
+
+A. Registry completeness
+- every executable F7 Admin control has exactly one canonical ActionId;
+- every bound ActionId exists exactly once in actions[];
+- no executable control is unbound;
+- no duplicate ActionId ambiguity.
+
+B. Truthfulness
+- disabled registry action => bound control disabled or rejects before publication;
+- executable/enabled action => authoritative backend/capability exists;
+- control state cannot claim success from local UI state alone.
+
+C. Safety regression
+- zero active prohibited direct C# mutation calls listed above;
+- teleport remains fail closed;
+- Auto Loot remains startup-only;
+- Glider Flight remains disabled;
+- glider-stamina semantic block remains.
+
+D. Catalog preservation
+- source consolidation catalog still loads;
+- CT catalog still loads;
+- CT entry count remains exactly 224;
+- both remain accessible under Developer & Diagnostics.
+
+Run at minimum:
+- PowerShell parse
+- F7 truthfulness suite
+- UI smoke
+- any registry/action coverage tests
+- prohibited mutation-call static test
+
+Do not claim runtime proof.
+
+==================================================
+6. DO NOT DO IN CODE-0042B
+==================================================
+
+Do NOT:
+- rewrite all 11 page internals yet;
+- add new gameplay features;
+- add new mutation backends;
+- re-enable crash-guarded hooks;
+- implement live Auto Pickup;
+- implement teleport;
+- alter F8 behavior;
+- weaken tests to make them pass;
+- remove the Source Map or CT catalog;
+- replace or designate Architect_Mod/Current as a new canonical source snapshot.
+
+Small UI changes necessary to expose/bind truthful action state are allowed.
+
+==================================================
+DELIVERABLE
+==================================================
+
+At completion report:
+1. Registry action count before and after.
+2. Total executable F7 controls discovered.
+3. Bound executable controls / total executable controls.
+4. Any controls intentionally excluded and why.
+5. New registry ActionIds added.
+6. Enabled vs disabled action counts.
+7. Tests run and exact results.
+8. Confirmation that prohibited direct mutation calls remain absent.
+9. CT catalog count (must remain 224).
+10. Files changed.
+
+If any executable control cannot be assigned a canonical ActionId from current source/evidence without guessing, STOP THAT CONTROL FAIL-CLOSED and report it rather than inventing semantics.
+
+Once CODE-0042B is complete and clean, the next pass will migrate all 11 page internals to responsive layouts against this canonical binding model.

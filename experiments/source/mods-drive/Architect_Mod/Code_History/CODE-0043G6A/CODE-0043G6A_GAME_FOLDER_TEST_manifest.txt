@@ -1,0 +1,35 @@
+CODE-0043G6A INSTALL-READY GAME-FOLDER TEST PACKAGE
+
+Source candidate:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0043G6A\architect_toolkit_CODE-0043G6A_candidate_INC0062_final_20260921.zip
+Source candidate SHA-256: 67B08A63835B4D0FF31F7F03F746D9F2E22BD31014042B1CCB15A8AC4F161A44
+Source candidate size: 66270786 bytes
+
+Deployment ZIP: architect_toolkit_CODE-0043G6A_GAME_FOLDER_TEST_20260921.zip
+Deployment ZIP SHA-256: 42BB89C289CEDC520564182F6753BFBB527E025E9A445C8114766BC1FF58128F
+Deployment ZIP size: 66496300 bytes
+
+Candidate version: 0.40.0
+Candidate build ID: architect-v040-hybrid-admin-code0043g6a-20260921
+Candidate mode: hybrid_observer_and_admin_mutation
+Native DLL SHA-256: 1C73C7B920C7EDBE2615467BCE30FE0105119F488A03DE6FD74089FDCCCDA4CC
+Registry: 55 total / 17 enabled / 38 disabled / 55 unique command IDs
+CT catalog: 224 entries
+
+Install layout:
+START_ARCHITECT_G6A_TEST.bat
+README_G6A_RUNTIME_TEST.txt
+mods\architect_toolkit\...
+
+Disposable runtime evidence cleared from the install-ready staging copy:
+- bridge\cheat_correlation_capture.jsonl
+- bridge\cheat_correlation_status.json
+- bridge\cheat_correlation_report.json
+- bridge\native_status.json
+- bridge\native_runtime.log
+- bridge\injector.log
+
+No source, runtime, registry, hook, gameplay, or feature semantics were changed.
+Only packaging additions were made at the ZIP root: START_ARCHITECT_G6A_TEST.bat and README_G6A_RUNTIME_TEST.txt.
+The authoritative candidate ZIP was independently re-hashed after packaging and remains untouched.
+Runtime proof remains pending the controlled Gate-B session.

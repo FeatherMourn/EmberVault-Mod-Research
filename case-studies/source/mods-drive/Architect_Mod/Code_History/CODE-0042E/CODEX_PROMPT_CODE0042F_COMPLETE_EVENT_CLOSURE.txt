@@ -1,0 +1,210 @@
+Continue CODE-0042 from the existing reconstructed full workspace and the current cleaned files in Architect_Mod/Current.
+
+This task is ONLY the final event-inventory / ActionId binding closure. Do not begin the broad responsive page migration yet. Do not add gameplay features or new mutation backends.
+
+PRIMARY GOAL
+Make the F7 action/event audit independently capable of proving that every event-bearing control in the defined F7 surface is classified and that every gameplay/admin ACTION control has exactly one canonical ActionId.
+
+CURRENT VERIFIED BASELINE
+- 52 canonical registry actions.
+- 17 enabled, 35 disabled/planned.
+- movement.teleport exists and remains disabled under ADM-TEST-0002.
+- 224-entry CT catalog preserved.
+- source-consolidation catalog preserved.
+- prohibited direct F7 mutation calls remain absent.
+- existing tests currently report 53/53 truthfulness, 28/28 UI smoke, UI errors 0.
+- Register-AdminActionEvent exists.
+- Register-F7UiEvent exists.
+- Get-F7ActionBindingAudit exists.
+- Dynamic Player Vitals badges and two Developer & Diagnostics controls are already canonical bindings.
+
+DO NOT CHANGE SAFETY POLICY
+Do not re-enable teleport, Auto Loot, Glider Flight, glider-stamina semantics, CODE-0022B attribute hooks, direct C# mutation fallbacks, or any currently disabled/unqualified capability.
+Do not add guessed offsets, pointers, signatures, hooks, or mutation paths.
+Do not change F8 behavior.
+Do not designate/replace Architect_Mod/Current; edit only the files already being worked on and return the change set.
+
+IMPORTANT AUDIT DEFECTS TO FIX
+
+1. RAW EVENT REGISTRATIONS REMAIN
+The F7 renderer surface still contains many raw Register-SafeUiEvent and direct .Add_Click registrations. They are invisible to the independent event inventory.
+
+Define the F7 audit surface explicitly and migrate EVERY event registration in that surface through exactly one helper:
+
+ACTION:
+  Register-AdminActionEvent
+
+UI_ONLY:
+  Register-F7UiEvent
+
+Do not leave raw Register-SafeUiEvent/.Add_Click/.add_Click registrations inside the audited F7 renderer/navigation surface.
+
+Do not touch unrelated F8 events or non-F7 forms outside the declared F7 audit surface unless they are directly created/owned by an F7 page.
+
+2. ADD directUnclassifiedEventRegistrations
+Get-F7ActionBindingAudit must report:
+- totalEventControls
+- actionControls
+- uiOnlyControls
+- boundActionControls
+- unboundActionControls
+- missingRegistryIds
+- duplicateRegistryIds
+- ambiguousBindings
+- directUnclassifiedEventRegistrations
+- rows
+
+`directUnclassifiedEventRegistrations` must be independently meaningful. It must not simply be hard-coded to zero.
+
+Preferred approach: after migration, add a test/source-scan limited to the explicit F7 renderer/navigation region that fails if raw Register-SafeUiEvent, .Add_Click, .add_Click or equivalent direct event registration remains outside the two helpers.
+
+3. FIX INVENTORY LIFETIME
+Current pages are destroyed/re-rendered during navigation, while f7EventInventory/adminActionControls persist. This can retain disposed controls and make counts depend on visit history.
+
+Make inventory deterministic and lifecycle-safe.
+
+Preferred model:
+- store stable metadata records for coverage;
+- assign every registration a stable EventId/ControlKey;
+- upsert/dedupe by that stable identity rather than appending unbounded duplicate rows;
+- do not retain strong references to disposed controls merely to preserve historical coverage;
+- if a live control reference is needed, use a lifecycle-safe/current-render map separate from the historical coverage metadata.
+
+A test must visit all 11 pages, revisit several pages, then verify the audit counts do not increase simply because a page was opened twice.
+
+4. FIX AMBIGUOUS IDENTITY
+Do not group ambiguity by Control.Name alone. Dynamically created controls often have blank/nonunique names.
+
+Every registration must carry a stable EventId/ControlKey. Example conceptual identities:
+- Player.health.fill.click
+- Player.survival.enable_all.click
+- Mobility.speed.apply.click
+- Mobility.teleport.selected.click
+- Mobility.location.category.changed
+- Developer.correlation.begin.click
+
+Use stable identity for duplicate/ambiguous checks.
+
+Do not rely on display text as the only identity.
+
+CLASSIFICATION RULES
+
+ACTION = user intent that can cause or request gameplay/admin/backend state change, including indirect dispatch.
+Examples:
+- Send-CheatCommand
+- Dispatch-AdminCommand
+- Invoke-PlayerTeleport, even though fail-closed
+- Apply preset if the preset can dispatch admin/game actions
+- reset/revert/panic actions that dispatch canonical admin actions
+- item/skill/world/build/combat/player changes
+
+UI_ONLY = presentation/navigation/local browsing behavior that does not request gameplay/admin mutation.
+Examples:
+- page navigation
+- search/filter text changes
+- category/list selection
+- grid sorting
+- opening/closing a local dialog
+- switching Player/Developer view
+- clipboard copy
+- opening external wiki/browser link
+- opening local folder
+
+If a control is a disabled unsupported placeholder and has no meaningful executable backend intent, prefer removing its event handler and showing its disabled reason through tooltip/status text rather than inventing a meaningless action.
+
+KNOWN F7 AREAS TO AUDIT
+Do not stop after Player Vitals. Audit all of these:
+- Home / Dashboard renderer
+- Player Vitals / Character controls
+- Mobility & Navigation
+- Items / Inventory
+- Crafting / Progression
+- Combat & AI
+- World & Environment
+- Camera & Presentation
+- Building & World Editing
+- Entities & Authority / Multiplayer / Quests
+- Mods & Configuration / Settings
+- Developer & Diagnostics
+- Codex/Search execution controls
+- Map/Wayfinder controls
+- role/preset controls
+- F7 navigation rail
+- F7-owned dialogs/subviews opened from those pages
+
+CANONICAL ACTION IDS
+Reuse an existing canonical ActionId wherever the semantic action already exists.
+Only add a new registry entry if an actual ACTION control has no truthful canonical identity.
+
+If adding entries:
+- do not enable them merely for coverage;
+- preserve evidenceStatus, backend, authority, risk, readback, revert and failureReason truthfully;
+- unsupported/unqualified entries remain enabled=false;
+- one semantic capability should not be duplicated just because multiple buttons/parameter variants use it.
+
+Teleport:
+- all selected/custom/safe-spawn warp controls may bind to the same disabled `movement.teleport` ActionId with parameters/context;
+- ADM-TEST-0002 remains fail-closed;
+- no WritePlayerCoordinates path may return.
+
+Presets:
+If a user-facing Apply Preset control can indirectly dispatch gameplay/admin actions, classify the Apply control as ACTION and give it one truthful canonical preset ActionId. Individual preset contents do not require fake per-control ActionIds; the preset execution path should validate each contained canonical action before dispatch.
+
+UI-ONLY EVENT REGISTRATION
+Convert UI-only handlers to Register-F7UiEvent, including search, list selection, local view changes and F7 navigation.
+
+Do not force UI_ONLY behavior into admin_action_registry.json.
+
+AUDIT / TEST REQUIREMENTS
+Add or strengthen tests so the following are mechanically checked:
+
+1. All 11 canonical F7 pages can be rendered in the headless harness.
+2. The test traverses all 11 pages at least once.
+3. Several pages are revisited; inventory counts remain stable/deduped.
+4. Every inventoried ACTION row has exactly one ActionId.
+5. Every ACTION ActionId resolves to exactly one registry entry.
+6. UI_ONLY rows have no gameplay ActionId.
+7. No raw/direct event registration remains in the defined F7 audit surface outside registration helper definitions.
+8. No duplicate registry IDs.
+9. No ambiguous stable EventId/ControlKey bindings.
+10. No prohibited direct NativeMemoryEngine mutation calls reappear.
+11. CT catalog remains exactly 224 entries.
+12. Existing truthfulness and UI smoke tests remain green.
+
+ZERO-GAP ACCEPTANCE
+Do NOT report CODE-0042F complete unless the runtime audit/test output shows:
+
+unboundActionControls = 0
+missingRegistryIds = 0
+ambiguousBindings = 0
+directUnclassifiedEventRegistrations = 0
+
+Also report:
+- totalEventControls
+- actionControls
+- uiOnlyControls
+- boundActionControls
+- registry action count
+- enabled/disabled registry count
+- stable inventory count after first all-page traversal
+- stable inventory count after repeated-page traversal
+
+If some handler cannot be truthfully classified, stop on that specific handler and explain why; do not guess.
+
+DO NOT DO RESPONSIVE MIGRATION YET
+Do not spend this pass converting the remaining fixed-position page layouts. Preserve the existing visual behavior except where registration helper plumbing requires a minimal change.
+
+DELIVERABLE
+Return:
+1. files changed;
+2. registry count before/after and any newly added ActionIds;
+3. event inventory totals;
+4. list of any intentionally UI-only categories;
+5. zero-gap audit metrics;
+6. raw-event scan result;
+7. truthfulness/UI smoke results;
+8. CT catalog count;
+9. confirmation that prohibited mutation calls remain absent;
+10. any remaining blocker.
+
+Do not claim runtime/gameplay success. This is an offline source/UI architecture qualification pass.

@@ -1,0 +1,324 @@
+CODE-0042G2E — BUILDING / ENTITIES EVENT MIGRATION ONLY
+
+Scope: Architect Toolkit F7 `Render-BuildingEntitiesPage`
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change `admin_action_registry.json`.
+- Registry must remain 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate G3 pages;
+- begin responsive layout work;
+- add building/world/entity mutation backends;
+- add registry action IDs;
+- enable altar-area, altar-distance, or build-range actions;
+- add terrain/prop/entity mutation handlers.
+
+GOAL
+
+Migrate the final 3 raw event registrations in the bounded G2 page set.
+
+Current `Render-BuildingEntitiesPage` raw source sites:
+
+1. `cheat.world.altar_area`
+2. `cheat.world.altar_far`
+3. `cheat.world.build_range`
+
+After this pass:
+
+- raw `Register-SafeUiEvent` in `Render-BuildingEntitiesPage` = 0
+- raw `.Add_Click(...)` = 0
+- G1 / G2A / G2B / G2C / G2D zero-gap state remains unchanged
+
+A. ALTAR BUILD AREA
+
+Current handler:
+
+`Send-CheatCommand "cheat.world.altar_area"`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.world.altar_area`
+
+EventId:
+`f7.building.altarArea.toggle.click`
+
+Page:
+`Building & Entities`
+
+Operation:
+`Toggle Altar Build Area`
+
+Lifetime:
+PAGE
+
+Replace with:
+`Register-AdminActionEvent`
+
+Canonical registry truth:
+
+- enabled=false
+- evidenceStatus=`UNSOLVED`
+- backend=`NONE`
+- runtimeMode=`UNAVAILABLE`
+- authority=`unknown`
+- risk=`mutation`
+
+Do NOT use `AllowDisabled`.
+
+Local `$caps["altarArea"].canExecute` must not override canonical disabled state.
+
+B. ALTAR DISTANCE / PLACE ANYWHERE
+
+Current handler:
+
+`Send-CheatCommand "cheat.world.altar_far"`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.world.altar_far`
+
+EventId:
+`f7.building.altarFar.toggle.click`
+
+Page:
+`Building & Entities`
+
+Operation:
+`Toggle Altar Far`
+
+Lifetime:
+PAGE
+
+Use:
+`Register-AdminActionEvent`
+
+Canonical action remains disabled/unqualified.
+
+Do NOT use `AllowDisabled`.
+Do NOT add direct patch/native fallback.
+
+C. EXTENDED BUILD REACH
+
+Current handler:
+
+`Send-CheatCommand "cheat.world.build_range"`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.world.build_range`
+
+EventId:
+`f7.building.buildRange.toggle.click`
+
+Page:
+`Building & Entities`
+
+Operation:
+`Toggle Extended Build Reach`
+
+Lifetime:
+PAGE
+
+Use:
+`Register-AdminActionEvent`
+
+Canonical action remains disabled/unqualified.
+
+Do NOT use `AllowDisabled`.
+Do NOT add direct patch/native fallback.
+
+D. DEFENSE-IN-DEPTH DISPATCH REJECTION
+
+Add explicit rejection branches in `Send-CheatCommand` BEFORE native command publication.
+
+Reject altar-area aliases:
+
+- `build.altar_area`
+- `cheat.world.altar_area`
+
+Return truthful error such as:
+
+`ALTAR_AREA_UNSOLVED: canonical altar build-area mutation backend is unavailable.`
+
+Reject altar-distance aliases:
+
+- `build.altar_far`
+- `cheat.world.altar_far`
+
+Return:
+
+`ALTAR_FAR_UNSOLVED: canonical altar-distance mutation backend is unavailable.`
+
+Reject build range:
+
+- `cheat.world.build_range`
+
+Return:
+
+`BUILD_RANGE_UNSOLVED: canonical build-range mutation backend is unavailable.`
+
+Equivalent wording is acceptable.
+
+Requirements:
+
+- rejection occurs before any `Publish-CheatCorrelationCommand`;
+- no pending command is created;
+- no native command publication;
+- no direct patch fallback;
+- local capability optimism cannot bypass rejection.
+
+This is safety hardening only.
+
+E. KEEP UNSUPPORTED CONTROLS HANDLER-FREE
+
+These already have no event handlers and must stay presentation-only:
+
+- INSTANT DISMANTLE
+- FLATTEN
+- EXCAVATE
+- ROTATE
+- CLONE
+- TELEPORT entity
+- KILL ENTITY
+- DESPAWN ENTITY
+
+Do NOT:
+- create EventIds for them;
+- create registry actions;
+- classify them UI_ONLY;
+- attach status-only click handlers.
+
+Entity Inspector remains read-only/parked per current engineering state. Do not add entity mutation behavior.
+
+F. SHARED RENDERER METADATA
+
+`Render-BuildingEntitiesPage` can be reached from more than one product/nav concept.
+
+Use stable explicit Page metadata:
+
+`Building & Entities`
+
+Do not derive definition Page from `$script:adminPage` if that could make one EventId conflict across alternate navigation entry points.
+
+Expected canonical EventIds:
+
+- `f7.building.altarArea.toggle.click`
+- `f7.building.altarFar.toggle.click`
+- `f7.building.buildRange.toggle.click`
+
+All:
+- Classification = ACTION
+- LifetimeScope = PAGE
+- Page = `Building & Entities`
+
+Repeated renders must be idempotent with no duplicate/ambiguous definitions.
+
+G. STATIC ACCEPTANCE
+
+After migration:
+
+- Building/Entities raw `Register-SafeUiEvent` = 0
+- Building/Entities raw `.Add_Click(...)` = 0
+- exactly 3 canonical Building action EventIds
+- exact mappings above
+- all three canonical actions remain disabled
+- no new registry IDs
+- all three dispatch families reject before publication
+- unsupported terrain/prop/entity controls remain handler-free
+- registry remains 55 / 17 enabled / 38 disabled
+
+G2 ZERO-GAP:
+
+- Inventory raw = 0
+- Crafting/Progression raw = 0
+- Combat/AI raw = 0
+- World/Camera raw = 0
+- Building/Entities raw = 0
+
+G1 ZERO-GAP:
+
+- Home raw = 0
+- Player raw = 0
+- Mobility raw = 0
+- shell UI-only raw = 0
+- shell ACTION raw = 0
+
+H. PRESERVE
+
+Keep unchanged:
+
+- scanner disabled/fail-closed
+- `movement.position.read` disabled/fail-closed
+- `Get-CurrentPlayerPosition` returns `$null`
+- skills set/reset fail-closed
+- parry fail-closed
+- time/pause/plant fail-closed
+- Inventory reroll disabled/unqualified
+- teleport fail-closed / ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch
+- Entity Inspector parked/read-only
+- CT catalog = 224
+- source-consolidation catalog
+- schema/adaptor validity
+
+TESTS
+
+Run:
+
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. Building/Entities raw count: 3 -> 0
+11. World/Camera raw remains 0
+12. Combat raw remains 0
+13. Crafting raw remains 0
+14. Inventory raw remains 0
+15. G1 raw counts remain 0
+16. exact three Building EventId assertions
+17. canonical disabled-state assertions for all three actions
+18. direct dispatch rejection assertions:
+    - `build.altar_area`
+    - `cheat.world.altar_area`
+    - `build.altar_far`
+    - `cheat.world.altar_far`
+    - `cheat.world.build_range`
+    with no pending command/publication
+19. unsupported terrain/prop/entity no-handler assertions
+20. prohibited mutation scan
+
+REPORT
+
+Return:
+
+- files changed
+- Building/Entities raw count before/after
+- exact three EventIds and mappings
+- exact fail-closed dispatch behavior
+- registry counts unchanged
+- lifecycle/truthfulness/UI-smoke results
+- confirmation that G2 is source/offline closed if every gate passes
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G3 or responsive migration in this pass.

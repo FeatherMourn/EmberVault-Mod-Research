@@ -1,0 +1,129 @@
+Continue CODE-0042 from the already verified temporary workspace:
+
+C:\Users\JoelT\AppData\Local\Temp\architect-code0042-35e945431cb14cfeb86ba1de87e42726\architect_toolkit
+
+Do NOT rebuild the workspace and do NOT switch to Architect_Mod\Current\architect_toolkit.zip.
+
+The recovered baseline + overlays are already verified:
+- F7 truthfulness: 53/53 PASS
+- UI smoke: 28/28 PASS
+- UI errors: 0
+- full source-consolidation catalog present
+- full 224-entry CT catalog present
+- native source/tests present
+
+Now complete the actual CODE-0042 implementation.
+
+PRIORITY ORDER
+
+1. CANONICAL ACTION REGISTRY EXPANSION
+- Expand runtime/admin_action_registry.json from the current 20 actions so every executable F7 control/action has one canonical ActionId.
+- Do not invent functionality or enable unsupported features.
+- Unsupported/planned actions may exist in the registry with enabled=false and truthful evidence/backend/reason/risk/readback/revert metadata.
+- Preserve existing backend/action semantics.
+- Do not use actionFamilies as a substitute for canonical executable action entries.
+
+2. EXECUTABLE CONTROL -> ACTIONID BINDING
+- Use the existing Bind-AdminActionControl infrastructure (or improve it minimally if needed).
+- Every executable F7 control must bind to exactly one canonical ActionId.
+- Binding must be inspectable/testable without scraping event-handler closure text.
+- Non-executable labels/panels do not require ActionIds.
+- Disabled placeholders for future features may bind to disabled canonical actions.
+
+3. RESTORE/PRESERVE SOURCE PROVENANCE UI
+- Preserve and load runtime/source_consolidation_catalog.json.
+- Preserve and load runtime/cheat_table_1013216_catalog.json with all 224 entries.
+- Expose Source Map and CT Catalog under Developer & Diagnostics.
+- Do not drop, truncate, deduplicate away, or silently rewrite source rows; deduplication belongs in normalized capability mapping, not source preservation.
+
+4. TRUE PAGE-INTERNAL RESPONSIVE MIGRATION
+- Existing outer FlowLayoutPanel is not sufficient.
+- Actually migrate page internals away from fixed-position New-Panel/New-Label/New-Button Location/Size layouts where practical.
+- Use the existing responsive helpers such as New-AdminPageRoot, New-AdminSection, New-AdminResponsiveGrid and/or TableLayoutPanel/FlowLayoutPanel-based equivalents.
+- Responsive helpers must have real page-renderer call sites.
+- Main sections should expand/reflow with available width.
+- Small windows should stack/scroll without overlap.
+- Large windows should consume available width instead of leaving content clustered at upper-left.
+
+5. COMPLETE THE 11-PAGE PRODUCT STRUCTURE
+Top-level F7 pages:
+1 Home
+2 Player
+3 Mobility & Navigation
+4 Items & Progression
+5 Combat & AI
+6 World & Environment
+7 Building & World Editing
+8 Entities & Authority
+9 Camera & Presentation
+10 Mods & Configuration
+11 Developer & Diagnostics
+
+Move existing functionality into the nearest correct page without changing backend behavior.
+Source Map and CT Catalog belong under Developer & Diagnostics.
+Do not move ordinary creative F8 building tools into F7.
+
+6. PLAYER FUTURE-EDITABLE PRESENTATION
+- Preserve Attributes/Derived Stats as planned editable product controls.
+- Keep CODE-0022B crash-guarded/unproven observer path disarmed.
+- No ARM HOOKS live affordance for the unsafe old path.
+- Show unsupported/planned state truthfully until a replacement backend is independently proven.
+
+7. PRESERVE SAFETY CLEANUP
+Do not reintroduce any F7 direct calls to:
+- TogglePatch
+- EnableAllSurvival
+- DisableAllSurvival
+- WritePlayerCoordinates
+- ToggleAutoLoot
+- ToggleGliderFlight
+
+Preserve:
+- teleport ADM-TEST-0002 fail-closed behavior
+- Auto Loot STARTUP_CANARY_ONLY
+- Glider Flight disabled/unqualified state
+- glider-stamina semantic mismatch block
+- capability gating before canonical command publication
+- native runtime as mutation owner where currently defined
+
+8. TESTS
+Strengthen tests so they verify the implementation, not helper definitions.
+
+Truthfulness tests must assert:
+- every executable F7 control has a canonical ActionId
+- every bound ActionId exists in admin_action_registry.json
+- enabled controls cannot point to disabled/unavailable actions
+- no executable control bypasses canonical dispatch
+- prohibited direct C# mutation calls remain absent
+
+Responsive tests must inspect all 11 pages at multiple sizes and assert:
+- page roots fill available content width
+- section containers resize/reflow
+- larger width produces meaningfully wider/reflowed content
+- minimum-size layout does not overlap sibling controls
+- clipping is handled by reflow/scrolling
+- dataset views use resizing grid/list containers where appropriate
+- Source Map and CT Catalog remain accessible
+
+Run at least:
+- PowerShell parse
+- test_f7_truthfulness.ps1
+- test_ui_smoke.ps1
+- relevant CODE-0036/0037 regression suites
+- command-routing/safety tests
+- prohibited mutation-call search
+
+9. DELIVERABLE
+Return:
+- files changed
+- registry action count before/after
+- number of executable controls bound
+- any controls intentionally left unbound and why
+- page-by-page responsive migration status
+- Source Map/CT Catalog preservation verification, including 224-entry count
+- all test results
+- remaining blockers
+- exact in-game acceptance procedure
+
+Do not claim runtime success. Do not add new gameplay cheats in CODE-0042.
+Proceed through implementation and offline verification unless a genuine evidence/safety blocker is encountered.

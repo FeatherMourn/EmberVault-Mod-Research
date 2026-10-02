@@ -1,0 +1,90 @@
+CODE-0042 BOOTSTRAP / WORKSPACE RECOVERY
+
+The prior CODE-0042 attempt stopped correctly because the sparse Current mirror did not contain the full 0.42.0 package assets. Do not infer that the assets are missing from the project.
+
+AUTHORITATIVE INPUTS FOR THIS TASK
+
+Full 0.42.0 package baseline (INC-0062):
+I:\My Drive\Enshrouded Mods\Incoming\2026-09-20\INC-0062\architect_toolkit.zip
+SHA-256:
+768ac907e33038d8a5efe4535ae1d3745abe4308de06a7d7694060068538b5ec
+
+Current cleaned F7 runtime overlay:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1
+
+Current registry overlay:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json
+
+IMPORTANT: DO NOT use:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip
+as the baseline for CODE-0042. That file is not the required full 0.42.0 package for this task.
+
+The INC-0062 baseline ZIP has been independently verified to contain, among other files:
+- architect_toolkit/runtime/source_consolidation_catalog.json
+- architect_toolkit/runtime/cheat_table_1013216_catalog.json
+- architect_toolkit/runtime/admin_action_registry.json
+- architect_toolkit/runtime/ArchitectRuntime.ps1
+- architect_toolkit/tests/test_ui_smoke.ps1
+- architect_toolkit/tests/test_f7_truthfulness.ps1
+- architect_toolkit/runtime/native/source/ArchitectPatchEngine.c
+
+It contains 5,117 archive entries total.
+
+TASK SETUP
+
+1. Create a NEW TEMPORARY working directory outside Architect_Mod/Current.
+2. Extract the INC-0062 architect_toolkit.zip into that temporary directory.
+3. Confirm the extracted root contains the expected architect_toolkit/runtime, architect_toolkit/tests, and architect_toolkit/runtime/native/source trees.
+4. Verify the two catalogs exist before proceeding:
+   - runtime/source_consolidation_catalog.json
+   - runtime/cheat_table_1013216_catalog.json
+5. Verify the full test/native assets exist, including:
+   - tests/test_ui_smoke.ps1
+   - tests/test_f7_truthfulness.ps1
+   - runtime/native/source/ArchitectPatchEngine.c
+6. Overlay ONLY the current cleaned files from Architect_Mod/Current onto the extracted full package:
+   - runtime/ArchitectRuntime.ps1
+   - runtime/admin_action_registry.json
+7. Do not overwrite or designate Architect_Mod/Current during this task.
+8. Do not copy the old Current/architect_toolkit.zip into the test workspace.
+
+AFTER THE WORKSPACE IS COMPLETE
+
+Resume the previously assigned CODE-0042 task:
+- expand the canonical action registry truthfully;
+- bind executable F7 controls to canonical ActionIds;
+- preserve disabled/unproven states;
+- restore and preserve Source Map and the full 224-entry CT Catalog under Developer & Diagnostics;
+- actually migrate page internals to responsive TableLayoutPanel/FlowLayoutPanel/DataGridView structures;
+- strengthen UI resize and truthfulness tests;
+- run the full package test suite against the temporary full workspace.
+
+SAFETY CONTRACT REMAINS IN FORCE
+
+Do not reintroduce any direct F7 calls to:
+- TogglePatch
+- EnableAllSurvival
+- DisableAllSurvival
+- WritePlayerCoordinates
+- ToggleAutoLoot
+- ToggleGliderFlight
+
+Teleport remains ADM-TEST-0002 fail-closed.
+Auto Loot remains STARTUP_CANARY_ONLY.
+Glider Flight remains disabled/unqualified.
+Glider stamina remains semantically blocked as true infinite stamina until separately proven.
+CODE-0022B attribute hooks remain crash-guarded/disarmed.
+
+If the exact INC-0062 ZIP path above is not accessible from your execution environment, STOP and report the exact filesystem/path-access error. Do not fall back to another ZIP, do not invent the missing catalogs, and do not weaken tests.
+
+At completion, report:
+- temporary workspace path used;
+- baseline ZIP SHA-256 actually verified;
+- overlay file hashes;
+- registry action count before/after;
+- number of executable controls bound to canonical ActionIds;
+- responsive helper call sites/pages migrated;
+- confirmation that both source catalogs are preserved;
+- full test results;
+- any remaining blockers;
+- exact files changed.

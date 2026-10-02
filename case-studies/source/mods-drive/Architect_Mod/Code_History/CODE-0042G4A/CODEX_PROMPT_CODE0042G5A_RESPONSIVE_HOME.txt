@@ -1,0 +1,393 @@
+CODE-0042G5A — RESPONSIVE FOUNDATION + HOME PAGE ONLY
+
+Scope:
+- F7 responsive layout primitives
+- `Resize-AdminPageChildren`
+- `Render-DashboardPage` only
+- temporary responsive/static/UI fixture additions
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Temporary tests:
+- existing reconstructed lifecycle/UI smoke fixtures as appropriate
+
+Registry:
+- DO NOT change `admin_action_registry.json`.
+- Must remain 55 actions / 17 enabled / 38 disabled.
+
+IMPORTANT BASELINE
+
+G4A established a corrected source/static F7 zero-gap audit.
+
+The 11-page x3 WinForms lifecycle traversal is still:
+`SKIPPED_NO_WINFORMS_HARNESS`
+
+Do not reinterpret that skipped traversal as proven.
+
+GOAL
+
+Begin the deferred responsive-layout migration with one bounded page:
+
+`Render-DashboardPage`
+
+The outer F7 shell is already structurally responsive:
+- sizable `$adminForm`
+- docked header/main/nav/body
+- `$adminContent` is a top-down `FlowLayoutPanel`
+- `Resize-AdminPageChildren` expands top-level non-label children
+
+The current Home page is still internally fixed-pixel and is the first responsive migration target.
+
+DO NOT:
+- change any EventId;
+- change any ActionId;
+- change action enabled/disabled state;
+- change command semantics;
+- change Home feature truthfulness semantics;
+- migrate Player, Mobility, Items, Combat, World, Building, Settings, Codex, Wayfinder, or other pages;
+- touch F8 UI;
+- add gameplay/native behavior;
+- replace the outer F7 shell.
+
+A. ADD SMALL REUSABLE RESPONSIVE HELPERS
+
+Add narrowly scoped WinForms helpers near the existing UI helpers.
+
+1. `New-F7ResponsiveCard`
+
+Parameters:
+- Height
+- BackColor
+- optional BottomMargin default 8
+
+Return a `System.Windows.Forms.Panel` with:
+- fixed requested Height for this first migration
+- BackColor
+- Margin = `Padding(0,0,0,BottomMargin)`
+- Anchor = Left | Right | Top
+- MinimumSize width = 320
+- no meaningful fixed X/Y position
+
+The outer `adminContent`/resize function owns its width.
+
+2. `New-F7ResponsiveTable`
+
+Parameters:
+- ColumnPercents array
+- RowHeights array or row-style description
+
+Return a `TableLayoutPanel` with:
+- Dock = Fill
+- Margin = 0
+- Padding = 0
+- GrowStyle = FixedSize
+- exact ColumnCount / RowCount
+- percent columns
+- rows using Absolute or Percent styles as specified by caller
+- BackColor transparent
+
+Do not create event handlers inside layout helpers.
+
+Keep helpers generic and UI-only.
+
+B. HARDEN `Resize-AdminPageChildren`
+
+Preserve its existing purpose and EventId:
+`f7.shell.content.sizeChanged`
+
+Keep:
+- usable width calculation
+- top-level width assignment
+- Left | Right | Top anchoring
+
+Add safe layout refresh for resized container children:
+- call `PerformLayout()` on child controls where supported
+- then `PerformLayout()` on `$adminContent`
+
+Do not resize top-level labels in this slice.
+
+Do not recurse by manually changing nested control coordinates.
+Nested TableLayout/FlowLayout containers own their children.
+
+C. MIGRATE HOME HEADER
+
+Current two top-level fixed labels should be placed in one responsive top-level header card/panel so the outer FlowLayoutPanel treats the header as one resizable unit.
+
+Use a compact responsive header container, e.g. Height ~42-46.
+
+Inside:
+- title label Dock = Top or Fill in first row
+- subtitle label Dock = Top or Fill in second row
+- no fixed X placement
+- labels use AutoEllipsis where helpful
+
+Preserve exact text.
+
+D. TELEMETRY CARD
+
+Replace fixed child coordinates with a 2-column x 2-row TableLayoutPanel.
+
+Card:
+- responsive top-level card
+- current approximate height preserved
+
+Columns:
+- 50% / 50%
+
+Rows:
+- 50% / 50%
+
+Cells:
+- left/top: Engine
+- left/bottom: Coordinates
+- right/top: local quest flag
+- right/bottom: watchdog
+
+Each label:
+- Dock = Fill
+- left cells MiddleLeft
+- right cells MiddleRight
+- Margin/Padding for breathing room
+- AutoEllipsis = true
+
+Preserve:
+- `Get-CurrentPlayerPosition`
+- safe unavailable coordinate text
+- `LOCAL QUEST FLAG: ON/OFF`
+- current colors
+- current watchdog wording
+
+E. QUICK ROLE PRESETS CARD
+
+Use a TableLayoutPanel instead of fixed button X positions.
+
+Suggested layout:
+- 4 equal-width columns
+- title row
+- preset-button row
+- full-width manage-button row
+
+Preserve:
+- first four loaded presets
+- colors
+- hotkey labels
+- `.Tag = $pr`
+- exact dynamic EventId:
+  `f7.home.preset.apply.<presetId>`
+- ActionId:
+  `admin.preset.apply`
+- existing fail-closed semantics
+- manage EventId:
+  `f7.home.presets.manage.click`
+
+Each preset button:
+- Dock = Fill
+- reasonable Margin
+- no fixed X coordinate
+
+Manage button:
+- span all 4 columns
+- Dock = Fill
+
+If fewer than four presets are present:
+- unused cells remain empty
+- no fake preset/control/EventId is created
+
+Do not change preset execution behavior.
+
+F. INSTANT ACTIONS CARD
+
+Use a TableLayoutPanel.
+
+Structure:
+- title row spanning all columns
+- button row with five responsive columns
+
+Buttons:
+1. Heal
+2. Fill Stamina
+3. Fill Mana
+4. Return disabled placeholder
+5. Recover Items unsupported placeholder
+
+Use percentage columns rather than fixed X positions.
+
+All buttons:
+- Dock = Fill
+- Margin small
+- AutoEllipsis = true where supported
+
+Preserve exact current canonical bindings:
+- `f7.home.health.fill.click` -> `player.health.fill`
+- `f7.home.stamina.fill.click` -> `player.stamina.fill`
+- `f7.home.mana.fill.click` -> `player.mana.fill`
+
+Preserve disabled/no-handler status of:
+- Return
+- Recover Items
+
+Do not create EventIds for placeholders.
+
+Do not alter command/result semantics in this layout slice.
+
+G. HOTKEY SUMMARY CARD
+
+Use one responsive card with a single Dock=Fill label.
+
+Preserve:
+- dynamic F7/F8/Panic/Drawer key names
+- current summary string
+- current colors
+
+Set:
+- AutoEllipsis = true
+- MiddleLeft
+- useful internal padding/margin
+
+No event behavior.
+
+H. RESTORE-VANILLA BUTTON
+
+Keep as a full-width top-level responsive control/card.
+
+Preserve:
+- EventId `f7.home.restoreVanilla.click`
+- ActionId `cheat.survival.disable_all`
+- canonical disabled/fail-closed behavior
+- current text/color/font
+
+Make the button:
+- fill available width
+- no fixed X coordinate
+- suitable margin
+
+Do not change command semantics in this slice.
+
+I. REMOVE HOME INTERNAL ABSOLUTE LAYOUT
+
+After migration, `Render-DashboardPage` should not lay out Home child controls by manually calculating per-control X/Y positions.
+
+Allowed:
+- fixed row/card heights
+- margins/padding
+- font sizes
+- percentage column widths
+
+Not allowed inside Home:
+- `$bx = 10 + ...`
+- child `.Location = ...` for page layout
+- fixed button X columns
+- fixed right-edge X positioning
+
+The outer shell/helpers may still contain their existing fixed values.
+
+J. RESPONSIVE GEOMETRY TEST
+
+Extend a Windows/WinForms-capable fixture or UI smoke test.
+
+Render Home at at least these admin-form client sizes:
+
+1. minimum-ish: 900 x 590
+2. default: 1000 x 700
+3. wide: 1400 x 850
+
+For each size:
+- call normal layout path
+- render Home
+- call `Resize-AdminPageChildren`
+- call `PerformLayout`
+
+Assert:
+
+1. every top-level Home container width tracks usable `$adminContent` width within a small tolerance;
+2. no visible nested Home control has negative X/Y;
+3. no visible nested Home control extends beyond its immediate parent client rectangle by more than a tiny border tolerance;
+4. all five Instant Action row controls have positive width/height at minimum size;
+5. all present preset buttons have positive width/height;
+6. Manage Presets spans usable card width;
+7. Restore Vanilla spans usable page width;
+8. no horizontal scrollbar is required at the 900x590 minimum for Home;
+9. vertical scrolling remains allowed if needed;
+10. no duplicate/ambiguous EventIds and no stale bindings are introduced.
+
+If the environment cannot instantiate the WinForms layout:
+- report the geometry test as `SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+- do not fake PASS.
+
+K. STATIC HOME RESPONSIVENESS ASSERTIONS
+
+Add static/source assertions that `Render-DashboardPage`:
+- uses `TableLayoutPanel` for Telemetry
+- uses `TableLayoutPanel` for Quick Presets
+- uses `TableLayoutPanel` for Instant Actions
+- no longer contains the dynamic `$bx = 10 + ...` positioning formula
+- does not set `.Location` for Home page child layout
+- preserves all existing Home EventIds exactly
+
+L. ZERO-GAP / EVENT REGRESSION
+
+Run the corrected G4A audit after migration.
+
+Expected:
+- boundaryMarkerCount = 1
+- boundaryKind = COMMENT_TOKEN
+- fullF7 = 0
+- legacySafeUiCount = 0
+- directAddEventCount = 0
+- sites.Count = 0
+- stableDefinitionControlReferences = 0
+- stableDefinitionHandlerReferences = 0
+
+No direct raw event registrations may be introduced by the responsive refactor.
+
+M. PRESERVE
+
+Keep unchanged:
+- registry 55 / 17 / 38
+- all canonical Home EventIds/ActionIds
+- G3D0 canonical execution gates
+- all G1/G2/G3/G4A safety/truthfulness behavior
+- CT catalog = 224
+- source-consolidation catalog
+- F8 shell and Builder HUD
+- Current designation
+
+N. STANDARD TESTS
+
+Run:
+
+1. PowerShell parse
+2. real registry import -> 55 unique
+3. lifecycle/static fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema/adaptor validation
+9. prohibited mutation scan
+10. corrected fullF7 zero-gap audit
+11. stable-definition Control/Handler refs = 0
+12. Home responsive geometry test or explicit SKIPPED status
+13. Home static responsive assertions
+14. verify no non-Home renderer changed
+
+REPORT
+
+Return:
+- files changed
+- helpers added
+- `Resize-AdminPageChildren` change
+- Home sections migrated
+- exact Home EventIds preserved
+- zero-gap audit result
+- responsive geometry results for each tested size, or explicit skip reason
+- horizontal-scroll result at minimum size
+- registry unchanged
+- standard tests
+- explicit statement that other F7 pages were NOT migrated yet
+- explicit statement that no gameplay/runtime mechanism was proven or changed
+
+Do not start Player/Mobility responsive migration in this pass.

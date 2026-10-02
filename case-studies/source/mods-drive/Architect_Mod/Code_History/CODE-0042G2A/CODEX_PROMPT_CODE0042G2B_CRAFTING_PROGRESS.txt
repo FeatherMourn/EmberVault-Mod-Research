@@ -1,0 +1,328 @@
+CODE-0042G2B — CRAFTING / PROGRESSION EVENT MIGRATION ONLY
+
+Scope: Architect Toolkit F7 `Render-CraftingProgressionPage`
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change `admin_action_registry.json`.
+- Registry must remain 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate Combat/AI, World/Camera, Building/Entities, Settings, Codex, Map, Blueprint Browser, or other pages;
+- begin responsive layout work;
+- add skill mutation backends;
+- enable `cheat.skills.set` or `cheat.skills.reset`;
+- invent level/XP/crafting mutations;
+- change Free Crafting state.
+
+GOAL
+
+Migrate all 3 raw source-level registrations inside `Render-CraftingProgressionPage` to canonical F7 action events while preserving the current disabled/unqualified truth.
+
+After this pass:
+
+- raw `Register-SafeUiEvent` in `Render-CraftingProgressionPage` = 0
+- raw `.Add_Click(...)` = 0
+- G1 and G2A zero-gap state remains unchanged
+
+CURRENT CANONICAL REGISTRY TRUTH
+
+`cheat.skills.set` is:
+- enabled=false
+- evidenceStatus=`UNSOLVED`
+- backend=`NONE`
+- runtimeMode=`UNAVAILABLE`
+- authority=`unknown`
+- risk=`mutation`
+- failureReason=`Skill point write backend is not currently qualified.`
+
+`cheat.skills.reset` is:
+- enabled=false
+- evidenceStatus=`UNSOLVED`
+- backend=`NONE`
+- runtimeMode=`UNAVAILABLE`
+- authority=`unknown`
+- risk=`mutation`
+- failureReason=`Skill reset backend is not currently qualified.`
+
+Do not change those entries.
+
+Local `Get-AdminCapabilities` state must NOT override canonical registry disabled state.
+
+A. APPLY SKILL POINTS
+
+Current raw handler:
+- reads `$spNum`
+- calls `Send-CheatCommand "cheat.skills.set" @{ value = ... }`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.skills.set`
+
+EventId:
+`f7.crafting.skillPoints.apply.click`
+
+Page:
+`Items & Progression`
+
+Operation:
+`Apply Skill Points`
+
+Lifetime:
+PAGE
+
+Use:
+`Register-AdminActionEvent`
+
+Preserve the existing value extraction and closure behavior.
+
+Canonical registry gating must disable the APPLY button even if `$caps["skillPoints"].canExecute` is true.
+
+Do not use `AllowDisabled`.
+
+B. SKILL-POINT PRESET LOOP
+
+Current source registration site creates 4 runtime buttons:
+
+- 10 SP
+- 50 SP
+- 114 SP
+- 999 SP
+
+All are ACTIONs using:
+`cheat.skills.set`
+
+Use deterministic stable EventIds:
+
+- `f7.crafting.skillPoints.preset.10.click`
+- `f7.crafting.skillPoints.preset.50.click`
+- `f7.crafting.skillPoints.preset.114.click`
+- `f7.crafting.skillPoints.preset.999.click`
+
+Generate the EventId from the numeric preset using invariant integer formatting.
+
+Use:
+`Register-AdminActionEvent`
+
+Page:
+`Items & Progression`
+
+Operation:
+`Set Skill Point Preset <value>`
+
+Lifetime:
+PAGE
+
+IMPORTANT CLOSURE RULE:
+Preserve each button's own preset value.
+
+The current control stores:
+`$b.Tag = @{ Preset = $preset; Num = $spNum }`
+
+Keep a closure-safe pattern so all four buttons do not accidentally use the last loop value.
+
+Do not build identity from Control.Name or display text.
+
+Canonical action state must keep all 4 preset buttons disabled.
+
+C. FREE SKILL RESET
+
+Current raw handler:
+`Send-CheatCommand "cheat.skills.reset"`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.skills.reset`
+
+EventId:
+`f7.crafting.skillReset.click`
+
+Page:
+`Items & Progression`
+
+Operation:
+`Free Skill Reset`
+
+Lifetime:
+PAGE
+
+Use:
+`Register-AdminActionEvent`
+
+Canonical registry state must keep the reset button disabled.
+
+Do not use `AllowDisabled`.
+
+D. DEFENSE-IN-DEPTH DISPATCH REJECTION
+
+Current `Send-CheatCommand` can still publish these ActionIds if the local capability model says they can execute.
+
+Add an explicit fail-closed route BEFORE native command publication for:
+
+- `cheat.skills.set`
+- `cheat.skills.reset`
+
+Required semantics:
+
+```powershell
+elseif ($Action -eq "cheat.skills.set") {
+    return @{
+        success = $false
+        state = "UNSUPPORTED"
+        error = "SKILL_POINTS_UNSOLVED: canonical skill-point write backend is unavailable."
+    }
+}
+elseif ($Action -eq "cheat.skills.reset") {
+    return @{
+        success = $false
+        state = "UNSUPPORTED"
+        error = "SKILL_RESET_UNSOLVED: canonical skill-reset backend is unavailable."
+    }
+}
+```
+
+Equivalent wording is acceptable if it remains truthful.
+
+Requirements:
+- branch must occur before `Publish-CheatCorrelationCommand`
+- no pending command must be created
+- no native command must be published
+- no direct patch fallback
+- no capability-map optimism may bypass this rejection
+
+This is safety hardening only.
+
+E. UNSUPPORTED / PRESENTATION-ONLY CONTROLS
+
+Do NOT add handlers or action identities for:
+
+- FREE CRAFTING (UNSUPPORTED - RELAY UNPROVEN)
+- UNLOCK RECIPES (UNSUPPORTED)
+- Production Speed buttons
+- APPLY LEVEL (UNSUPPORTED)
+- +XP buttons
+- XP Multiplier buttons
+
+They are currently disabled/presentation-only.
+
+Leave them that way.
+
+Do not create fake EventIds merely to increase coverage.
+
+F. NUMERIC INPUT
+
+`$spNum` is an input control, not a mutation by itself.
+
+No event registration is required for it in this pass.
+
+It may remain editable or follow existing local capability presentation, but there must be no mutation path except through the canonically disabled action buttons.
+
+Do not add ValueChanged mutation behavior.
+
+G. LIFECYCLE
+
+Use existing F7 lifecycle architecture:
+
+- stable definition keyed by EventId
+- active binding keyed by EventId
+- PAGE lifetime
+- no live Control in stable metadata
+- repeated render idempotent
+
+Expected canonical Crafting definitions after render:
+
+1. `f7.crafting.skillPoints.apply.click`
+2. `f7.crafting.skillPoints.preset.10.click`
+3. `f7.crafting.skillPoints.preset.50.click`
+4. `f7.crafting.skillPoints.preset.114.click`
+5. `f7.crafting.skillPoints.preset.999.click`
+6. `f7.crafting.skillReset.click`
+
+No duplicate/ambiguous EventIds.
+
+H. STATIC ACCEPTANCE
+
+After migration:
+
+- Crafting raw `Register-SafeUiEvent` = 0
+- Crafting raw `.Add_Click(...)` = 0
+- exactly 6 Crafting ACTION EventIds exist
+- all 5 skill-point-set EventIds map to `cheat.skills.set`
+- reset EventId maps to `cheat.skills.reset`
+- both canonical ActionIds remain disabled
+- no handlers added to unsupported level/XP/free-craft/workbench placeholders
+- `Send-CheatCommand` rejects both actions before publication
+- registry = 55 / enabled 17 / disabled 38
+- Inventory raw = 0
+- Home / Player / Mobility / shell raw = 0
+
+I. PRESERVE
+
+Keep unchanged:
+
+- `diagnostics.aob_scanner.toggle` disabled/fail-closed
+- `movement.position.read` disabled/fail-closed
+- `Get-CurrentPlayerPosition` returns `$null`
+- teleport fail-closed / ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch
+- Inventory reroll disabled/unqualified
+- CT catalog = 224
+- source-consolidation catalog
+- schema/adaptor validity
+
+TESTS
+
+Run:
+
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. Crafting raw count: 3 -> 0
+11. Inventory raw remains 0
+12. G1 raw counts remain 0
+13. exact six Crafting EventId assertions
+14. preset EventId uniqueness/value assertions
+15. canonical disabled-state assertions for skills set/reset
+16. direct `Send-CheatCommand` rejection assertions:
+    - no pending command
+    - no publication
+17. unsupported-placeholder no-handler assertions
+18. prohibited mutation scan
+
+REPORT
+
+Return:
+
+- files changed
+- Crafting raw count before/after
+- exact six EventIds
+- mapping to `cheat.skills.set` / `cheat.skills.reset`
+- enabled presentation before/after if canonical gating changes it
+- exact fail-closed dispatch behavior
+- registry counts unchanged
+- lifecycle/truthfulness/UI-smoke results
+- remaining G2 raw counts:
+  - Combat/AI 12
+  - World/Camera 9
+  - Building/Entities 3
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G2C in this pass.

@@ -1,0 +1,27 @@
+INTAKE RECORD
+=============
+Intake_ID: INC-0059
+Received: 2026-09-19
+Filename: enshrouded_server.ct
+Type: EXTERNAL_CHEAT_TABLE (Cheat Engine, server-side focus)
+SHA256: 9E3FB84885A00D92595631386ACE862EB12515A7CB1F09CFFFD5341E6C706079
+Size_Bytes: 114325
+Source: User-provided attachment from C:\Users\JoelT\AppData\Local\Temp\
+
+CLASSIFICATION
+==============
+UNTRUSTED_STAGING / EXTERNAL_ARTIFACT_EVIDENCE
+Locator/hypothesis source. Per filename, likely targets dedicated server
+process (enshrouded_server.exe) rather than the client. Distinct build path.
+
+PROMOTION STATUS
+================
+Promoted_To: None (research/correlation only)
+Related: Server admin / multiplayer surface, CAP-MP-0001 (parked per brain).
+
+HANDLING NOTES
+==============
+- Original preserved byte-exact; hash verified after copy on 2026-09-19.
+- Architect runtime currently targets client (enshrouded.exe). Server-side
+  signatures likely do not apply to client build 1076226. Flag any client-
+  relevant signatures only.

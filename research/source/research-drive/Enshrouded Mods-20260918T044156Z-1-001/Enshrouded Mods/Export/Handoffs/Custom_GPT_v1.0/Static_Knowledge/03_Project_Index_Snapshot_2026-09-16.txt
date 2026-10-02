@@ -1,0 +1,119 @@
+﻿Enshrouded Mods — Project Index
+
+
+Brain Schema: 1.0
+Role: Canonical navigation map for the Enshrouded Mods workspace.
+
+
+STARTUP ORDER
+1. Read this Project Index.
+2. Read Architect — Project Control / Current_State.
+3. Read Architect — Current Engineering State.
+4. Check Roadmap and relevant Capability_Map rows.
+5. Read subsystem research and raw evidence only as needed.
+
+
+GLOBAL CANONICAL SOURCES
+Core Method:
+https://docs.google.com/document/d/1iln9V6gu1mLZnBwnqqgNKaKZQzswZIhdHwyvLG8c6tc/edit
+
+
+Shared Control:
+https://docs.google.com/spreadsheets/d/142L8BTgOiuo6c9ITJoZ27MQNdGQyMuXJrZEPUrKiSH8/edit
+
+
+Brain Initialization Record:
+https://docs.google.com/document/d/1bHXk28VcLeewQoSeBEGAPI3OSP8mlPEslZr5WYacU4U/edit
+
+
+ARCHITECT CANONICAL SOURCES
+Current Engineering State:
+https://docs.google.com/document/d/1Z4PvAL1ba8dlOCklMp3oSpbN8ux2mdHeWE2KV_eKnOI/edit
+
+
+Project Control:
+https://docs.google.com/spreadsheets/d/10-svOrp3lRByrOWMU_yr6ggePhBloM6BmBjvJHXwI74/edit
+
+
+Master Architecture & UX:
+https://docs.google.com/document/d/1mjvpFrp1oP__ihV_miMqtt5BwpYoujpMNDe0zeN0ALk/edit
+
+
+Decision Log:
+https://docs.google.com/document/d/1AjmoeK_cCpVRf-dL64Cag3LlPeuDXhYTCKjMXfHtE0Q/edit
+
+
+Research Index:
+https://docs.google.com/document/d/1Wwh_WdaLkzEIz3mxZ_Paa_O-XURmUW6PhmJB0h2BsAw/edit
+
+
+Current Roadmap:
+https://docs.google.com/document/d/1H0UV4wwGLH2rrrTZRFTKLTGt7WwDCp5FlFtNbwgGcHc/edit
+
+
+DRIVE LOCATIONS
+Workspace Root: Enshrouded Mods
+Architect current source: Enshrouded Mods/Architect_Mod/Current/
+Architect source archive: Enshrouded Mods/Architect_Mod/Archive/
+Architect code history: Enshrouded Mods/Architect_Mod/Code_History/
+Architect research: Enshrouded Mods/Architect_Mod/Research/
+Architect evidence: Enshrouded Mods/Architect_Mod/Evidence/
+Architect data: Enshrouded Mods/Architect_Mod/Data/
+Incoming staging: Enshrouded Mods/Incoming/
+Exports: Enshrouded Mods/Export/
+Vanilla evidence corpus: Enshrouded Mods/ENSHROUDED KFC FILES/
+
+
+KFC POLICY
+ENSHROUDED KFC FILES is read-only to the GPT. The user updates this corpus manually. The GPT may search, read, index and reference it, but must not modify, rename, move, replace or delete KFC files.
+
+
+AUTHORITY SUMMARY
+1. Current user-confirmed in-game behavior
+2. Current runtime/test/capture evidence
+3. Current project source
+4. Current structured engineering state
+5. Current static analysis/build-profile evidence
+6. Current KFC evidence
+7. Current research summaries
+8. Active architecture/decision documentation
+9. Archived/historical material
+10. Historical handoffs
+11. Chat recollection, plans and hypotheses
+
+
+History is append-only by default. Incoming is untrusted staging. Canonical conclusions require evidence and provenance.
+
+
+CURRENT MIGRATION BASELINE — 2026-09-15
+Current source archive:
+https://drive.google.com/file/d/1TC_1f_jZ0SST6EMhfpVyXdRX77lXiOaz/view?usp=drivesdk
+Current source manifest:
+https://drive.google.com/file/d/1bKWtkjXRodSOoJMyaPfs803aoxP6LVE4/view?usp=drivesdk
+Immutable source snapshot:
+https://drive.google.com/file/d/1p1i0hzRftSM7zPnbWUy8SnoDeCk2PzYz/view?usp=drivesdk
+Current native runtime source:
+https://drive.google.com/file/d/1yMGOwIx3qpCWVKosD8afzK9Ddqdzd_Gj/view?usp=drivesdk
+Architect data index (build 1076226):
+https://drive.google.com/file/d/1ROt0buqJTgtvYS0-FXX7bGNYFLpDBAZ6/view?usp=drivesdk
+Intake provenance: INC-0001
+Source SHA-256: ca8be6f2ca07dbd204ab2bd75cdce948e4ffe1ba713a0bcc3819d4d9d9a37805
+
+
+BOOTSTRAP SPECIFICATION
+Enshrouded Mods — Brain Schema v1.0:
+https://docs.google.com/document/d/17n9C4t-mtt3eJBZuYjkBqDf3pKLGON4ojvuBXCF2eQQ/edit
+
+
+CUSTOM GPT CONFIGURATION
+Final instructions: Enshrouded Mods Custom GPT Instructions v1.0
+https://docs.google.com/document/d/1waYCYEc5E8rVX0DWJX8RZj21pyyqQETP3qYSCXpDSeY/edit
+Configuration review report:
+https://docs.google.com/document/d/1M81OyeiHvGbJRR9zsGI_oCF8JQ-fcq-Kws5tlL050Ec/edit
+Status: FINAL v1.0; exact v0.3 promotion; 7,297 characters
+Instruction adversarial validation: BRAIN-TEST-0002 — PASS 7/7
+https://docs.google.com/document/d/16fvacBkKhaKKW8tzSXCgH1hHQI33CUY4_uQGguvyOdA/edit
+Static Knowledge package:
+https://drive.google.com/drive/folders/15h3UNKJstEiGrvTvelxgo9BFjSdZwzRL
+Live Drive remains authoritative for current project state; static Knowledge is bootstrap/fallback context.
+.

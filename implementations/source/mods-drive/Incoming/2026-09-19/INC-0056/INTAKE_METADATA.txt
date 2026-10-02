@@ -1,0 +1,27 @@
+INTAKE RECORD
+=============
+Intake_ID: INC-0056
+Received: 2026-09-19
+Filename: Enshrouded Building Companion Water Update WIP V2 (1).CT
+Type: EXTERNAL_CHEAT_TABLE (Cheat Engine)
+SHA256: 101F529FD3CC0B1463EF1B625790301653834B2670C5C0962D2B6833006A56DA
+Size_Bytes: 648926
+Source: User-provided attachment from C:\Users\JoelT\AppData\Local\Temp\
+
+CLASSIFICATION
+==============
+UNTRUSTED_STAGING / EXTERNAL_ARTIFACT_EVIDENCE
+Locator/hypothesis source for the Working Cheat Sprint.
+Build focus appears to be building placement / water interaction (per filename).
+
+PROMOTION STATUS
+================
+Promoted_To: None (research/correlation only)
+Related: INC-0010 (prior CT), INC-0055 (cfemon CT), CHEAT-SPRINT-STATE-0001,
+CODE-0032 Working Cheat Sprint.
+
+HANDLING NOTES
+==============
+- Original preserved byte-exact; hash verified after copy on 2026-09-19.
+- Per Core Method: extract technical lessons, verify independently on build 1076226.
+- Note: file name contains "(1)" suggesting duplicate name in source folder.

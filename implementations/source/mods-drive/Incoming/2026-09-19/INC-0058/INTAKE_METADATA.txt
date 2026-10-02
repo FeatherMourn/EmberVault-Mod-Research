@@ -1,0 +1,26 @@
+INTAKE RECORD
+=============
+Intake_ID: INC-0058
+Received: 2026-09-19
+Filename: enshrouded (1).CT
+Type: EXTERNAL_CHEAT_TABLE (Cheat Engine)
+SHA256: D83D5F309B5E39E863D20C0147FB968D992AD06B0D8894C6DC40E564EABC15CE
+Size_Bytes: 186414
+Source: User-provided attachment from C:\Users\JoelT\AppData\Local\Temp\
+
+CLASSIFICATION
+==============
+UNTRUSTED_STAGING / EXTERNAL_ARTIFACT_EVIDENCE
+Locator/hypothesis source for the Working Cheat Sprint.
+
+PROMOTION STATUS
+================
+Promoted_To: None (research/correlation only)
+Related: INC-0055 (cfemon CT), INC-0056 (Building Companion CT), INC-0059
+(server-side CT), INC-0010 (prior CT), CHEAT-SPRINT-STATE-0001, CODE-0032.
+
+HANDLING NOTES
+==============
+- Original preserved byte-exact; hash verified after copy on 2026-09-19.
+- File name "(1)" suggests duplicate name in source folder.
+- Will parse AOB signatures for cross-comparison against existing verified set.

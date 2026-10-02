@@ -1,0 +1,882 @@
+CODE-0042G5H — AUTONOMOUS GOAL: ENTITIES & AUTHORITY RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Fully migrate F7 `Render-MultiplayerQuestsPage` from its fixed-pixel layout to the established responsive F7 framework, preserve every current local-only quest-tracker semantic and event-lifecycle contract, and close G5H with one final verification report.
+
+IMPORTANT PRODUCT/TRUTHFULNESS BOUNDARY
+
+The F7 navigation label is:
+
+`Entities & Authority`
+
+but the current renderer is intentionally a LOCAL Architect quest tracker / co-op notes page.
+
+This milestone does NOT authorize:
+- in-game quest mutation,
+- multiplayer quest synchronization changes,
+- server/host authority controls,
+- entity mutation,
+- world-progression mutation,
+- save-affecting admin actions.
+
+Do NOT add new "entity authority" functionality merely because of the nav label.
+
+The dispatcher must continue to route:
+
+`Entities & Authority`
+
+to:
+
+`Render-MultiplayerQuestsPage`
+
+Work autonomously toward the goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded fixture paths, stale fixed-pixel source assertions, fixture-version mismatches, missing TEMP support artifacts, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5H satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting SHA-256:
+
+`D82ECDA9A9EAAC7837B22B640235D1C4DC63FF947A88B843D06537F1DCC0BB1B`
+
+Required starting length:
+
+`449290` bytes
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry SHA-256:
+
+`7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+
+Required registry state:
+
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- modify backend/dispatch logic
+- modify quest database/state helper semantics
+- start quest/progression reverse-engineering
+- add multiplayer/server authority code
+- add entity-control code
+- start G5I/Mods & Configuration or later responsive pages
+- start F8 work
+- turn UI_ONLY events into canonical mutation actions
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a UI/responsive migration, not a quest, multiplayer, entity, or progression implementation.
+
+Preserve working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+CURRENT ENGINEERING BOUNDARY
+
+Canonical project state:
+
+`CAP-QST-0001 — Quest / world progression administration`
+- Runtime owner: UNMAPPED
+- Evidence status: PLANNED
+- save schema, authority, rollback, and corruption risk remain unknown
+- read-only quest/progression inspection is the prerequisite before future mutation work
+
+`MILESTONE-0012 — Multiplayer / Quest / Advanced`
+- PLANNED_LATE
+- host/server authority, replication, quest/world-progression storage, and safe rollback remain UNSOLVED
+- mutation must remain disabled until independently mapped
+
+Therefore G5H must preserve the current Architect-local tracker truthfulness and must not convert it into gameplay/admin functionality.
+
+SCOPE BOUNDARY
+
+Expected product-source edit:
+
+- `Render-MultiplayerQuestsPage`
+
+Do not alter:
+
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+- `Render-BuildingEntitiesPage`
+- `Render-SettingsDevPage`
+- page dispatch
+- responsive helper functions
+- `Load-QuestDatabase`
+- `Load-QuestState`
+- `Save-QuestState`
+- `Save-ArchitectKeybindings`
+- `Send-CheatCommand`
+- registry
+- native runtime
+- Lua/EML
+- F8
+
+If a shared helper, dispatch, quest-storage helper, registry, multiplayer/quest backend, or authority change appears necessary:
+
+STOP and report why before making it.
+
+PRE/POST HASH GUARDS
+
+Before editing, record exact hashes for at least:
+
+- full `ArchitectRuntime.ps1`
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+- `Render-BuildingEntitiesPage`
+- `Render-MultiplayerQuestsPage`
+- `Render-SettingsDevPage`
+- `Load-QuestDatabase`
+- `Load-QuestState`
+- `Save-QuestState`
+
+After editing:
+
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- Combat hash unchanged
+- World/Camera hash unchanged
+- Building/World Editing hash unchanged
+- Mods/Configuration hash unchanged
+- quest helper hashes unchanged
+- Multiplayer/Quests renderer hash should change
+- unrelated function hashes remain source-identical
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use existing proven helpers:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Respect helper contracts:
+
+- percentage columns for `New-F7ResponsiveTable`
+- numeric row heights are absolute heights
+- only `{Type='Percent';Value=...}` is the special percent-row form
+- never introduce `{Type='Absolute';Value=...}` row-height hashtables
+
+Prefer:
+
+- Dock / Anchor
+- percentage-column tables
+- responsive button groups
+- bounded minimum sizes
+- AutoEllipsis where appropriate
+- FlowLayoutPanel-compatible vertical cards
+- multiline labels where the existing meaning requires wrapping
+
+Avoid recreating the page as fixed X/Y positioning.
+
+Do not redesign styling beyond what is necessary for responsive layout.
+
+CURRENT ENTITIES & AUTHORITY / LOCAL QUEST TRACKER SEMANTIC CONTRACT — PRESERVE EXACTLY
+
+============================================================
+A. ROUTING / PAGE IDENTITY
+============================================================
+
+Preserve dispatcher routing:
+
+`"Entities & Authority" { Render-MultiplayerQuestsPage }`
+
+Preserve title meaning:
+
+`LOCAL QUEST TRACKER & CO-OP NOTES`
+
+Preserve subtitle meaning:
+
+`Architect-local tracker metadata only; in-game quest state and multiplayer synchronization are not modified.`
+
+Preserve notice meaning:
+
+`NOTE: Local Architect tracker only. In-game quest state and multiplayer quest synchronization are not modified.`
+
+Do not rename the page to imply host/server authority, in-game quest editing, entity administration, or multiplayer protection.
+
+============================================================
+B. LOCAL STORAGE SOURCES
+============================================================
+
+Preserve:
+
+`$qState = Load-QuestState`
+
+`$quests = Load-QuestDatabase`
+
+Do not change:
+
+- quest database format
+- quest state schema
+- quest-state storage path
+- save implementation
+- atomic JSON behavior
+- helper fallback behavior
+
+Current quest-state helper fallback schema remains:
+
+`architect.quest_state.v1`
+
+with:
+- `quarantineEnabled = $false`
+- `states = {}`
+
+Do not alter those helpers in G5H.
+
+============================================================
+C. GLOBAL LOCAL-TRACKER QUARANTINE
+============================================================
+
+Preserve scope label meaning:
+
+`Scope: LOCAL ARCHITECT TRACKER ONLY`
+
+Preserve preference source:
+
+`$script:activePreferences.quest_quarantine_enabled`
+
+Preserve badge text:
+
+- `LOCAL TRACKER QUARANTINE FLAG: ON`
+- `LOCAL TRACKER QUARANTINE FLAG: OFF`
+
+Preserve hint meaning:
+
+`This flag only changes Architect's local tracker metadata. It does not block or alter in-game quest synchronization.`
+
+Preserve toggle labels:
+
+- `TRACKER QUARANTINE: ON`
+- `TRACKER QUARANTINE: OFF`
+
+EventId:
+
+`f7.quests.tracker.quarantine.toggle.click`
+
+Event type:
+
+UI_ONLY through `Register-F7UiEvent`
+
+Page:
+
+`Entities & Authority`
+
+Operation:
+
+`Toggle Local Quest Tracker Quarantine`
+
+LifetimeScope:
+
+`PAGE`
+
+Preserve handler semantics:
+
+1. invert `$script:activePreferences.quest_quarantine_enabled`;
+2. assign new value to `$qState.quarantineEnabled`;
+3. `Save-QuestState $qState`;
+4. `Save-ArchitectKeybindings`;
+5. report local tracker flag state;
+6. `Clear-AdminContent`;
+7. rerender `Render-MultiplayerQuestsPage`.
+
+Preserve closure-safe behavior.
+
+Do not convert this to a gameplay command.
+Do not claim it blocks multiplayer synchronization.
+
+============================================================
+D. CATEGORY FILTERS
+============================================================
+
+If `$script:questFilterCategory` is empty/unset, preserve default:
+
+`All`
+
+Preserve exact categories and order:
+
+1. `All`
+2. `Main Flame`
+3. `Artisans & Survivors`
+4. `Exploration & Lore`
+
+Preserve exact EventIds:
+
+- `f7.quests.filter.all.click`
+- `f7.quests.filter.main-flame.click`
+- `f7.quests.filter.artisans-survivors.click`
+- `f7.quests.filter.exploration-lore.click`
+
+All remain:
+
+- UI_ONLY
+- `Register-F7UiEvent`
+- Page = `Entities & Authority`
+- LifetimeScope = `PAGE`
+
+Preserve each filter button's Tag = category name.
+
+Preserve handler semantics:
+
+- obtain clicked control from sender/closure context
+- set `$script:questFilterCategory` from Tag
+- `Clear-AdminContent`
+- rerender `Render-MultiplayerQuestsPage`
+
+Preserve `.GetNewClosure()` use.
+
+Preserve filtering semantics:
+
+- `All` -> full `$quests`
+- otherwise exact equality on `$_.category -eq $filterCat`
+
+Do not persist filter selection to game state.
+
+============================================================
+E. QUEST CARD DATA PRESENTATION
+============================================================
+
+For each filtered quest, preserve display semantics for:
+
+- `$q.title`
+- `$q.zone`
+- `$q.flameLevelRequirement`
+- `$q.summary`
+
+Preserve zone/requirement text meaning:
+
+`Zone: <zone>  |  Req Flame: Lvl <requirement>`
+
+Preserve status source semantics:
+
+- use `$qState.states[$q.id]` when present
+- default status = `In Progress`
+- default quarantine = `$q.quarantinedByDefault`
+
+Preserve recognized status color semantics:
+
+- `Completed`
+- `In Progress`
+- `Locked`
+- fallback/default
+
+Preserve status badge meaning:
+
+`STATUS: <UPPERCASE STATUS>`
+
+Responsive construction may wrap/resize text but must not drop these fields.
+
+============================================================
+F. PER-QUEST LOCAL QUARANTINE
+============================================================
+
+Preserve button labels:
+
+- quarantined: `[X] Local Quarantine`
+- not quarantined: `Local Quarantine`
+
+Preserve Tag data:
+
+- `QuestId`
+- `StateObj`
+
+Preserve dynamic EventId:
+
+`f7.quests.item.<questId>.quarantine.toggle.click`
+
+Event type:
+
+UI_ONLY through `Register-F7UiEvent`
+
+Page:
+
+`Entities & Authority`
+
+Operation meaning:
+
+`Toggle Local Quest Quarantine <questId>`
+
+LifetimeScope:
+
+`PAGE`
+
+For a VALID nonblank quest id, preserve handler semantics:
+
+- resolve clicked control from sender/closure
+- read QuestId / StateObj from Tag
+- if quest state record is missing:
+  - add a state record
+  - `status = "In Progress"`
+  - `quarantined = $true`
+- else:
+  - toggle only `.quarantined`
+- `Save-QuestState`
+- `Clear-AdminContent`
+- rerender `Render-MultiplayerQuestsPage`
+
+Preserve `.GetNewClosure()`.
+
+Do not add in-game quest calls.
+
+============================================================
+G. PER-QUEST LOCAL STATUS
+============================================================
+
+Preserve button labels:
+
+- if completed: `RESET TRACKER STATUS`
+- otherwise: `MARK COMPLETE (LOCAL)`
+
+Preserve Tag data:
+
+- `QuestId`
+- `StateObj`
+- `Current`
+
+Preserve dynamic EventId:
+
+`f7.quests.item.<questId>.status.toggle.click`
+
+Event type:
+
+UI_ONLY through `Register-F7UiEvent`
+
+Page:
+
+`Entities & Authority`
+
+Operation meaning:
+
+`Toggle Local Quest Tracker Status <questId>`
+
+LifetimeScope:
+
+`PAGE`
+
+For a VALID nonblank quest id, preserve handler semantics:
+
+- resolve clicked control from sender/closure
+- read QuestId / StateObj / Current from Tag
+- new status:
+  - `Completed` -> `In Progress`
+  - anything else -> `Completed`
+- if state record is missing:
+  - add state record with:
+    - `status = $newSt`
+    - `quarantined = $true`
+- else:
+  - update only `.status`
+- `Save-QuestState`
+- preserve status-message meaning:
+  `Local tracker quest '<id>' set to <status>.`
+- `Clear-AdminContent`
+- rerender `Render-MultiplayerQuestsPage`
+
+Preserve `.GetNewClosure()`.
+
+Do not add quest completion/reset game calls.
+
+============================================================
+H. MISSING / BLANK QUEST ID FAIL-CLOSED
+============================================================
+
+Historical G3C behavior must remain intact.
+
+For a missing/blank quest id:
+
+- local-quarantine button disabled
+- local-status button disabled
+- no event registration
+- no generated EventId
+- no handler
+- disabled styling
+- truthful AccessibleDescription / tooltip reason
+
+Preserve reason:
+
+`Quest tracker action unavailable: stable quest id is missing.`
+
+Do not synthesize a quest id.
+Do not use title/index/category as a fallback id.
+Do not register unstable dynamic EventIds.
+
+============================================================
+I. LOCAL-ONLY TRUTHFULNESS
+============================================================
+
+Preserve all of these truths:
+
+- tracker state is Architect-local metadata
+- quarantine is a local tracker flag
+- "mark complete" is local tracker status only
+- no in-game quest state is modified
+- no multiplayer quest synchronization is blocked/changed
+- no host/server authority is implied
+- no entity authority is implied by this renderer
+
+Do not restore old multiplayer-protection wording.
+
+Home/local telemetry truthfulness must remain unchanged by preserving `Render-DashboardPage` hash.
+
+============================================================
+J. EVENT LIFECYCLE / ZERO-GAP
+============================================================
+
+Historical G3C closure established canonical UI_ONLY events for all prior raw handler families.
+
+Preserve:
+
+Global:
+- `f7.quests.tracker.quarantine.toggle.click`
+
+Filters:
+- `f7.quests.filter.all.click`
+- `f7.quests.filter.main-flame.click`
+- `f7.quests.filter.artisans-survivors.click`
+- `f7.quests.filter.exploration-lore.click`
+
+Per valid quest id:
+- `f7.quests.item.<questId>.quarantine.toggle.click`
+- `f7.quests.item.<questId>.status.toggle.click`
+
+Do not introduce:
+
+- `.add_Click`
+- `.add_SelectedIndexChanged`
+- `.add_TextChanged`
+- `.add_ValueChanged`
+- direct `Register-SafeUiEvent`
+- `Register-AdminActionEvent` inside this renderer
+- `[scriptblock]::Create`
+
+All renderer events remain UI_ONLY.
+
+RESPONSIVE DESIGN TARGET
+
+Rebuild `Render-MultiplayerQuestsPage` using responsive cards/tables while preserving conceptual hierarchy:
+
+1. Local Quest Tracker & Co-op Notes header/subtitle
+2. Local-only notice banner
+3. Local Tracker Quarantine status card
+4. Category filter card/row
+5. Dynamic quest cards
+
+The exact responsive decomposition is yours to design.
+
+At minimum:
+
+- header/subtitle stretch with content width
+- notice text remains readable and does not clip
+- quarantine scope/badge/hint/toggle layout remains usable at narrower widths
+- category filters distribute without overlapping long category names
+- each quest card stretches horizontally
+- quest title, zone/flame metadata, summary, and status remain readable
+- quest action controls do not overlap quest text
+- long quest titles/summaries can wrap or otherwise remain readable
+- status/actions can use a bounded side column or stacked rows
+- dynamic quest-card vertical ordering remains stable
+- filtered quest set/order remains unchanged
+- no fixed 590px-width dependency remains in the migrated renderer
+
+Do not claim exact geometry is proven unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- make bounded product edits inside `Render-MultiplayerQuestsPage`
+- create TEMP staging roots
+- create a TEMP-only G5H Entities/Authority parity fixture
+- adapt TEMP copies of test fixtures for toolkit-root/path issues
+- update TEMP-only stale fixed-pixel/source-pattern assertions only when semantic invariants are independently proven preserved
+- rerun tests as many times as needed
+- fix parse/layout-construction issues introduced by your migration
+- fix renderer-local responsive overlap/clipping issues discovered by UI smoke
+- iterate on responsive table/card decomposition
+- inspect Current source, archived G3C evidence, and project Capability/Roadmap records
+
+Do not ask the user for intermediate approval for those recoverable issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- authoritative Current hash differs before first edit
+- a required local quest-tracker behavior cannot be preserved without changing storage/gameplay semantics
+- current source materially contradicts the G3C local-only truthfulness contract
+- a change outside `Render-MultiplayerQuestsPage` is genuinely required
+- a shared responsive helper must change
+- page dispatch must change
+- `Load-QuestDatabase`, `Load-QuestState`, or `Save-QuestState` must change
+- registry/backend/native/Lua must change
+- completing the task requires recreating H:
+- completing the task requires creating a quest/multiplayer/entity mutation action
+- completing the task requires inventing an API, address, signature, pointer, layout, calling convention, quest authority model, multiplayer authority model, save schema, or runtime behavior
+- a missing quest-id path cannot remain fail-closed
+- a safety-sensitive ambiguity cannot be resolved from existing evidence/tests
+
+Do NOT stop merely because a TEMP test fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified lineage from G5B–G5G:
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native sources to the older archive generation.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+If prior TEMP G5B/G5C/G5D/G5E/G5F/G5G parity fixtures are unavailable, recreate equivalent TEMP checks from their closed invariants rather than stopping.
+
+G5H PARITY FIXTURE
+
+Create a TEMP-only Entities & Authority / Local Quest Tracker parity fixture.
+
+Verify at least these independent groups:
+
+1. `Entities & Authority` still routes to `Render-MultiplayerQuestsPage`
+2. page title remains local quest tracker / co-op notes
+3. subtitle still states in-game quest state and multiplayer synchronization are not modified
+4. notice remains explicitly local-only
+5. renderer still loads quest state through `Load-QuestState`
+6. renderer still loads quests through `Load-QuestDatabase`
+7. quest helper source hashes remain unchanged
+8. global scope label remains `LOCAL ARCHITECT TRACKER ONLY`
+9. global preference source remains `quest_quarantine_enabled`
+10. quarantine badge ON/OFF meaning preserved
+11. quarantine hint remains local-only / no sync blocking claim
+12. global toggle labels remain ON/OFF local tracker quarantine
+13. global EventId remains exact
+14. global event remains `Register-F7UiEvent` UI_ONLY
+15. global Page / Operation / PAGE lifetime semantics preserved
+16. global handler updates active preference
+17. global handler updates `qState.quarantineEnabled`
+18. global handler saves quest state
+19. global handler preserves `Save-ArchitectKeybindings`
+20. global handler rerenders page after clear
+21. default filter remains `All`
+22. filter category list/order remains exact
+23. filter EventId map remains exact for all four categories
+24. filter events remain UI_ONLY
+25. filter buttons preserve category Tag
+26. filter handlers update `questFilterCategory`
+27. filter handlers rerender
+28. filter handlers remain closure-safe
+29. `All` returns full quest collection
+30. non-All filtering remains exact category equality
+31. quest title presentation preserved
+32. zone presentation preserved
+33. flame requirement presentation preserved
+34. summary presentation preserved
+35. default status remains `In Progress`
+36. default quarantine remains `q.quarantinedByDefault`
+37. status color mapping semantics remain Completed/In Progress/Locked/default
+38. status badge meaning remains uppercase current status
+39. per-quest quarantine labels preserved
+40. per-quest quarantine Tag contains QuestId/StateObj
+41. per-quest quarantine EventId construction remains exact
+42. per-quest quarantine event remains UI_ONLY/PAGE lifetime
+43. per-quest quarantine missing-state creation preserves status In Progress + quarantined true
+44. per-quest quarantine existing-state path toggles only quarantine
+45. per-quest quarantine saves state and rerenders
+46. per-quest status labels preserved
+47. per-quest status Tag contains QuestId/StateObj/Current
+48. per-quest status EventId construction remains exact
+49. per-quest status event remains UI_ONLY/PAGE lifetime
+50. status transition Completed -> In Progress preserved
+51. non-Completed -> Completed preserved
+52. missing-state status creation preserves quarantined=true
+53. existing-state status path updates status
+54. status handler saves state
+55. local status message meaning preserved
+56. status handler rerenders
+57. missing/blank quest id disables quarantine action
+58. missing/blank quest id disables status action
+59. missing/blank quest id registers no dynamic event
+60. missing-id accessibility/tooltip reason remains truthful
+61. no synthesized fallback quest ids
+62. raw direct F7 event registrations inside renderer remain zero
+63. `Register-AdminActionEvent` sites inside renderer remain zero
+64. all renderer event registrations remain `Register-F7UiEvent`
+65. no old multiplayer-protection wording reintroduced
+66. Home hash unchanged
+67. Player hash unchanged
+68. Mobility hash unchanged
+69. Inventory hash unchanged
+70. Crafting/Progression hash unchanged
+71. Combat hash unchanged
+72. World/Camera hash unchanged
+73. Building hash unchanged
+74. Mods/Configuration hash unchanged
+75. renderer now uses responsive card/table infrastructure
+76. no invalid Absolute row-height hashtable introduced
+77. registry unchanged
+78. no backend/dispatch/native/Lua changes occurred
+
+You may split or strengthen checks.
+Do not reduce coverage merely to get green.
+
+REGRESSION / SUCCESS CRITERIA
+
+G5H is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only intended Multiplayer/Quests renderer layout source changed
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- Combat hash unchanged
+- World/Camera hash unchanged
+- Building hash unchanged
+- Mods/Configuration hash unchanged
+- quest helper hashes unchanged
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- G5H parity fixture fully PASS
+- G5B Player parity remains 18/18 PASS
+- G5C Mobility parity remains fully PASS
+- G5D Items/Progression parity remains fully PASS
+- G5E Combat parity remains fully PASS
+- G5F World/Camera parity remains fully PASS
+- G5G Building parity remains fully PASS
+- truthfulness fully PASS after only justified TEMP semantic refreshes
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new direct F7 event sites
+- no canonical mutation actions introduced on the local quest tracker page
+- final Current runtime SHA recorded
+- H: remains absent
+- no gameplay/runtime mechanism changed or promoted to PROVEN
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA/length
+- ending SHA/length
+- Home hash before/after
+- Player hash before/after
+- Mobility hash before/after
+- Inventory hash before/after
+- Crafting/Progression hash before/after
+- Combat hash before/after
+- World/Camera hash before/after
+- Building hash before/after
+- Multiplayer/Quests hash before/after
+- Mods/Configuration hash before/after
+- `Load-QuestDatabase` hash before/after
+- `Load-QuestState` hash before/after
+- `Save-QuestState` hash before/after
+- concise responsive layout architecture
+- product-source files changed
+- TEMP-only test files changed
+- full G5H parity result
+- Player parity result
+- Mobility parity result
+- Items/Progression parity result
+- Combat parity result
+- World/Camera parity result
+- Building parity result
+- truthfulness result
+- UI smoke result
+- UI error count
+- catalog count
+- lifecycle result
+- schema/source-consolidation result
+- prohibited-mutation result
+- G4A result
+- stable-definition refs
+- registry counts
+- raw-event / UI_ONLY event results
+- geometry status
+- any justified TEMP assertion refreshes and evidence
+- confirmation local-only quest semantics remain unchanged
+- confirmation no quest/multiplayer/entity mutation action was introduced
+- confirmation H: was not recreated
+- confirmation G5I/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5H Entities & Authority responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay behavior PROVEN from these tests.

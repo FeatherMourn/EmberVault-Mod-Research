@@ -1,0 +1,356 @@
+CODE-0042G1F1 — F7 SHELL LIFETIME + UI-ONLY EVENT MIGRATION
+
+Scope: Architect Toolkit F7 Admin shell/navigation
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change admin_action_registry.json in this pass.
+- Registry must remain 54 actions.
+
+Tests:
+- Use the reconstructed full workspace.
+- Update/add lifecycle assertions only as needed.
+
+DO NOT:
+- migrate the AOB Scanner action yet;
+- migrate other F7 pages;
+- begin responsive layout work;
+- add gameplay capabilities/backends/hooks/offsets/signatures;
+- change action enablement.
+
+GOAL
+
+Add correct lifetime semantics for persistent F7 shell controls, then migrate all clearly UI-only shell events into `Register-F7UiEvent`.
+
+After this pass:
+- persistent shell event definitions/bindings survive page navigation correctly;
+- page-owned active bindings are still cleared on `Clear-AdminContent`;
+- all seven clearly UI-only shell registration sites use the explicit F7 event system;
+- the AOB Scanner click remains the ONE intentionally-unmigrated shell ACTION for the next slice.
+
+CURRENT LIFECYCLE PROBLEM
+
+Current:
+- `$script:f7EventDefinitions` is stable metadata keyed by EventId.
+- `$script:f7ActiveBindings` is live state keyed by EventId.
+- `Clear-AdminContent` currently resets ALL active bindings and ALL action-control references.
+
+That is correct for PAGE controls but wrong for persistent shell controls.
+
+A shell control such as navigation, admin form KeyDown, or bounds timer remains alive across page transitions. If its binding is placed in the same active map and then globally cleared, the audit becomes false even though the event handler still exists.
+
+REQUIRED LIFETIME MODEL
+
+Add an explicit lifetime/scope concept to the F7 event lifecycle.
+
+Recommended vocabulary:
+
+- `PAGE`
+- `SHELL`
+
+Use one stable field name consistently, e.g. `LifetimeScope`.
+
+Apply it to:
+
+1. Stable event definitions
+   - EventId
+   - Page
+   - Classification
+   - ActionId
+   - EventName
+   - Operation
+   - LifetimeScope
+
+2. Active bindings
+   - Control
+   - ActionId
+   - Page
+   - LifetimeScope
+
+3. `Register-F7EventDefinition`
+   - accept `LifetimeScope`
+   - include it in conflict comparison
+   - default to `PAGE`
+
+4. `Register-F7UiEvent`
+   - accept `LifetimeScope`
+   - default to `PAGE`
+
+5. `Register-AdminActionEvent`
+   - accept `LifetimeScope`
+   - default to `PAGE`
+   - pass it through to definition/binding logic
+
+6. `Bind-AdminActionControl`
+   - accept/store `LifetimeScope`
+   - default to `PAGE`
+
+CLEAR-ADMIN-CONTENT BEHAVIOR
+
+Change `Clear-AdminContent` so it removes only PAGE active bindings.
+
+It must preserve active bindings where `LifetimeScope == "SHELL"`.
+
+Then rebuild/recompute `$script:adminActionControls` from the surviving active ACTION bindings rather than blindly resetting it to an empty map.
+
+Even though this pass will not yet add a shell ACTION, implement this correctly now so the scanner slice can use the same architecture.
+
+Do not preserve disposed controls. If a preserved SHELL control is already disposed, drop it.
+
+MIGRATE THESE SEVEN UI-ONLY SHELL SITES
+
+A. Bounds-save timer Tick
+
+Current:
+`$script:boundsSaveTimer.Add_Tick(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.shell.bounds.saveTimer.tick`
+
+Page:
+`Shell`
+
+LifetimeScope:
+`SHELL`
+
+Operation:
+`SaveAdminWindowBoundsDeferred`
+
+B. Admin form ResizeEnd
+
+Current:
+`$adminForm.Add_ResizeEnd(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.shell.bounds.resizeEnd`
+
+Page:
+`Shell`
+
+LifetimeScope:
+`SHELL`
+
+C. Admin form LocationChanged
+
+Current:
+`$adminForm.Add_LocationChanged(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.shell.bounds.locationChanged`
+
+Page:
+`Shell`
+
+LifetimeScope:
+`SHELL`
+
+D. Admin form FormClosing — bounds save handler
+
+Current early handler:
+`$adminForm.Add_FormClosing({ $script:boundsSaveTimer.Stop(); Save-AdminWindowBounds })`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.shell.bounds.formClosing.save`
+
+Page:
+`Shell`
+
+LifetimeScope:
+`SHELL`
+
+E. Navigation button loop
+
+Current:
+raw `Register-SafeUiEvent $nav "Click" ...`
+
+Classification:
+UI_ONLY
+
+Each runtime navigation button must receive a unique deterministic EventId.
+
+Use stable page-key mapping, for example:
+
+- `f7.shell.nav.home.click`
+- `f7.shell.nav.player.click`
+- `f7.shell.nav.mobilityNavigation.click`
+- `f7.shell.nav.itemsProgression.click`
+- `f7.shell.nav.combatAI.click`
+- `f7.shell.nav.worldEnvironment.click`
+- `f7.shell.nav.buildingWorldEditing.click`
+- `f7.shell.nav.entitiesAuthority.click`
+- `f7.shell.nav.cameraPresentation.click`
+- `f7.shell.nav.modsConfiguration.click`
+- `f7.shell.nav.developerDiagnostics.click`
+
+Do not build identity from a transient control reference.
+
+Page:
+`Shell`
+
+LifetimeScope:
+`SHELL`
+
+Operation:
+`NavigateAdminPage`
+
+Preserve navigation behavior and color-selection behavior.
+
+F. Admin form KeyDown — Escape to hide
+
+Current:
+`$adminForm.Add_KeyDown(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.shell.escape.keyDown`
+
+Page:
+`Shell`
+
+LifetimeScope:
+`SHELL`
+
+G. Admin form FormClosing — cancel close / hide admin menu
+
+Current later handler:
+`$adminForm.Add_FormClosing(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.shell.formClosing.hide`
+
+Page:
+`Shell`
+
+LifetimeScope:
+`SHELL`
+
+Preserve both FormClosing handlers. They have distinct EventIds and operations.
+
+DO NOT MIGRATE THE AOB SCANNER YET
+
+Leave this one source-level registration unchanged for G1F2:
+
+`Register-SafeUiEvent $script:btnScannerToggle "Click" ...`
+
+Why:
+- it invokes `NativeMemoryEngine.ToggleScanner()`;
+- it is ACTION, not UI_ONLY;
+- scanner startup/shutdown has native/process-state side effects;
+- no canonical scanner action has yet been accepted.
+
+The shell audit after G1F1 should therefore report exactly one intentionally-unclassified/raw shell ACTION: the AOB Scanner click.
+
+Do not hide this fact by excluding it from the audit.
+
+DIRECT-EVENT AUDIT
+
+Extend or add a shell-specific deterministic audit.
+
+Report at least:
+- `shellUiOnlyRawRegistrations`
+- `shellActionRawRegistrations`
+- `shellTotalRawRegistrations`
+
+Acceptance for G1F1:
+- shell UI-only raw registrations = 0
+- shell ACTION raw registrations = 1
+- that one remaining site is exactly the AOB Scanner click
+
+Do not report full shell zero-gap closure yet.
+
+LIFECYCLE TEST
+
+Extend `test_f7_event_lifecycle.ps1` or add a narrow companion test.
+
+Exercise:
+
+1. register/render shell events;
+2. render Home;
+3. navigate/clear to Player;
+4. navigate/clear to Mobility;
+5. clear/render Home again.
+
+Assert:
+
+- SHELL definition EventId set stays stable.
+- SHELL active-binding EventId set stays present across `Clear-AdminContent`.
+- PAGE active bindings from outgoing page are removed.
+- no stale/disposed SHELL controls remain.
+- no duplicate/ambiguous shell EventIds.
+- all 11 navigation EventIds are unique/stable.
+- Home/Player/Mobility raw event counts remain 0.
+- scanner remains the only raw shell ACTION.
+
+If full WinForms traversal cannot run headless, test the actual lifecycle helpers with representative persistent shell controls plus disposable PAGE controls and clearly report the limitation.
+
+PRESERVE
+
+- Registry = 54.
+- `movement.position.read` remains disabled / UNSOLVED / backend NONE / runtime UNAVAILABLE / risk mutation.
+- teleport remains disabled ADM-TEST-0002.
+- Auto Loot remains STARTUP_CANARY_ONLY.
+- Glider Flight remains disabled/unqualified.
+- glider-stamina semantic block remains.
+- no direct F7 calls to:
+  TogglePatch
+  EnableAllSurvival
+  DisableAllSurvival
+  WritePlayerCoordinates
+  ToggleAutoLoot
+  ToggleGliderFlight
+- source-consolidation catalog.
+- CT catalog = 224.
+- Home raw events = 0.
+- Player raw events = 0.
+- Mobility raw events = 0.
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. lifecycle test.
+3. F7 truthfulness.
+4. UI smoke.
+5. UI errors.
+6. CT catalog = 224.
+7. registry count/unique IDs = 54.
+8. Home/Player/Mobility raw counts = 0.
+9. shell UI-only raw = 0.
+10. shell ACTION raw = 1 (AOB Scanner only).
+11. stale/disposed SHELL active bindings = 0.
+12. prohibited mutation scan.
+
+REPORT
+
+Return:
+- files changed;
+- exact lifetime architecture added;
+- seven migrated source-level shell UI-only sites;
+- 11 navigation EventIds;
+- PAGE vs SHELL active-binding counts through navigation test;
+- shell raw counts before/after;
+- confirmation scanner is intentionally still raw and why;
+- all test results;
+- no runtime/gameplay proof claim.
+
+Do not migrate the scanner in this pass.

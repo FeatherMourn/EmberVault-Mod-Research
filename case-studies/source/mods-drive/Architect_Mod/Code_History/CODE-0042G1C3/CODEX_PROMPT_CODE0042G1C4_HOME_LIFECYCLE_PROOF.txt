@@ -1,0 +1,154 @@
+CODE-0042G1C4 — REMOVE CALLER-SCOPE COUPLING + PROVE HOME RERENDER LIFECYCLE
+
+Scope: Architect Toolkit F7 Admin
+Build: Enshrouded 1076226
+Task: lifecycle correctness + automated verification only
+
+DO NOT migrate Player Vitals or Mobility.
+DO NOT begin responsive layout work.
+DO NOT add gameplay functionality or registry actions.
+
+CURRENT STATE
+
+Already good:
+- legacy `$script:f7EventInventory` removed;
+- stable `$script:f7EventDefinitions` exists;
+- live `$script:f7ActiveBindings` exists;
+- `Clear-AdminContent` clears active/action maps;
+- definition conflict comparison is explicit field-by-field;
+- Home raw direct-event count is zero;
+- registry count is 53.
+
+ONE SOURCE DEFECT REMAINS
+
+`Bind-AdminActionControl` still references `$EventId`, `$EventName`, and `$Operation` even though these are not parameters.
+
+It currently works only because PowerShell resolves them from the calling `Register-AdminActionEvent` scope.
+
+REMOVE THIS DYNAMIC-SCOPE DEPENDENCY.
+
+Preferred implementation:
+
+1. In `Register-AdminActionEvent`, explicitly call:
+
+   Register-F7EventDefinition
+     -EventId $EventId
+     -Page $Page
+     -Classification "ACTION"
+     -ActionId $ActionId
+     -EventName $EventName
+     -Operation $Operation
+
+2. If the definition is ambiguous/conflicting:
+   - disable the control;
+   - expose the ambiguity reason;
+   - return false.
+
+3. Change `Bind-AdminActionControl` so every identity value it uses is explicit.
+   Recommended parameters:
+   - Control
+   - ActionId
+   - EventId
+   - Page
+   - AllowDisabled
+
+   It should NOT reference `$EventName` or `$Operation` at all if stable definition registration happens in the caller.
+
+4. `Bind-AdminActionControl` should:
+   - resolve the canonical action;
+   - set the control Tag/accessible metadata with explicit EventId/ActionId/Page;
+   - refresh `$script:f7ActiveBindings[$EventId]`;
+   - refresh `$script:adminActionControls[$ActionId]` from active bindings;
+   - enforce disabled/unavailable action state;
+   - never use caller-scope variables.
+
+5. `Register-F7UiEvent` should remain explicit and EventId-driven.
+
+AUTOMATED REPEATED-HOME TEST
+
+Add a dedicated lifecycle test to the reconstructed full workspace. Prefer a new focused test such as:
+
+`tests/test_f7_event_lifecycle.ps1`
+
+or a clearly isolated block in an existing test if that is safer.
+
+Exercise repeated Home lifecycle behavior. Use the strongest deterministic headless path available.
+
+Required sequence should be equivalent to:
+
+1. render/register Home;
+2. capture Home stable EventId set and definition count;
+3. clear/navigate away;
+4. render/register Home again;
+5. clear/render Home a third time.
+
+Assert:
+
+- Home stable EventId set is identical after every render.
+- Home stable definition count is unchanged.
+- duplicate Home EventIds = 0.
+- ambiguous Home bindings = 0.
+- missing Home registry IDs = 0.
+- staleOrDisposedActiveBindings = 0.
+- active bindings contain only controls from the current render.
+- no old/disposed controls survive in `$script:f7ActiveBindings` or `$script:adminActionControls`.
+- `Render-DashboardPage` direct raw event count remains 0.
+- Home ACTION controls still resolve to their existing canonical ActionIds.
+- UI_ONLY Home control remains UI_ONLY.
+
+If the full WinForms page cannot be safely instantiated in the test harness:
+- test the actual registration helpers with disposable WinForms controls and the exact Home EventIds;
+- also retain the static Home renderer raw-event assertion;
+- state clearly that this proves lifecycle helper behavior offline, not in-game rendering.
+
+STATIC ASSERTION
+
+Add a test/static assertion that `Bind-AdminActionControl` contains no undeclared references to:
+- EventId
+- EventName
+- Operation
+
+Any EventId used by it must be an explicit parameter/local value.
+
+PRESERVE
+
+- Registry = 53 actions.
+- No new action IDs.
+- `admin.preset.apply` remains disabled / ORCHESTRATION_ONLY.
+- Teleport fail-closed ADM-TEST-0002.
+- Auto Loot STARTUP_CANARY_ONLY.
+- Glider Flight disabled/unqualified.
+- Glider-stamina semantic block.
+- No direct F7 calls to TogglePatch, EnableAllSurvival, DisableAllSurvival, WritePlayerCoordinates, ToggleAutoLoot, ToggleGliderFlight.
+- Source-consolidation catalog.
+- CT catalog = 224.
+- Existing Home EventIds and classifications.
+- Existing truthfulness behavior.
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. F7 truthfulness.
+3. UI smoke.
+4. UI errors.
+5. CT catalog count = 224.
+6. Home raw direct-event count = 0.
+7. New repeated-Home lifecycle test.
+8. Caller-scope static assertion.
+9. Prohibited mutation-call scan.
+
+REPORT
+
+Return:
+- files changed;
+- exact `Bind-AdminActionControl` signature before/after;
+- where ACTION definitions are now registered;
+- confirmation that EventId/EventName/Operation are not dynamically inherited by Bind;
+- Home EventId set and definition counts across each traversal;
+- active-binding counts across each traversal;
+- duplicate/ambiguous/missing/stale metrics;
+- all test results;
+- remaining Player/Mobility work.
+
+Do not stop after analysis. Implement this narrow repair and the lifecycle test completely unless there is a concrete source-level blocker.

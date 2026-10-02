@@ -1,0 +1,34 @@
+INTAKE RECORD
+=============
+Intake_ID: INC-0061
+Received: 2026-09-19
+Filename: Ember.zip
+Type: EXTERNAL_MOD_ARCHIVE (EML mod, Lua-based)
+SHA256: 674A93C3229AC6295FCBB741A684C49D7A87FEAEF28EA6279D023B964884F7C1
+Size_Bytes: 62311
+Source: User-provided attachment from
+  F:\1-Terrabite - Downloads\enshrouded\Enshrouded Mod Manager 114 2.4.4
+  2026-07-28T22-20Z LRF4M9sAS\mods\Ember.zip
+  (inner file of the previously-intaked INC-0060 Mod Manager bundle)
+
+CLASSIFICATION
+==============
+UNTRUSTED_STAGING / EXTERNAL_ARTIFACT_EVIDENCE
+Reference: Ember is a third-party EML mod that provides shared modding
+primitives, commands, and APIs in the same EML Lua runtime Architect uses.
+Used here as a structural reference for comparing Architect's Lua command
+surface and capability registration patterns - not as a target for adoption
+or integration into Architect.
+
+PROMOTION STATUS
+================
+Promoted_To: None (structural reference only)
+Related: Architect src/mod.lua, src/Architect_QoL_ResourceFeatures.lua,
+src/Data/Architect_QoL_Profiles_1076226.lua, runtime/staging/ArchitectProductPathPreview.lua.
+
+HANDLING NOTES
+==============
+- Original preserved byte-exact; hash verified after copy on 2026-09-19.
+- Will inspect mod.json manifest and key Lua files to characterize Ember's
+  command / hook surface, then compare against Architect's Lua layer to
+  identify any commands/configs/cheats the user expected Architect to expose.

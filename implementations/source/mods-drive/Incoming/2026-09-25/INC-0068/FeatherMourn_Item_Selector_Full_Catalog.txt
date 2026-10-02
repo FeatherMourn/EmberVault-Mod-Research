@@ -1,0 +1,3599 @@
+{$lua}
+if syntaxcheck then return end
+
+[ENABLE]
+-- FeatherMourn: Item Selector / single-use inventory slot editor
+-- Catalog data: supplied reference item list (names and hashes retained unchanged).
+-- Original UI / safeguards rewritten; catalog identity is NOT an independent discovery.
+-- Requires an independently VERIFIED pointer capture named InventoryItemSlot,
+-- or the existing working capture named pItem. Neither is installed here.
+-- Build reported: 1024333. Item layout at +0 and +8 remains experimental.
+-- Run only in a backed-up offline test world; never enable two competing hooks.
+
+local POINTER_SYMBOLS = { 'InventoryItemSlot', 'pItem' }
+local function unsigned32(n)
+  return n % 4294967296
+end
+
+local function findCapturedItem()
+  local descriptions = {}
+  for _, symbol in ipairs(POINTER_SYMBOLS) do
+    local slot = getAddressSafe(symbol)
+    if slot and slot ~= 0 then
+      local item = readQword(slot)
+      if item and item ~= 0 then
+        local oldHash = readInteger(item)
+        local oldCount = readInteger(item + 8)
+        if oldHash ~= nil and oldCount ~= nil then
+          return item, slot, symbol, oldHash, oldCount
+        end
+        descriptions[#descriptions + 1] = symbol .. ': pointer unreadable'
+      else
+        descriptions[#descriptions + 1] = symbol .. ': no item captured'
+      end
+    else
+      descriptions[#descriptions + 1] = symbol .. ': symbol missing'
+    end
+  end
+  showMessage('No usable inventory item pointer. Enable ONE known-working '
+    .. 'inventory capture, select a disposable inventory item, and retry.\n'
+    .. table.concat(descriptions, '\n'))
+  return nil
+end
+
+-- Name + hash data is a catalog, NOT a memory map. Rows with identical names
+-- remain separate and display their hashes so no item variation gets lost.
+local catalogText = [====[
+"Boar At Home"	BECC3614
+"Braid" Wig Head	33B24A91
+"Cowlick" Wig Head	61D39D8B
+"Flightless Redtail On One Leg"	0123208F
+"Flower Snake"	DFBF5843
+"Flower Vase"	500DDD97
+"Hanfu Ponytail" Wig Head	D6064ED3
+"Slick Fade" Wig Head	C98766AB
+"Still Life"	49BC6DE0
+"Temple Landscape"	6ABEDD25
+"Tower In The Night"	E54CDFF0
+"Wolf's Choir"	64A9255A
+Abyssal Wing Axe (1)	9CAF00B9
+Abysswalker (1)	F2B0D528
+Acid Bite (17)	1C1F749B
+Acid Cleaver (1)	032D9171
+Acidic Mycelium (18)	186D3638
+Active Mycelium (5)	81E20CFB
+Adorned Drakling Daggers (1)	80ABB9F2
+Advanced Glider (10)	534BA901
+Advanced Rake (5)	81BB769F
+Adventurer Boots (10)	162F6371
+Adventurer Boots (10)	2A5EA1CA
+Adventurer Chest (10)	9E145C29
+Adventurer Chest (10)	B8DA18F5
+Adventurer Gloves (10)	2E140CDC
+Adventurer Gloves (10)	420F94AD
+Adventurer Helmet (10)	C83EDC61
+Adventurer Helmet (10)	FF1B25E5
+Adventurer Trousers (10)	29F12DA4
+Adventurer Trousers (10)	C4003FC4
+Aerated Banshee Gel (5)	A8D579FA
+Aerostriker (1)	6A697497
+Albaneve Summits Dirt	7C00C41F
+Alchemical Base (16)	8D5E7532
+Alchemist Apprentice Boots (5)	5A379F89
+Alchemist Apprentice Boots (5)	D9768981
+Alchemist Apprentice Chest (5)	50105A80
+Alchemist Apprentice Chest (5)	CD1535CE
+Alchemist Apprentice Gloves (5)	B055A7C5
+Alchemist Apprentice Gloves (5)	C4E3FFCD
+Alchemist Apprentice Hat (5)	5DB83EC3
+Alchemist Apprentice Hat (5)	E5A9AC59
+Alchemist Apprentice Trousers (5)	984A3432
+Alchemist Apprentice Trousers (5)	FB04BDCB
+Alchemist Showcase	715F4596
+Alchemist's Ring (2)	0598DE5A
+Alchemy Station	E067FCDC
+Alden Crowley	E05F1FDF
+Algae Buds	91ECD8D2
+Algae Salad	A2F52D31
+Algae Seedling	8FBA1B49
+Algae	300C7868
+Almanac of Plants and Seedlings	33CFD09A
+Aloe (25)	2D8E23B7
+Aloe Plant	12320AAB
+Aloe Seedling	1F5B19CA
+Alpine Antler Boots (30)	E7D264EE
+Alpine Antler Boots (30)	FDFF51FC
+Alpine Antler Chest (30)	963829DB
+Alpine Antler Chest (30)	D5358343
+Alpine Antler Gloves (30)	17AEEEDC
+Alpine Antler Gloves (30)	F5B51881
+Alpine Antler Hood (30)	B36DA8D1
+Alpine Antler Hood (30)	DCFAEF09
+Alpine Antler Trousers (30)	DB8AA57E
+Alpine Antler Trousers (30)	DD4EEEBA
+Alpine Rose	34FDC5E9
+Amber (13)	6F0139E1
+Amber Bow (1)	94778B82
+Amethyst (33)	770B83EB
+Ammonia Gland (16)	78DA83C4
+Ammonite Imprint	E7FA4CB4
+Ancestral Star (1)	84BCC08C
+Ancestral Star (26)	E51C11A8
+Ancestral Star (36)	71FAE999
+Ancient "Artichoke" Seedling	CA85DB2D
+Ancient "Bean" Seedling	A7E0FB74
+Ancient "Cabbage" Seedling	38EC14C7
+Ancient "Pomegranate" Seedling	BCBA8CCE
+Ancient Drak Wand (1)	6D995054
+Ancients Night Door	9E48ECD3
+Animal Fur (5)	3AAA39A7
+Antidote	CD243274
+Antique	EF63753B
+Antiseptic (16)	26B09DA6
+Antler Bow (1)	ACF1E310
+Anton Godwin	EB21C0E3
+Apex Machete (1)	A899383F
+Apprentice Wand (1)	42444694
+Aquamarine (40)	57FA3BCD
+Aquamarine Dreams	7CC38C1B
+Aquamarine Dust (40)	2106F5A3
+Archaic Core (45)	B7DCD57C
+Archaic Essence I (5)	6A40E93A
+Archaic Essence II (13)	4EE19490
+Archaic Essence III (18)	EA2BEB3F
+Archaic Essence IV (25)	D4480073
+Archaic Essence V (33)	E5256405
+Archaic Essence VI (40)	18E4EB33
+Archaic Shards (45)	7FA553A8
+Archer Boots (10)	A2CA9A45
+Archer Chest (10)	5BFF7EB2
+Archer Gloves (10)	9FF92FCC
+Archer Helmet (10)	C7C65CA4
+Archer Trousers (10)	D42855B2
+Archmage Boots (20)	74707C83
+Archmage Boots (20)	8243BEB7
+Archmage Chest (20)	4D6FA9A9
+Archmage Chest (20)	CE4793D0
+Archmage Gloves (20)	17BA70DC
+Archmage Gloves (20)	2EF64B3D
+Archmage Hat (20)	512F3BD4
+Archmage Hat (20)	B62C963F
+Archmage Trousers (20)	605A15DE
+Archmage Trousers (20)	83F7B8A5
+Arsonist's Bow (1)	384C37FD
+Assassin Boots (20)	1A6DBE08
+Assassin Boots (20)	EFE6DEA7
+Assassin Chest (20)	430428F9
+Assassin Chest (20)	A7092849
+Assassin Gloves (20)	32E1CB66
+Assassin Gloves (20)	C78AF280
+Assassin Hood (20)	42FB6E86
+Assassin Hood (20)	73015DA0
+Assassin Trousers (20)	34E4DAE5
+Assassin Trousers (20)	CB7503B3
+Athalan Skree	4FE25661
+Athanor	B2F2692B
+Aunt Braelyn	8370590E
+Aureolin Flower Seedling	A4A79846
+Aureolin Flower	F927BC27
+Aureolin Plant	E0FB6464
+Aurora Sword (1)	B4788350
+Avalanche Starter (1)	ECBD38B9
+Awning III	F72D8BB4
+Awning II	74CBF70D
+Awning I	4FE3C1FA
+Axe (1)	1DA5F1F1
+Azure Russula Seedling	E113280B
+Azure Russula	4DC5E916
+Baby Capybara	727A19E5
+Baby Common Goat	17B771E6
+Baby Dune Armadillo	57CCFFC0
+Baby Fae Deer	BC451FE0
+Baby Flightless Redtail	EE916A01
+Baby Frizzy Goat 	B539D5AF
+Baby Hophare	08775890
+Baby Round-Billed Sailer	FF7ADB58
+Baby Yak	A7E9C2B5
+Balefire Brazier	CA5F0397
+Balthazar	F72A4C04
+Bamboo Bar Counter	DAB16B65
+Bamboo Barricade III	12B63D17
+Bamboo Barricade II	661B8A78
+Bamboo Barricade IV	F31E97EA
+Bamboo Barricade I	052D3143
+Bamboo Bedside Table	7B005B40
+Bamboo Bench	EC191DDD
+Bamboo Boardwalk II	43BA605E
+Bamboo Boardwalk I	3555AACC
+Bamboo Cage II	27C1CF62
+Bamboo Cage I	67DF08FA
+Bamboo Chair	4B8295C5
+Bamboo Container II	5018424D
+Bamboo Container I	283DFE7F
+Bamboo Crate II	684448CD
+Bamboo Crate I	542D8340
+Bamboo Crate I	F68A9BD0
+Bamboo Door	E921C36A
+Bamboo Fence Pole	BA0A1828
+Bamboo Fence Pole	C7A4CD06
+Bamboo Fence With Ropes II	99622FF1
+Bamboo Fence With Ropes I	3BE37559
+Bamboo Ladder III	5AFC866A
+Bamboo Ladder II	9FE6B9DE
+Bamboo Ladder	387BE9D8
+Bamboo Logs (40)	5251AC02
+Bamboo Lounger	610BAE37
+Bamboo Palm Leaf Umbrella	035906CF
+Bamboo Plant	5E739766
+Bamboo Room Divider II	37B660D3
+Bamboo Room Divider I	0F8A5510
+Bamboo Room Divider I	16280A8A
+Bamboo Room Divider I	743F3B4B
+Bamboo Room Divider I	CB736666
+Bamboo Room Divider I	D70CCACF
+Bamboo Seedling	AC06CCF6
+Bamboo Stairs	5A72B8BB
+Bamboo Stairs	81AA3914
+Bamboo Window III	F94AD04B
+Bamboo Window II	6BB194EA
+Bamboo Window I	28789E9B
+Bamboo Wood Block	1FA83AC2
+Banana Plant	51B076A4
+Banana Seedling	EBC4D37A
+Banana	9C9346AE
+Bandage	5BC2B4BD
+Banebringer (1)	88DCCF6F
+Barbarian Greatsword (1)	99723794
+Barber Boots name placeholder	A8F748AB
+Barber Gloves name placeholder	51F19DE4
+Barber chest name placeholder	9C46A373
+Barber helmet name placeholder	350CF6FB
+Barber legs name placeholder	9BEB5591
+Bare Fists (1)	DA9E5C1B
+Baroness Daggers (1)	3C1646B6
+Basalt Dust (45)	10F22301
+Basalt Farm Soil	73105665
+Basil	57CF25F9
+Basket III	B6F2800A
+Basket II	1A6958F8
+Basket IV	32684478
+Basket I	D02991E5
+Basket VI	384FF6EE
+Basket V	0C7533D1
+Basswood Tree Seedling	B800132C
+Battering Ram Hammer (1)	7565A899
+Batwing Axe (1)	ADA2E77D
+Beard 01	B52A2653
+Beard 02	A4E21F6B
+Beard 03	EDC10B23
+Beard 04	4EF6C929
+Beard 05	02388AE2
+Beard 05	07532541
+Beard 05	143D4B1F
+Beard 05	1B3A4437
+Beard 05	290792C5
+Beard 05	5407B13E
+Beard 05	91D5EE06
+Beard 05	C107A46F
+Beard 05	E3C1F895
+Beef Stew	9D06A938
+Beehive Smoker	6B29C011
+Beet Seedling	A23617DA
+Bejeweled Golden Urn	B0D6E390
+Bell Pepper Seedling	8AECEF1C
+Bell Pepper	F40A4E3F
+Bellows	EE21083E
+Bembel Pitcher	04105DCC
+Bench	E19559D8
+Berry Bush Seedling	4604958B
+Big Ammonite	D5B4AAB8
+Big Blackmire Statue II	336075CA
+Big Blackmire Statue I	BC1CAD2B
+Big Bronze Statue "Snake"	8BE203C7
+Big Clay Vat	BE95E227
+Big Coffin Lid	2778C3AE
+Big Coffin	154E2223
+Big Decorated Tree	9BEC6805
+Big Elegant Sofa	0A78D6C2
+Big Farm Animal Pillow	33265FD2
+Big Fur Rug	5D41E40F
+Big Furry Straw Mat	837F1582
+Big Hollow's Eve Pumpkin III	41BDEC39
+Big Hollow's Eve Pumpkin II	B30583F5
+Big Hollow's Eve Pumpkin I	494BD7F2
+Big Leather Crate	3DA6D524
+Big Shape	054F63EB
+Big Shape	16A432DC
+Big Steel Barrel	B3284FA5
+Big Stone Statue "Sword"	8DE4525B
+Big Straw Mat	A2A2BBE2
+Big Waggon	EAB90473
+Big Wooden Crate	9529ABCC
+Bird Feeder	9372D5AF
+Bird Food Bait	A4A95E84
+Bird Food	9830B1DF
+Black Coffee	FADF8E20
+Black Eyes	B23477B6
+Black Hair	FE88C796
+Black Powder (25)	6CFEAC45
+Black Powder Ball (21)	6042ECBC
+Blackened Staff (1)	B834F7F6
+Blackguard Boots (15)	34281ED7
+Blackguard Chest (15)	C7F44F55
+Blackguard Gloves (15)	08C71732
+Blackguard Helmet (15)	96D0B096
+Blackguard Trousers (15)	449188BA
+Blackmire Bark	4922DE66
+Blackmire Dirt	8E33BA5C
+Blackmire Heartwood	680E88C9
+Blackmire Rubble	D7CF26A5
+Blackmire Statue III	5AACA562
+Blackmire Statue II	6B9DEA20
+Blackmire Statue IV	CE451E4E
+Blackmire Statue I	DCBA1A39
+Blackmire Statue VI	CE34CDD4
+Blackmire Statue V	52CAEFD8
+Blackmire Stone	2D50848B
+Blacksmith Boots	860B4858
+Blacksmith Garb	68F1AC9A
+Blacksmith Hat	C52F14B3
+Blacksmith Pants	37F161E3
+Blast Furnace	92EED965
+Blazing Wand (1)	9675B7F1
+Blessed Club (1)	68577E12
+Blessed Club (26)	91118BAD
+Blessed Club (36)	72B4386F
+Blink (5)	D14E93C4
+Blink Daggers (1)	F5C33D53
+Blizzard Wand (1)	C2EAEC62
+Block Dismantle 4x4	BE1D3B4A
+Block Dismantle	3C76F0BA
+Blood In The Snow	9ABF37A9
+Blood Omen Axe (1)	B6E1B8BE
+Blood Rose Boots	8E501903
+Blood Rose Boots	A2B8A839
+Blood Rose Chestplate	B0576904
+Blood Rose Chestplate	BA540E76
+Blood Rose Gloves	2747F320
+Blood Rose Gloves	FCEB3B15
+Blood Rose Mail Coif	681D54B4
+Blood Rose Mail Coif	F3FB4BE8
+Blood Rose Pants	17798141
+Blood Rose Pants	8BE44AE4
+Bloodfeather Chest (40)	0E40F86C
+Bloodfeather Chest (40)	7B1F4C25
+Bloodfeather Gloves (40)	0FCB3721
+Bloodfeather Gloves (40)	7CBD84FA
+Bloodfeather Helmet (40)	B6160CDE
+Bloodfeather Helmet (40)	F8CE6A91
+Bloodfeather Pants (40)	84EDC057
+Bloodfeather Pants (40)	D1C3AFE8
+Bloodfeather Shoes (40)	70654767
+Bloodfeather Shoes (40)	E72F5AF8
+Blue Confetti Mortar	FD10B599
+Blue Decorative Box	1885154D
+Blue Eyes	DBDD7EF7
+Blue Fabric (25)	17BB2C00
+Blue Floor Light II	AE60165C
+Blue Floor Light I	68268830
+Blue Globe	B17EE2D3
+Blue Goblet	7EB5EC48
+Blue Hair	CB04CAFE
+Blue Luminescent Block	0B7F9C4B
+Blue Pendant Light II	37FB9778
+Blue Pendant Light I	89A74A23
+Blue Rocket	DC95D601
+Blue Wall Light II	DBC517F7
+Blue Wall Light I	00E49133
+Blunt Knives (1)	2FE6808A
+Boiled Eggs	43BE4AB4
+Bone Arrow (12)	4A552B18
+Bone Block	462350FA
+Bone Channel I (15)	08CC6F7A
+Bone Channel II (25)	B3B0B3B0
+Bonebreaker (1)	5C8F3F02
+Bonemeal (5)	B1C8EEC6
+Bones (5)	7A6407EA
+Bonescourge Mace (1)	9DC18D02
+Book III	B5AC3120
+Book II	2DBD9430
+Book IV	FFF18E70
+Book I	18A62A4E
+Book I	232464B6
+Book I	285785D2
+Book I	2C57D892
+Book I	3E245215
+Book I	634A59C7
+Book I	6FF9318C
+Book I	72761755
+Book I	8816D6DA
+Book I	97E16DDA
+Book I	B1588E4C
+Book I	C683CCA3
+Book I	E5B2F671
+Book I	FCE05BF4
+Book V	3EE093DC
+Boreal Axe (1)	78ECF48E
+Boreal Wood Banquet Table	BAD60643
+Boreal Wood Bed	FE4A082D
+Boreal Wood Bedside Table	10AF531C
+Boreal Wood Bench	9DF1F682
+Boreal Wood Chair	5A71A7C6
+Boreal Wood Door	F8F36FC2
+Boreal Wood Double Door	62841872
+Boreal Wood Garden Fence Door	424601BF
+Boreal Wood Garden Fence II	C74B8B59
+Boreal Wood Garden Fence I	323E4235
+Boreal Wood Garden Fence Pole	4A69F157
+Boreal Wood Shelf	37D98183
+Boreal Wood Side Table	8E3BA239
+Boreal Wood Table	408D2F76
+Bound Tome	43405F8F
+Bow (3)	D2479EC1
+Bow Of The Serpent (16)	456EA73B
+Bow Of The Serpent (20)	425F24BE
+Bow Of The Serpent (21)	1CF81B28
+Bow Of The Serpent (26)	A7B1345E
+Bow Of The Serpent (36)	CFE6C81B
+Bow Weapon Rack	28B5DEB3
+Bow and Arrow Wall Mount	C6502168
+Box 4m	4BAD00E3
+Brazen Bull Boots (30)	C9C39F47
+Brazen Bull Boots (30)	F32FECA9
+Brazen Bull Chest (30)	D5352DE9
+Brazen Bull Chest (30)	F23A348C
+Brazen Bull Gloves (30)	70D09832
+Brazen Bull Gloves (30)	AB5FFC4A
+Brazen Bull Helmet (30)	03C47EDE
+Brazen Bull Helmet (30)	55DC79B4
+Brazen Bull Shield (30)	73C8E382
+Brazen Bull Shield (30)	B684A67F
+Brazen Bull Trousers (30)	A23B3713
+Brazen Bull Trousers (30)	FC325A24
+Brazier	06EED042
+Brick Fireplace	FCF1E470
+Brick-Timbered Block	25668BA0
+Bright Morningstar (1)	77D26392
+Bright Resolve	78879C80
+Brisk Bow (1)	1666BBAB
+Brittle Shroud Flakes (25)	F3E3D74D
+Brittle Shroud Petals (13)	4C8D43AE
+Brittlebush Plant	2A66C113
+Broken Hollow Halls Banner	D8F1FE85
+Bronze Arrow (18)	EDE078CF
+Bronze Axe (15)	3C55B420
+Bronze Barrel	A7B5C973
+Bronze Bars (18)	26442EB9
+Bronze Bathtub	650F33C0
+Bronze Block	0330F8FF
+Bronze Bowl	69D9F49C
+Bronze Candleholder	B9327C44
+Bronze Chandelier	BA84D9E7
+Bronze Cup	16CEDCBD
+Bronze Cyclops Trophy	8FD0A376
+Bronze Fell Cyclops Trophy	7A4F96BE
+Bronze Fell Dragon Youngling Trophy	C7FAC237
+Bronze Fell Monstrosity Trophy	4D0C55D5
+Bronze Fell Sicklescythe Trophy	C98E43DD
+Bronze Fell Thunderbrute Trophy	F977D7DD
+Bronze Fell Wispwyvern Trophy	7084A0C6
+Bronze Floor Candleholder	7905109E
+Bronze Hollow Cyclops Trophy	1B5BA878
+Bronze Hydrak'Dal Trophy	26783C50
+Bronze Jug	508EC70C
+Bronze Key	7D95401F
+Bronze Pickaxe (15)	8FACAA63
+Bronze Platter	C534B469
+Bronze Scavenger Matron Trophy	D49B041A
+Bronze Sword (1)	43108313
+Bronze Vukah Brawler Trophy	97288292
+Bronze Wall Torch	27A674FB
+Bronze-engraved Greatsword (1)	ED33747A
+Broodmother’s Eye (1)	FD361CD8
+Bug Dust (13)	390D22AE
+Bursting Fell Heart (40)	E53B056C
+Butter (18)	B1CC23E3
+Butter Churn	B4BC800F
+Butterfly Bloom Seedling	6A694E41
+Buttermilk	696B947E
+By The Riverside	9F80A311
+Cactus Plant	105F4F52
+Cactus Plant	A5B20D42
+Cactus Seedling	DCC8D89C
+Cade Hawthorn	44836D45
+Calla Luna (18)	8B8DE9ED
+Calla Luna Soup	22FFE61E
+Camera	A303B96E
+Camp Bed	2211885E
+Campfire	4F130A00
+Candied Ginger	EE607BDC
+Candle	AF3025E4
+Captain Melville Fontane	A002B7A8
+Captain Whiskers	4616BD99
+Captain's Coat	ACD1BBDF
+Capybara Bait	50F09D3F
+Capybara Bristles (40)	FC264E7B
+Capybara Feeder	B1864FAB
+Capybara Food	33E71CAD
+Capybara	41242027
+Carpet	C5D5E4AA
+Carved Limestone Vase III	D5EA3E9F
+Carved Limestone Vase II	DE3B9FA2
+Carved Limestone Vase I	451F002F
+Carved Round Door	3C6CB7F2
+Carved Secret Bookshelf Door	7B959B45
+Carved Secret Bookshelf Door	BA58D7D3
+Carved Tropical Wood Fence Pole	09A1A3D5
+Carved Tropical Wood Fence Pole	6541876F
+Carved Tropical Wood Fence Pole	90C82343
+Carved Tropical Wood Fence with Ropes II	67795EB6
+Carved Tropical Wood Fence with Ropes I	8B74DA4A
+Carved Wooden Cabinet	E5117EDC
+Carved Wooden Door	8A605A1B
+Carved Wooden Double Door	EC651153
+Carved Wooden Nightstand	D6941EF2
+Carved Wooden Shelf	14EE652E
+Carved Wooden Window Frame	C906589A
+Cashew Apple	B3250697
+Cashew Nut	584E62AF
+Castle Bench	BB5C33B7
+Castle Block	D51681FB
+Castle Roof Block	6842CD66
+Castle Throne	E6E87B38
+Castle Wall Shelf	F3AF74D9
+Castle Wall Stone Block	59CABD6D
+Cat Bowl	B1C6A879
+Cat Food Bait	2EE26768
+Cat Food	460CC76B
+Cat Pillow	27081BCF
+Cathedral	F9AD2EBD
+Cattail Seedling	323CB2BC
+Cauldron	12913E04
+Cauldron	B9EE1781
+Ceiling Chain	87DE281B
+Ceiling	04DF0B2D
+Ceiling	C6FF4677
+Celesthium Bars (45)	AC78B933
+Celesthium Ore (45)	795A0EBA
+Celestial Axe (1)	6E2F9F64
+Chain Heal I (12)	E72D214C
+Chain Heal II (32)	BFB92613
+Chain Lightning (12)	3E7F92E5
+Chamomile (13)	CF5B015A
+Chamomile Plant	840BBFDD
+Chamomile Seedling	978B7537
+Chamomile Tea	8B59AAFA
+Champion's Axe (1)	AB9712EF
+Chandelier	5747C7D6
+Chanterelle	645B00E2
+Charcoal (5)	162CB6D2
+Charcoal Kiln	15E4E52E
+Chest Male 01	13034A57
+Chest Male 01	68393049
+Chest Male 01	88D8A0F3
+Chest Male 01	DE06075B
+Chester Loft	10AC553C
+Chicken Soup	672A1D1D
+Chief Drak'Dal Axe (1)	F743114A
+Chieftain's Hammer  (1)	5109EF42
+Child Of The Lyre	43B2D436
+Chimerical Greatsword (1)	0122E495
+Chitin Powder (33)	765E969F
+Circlet Of Lightning (40)	AFFEAFFD
+Circular Sawblades	571AC328
+Circus Knives (1)	36736B07
+Circus Knives (26)	35155456
+Circus Knives (36)	F644FEBA
+Citywall Block	749C6E1D
+Clay Bowl	6A86CBA9
+Clay Cup	8D46073E
+Clay Fireplace	71D8DEEF
+Clay Jug	3484681D
+Clay Platter	6BE2DF4B
+Clay Pot III	0F524D44
+Clay Pot II	7EF96FD9
+Clay Pot IV	3B1DA13A
+Clay Pot I	D76BD513
+Clay Tea Cup	94427BCF
+Clay Vase III	564E033D
+Clay Vase II	2E975CC0
+Clay Vase IV	54132DAA
+Clay Vase I	ED65DB16
+Clay Vase VI	85CCC171
+Clay Vase V	F7A062A7
+Cleaned Bandage	C1674C6E
+Clearwater Staff (1)	CEBEA0B5
+Climbing Claws	5C5DBF1C
+Climbing Rose (13)	2E772004
+Closed Copper Jar	42A38636
+Cloudy Brook	890B92CC
+Club (3)	3A67584F
+Club of Defiance (1)	7DC2A3DB
+Coal (33)	8BFDA5A0
+Coal Powder (5)	FC210A01
+Coalescent Wand (1)	7ED9708F
+Coaster	301DFBE1
+Coconana Smoothie	56142D86
+Coconut Milk	BA986CB3
+Coconut Palm Seedling	6CDFB072
+Coconut Plant	1F8BE8EE
+Coconut	04F579F5
+Coffee Beans (40)	17AA352C
+Coffee Brewery	F97AE3BD
+Coffee Drum Roaster	7B4CC817
+Coffee Seedling	C82C3098
+Coffin Lid	F3DD9EAF
+Coffin	FBCD3FE8
+Collection Of Books III	0B1C08B6
+Collection Of Books III	1F36E459
+Collection Of Books II	08CE727F
+Collection Of Books II	6746A270
+Collection Of Books I	4C1BA61C
+Collection Of Books I	C2472A9D
+Coloring Station	C0781900
+Column	4FB13733
+Column	848B7621
+Commander's Ring (15)	76CE1020
+Common Fishing Bait (5)	4A4CC815
+Common Goat	E011F905
+Composite Bow (1)	85601037
+Conifer Crate	2102F25A
+Conifer Crate	973D0949
+Conifer Crate	E8B2C90D
+Conifer Logs (33)	57F0F395
+Conifer Tree Seedling	E37A0FF0
+Conifer Wood Block	9BDE0344
+Construction Hammer	2950DA8D
+Cooked Fae Deer Milk	E0F8D400
+Cooked Rice	DBD3748E
+Cooking Station	E75F49C4
+Copper Arrow (12)	F12FAA48
+Copper Axe (10)	75EF886A
+Copper Bars (13)	0A2C835D
+Copper Block	60876270
+Copper Bowl	21174731
+Copper Cup	07C491FA
+Copper Door	D718DF85
+Copper Double Door	5F17D2DA
+Copper Fence	3EEBFBA6
+Copper Hair	B85F63D5
+Copper Jug	E61D3FD8
+Copper Ore (13)	2B9D5B6F
+Copper Pickaxe (10)	9F3729B9
+Copper Platter	30A02674
+Copper Pot	90DD9D4E
+Copperblade Greatsword (1)	D64D9E95
+Corn Seedling	DA32EE05
+Corncob	B9E52CAA
+Corrosive Blood (18)	893BADB3
+Corrosive Daggers (1)	65F4D370
+Corrupted Boar Tusk (13)	CAFB37D9
+Crab Cakes	56A17A5B
+Crab Fossil	A8E6A318
+Crab Meat	E6A2829B
+Crackling Wand (1)	64F5C6E5
+Creamy Mushroom Spaetzle	468FB0BC
+Crimson Valor	39BF26E9
+Crimsonback	63D79399
+Critter Carapace (33)	60123435
+Critter Glands (18)	64EDE1C5
+Critter Parts (5)	C29A4D76
+Critter Plush	394DD59C
+Crotch Male 01	2D80823C
+Crotch Male 01	53D01869
+Crotch Male 01	A7F6A962
+Crotch Male 01	D601EE97
+Crown Crusher (1)	9B397023
+Crucible	F517DD48
+Crude Bench	8DDEF1EA
+Crude Mattress	BC3E446C
+Crude Wooden Bed	566C8DFE
+Crude Wooden Cabinet	24E63ADB
+Crude Wooden Closet	75C8F41D
+Crude Wooden Door	ADEAD79F
+Crude Wooden Double Door	B504F70B
+Crude Wooden Fence III	07CEC63B
+Crude Wooden Fence II	3EF6FAEB
+Crude Wooden Fence IV	4880C899
+Crude Wooden Fence I	52323EC4
+Crude Wooden Gate II	04553CD8
+Crude Wooden Gate I	BFA5D5B4
+Crude Wooden Jug	44FA8D37
+Crude Wooden Nightstand	5E6EABF0
+Crude Wooden Platter	BF0277EA
+Crude Wooden Side Table	A3D60D55
+Crude Wooden Stool	00D89A3E
+Crude Wooden Table	D109E828
+Crypt Bench	A4702C3C
+Crypt Bookrest	D4B13AFE
+Crypt Brazier	6B8E2C5E
+Crypt Candle	45976FC6
+Crypt Chair	A5C2799B
+Crypt Chandelier	9DC098F6
+Crypt Fence	ED6AE53A
+Crypt Gate	32D373C8
+Crypt Skull Torch	EB57216C
+Crypt Standing Skull Torch	66A555CA
+Crypt Standing Torch	D9B9AFA2
+Crypt Throne	68697AD5
+Crypt Wall Skull Torch	0E7626EA
+Crypt Wall Torch	1AD92BDA
+Cryptic Wand (1)	DEE62AFB
+Cryptic Wand (11)	F148FF83
+Cryptic Wand (16)	FFFE5E6E
+Cryptic Wand (21)	F9E4BA3E
+Cryptic Wand (26)	AD5FCD54
+Cryptic Wand (36)	98CD7462
+Crystal Ball	DB7D4547
+Crystal Bowl	5616641B
+Crystal Cup	EFA7A535
+Crystal Jug	3A484C6C
+Crystal Knives (1)	CB6659CB
+Crystal Platter	C0441491
+Crystalwater Staff (1)	0F32AA91
+Cube 1m	B3AAF557
+Cube 2m	6D2AC86D
+Cube 4m	BDC840C0
+Cup Runneth Over	E22B793C
+Curse Bringer Axe (1)	AA0B6F69
+Cursed Fishing Rod	6C38F2E3
+Cursed Shroud Sack (13)	979CD952
+Cyan Decorative Box	342723A6
+Cyan Party Hat	774C9E44
+Cyclone Axe (1)	0609B068
+Cyclops Head	89B2D1CF
+Cyclops Pelvis	9E719DD0
+Cyclops Showcase	34A7A325
+Cyclops Skull	07E7EF6B
+Cyclops Torso	9A1DFA9F
+Cyclops Trophy	A9ABAE56
+Dagger Wall Mount	C5465468
+Daggers (3)	ECECC0B2
+Daggers Weapon Rack	A1B4D667
+Dark Blonde Hair	62E16569
+Dark Brown Eyes	8C044F34
+Dark Brown Hair	D4D195A7
+Dark Cleaver (1)	2E6DFC9E
+Dark Crystal Cluster	4EE8299F
+Dark Morningstar (1)	70DA3229
+Dark Red Eyes	73B73C94
+Dark Red Hair	49C07562
+Dark Staff (1)	BCE22175
+Darkwood Axe (1)	F57931C4
+Darya's Staff (1)	E204C2E9
+Darya's Staff (26)	EE7A0B1A
+Darya's Staff (36)	FF880D80
+Darya's Wand (1)	8AF081A1
+Darya's Wand (26)	7D75D16F
+Darya's Wand (36)	5D0DD357
+Date Palm Seedling	A127ACFE
+Daylilies For Emily	7DE3FD66
+Daylily (40)	711B27C8
+Daylily Plant	C69643D3
+Daylily Seedling	4D01DD15
+Deadeye Boots (20)	149167A5
+Deadeye Boots (20)	514CE0F7
+Deadeye Gloves (20)	8EF04EFC
+Deadeye Gloves (20)	B738F874
+Deadeye Hood (20)	BB3E6026
+Deadeye Hood (20)	DBC6689C
+Deadeye Trousers (20)	57277118
+Deadeye Trousers (20)	795863A5
+Deadeye Vest (20)	CDC8698E
+Deadeye Vest (20)	E615AFE0
+Death Gazer Axe (1)	B0B46647
+Decay Tool	C3DD790F
+Deceit	A82F212E
+Deceiving Staff (1)	3F68836E
+Decoration Workbench	A31A4193
+Decorative Bells III	F4358F5E
+Decorative Bells II	AF8DFC32
+Decorative Bells I	4A30C100
+Decorative Butter Churn	BFD2EA08
+Decorative Oven III	B31D1E7A
+Decorative Oven II	B6F30A25
+Decorative Oven I	777E3FB1
+Deeproot Axe (1)	73ADB5CF
+Deerstalker Boots (20)	A46A6B62
+Deerstalker Boots (20)	CFCB5A0D
+Deerstalker Chest (20)	393B421B
+Deerstalker Chest (20)	660F63E0
+Deerstalker Gloves (20)	2089F6B9
+Deerstalker Gloves (20)	89A1BCC4
+Deerstalker Hood (20)	9EF21F38
+Deerstalker Hood (20)	D24676DE
+Deerstalker Trousers (20)	42EFDD80
+Deerstalker Trousers (20)	7BF26C7D
+Desert City Wall	BD6DA8D3
+Desert Shingle Roof Block	E867FCF9
+Desert Temple Block	AB5D35E2
+Devilish Bow (1)	81D74B1F
+Diamond (45)	03AB981C
+Diamond Dust (45)	66DEC327
+Diamond Wall Emblem II	B1A09D7B
+Diamond Wall Emblem I	ADF525B6
+Diamond Wall Emblem	992A7D0A
+Dimweald Axe (1)	0CB964B9
+Dimweald Hammer (1)	509BA5BC
+Direction Sign	344F5C88
+Dirt Road Block	1AAF5161
+Disc 3m	443683D2
+Diver’s Endurance Flask	C1F788DE
+Diving Helmet (40)	1A410CD1
+Dodge Roll Attack	ADD377D8
+Dodge Roll	183756A7
+Dog Bowl	401E843F
+Dog Food Bait	B59DFC2C
+Dog Food	5AB9B82A
+Dog Pillow	34CE536F
+Door Frame	94966EED
+Door Frame	A0D02CC7
+Door Frame	E217A453
+Draconian Bow (1)	3EDC18CA
+Draconian Bow (21)	1B99F545
+Draconian Bow (26)	35CAAD5F
+Draconian Bow (36)	D547D50E
+Dragon Sword (1)	DACAF5E5
+Dragon Sword (16)	E8E73EB4
+Dragon Sword (21)	CCB64422
+Dragon Sword (26)	D49800B7
+Dragon Sword (36)	8C313369
+Dragon's Wing (1)	4CA9715D
+Dragon's Wing (26)	2914FB3F
+Dragon's Wing (36)	1F5E0094
+Dragonsbane (1)	2B7FB550
+Dragonsbane (26)	5FD9670A
+Dragonsbane (36)	A03EF57F
+Drak Blood (40)	FD3A7C41
+Drak Claws (40)	C2505949
+Drak Relief III	C13E1BB6
+Drak Relief II	2AA06E46
+Drak Relief IV	CC1DFEFB
+Drak Relief I	2788AF7A
+Drak Relief Showcase	414720BE
+Drak Relief VII	ADFEE281
+Drak Relief VI	EF45605F
+Drak Relief V	17B13B72
+Drak Scales (40)	33A8070F
+Drak Soulward Flask	8BA58388
+Drak Stone Totem III	0A683141
+Drak Stone Totem II	6767A96B
+Drak Stone Totem IV	B5801BDB
+Drak Stone Totem I	2830B902
+Drak Stone Totem I	C718F9AB
+Drak Stone Totem V	2E626AC0
+Drak Teeth (40)	36FE559F
+Drak Temple Block	2D0ED074
+Drak Temple Roof Block	0DA46295
+Drak Temple Vase III	FD78E9F1
+Drak Temple Vase II	81011104
+Drak Temple Vase IV	1FA3CBF9
+Drak Temple Vase I	61BAE53B
+Drak Temple Vase VII	BEA56731
+Drak Temple Vase VI	DD449A26
+Drak Temple Vase V	27845A18
+Drak Whistle Bow (1)	D66D67DA
+Drak Wood Totem III	6FB628B3
+Drak Wood Totem II	AC69DB19
+Drak Wood Totem IV	9322F914
+Drak Wood Totem I	CE0AE264
+Drak Wood Totem V	712E0894
+Drak'Dal Spine (1)	BEDD9475
+Drakian Boots (40)	1C9F3C8E
+Drakling Daggers (1)	7F4D7572
+Draped In Envy	8BB0CF6A
+Dreadbane (1)	FF6C9C81
+Dreadbane (21)	773DA883
+Dreadbane (26)	3974CCDD
+Dreadbane (36)	D848E2CA
+Dried Banana Chips	665D41A0
+Dried Fur (5)	CBE0B1F9
+Dried Purple Berry	A854FA99
+Drying Rack	D1666847
+Dull Shark Tooth	C5E9D43E
+Dune Armadillo Feeder	ABA19FE5
+Dune Armadillo Food Bait	80703FA6
+Dune Armadillo Food	77FDB92C
+Dune Armadillo	50BBC1B7
+Dusk Amethyst	ED3BA516
+Eagle Eye Boots (30)	ED5C34DD
+Eagle Eye Chest (30)	CE2E1F89
+Eagle Eye Gloves (30)	3B316B84
+Eagle Eye Helmet (30)	16C8E798
+Eagle Eye Trousers (30)	88A1302D
+Eclipsed Blade (1)	03F995B2
+Ectoplasm (13)	2A6DFF30
+Ectoplasm Block	E71AEA16
+Ectoplasm Crystal (25)	C0E8CDEB
+Ectoplasm Fragment (8)	9BFD9983
+Ectoplasm Gem (5)	EBA5FAD8
+Ectoplasm Press	8F7ED74C
+Ectoplasm Shard (18)	56A58BB5
+Ectoplasm Soup	254DF379
+Efflorescent Hope Boots	42EFC84B
+Efflorescent Hope Boots	6913F415
+Efflorescent Hope Chest	1B6F8259
+Efflorescent Hope Chest	EBBD5B70
+Efflorescent Hope Flower Crown	574B419C
+Efflorescent Hope Flower Crown	A9C7314B
+Efflorescent Hope Gloves	ABCBC419
+Efflorescent Hope Gloves	F99248FB
+Efflorescent Hope Pants	860E1804
+Efflorescent Hope Pants	8780DFAA
+Eggs	7106E3CC
+Elder Boots (30)	713DE2BE
+Elder Chest (30)	E9A524DC
+Elder Gloves (30)	7F1BAB11
+Elder Hat (30)	5814D36F
+Elder Trousers (30)	FF224A43
+Elder's Staff (1)	DA05E03A
+Electric Nerve (40)	A22AEC37
+Elevated Sea Urchin	8FF0888D
+Elio Ricci	DDCED9A8
+Elite Hollow Boots (20)	18438D91
+Elite Hollow Boots (20)	425167A4
+Elite Hollow Chest Plate (20)	A0549382
+Elite Hollow Chest Plate (20)	FB8668F4
+Elite Hollow Gloves (20)	2A20A6AB
+Elite Hollow Gloves (20)	67AF5F36
+Elite Hollow Helmet (20)	2A3BEF8B
+Elite Hollow Helmet (20)	BDEFB43B
+Elite Hollow Pants (20)	CF1FF868
+Elite Hollow Pants (20)	F6662FCD
+Emberfin	CBCA4784
+Emerald Forest	3CA2C59E
+Emily Fray	3BDDD3A9
+Empty Cymbidium Pot	7EB1247A
+Empty Cymbidium Pot	F67B0BF6
+Empty Farmbed	240F7BF9
+Empty Farmbed	52FDD66B
+Empty Farmbed	908E8D09
+Empty Farmbed	C557D30B
+Empty Farmbed	E971E22C
+Empty Fern Pot	C03931EB
+Empty Lily Pot	8AC93083
+Empty Lily Pot	D2B2C30B
+Empty Lily Pot	D62C5592
+Enflamed Sword (1)	1EE67060
+Enhanced Spiked Club (11)	1868C788
+Enormous Magic Chest	01D6411A
+Enshrouded Axe (1)	AAEF2BE4
+Enshrouded Cyclops Eye (33)	AA8AA0F4
+Enshrouded Ice (33)	451358B3
+Enshrouded Oil (25)	50809EC9
+Enshrouded Vulture Talon (25)	7D4D767E
+Epic Fishing Bait (40)	1C1A1097
+Eternal Acid Bite (22)	FFCDAB9C
+Eternal Chain Heal (17)	47B8EC3E
+Eternal Chain Lightning (32)	A565756B
+Eternal Fireball I (17)	72022B44
+Eternal Fireball II (38)	4F85A152
+Eternal Frost Arrow I (9)	17B40657
+Eternal Frost Arrow II (29)	3858C08C
+Eternal Heal Beam Channel (38)	60E8C08D
+Eternal Heal Channel (22)	8B4DE09B
+Eternal Ice Bolt I (6)	52E7F0C0
+Eternal Ice Bolt II (17)	1F16FF95
+Eternal Ice Bolt III (43)	78F92A55
+Eternal Light Burst (22)	044D91D8
+Eternal Lightning Channel (43)	52D4346E
+Ethereal Plane (20)	6C00E1FA
+Ethereal Plane (20)	902430A6
+Evergreen Tree Seedling	290A7C9F
+Excellent Ectoplasm (25)	6825D757
+Excellent Ectoplasm Soup	25B23D89
+Excellent Fishing Rod	AF6EDB3C
+Exceptional Ectoplasm (35)	08D87845
+Exceptional Ectoplasm Soup	AECA0A84
+Exceptional Flute	F3087BA2
+Exceptional Hand Drum	4EFFC6B9
+Exceptional Handpan	2992CA47
+Exceptional Harp	38607DB5
+Exceptional Lute	C4DCE081
+Exceptional Ring of Health (30)	74187CD1
+Exceptional Ring of Mana (30)	1B668382
+Exceptional Ring of Stamina (30)	5F0A6094
+Exclusive Hollow Boots	26324E2C
+Exclusive Hollow Boots	8ABF5ADC
+Exclusive Hollow Chestplate	1FC4F8E1
+Exclusive Hollow Chestplate	4BA1D245
+Exclusive Hollow Gloves	20496878
+Exclusive Hollow Gloves	A7662F4F
+Exclusive Hollow Helmet	BA08F81D
+Exclusive Hollow Helmet	D7BE4A32
+Exclusive Hollow Pants	301394F5
+Exclusive Hollow Pants	5CB01A35
+Executioner's Axe (1)	C4F3EF68
+Experience Scroll	4848D40D
+Explorer Boots	F6CE4AE0
+Explorer Coat	7F9039D3
+Explorer Gloves	8D962CC2
+Explorer Helmet	2B24B745
+Explorer Pants	DA64E033
+Explorer's Machete (1)	F20E5E7A
+Explosive Arrow I (14)	799826DF
+Explosive Arrow II (24)	3DECC63B
+Explosive Arrow III (44)	C7330BD1
+Explosive Barrel	CE5CD929
+Explosive Crawler (35)	E6B0FF92
+Explosive Powder Ball (10)	88175069
+Explosive Powder Ball Net (15)	FC53041D
+Extinguished Sword (1)	D0C477D9
+Extraordinary Ectoplasm (40)	59CCC524
+Extraordinary Ectoplasm Soup	C675D231
+Extraordinary Glider (20)	10F14447
+Fabric (25)	7EDE9D9F
+Fae Deer Feeder	D3ED7FAE
+Fae Deer Food Bait	C8F10F17
+Fae Deer Food	901274DC
+Fae Deer	473F7CB8
+Fake Ancient Door	2064D7A8
+Fake Ancient Door	817ADC66
+Fake Basement Door	27955109
+Fake Castle Door	BABE0256
+Fake Stair Passage	4DCA3582
+Fake Stone Door	4C11D49F
+Fake Stone Floor Passage	3E6DCF77
+Fake Temple Door	917DAEA8
+Fake Wooden Door	A7727598
+Fake Wooden Floor Passage	3E1D790A
+Falk Fall Daggers (1)	044D25C2
+Fallen Wing Axe (1)	36CAE6E6
+Fancy Stone Block	D8378FB2
+Fang Blade (1)	62E8CDD0
+Farm Animal Pillow	A60BE0A8
+Farm Soil	6CB3103A
+Farmer Boots	E0CDAB64
+Farmer Garb	08C6EF4A
+Farmer Hat	BA301C41
+Farmer Pants	BCFEAE9D
+Fearsome Club (1)	D2AD15D7
+Feather (18)	E4D1113B
+Feathered Mace (1)	57E67982
+Fell Broad Sword (1)	277C6671
+Fell Commander Bow (1)	C5388DA5
+Fell Confusion Pheromones (20)	BB7D915F
+Fell Curse Cleansing Tonic	5A86F7BF
+Fell Cyclops Head	3095A730
+Fell Cyclops Trophy	B2357913
+Fell Dragon Youngling Head	60C8A851
+Fell Dragon Youngling Trophy	403639C0
+Fell Fashion	32FEDBB5
+Fell Heart (25)	2001BDA3
+Fell Impaler Bow (1)	5856C5FF
+Fell Monstrosity Head	43DFB1FD
+Fell Monstrosity Trophy	FC091244
+Fell Shield (1)	ED560164
+Fell Sicklescythe Head	CCEC8F00
+Fell Sicklescythe Trophy	C9513210
+Fell Thunderbrute Greatsword (1)	FB62CCEB
+Fell Thunderbrute Head	A190BB6A
+Fell Thunderbrute Trophy	B8754057
+Fell Wispwyvern Head	2A2BC4D3
+Fell Wispwyvern Trophy	04B30778
+Fenrig Mills, Jr.	48133085
+Fenrig's Axe (1)	8ED91EE7
+Fenrig's Axe (11)	9171F1D7
+Fenrig's Axe (16)	D26BA4B7
+Fenrig's Axe (21)	6E75F886
+Fenrig's Axe (26)	03E66F8C
+Fenrig's Axe (36)	67729E04
+Fenrig's Axe (6)	1B98316E
+Fern	28235AD0
+Fern	493F4B9C
+Fern	633FB4B5
+Fern	7860B303
+Fertile Blackmire Dirt	FB7A074E
+Fertile Kindlewastes Sand	AE630C35
+Fertile Nomad Highlands Dirt	E1BE4882
+Fertile Revelwood Dirt	1B610F74
+Fertile Springlands Dirt	960C9329
+Fertile Veilwater Basin Dirt	54C6AF7B
+Fertilised Farm Soil	0F8153BB
+Field Stones	B26197A8
+Final Gambit (1)	74168EB1
+Fine Copperblade Greatsword (1)	5A473D86
+Fine Hardwood Fence Pole	F33C85F5
+Fine Hardwood Fence	29EB1846
+Fine Hardwood Fence	C5297A1A
+Fine Hardwood Handrail	2D5BE37C
+Fine Sand	D001D9A9
+Fine Stone Fence Pole	A956C88D
+Fine Stone Fence	7A250F3E
+Fine Stone Fence	87CDBC28
+Fine Stone Handrail	681FAFE0
+Fine Wooden Fence Pole	D7A6AFFB
+Fine Wooden Fence	BCBB0968
+Fire Bolt (3)	8F25FE1A
+Fire Bowl	BDE7930C
+Fire Fly (5)	3C7E24A5
+Fire Wisp Summon	3114E919
+Fireball I (10)	E988B200
+Fireball II (15)	6D4C9023
+Fireball IV (28)	50E04C0A
+Fired Brick (13)	4B379373
+Fired Bricks Block	E10D54DC
+Firefly Chandelier	F10DD709
+Firefly Lamp	31B67D1D
+Firefly Standing Lamp	0E9CE973
+Firefly Wall Lamp	0C100C0F
+Fireplace	983747CB
+Fireworks	180C512D
+Fireworks	405147B0
+Fireworks	641BA08F
+Fireworks	7AF19ACB
+Fireworks	C6A44460
+Fish Bones (40)	85C69415
+Fish Chowder	3FE67082
+Fish Cutlet	27933FE7
+Fish Drying Rack	FE2D6C53
+Fish Filet	2255FF26
+Fish Fossil	EB595E63
+Fish Teeth (40)	8C355569
+Fish Trap	A077AFD7
+Fish Trophy Board	A7B16C04
+Flag Pole III	16E21431
+Flag Pole II	5F2D5751
+Flag Pole IV	EA32E8E3
+Flag Pole I	01F5D42B
+Flag Pole VI	B784AE2D
+Flag Pole V	8BBC3852
+Flame Altar	EBB93C94
+Flame Mosaic Piece III	7FAAEEF7
+Flame Mosaic Piece II	5FC1216D
+Flame Mosaic Piece IV	0B004760
+Flame Mosaic Piece I	F4C4BFC6
+Flame Mosaic Piece VIII	7227ED23
+Flame Mosaic Piece VII	8EA5DAE1
+Flame Mosaic Piece VI	4C98FA06
+Flame Mosaic Piece V	45CC4AED
+Flame Mosaic Showcase	D7E574E6
+Flame Pact Boots	1B560E9D
+Flame Pact Boots	A54F3E1D
+Flame Pact Gloves	54F976A5
+Flame Pact Gloves	E44374C7
+Flame Pact Hat	A51081C0
+Flame Pact Hat	ECD5EAAB
+Flame Pact Pants	D98C7D04
+Flame Pact Pants	FE75578E
+Flame Pact Vest	19B9626A
+Flame Pact Vest	92B0B7E9
+Flaming Gauntlets (40)	BF96E333
+Flaming Heartbeat	13A4EB2F
+Flammable Goo (33)	34EA2A1A
+Flare Arrow (8)	D1484F63
+Flask of the Fell	9D1B0484
+Flat Bread	80C0308F
+Flat Roof	69BE0B55
+Flat Roof	F127AC1B
+Flat ramp 2m	6E501FFD
+Flat ramp 4m	E5027779
+Flax (13)	E863AF88
+Flax Plant	125A765C
+Flax Seedling	020E3C6A
+Fleeting Memory	94EFF2F0
+Fleshgrinder (1)	406BE4C6
+Flightless Redtail	5BEA4DB1
+Flint Arrow (5)	54C54CD4
+Flint	21286E19
+Flintstone (5)	5E8E867A
+Floor Drain	A157FC32
+Floor Drain	E9B39A4F
+Flour (18)	0A1ADB1C
+Flower Soil	D6DDA79F
+Flower Wreath	1A32E063
+Flower Wreath	2568CB9C
+Fluffy Boots	2CBC2925
+Fluffy Boots	E3772144
+Fluffy Hood	92B5CEE2
+Fluffy Hood	F11C2892
+Fluffy Mittens	05F0F864
+Fluffy Mittens	120A3922
+Fluffy Pants	1B0B9A93
+Fluffy Pants	52328797
+Fluffy Tunic	23374069
+Fluffy Tunic	78D318C6
+Flute	B11B236F
+Fog Goo 07 Archaic Essence VII (45)	7F4AB528
+Foliage	88E99801
+Food Plate	A5792729
+Fool's Demise (1)	A83F5C16
+Fool's Errand (1)	E37D19B3
+Foreboding Golden Urn	E88AD9ED
+Forest Beet	D32B42E1
+Forest Longbow (1)	13800730
+Forge	2DF036B6
+Forgotten Library	9E2FD6BE
+Forked Tongue (1)	803B7450
+Forsaken (1)	1B3F153D
+Fossil Showcase 	83FC0795
+Fossil Showcase 	AFFE4B99
+Fossil Showcase 	C9B3DF94
+Fossil Showcase 	DC47E050
+Fossilized Bone (18)	B8841BE2
+Fossilized Bone Arrow (16)	5B9117EA
+Fossilized Bone Dust (18)	B72DB570
+Foundation	38A8FD04
+Foundation	E4372E81
+Fowler Boots (15)	35F526D3
+Fowler Chest (15)	892AB70F
+Fowler Gloves (15)	29AE00DE
+Fowler Helmet (15)	6CA193BB
+Fowler Trousers (15)	C39C093F
+Fresh Shroud Spore (5)	F3D43B70
+Freshblood Mace (1)	7E6A2AB6
+Fried Rice	883537D1
+Frizzy Goat Milk	1A73BE52
+Frizzy Goat	9B09F53A
+Frog (40)	D68A6764
+Frog In The Grass	E5468903
+From Dusk Till Dawn	6EDE9386
+Frost Smasher (1)	E033613B
+Frost Wand (1)	DF9377D2
+Frostbite Slasher Boots (30)	11D24AB9
+Frostbite Slasher Boots (30)	C9EABF14
+Frostbite Slasher Chest (30)	1599A12A
+Frostbite Slasher Chest (30)	A4A0DC58
+Frostbite Slasher Gloves (30)	08C0CC51
+Frostbite Slasher Gloves (30)	3EEFBFAB
+Frostbite Slasher Hood (30)	1CFC4E88
+Frostbite Slasher Hood (30)	71219C8C
+Frostbite Slasher Trousers (30)	2DD34F02
+Frostbite Slasher Trousers (30)	B5DDCBEE
+Frostwing Axe (1)	0F94982F
+Frozen Core Wand (1)	CBCCB69E
+Frozen Gauntlets (40)	A777F2EE
+Fruit Bowl	36ACF603
+Fur Boots (4)	2EFA3D10
+Fur Chest (4)	45458B76
+Fur Gloves (4)	F892A8BC
+Fur Hood (4)	69B3CAB9
+Fur Patch (5)	27667708
+Fur Rug	E915ACD1
+Fur Trousers (4)	407BE3BB
+Furry Straw Mat	4E9AE48B
+Gabrielle Fairburn	3EEC9AEE
+Galen Yager	EDE9F3BC
+Garden Gnome	60B24997
+Gastropods	A996A5C5
+Gem of Aerobatics (1)	2348F15C
+Gem of Agility (1)	F61B7CB6
+Gem of Battle Mania (1)	05FD35CA
+Gem of Bleeding (1)	299A8888
+Gem of Bloodlust (1)	3F9106C1
+Gem of Burning (1)	DA5CBEC2
+Gem of Cold Composure (1)	BEF06420
+Gem of Corruption (1)	3FF4CA68
+Gem of Currents (1)	6171C297
+Gem of Focused Light (1)	03C1B61E
+Gem of Fracturing (1)	6A7745E9
+Gem of Hopeful Embers (1)	F4599D6E
+Gem of Lesser Necromancy (1)	9F3A9036
+Gem of Lycanthropy (1)	570658C3
+Gem of Meteoric Impact (1)	393BFCA4
+Gem of Overpowering (1)	A2B671CA
+Gem of Retaliation (1)	809CF8B5
+Gem of Skulls	EA2B601D
+Gem of Soul Reaping (1)	0A58CD31
+Gem of Storm's Eye (1)	E52A5AC0
+Gem of Swiftness (1)	522E2761
+Gem of Toxic Betrayal (1)	18C7A1F0
+Gemini Ring (5)	499A6088
+Gentian Plant	398870CE
+Gentian Seedling	3951B134
+Gentian	E1448D02
+Ghost Glider (30)	C81FA83C
+Ghostly Shield (10)	10F8EF3D
+Ghostly Shield (10)	8AF746DD
+Giant Bone Arrow I (23)	C2ED8C18
+Giant Bones (13)	B031EDF6
+Giant Critter Scales (13)	D4E6BCC9
+Giant Hollow Halls Banner	BEBFC344
+Gilded Axe (40)	0EB86C81
+Gilded Pickaxe (40)	4B993562
+Ginger In A Jungle	911491EF
+Ginger Plant	E2AD44EE
+Ginger Seedling	9B0A7166
+Ginger Tea	63572DCA
+Ginger	3086213D
+Glass (25)	85E3F499
+Glass Shards (25)	9D683F7F
+Gleam Root (40)	7FE23ED5
+Gleam Root Diving Light (37)	01ECB2E1
+Gleam Root Dust (40)	D1095CF2
+Gleaming Staff (1)	1B5154B9
+Glider (5)	3D4A78DD
+Glimmer Gentian (33)	D3826A6D
+Glimmer Gentian Tea	27A25AF7
+Gloom Monarch Boots (20)	79CF3B09
+Gloom Monarch Chestplate (20)	184D0DFF
+Gloom Monarch Gloves (20)	FC664E80
+Gloom Monarch Helmet (20)	421F09A4
+Gloom Monarch Trousers (20)	02EB8568
+Gloomberry (13)	BD24D89C
+Glow Dust (13)	6D15E5C6
+Glow Soup	223C0C0D
+Goat Feeder	2D661965
+Goat Food Bait	5C236B2C
+Goat Food	0C517DB5
+Goat Hammer (1)	030D8049
+Gold Bars (40)	1EAACB52
+Gold Coins	995AB3E1
+Gold Cyclops Trophy	8860277F
+Gold Dust (40)	3F31D383
+Gold Fell Cyclops Trophy	3BB15C50
+Gold Fell Dragon Youngling Trophy	71412C8C
+Gold Fell Monstrosity Trophy	D1BAB401
+Gold Fell Sicklescythe Trophy	A807ADE3
+Gold Fell Thunderbrute Trophy	D4B3D6A1
+Gold Fell Wispwyvern Trophy	F3BA29D2
+Gold Hollow Cyclops Trophy	3ADFC737
+Gold Hydrak'Dal Trophy	3A03B30B
+Gold In The Water	D0466107
+Gold Key	477E1014
+Gold Ore (40)	A1D54105
+Gold Scavenger Matron Trophy	A0B9B47C
+Gold Vukah Brawler Trophy	C49B5FA4
+Golden Ball	D09B47F2
+Golden Bulwark Boots (40)	53F752A1
+Golden Bulwark Boots (40)	CAD7D3BC
+Golden Bulwark Chest Plate (40)	1FEA741B
+Golden Bulwark Chest Plate (40)	78E568F3
+Golden Bulwark Gloves (40)	7FD5856B
+Golden Bulwark Gloves (40)	87E56261
+Golden Bulwark Helmet (40)	5635E715
+Golden Bulwark Helmet (40)	8E1BB2CC
+Golden Bulwark Pants (40)	15F1D6CA
+Golden Bulwark Pants (40)	FBF33A54
+Golden Bulwark Shield (40)	69EC9B4F
+Golden Bulwark Shield (40)	714447CA
+Golden Leaf	3A872F0C
+Golden Recruit Axe (1)	57510C29
+Golden Recruit Axe (36)	81B5BD94
+Golden Steel Arrow (42)	D89C1A30
+Golden War Hero Axe (1)	87413023
+Golden War Hero Axe (36)	6FEA9C58
+Goldlaced Greatsword (1)	041E78D7
+Goo (13)	CAE4DB22
+Gorestriker (1)	2DF95952
+Gormander's War Banner II	BB7BEC9D
+Gormander's War Banner I	A28C7E45
+Granite Block	31C90B50
+Granite Fireplace	57A42F41
+Granite Ornamented Roof Block	53608F71
+Granite Rubble Road Block	C9450BD7
+Granite Shingle Roof Block	BB93D200
+Granite Stone Bathtub	4AC8CA6E
+Granite Stone Lavatory	8819E6FC
+Granite Stone Shower	6814B778
+Granite Stone Sink	F3ACE870
+Granite Throne	CB0AD243
+Granite Window Frame	A1B2C18A
+Granite	E66E1CE9
+Grapple Plant Flower	6CBE7B54
+Grapple Plant Seedling	7125F503
+Grapple Plant	7B1C9FF6
+Grappling Hook Pull Anchor	DC5E1245
+Grappling Hook Swing Anchor	3B6B988F
+Grappling Hook	55BF8EB8
+Grass	308D2D71
+Grass	582A219C
+Grass	FC39BEAD
+Grasshopper (40)	8B988F97
+Gravedigger Boots	1761DD57
+Gravedigger Garb	D956EEC6
+Gravedigger Hat	577C8C58
+Gravedigger Pants	135989F7
+Graven Idol Axe (1)	649BEAA9
+Graveyard Fence Broken II	EEA827DE
+Graveyard Fence Broken I	D62D0F9E
+Graveyard Fence Pole	1587C0E3
+Graveyard Fence Pole	4243207E
+Graveyard Fence Pole	632DFC2B
+Graveyard Fence	029FF5E5
+Gray Eyes	B16F3B75
+Gray Hair	DC003920
+Great Mace (1)	A0D0B71F
+Greater Antidote	97B46474
+Greater Ectoplasm (18)	18E89A9A
+Greater Ectoplasm Soup	BB7CD728
+Greater Golden Twinflame Sword (1)	C61F77DD
+Greater Golden Twinflame Sword (26)	AE527245
+Greater Golden Twinflame Sword (36)	DAD3E392
+Greater Health Potion +	59F7A95B
+Greater Health Potion	B8F2DE47
+Greater Mana Potion +	F252D2DD
+Greater Mana Potion	7C516C66
+Greater Ring of Health (15)	195FB4F0
+Greater Ring of Mana (15)	AD916CF8
+Greater Ring of Stamina (15)	627B1D51
+Greater Shroud Survival Flask	0C7CAE5C
+Greater Skull Summoning Vessel (25)	123636D7
+Greater Thunderblast Axe (1)	B45986C9
+Greatsword Gauntlets (40)	099712FE
+Greatsword Of Rivalry (1)	17604852
+Greatsword Of The Old Order (1)	EC08EEBD
+Green Decorative Box	F82C80D2
+Green Eyes	4F24E4C0
+Green Fabric (25)	885E307A
+Green Hair	C1DB3112
+Green Luminescent Block	CAC7A00D
+Green Rocket	9627395D
+Green Vitriol Dust (40)	DCB10D80
+Green-Winged Orchid	373AEE60
+Grey Blades (1)	06270F7E
+Grilled Algae Buds	CC0BF8EE
+Grilled Bird Meat	78E7C62B
+Grilled Crab Meat	11940D5E
+Grilled Crimsonback	E67E643E
+Grilled Dune Armadillo	2657F258
+Grilled Emberfin	A230A73B
+Grilled Fatty Meat	01DCF34F
+Grilled Fish with Coconut Rice	F854075D
+Grilled Game	0102FAD6
+Grilled Lakehopper	6E06D352
+Grilled Lean Meat	7C9F7632
+Grilled Penny Bun	5A1C2F2F
+Grilled Shadowtail	BF34E9D6
+Grilled Shimmerfin	5BCEDC23
+Grilled Shockfin	FF738928
+Grilled Silverback	4BF6AC2E
+Grilled Stripetail	83F20C6E
+Grilled Sunscale	9746B2F8
+Grilled Thornridge	AC1654C6
+Grilled Waveleaper	A6E37A5D
+Grilled Whiskerfin	568D2B39
+Grilled Wolf Meat	C9199BB0
+Grilled Yellowfin	6DF345BD
+Grilled Yucca Fruit	2CB0194D
+Grinding Stones	FCF23FBE
+Ground Coffee Beans (40)	50F4361D
+Ground Lantern II	E42E5101
+Ground Lantern I	681864AC
+Ground Sign	F1A58A41
+Guard Of The North Sword (1)	49C76ECA
+Guard Of The North Sword (36)	F2C8904B
+Guard of the North Boots (10)	490631E2
+Guard of the North Chestplate (10)	C2B599AE
+Guard of the North Gloves (10)	B389368E
+Guard of the North Helmet (10)	83E4B1A0
+Guard of the North Pants (10)	4FD68DA5
+Guardian Boots (15)	1FF43F21
+Guardian Boots (15)	855EEC45
+Guardian Chestplate (15)	14E34980
+Guardian Chestplate (15)	8186A0C4
+Guardian Gloves (15)	A18A7FC6
+Guardian Gloves (15)	FB14858E
+Guardian Helmet (15)	48D59EAB
+Guardian Helmet (15)	641870E4
+Guardian Shield (15)	366C9D41
+Guardian Shield (15)	4F91B930
+Guardian Trousers (15)	5168BC01
+Guardian Trousers (15)	9BC68A4C
+Guillotine (1)	CFD07AE4
+Gunther Galeforth	5FD360A9
+Hailcaster Boots (30)	19C51E4F
+Hailcaster Boots (30)	DB3841CE
+Hailcaster Chest (30)	5F6AD668
+Hailcaster Chest (30)	91A4CDE9
+Hailcaster Gloves (30)	21F00BCF
+Hailcaster Gloves (30)	26AD9145
+Hailcaster Hat (30)	A6CFADAD
+Hailcaster Hat (30)	A7BE637D
+Hailcaster Pants (30)	2BCDB63F
+Hailcaster Pants (30)	DFBCE711
+Hailscourge (1)	214BD402
+Hailscourge (11)	36165CEE
+Hailscourge (16)	23EAD27C
+Hailscourge (21)	BB81BA38
+Hailscourge (26)	411FB242
+Hailscourge (36)	8FA4F478
+Hair 01	01D5F450
+Hair 02	27862CC7
+Hair 03	190AF6CB
+Hair 03	58689FC6
+Hair 05	2A63E5E4
+Hair 06	1BEF98BA
+Hair 06	8A2B35AB
+Hair 06	8BC4418E
+Hair Splitter (1)	45FA1C87
+Hair_01_01	4A8E06D1
+Hair_01_01	A58A85A9
+Hair_01_02	1180F249
+Hair_01_02	47C9AE04
+Hair_01_02	647CCD0B
+Hair_01_02	90F17FF6
+Hair_01_02	A549535B
+Hair_01_02	BA5888D7
+Hair_01_02	C1CB60C7
+Hair_01_02	F5ECF072
+Hair_01_03	910B2B2D
+Hair_01_04	38FD7256
+Hair_01_05	D87E8106
+Hair_01_06	2C445A3A
+Hair_01_07	3BE20079
+Hair_02_01	2A3EF577
+Hair_02_02	A284FF6B
+Hair_02_03	30E87C9B
+Hair_02_04	D2B5EDAB
+Hair_02_05	F3C51CF2
+Hair_02_06	13C105D7
+Hair_03_01	D0D17F94
+Hair_03_02	0542529B
+Hair_03_03	B6F00EF3
+Hair_04_01	D26218B3
+Hair_04_02	DC047E95
+Hair_05_01	06025E8A
+Hair_05_02	1810B991
+Hair_05_02	1BE57FFB
+Hair_05_02	1C6E498B
+Hair_05_02	395FABE3
+Hair_05_02	AB1FB478
+Hair_05_02	D6B4B96B
+Half Wooden Barrel	9DC10DA0
+Half-Light Halos (1)	A6ADCDF2
+Half-Timbered Block	AB2B6C51
+Half-timbered Shell Limestone Block	4AB388EB
+Hammer Of The Piercing Gaze (1)	006B0C01
+Hand Drum	85EEBA18
+Hand Spindle	5F0C3AF2
+Handpan	7981CA49
+Handrail	93479A1D
+Handrail	F8BBB5D2
+Hanging Lantern	527CD2C9
+Hanging Silver Chandelier	8478DB3D
+Hannah Reed	32233F92
+Hardened Leather (33)	6871E534
+Hardwood (13)	693DC809
+Harp	0807181B
+Harrow	2483E261
+Harvest Festival	4E78C1C9
+Hatchet (1)	413BF00F
+Hawk Boots (20)	A2292D03
+Hawk Chest (20)	F2105396
+Hawk Gloves (20)	6D2DB490
+Hawk Helmet (20)	DB3F96C4
+Hawk Trousers (20)	74D35075
+Hazelnut Bush Seedling	9EF54901
+Hazelnut	C84ECF0A
+Head Pounder (1)	3F79B303
+Headscarf	8BA17CA5
+Heal Beam Channel (25)	40D10BEB
+Heal Channel (5)	713CC0E6
+Healer Boots (10)	F3BE843D
+Healer Boots (10)	FC5F86B1
+Healer Gloves (10)	24A4A71C
+Healer Gloves (10)	D7912684
+Healer Headwrap (10)	256ECB63
+Healer Headwrap (10)	F0D13346
+Healer Pants (10)	2B0F4AAA
+Healer Pants (10)	5874F575
+Healer Tunic (10)	06A6181E
+Healer Tunic (10)	A1675D3B
+Health Potion +	AFCB1810
+Health Potion	CCD46F7A
+Heart Pillow	B443D8E9
+Heart Pillow	DF74E1E2
+Heart's Desire	73302998
+Heather Flower	8CAB0F0B
+Helix  (1)	8964E067
+Hemotoxin Antidote	5418F4DB
+Herbal Mountain Tea	C2D07B8A
+Herbalist Boots (15)	75E5B8EB
+Herbalist Boots (15)	E8969436
+Herbalist Gloves (15)	388CB2B5
+Herbalist Gloves (15)	F1A101CB
+Herbalist Headwrap (15)	49EDBF95
+Herbalist Headwrap (15)	90F451EE
+Herbalist Pants (15)	311AD213
+Herbalist Pants (15)	CA7F07BF
+Herbalist Tunic (15)	7884DAA7
+Herbalist Tunic (15)	A681AA85
+Hero's Shield (10)	0262764A
+Hero's Shield (10)	DF30BEBE
+High Bamboo Window	7020AA19
+High Carved Wooden Window Frame	78F31FE6
+High Crude Wooden Shelf	B8B0B831
+High Elegant Armchair	E9C23BBD
+High Golden Window Frame	B374EEFA
+High Iron Window Frame II	7D373751
+High Iron Window Frame I	E0959303
+High Ornamented Stone Window Frame	E7628967
+High Paling Fence III	5CE24DB3
+High Paling Fence II	A9D16296
+High Paling Fence I	6EC5F2A6
+High Polished Window Frame	F28B98D6
+Highly Polished Stone Block	22BD4FE5
+Hollow Cyclops Head	5197A820
+Hollow Cyclops Head	CB558C40
+Hollow Cyclops Trophy	AA28FC75
+Hollow Halls Block	79A8F854
+Hollow Halls Showcase 	6627EECA
+Hollow Halls Showcase 	76C3BE43
+Hollow Halls Showcase 	98D5BFB3
+Hollow Halls Showcase 	B4DD9823
+Hollow Halls Showcase 	D158A8C3
+Hollow's Eve Banner	D782E9A1
+Hollow's Eve Boots	FEC4F68D
+Hollow's Eve Chest	0E4A7206
+Hollow's Eve Gloves	626AAA5E
+Hollow's Eve Hood	6F9C6D81
+Hollow's Eve Pants	766FCF42
+Hollow's Eve Recipes	B37856B6
+Hollow's Eve Recipes	BED393E0
+Holly and Berry	7536E747
+Homage To Drak Slurp	941693D3
+Honey Baked Banana	D40370E4
+Honey Beehive	A6700B01
+Honey	0D89EE9B
+Hopeful Glimmer (1)	42104D68
+Hophare Feeder	90BD73E2
+Hophare Food Bait	37821C6D
+Hophare Food	63CB1767
+Hophare	CA2B2DFD
+Horizontal Banner II	0CD5E44E
+Horizontal Banner I	238191CC
+Horn Daggers (1)	CA7E4986
+Horned Beast Bow (1)	AB8D8D35
+Horned Greatsword (1)	CE48203F
+Huge Chest	A8EF01CE
+Huge Crypt Door	8E07455A
+Huge Magic Chest	F7D5170C
+Hugo Vanderhall	64BA825D
+Hunter Boots (15)	09A51988
+Hunter Boots (15)	931C35E1
+Hunter Boots	7522E16F
+Hunter Garb	FEA32E48
+Hunter Gloves (15)	16D52EBB
+Hunter Gloves (15)	26DD2AB8
+Hunter Headband	2DE07D35
+Hunter Hood (15)	3A470FEA
+Hunter Hood (15)	3D21D3F6
+Hunter Pants	3F29B78A
+Hunter Trousers (15)	49ACE713
+Hunter Trousers (15)	56E548C2
+Hunter Vest (15)	867566D8
+Hunter Vest (15)	9BBF61AD
+Hunter's Bow (1)	E7621F31
+Hunter's Ring (2)	C14D1774
+Hydrak'Dal Head	1499EAED
+Hydrak'Dal Trophy	2BE4935E
+Ice Blade (1)	FFBAB9DE
+Ice Bolt I (5)	BCE7922F
+Ice Bolt II (32)	5B63FA78
+Ice Protection Lotion	170D2A07
+Ice-Coated Daggers (1)	6AB70715
+Ice	FA53DB5D
+Icicle Sword (1)	561A851D
+Icy Brook	B0E4F130
+Ignited Bow (1)	56DCC06D
+Ignited Hammer (1)	C732F017
+Ikko	CFADB30A
+Improved Bandage	8E6397DF
+Improved Fishing Rod	1BFB07F1
+Improved Grappling Hook	6AA6A1D4
+Improved Millstone	EAC48543
+Improved Water Well	44E3709B
+Incendiary Ball (35)	3DC1DBFE
+Incendiary Ball (35)	5733067A
+Indigo Plant (13)	FEE6A7A9
+Indigo Plant	EC63CE9F
+Indigo Seedling	5B6024DB
+Infernal Wand (1)	D493E5F3
+Inner Roof Corner	88F05B30
+Inner Roof Corner	DDDCDF67
+Inscribed Golden Urn	14BB08C5
+Instrument Holder	DD9E49D6
+Instrument Stand	E7FF330D
+Inverted Stepped Wall	561D0FAD
+Inverted Stepped Wall	FB0DF18E
+Invisible Barrier (30)	8EBD21EB
+Invisible Barrier (30)	E0BF561D
+Iron Adorned Round Door	AC768A82
+Iron Arrow (22)	56B0F8FE
+Iron Axe (20)	F63F03E5
+Iron Bars (25)	097BE3AE
+Iron Bench	9BF23A0C
+Iron Block	107ECA7C
+Iron Bucket	07017FA7
+Iron Chandelier	F91425F4
+Iron Claw Club (21)	06189614
+Iron Crypt Brazier	7876280B
+Iron Crypt Chandelier	65661B8B
+Iron Crypt Wall Torch	975BAB5A
+Iron Cyclops Trophy	D44F7DE3
+Iron Door	1A1A105D
+Iron Double Door	97AACBE0
+Iron Dust (40)	F538D98B
+Iron Fell Cyclops Trophy	905ED2F4
+Iron Fell Dragon Youngling Trophy	34E382D1
+Iron Fell Monstrosity Trophy	831089B6
+Iron Fell Sicklescythe Trophy	F043558C
+Iron Fell Thunderbrute Trophy	845BEB4C
+Iron Fell Wispwyvern Trophy	EAA04C56
+Iron Fence	EC05A1DE
+Iron Fireplace	53B528BD
+Iron Grate	9A00EE0C
+Iron Grate	D8E27E1B
+Iron Hollow Cyclops Trophy	3EDDE96C
+Iron Hydrak'Dal Trophy	D2788311
+Iron Ore (25)	1B29335D
+Iron Pickaxe (20)	50320935
+Iron Prison Door	307A23A6
+Iron Prison Double Door	61D59D58
+Iron Scavenger Matron Trophy	91194CEA
+Iron Vukah Brawler Trophy	992AA216
+Iron Wall Torch	87C0016E
+Iron Window Frame	79FD1708
+Ironheart Greatsword (1)	C98CF242
+Irrigation Gate Large	0A90F0EC
+Irrigation Gate Small	C4FC77B9
+Ivy (5)	BBA6CB08
+Jagged Obsidian Axe (1)	5BE8B74E
+Jester Hat	B80501AF
+Jewelry Box	E5C02A1C
+Jezmina's Apotheosis (1)	BBFCE07E
+Jezmina's Apotheosis (16)	9CAA8F8A
+Jezmina's Apotheosis (21)	95950775
+Jezmina's Apotheosis (26)	790A3FDC
+Jezmina's Apotheosis (36)	26BC57E2
+Jezmina's War Banner II	4992C240
+Jezmina's War Banner I	E7AD0356
+Jump Attack	501FB49C
+Jump Attack	7BA76EF6
+Jump Attack	95D4FF2B
+Jump Attack	B9E2FECC
+Jump Attack	DC1D7E67
+Kaori Conway	C4A0E8F9
+Kettle	FB740875
+Key to The Pike	E3076566
+Kiln	014977D3
+Kindlewastes Bone Key (23)	F1975FF8
+Kindlewastes Flower (25)	3D132B37
+Kindlewastes Flower Seedling	78A8963A
+Kindlewastes Rubble	F1CC477A
+Kingmaker	EB1D0A99
+Kingsize Bed	7A65C7EC
+Kitchen	D5DB41AB
+Knight Boots (15)	0AB61350
+Knight Chestplate (15)	AD60AE18
+Knight Gloves (15)	F272037D
+Knight Helmet (15)	B21329AC
+Knight Trousers (15)	ED4C14CC
+Laboratory	68555285
+Lady Leclair	834E9968
+Lakehopper	CF6FE4AB
+Lamp	EAA5FCA1
+Lantern Garden Gnome	3575CCAC
+Lantern	61397FEF
+Lapislazuli (25)	B57CE1C6
+Large Albaneve Summits Brazier	80825ECC
+Large Ancient Plant Pot	C5B58C98
+Large Backpack	3B624853
+Large Backpack	BAA1776A
+Large Bamboo Basket	59D1CFF0
+Large Bamboo Basket	A09680C2
+Large Bamboo Basket	AAE51509
+Large Bamboo Basket	D31E520A
+Large Bamboo Crate	8AAABEC7
+Large Bamboo Crate	D3E00468
+Large Boreal Wood Bed	609EB1C8
+Large Boreal Wood Cabinet	5AA80B18
+Large Boreal Wood Cupboard	F9B3FF54
+Large Boreal Wood Sideboard	9E599E66
+Large Carved Wooden Cabinet	0CEC0696
+Large Castle Table	1EFB366D
+Large Chest	FAA0E9F1
+Large Crypt Cabinet	A5EB7F94
+Large Crypt Coffin II	8B4081A7
+Large Crypt Coffin I	F07C806C
+Large Crypt Coffin Lid	60D28207
+Large Crypt Cupboard	C5AB47BE
+Large Crypt Door	791B422A
+Large Crypt Mausoleum	14DD5A9F
+Large Crypt Sideboard	C4192207
+Large Crypt Table	DD08EB10
+Large Dark Crystal	0A2CC571
+Large Drak'Dal Door	1709E7A1
+Large Elevated Crypt Coffin II	27F813FF
+Large Elevated Crypt Coffin I	5E736685
+Large Golden Window Frame	D14D35B8
+Large Iron Crypt Brazier	35ADDDFA
+Large Iron Window Frame	1CE48F02
+Large Magic Chest	DB6AC612
+Large Palm Wood Cabinet	EB6586CA
+Large Palm Wood Cupboard	DC4BBC85
+Large Plant Pot	61E48CA4
+Large Polished Wooden Cabinet	E1279BA9
+Large Polished Wooden Cupboard	05939143
+Large Quick Stack Station 	DDA3AEF7
+Large Round Carved Window Frame	E55BE0BB
+Large Round Iron Window Frame	9301B0B9
+Large Round Polished Window Frame	4EB9C5A8
+Large Round Steel Window Frame	C4B31768
+Large Round Stone Window Frame	0C8DB75F
+Large Round Wooden Window Frame	50704E6B
+Large Salon Mirror	41A9A6AA
+Large Salon Mirror	9E8B2BF7
+Large Set of Vials	1B7E2FA5
+Large Silver Brazier	5ABF7713
+Large Spiral Stone Stairs	CCA6FCB4
+Large Stone Arc	C63E2105
+Large Throne Room Brazier	2BF99653
+Large Water Wheel	8B866C8B
+Larger Sea Lily Fossil	F0623823
+Latte	9E1612BB
+Lavender Dream	930A872F
+Leather (18)	F67A812E
+Leather Bag	178B3531
+Leather Crate	6FFB17A9
+Left Cyclops Arm	86FFEBA2
+Left Cyclops Leg	3C53DC7A
+Legendary Runes (13)	A8FCDC84
+Lesser Golden Twinflame Sword (1)	F9AF5276
+Lesser Golden Twinflame Sword (26)	A551B40A
+Lesser Golden Twinflame Sword (36)	6A7D781B
+Lesser Ring of Health (5)	3993797A
+Lesser Ring of Mana (5)	0120840D
+Lesser Ring of Stamina (5)	4B267DD5
+Licuala Plant	FC4C56BA
+Licuala Seedling	ABE519C0
+Light Blonde Hair	345675FE
+Light Blue Eyes	BE4D6CFD
+Light Blue Hair	C33649B2
+Light Brown Eyes	BC1D6432
+Light Brown Hair	D0B4AF55
+Light Burst (17)	2C0C36D4
+Light Red Hair	9FACB127
+Lightforged Axe (1)	90AA51C2
+Lightforged Daggers (1)	7B2B96E2
+Lightning Channel (22)	647C48CA
+Lilac Insomnia	68C10D53
+Limestone Block	8D003FD7
+Limestone Fence	DBF3BD47
+Limestone Road Block	C5FDB42B
+Limestone	CD603DCD
+Linen (13)	6C352CB4
+Liquid Light	DE2273E7
+Lockpick	ACB994B8
+Lonely At The Top	46A27792
+Long Plant Pot	5A524F44
+Long Wall Banner	E63A811D
+Loom	02E355F3
+Lore Text Test	770C4C28
+Lore Text Test	F10057A3
+Low Crude Wooden Shelf	9A2296DB
+Low Elegant Armchair	69DB1196
+Low Large Plant Pot	0611B35E
+Low Paling Fence II	A044E757
+Low Paling Fence I	3ED5836E
+Lucky Fishing Rod	58050294
+Lumberer Boots	594FE1C2
+Lumberer Coat	32BBF3A2
+Lumberer Gloves	560BA1E2
+Lumberer Hat	BFBB706E
+Lumberer Pants	D5E377A2
+Lumenshade Axe (1)	7F00F657
+Luminous Growth	BBED8B2D
+Luminous Wand (1)	6AD4933C
+Lump of Clay (13)	72BD4309
+Lunar New Year Door	A2074940
+Lupa's Scalper (1)	D37F4F39
+Lupa's Scalper (16)	8E4FC4B6
+Lupa's Scalper (21)	3CC3BE72
+Lupa's Scalper (26)	20EB3063
+Lupa's Scalper (36)	90F91842
+Lute	70CC4C6F
+Lying Wooden Barrel	1C693438
+Mace of Denial (1)	C47C1F62
+Mace of Wrath (1)	D7FA26A5
+Mace-like Club (16)	8828C46B
+Madly Maroon	DBC9616F
+Mae's Map Piece	FAAC460E
+Mage Boots (10)	A95B1D01
+Mage Boots (10)	EBB20BA5
+Mage Chest (10)	D04AB4DB
+Mage Chest (10)	D291158F
+Mage Gloves (10)	1C54B857
+Mage Gloves (10)	ECCF7CD4
+Mage Hat (10)	C0F669C5
+Mage Hat (10)	EFCF2566
+Mage Trousers (10)	6B382D67
+Mage Trousers (10)	80FE00B6
+Magic Shield (43)	6622EE4F
+Magician Boots (15)	6E181134
+Magician Boots (15)	C35072BE
+Magician Chest (15)	5ACC179B
+Magician Chest (15)	CA7B905D
+Magician Gloves (15)	1FFE6E2A
+Magician Gloves (15)	34D04307
+Magician Hat (15)	B010EAF3
+Magician Hat (15)	FFA62200
+Magician Trousers (15)	A3849217
+Magician Trousers (15)	AF5B3F6F
+Magnificent Granite Stone Chair	C6976B3B
+Magnificent Granite Stone Table	3721B01A
+Maid Garb	A1F78EB8
+Maid Hat	BDA863E7
+Major Arcana (1)	0D6CBE9A
+Makeshift Daggers (1)	B62D45A8
+Male Collar 01	0CE55F55
+Male Collar 01	76F42927
+Male Collar 01	A2629792
+Male Collar 01	FD538FF6
+Male Feet 01	096096FA
+Male Feet 01	208206C3
+Male Feet 01	39046B87
+Male Feet 01	3BB9E89B
+Male Hand 01	0A750D1B
+Male Hand 01	0ABC9658
+Male Hand 01	926D7B52
+Male Hand 01	A7DB1F39
+Male Head 01	11140AAA
+Male Head 01	147981B8
+Male Head 01	1FCA1B05
+Male Head 01	20198A62
+Male Head 01	304C550F
+Male Head 01	4908D779
+Male Head 01	5003F7B3
+Male Head 01	6C1C0AF2
+Male Head 01	6E5618F2
+Male Head 01	778F7390
+Male Head 01	86A46569
+Male Head 01	8C08CC14
+Male Head 01	93C7A47C
+Male Head 01	9CDEC598
+Male Head 01	9F40FB06
+Male Head 01	A83410AB
+Male Head 01	AB125116
+Male Head 01	AC0BF6C3
+Male Head 01	BD9CAFC2
+Male Head 01	C83CF77C
+Male Head 01	D04394EB
+Male Head 01	E1BD6919
+Male Head 01	E40C42A2
+Male Head 01	E9C8497B
+Male Head 01	EA22AF40
+Male Head 01	F90A5792
+Male Head 01	FDCF7D5A
+Male Lower Arms 01	31AEC656
+Male Lower Arms 01	B0202335
+Male Lower Arms 01	B5DEFAAD
+Male Lower Arms 01	FF13788C
+Male Lower Legs 01	1C5FEB81
+Male Lower Legs 01	418D2EDC
+Male Lower Legs 01	578A6383
+Male Lower Legs 01	58593ACC
+Male Neck 01	5AF83494
+Male Neck 01	924B0F2A
+Male Neck 01	F4940564
+Male Neck 01	FE3DF20C
+Male Upper Arms 01	2CE37F7E
+Male Upper Arms 01	36DB5727
+Male Upper Arms 01	37D34415
+Male Upper Arms 01	75568973
+Male Upper Legs 01	4B4A96B0
+Male Upper Legs 01	5B98B87D
+Male Upper Legs 01	676BAC67
+Male Upper Legs 01	B5BC5B25
+Male Waist 01	5F1FEF82
+Male Waist 01	8B2F9F01
+Male Waist 01	9E9DD7E7
+Male Waist 01	A70E01AE
+Mana Potion +	FBB88C3A
+Mana Potion	04F64485
+Mandible Crusher (1)	F673FF5E
+Mangrove Seedling	B2810190
+Mannequin "Back Off"	9FD9C46F
+Mannequin "Here I Come"	790BB32A
+Mannequin "Let Me Serve You"	1DDFD46F
+Mannequin "Look At Me"	13168F94
+Mannequin "Strike A Pose"	B71CE1FB
+Mannequin "Victory"	4728448D
+Marianne Reed	49EAAE4D
+Maritime Bathtub	015639D3
+Maritime Shower	ADAD1831
+Maritime Sink	060E9781
+Maritime Toilet	742040A2
+Market On A Yearfall's Day	602E7DD5
+Marksman Boots (10)	19443C99
+Marksman Boots (10)	462FD8C4
+Marksman Gloves (10)	27A046A3
+Marksman Gloves (10)	F250B200
+Marksman Hood (10)	6233C43B
+Marksman Hood (10)	7584BD20
+Marksman Trousers (10)	63CC8BAF
+Marksman Trousers (10)	A97FDA22
+Marksman Vest (10)	47EFD3FF
+Marksman Vest (10)	CF308757
+Masonry Tools	77CE9B68
+Massive Hammer (1)	1CDF3D35
+Masterful Mace (1)	B4E41AF1
+Mauveine (33)	F5CD7308
+Meat Chopper (1)	A8CF4D1D
+Meat Wrap	DF31ED48
+Meat and Corncob Skewer	A94E9A40
+Meat and Mushroom Skewer	C3E08AC8
+Meat and Tomato Skewer	69529EA5
+Medium Albaneve Summits Brazier	CCAEB994
+Medium Backpack	E0E90A4E
+Medium Backpack	F19BC16C
+Medium Boreal Wood Cabinet	2978B752
+Medium Castle Table	DFDB61A6
+Medium Chest	D919AC26
+Medium Crypt Cabinet	6AE90A4D
+Medium Crypt Table	AFE2863D
+Medium Flask	786B3F7E
+Medium Hollow Halls Banner	21051F7F
+Medium Hollow's Eve Pumpkin III	8E2D9B23
+Medium Hollow's Eve Pumpkin II	D1024DF3
+Medium Hollow's Eve Pumpkin I	1ED18EF6
+Medium Magic Chest	92D92D5F
+Medium Plant Pot	253EF976
+Medium Shape	1C3C2581
+Medium Shape	56CEBBA7
+Medium Stone Brazier	52951769
+Megalodon Greatsword (1)	BEE979F4
+Mei-Yin Chen	8D9AD8D8
+Mercenary Boots (15)	01D01D36
+Mercenary Boots (15)	38F5CDA3
+Mercenary Chest (15)	9F0E8E19
+Mercenary Chest (15)	E285921C
+Mercenary Gloves (15)	8349EAE5
+Mercenary Gloves (15)	DFA3A847
+Mercenary Helmet (15)	0D650E3A
+Mercenary Helmet (15)	C20A2F3C
+Mercenary Shield (15)	507093FA
+Mercenary Shield (15)	8CD95B6F
+Mercenary Trousers (15)	7949BB1B
+Mercenary Trousers (15)	E64C9350
+Metal Block	1CE951B4
+Metal Bound Wooden Door	2A7992B7
+Metal Bound Wooden Double Door	E61B4502
+Metal Scraps (5)	07E67B5B
+Metal Sheets (5)	FE9FF6A2
+Metalstar Mace (1)	F4FF735A
+Midnight Lily (5)	910C1368
+Midnight Tomb Block	A9C37A40
+Milk	AB457577
+Milkmaid Boots	2EE5A429
+Milkmaid Garb	E55AC05D
+Milkmaid Hat	C0B1DA4B
+Mill	B14E06E0
+Miner Helmet (40)	53028698
+Mining Sieve (40)	86CBBEE7
+Minor Arcana (1)	071E8DF6
+Minstrel Hat	48EB0567
+Mint Mushroom Meat (18)	05664746
+Mirage (1)	76BC31BE
+Mirage	4573C01E
+Misfortune Mace (1)	0C85C609
+Mist of a Fell Sicklescythe (25)	A0DE4C1E
+Mixed Sandstone Block	C96C88C1
+Monstera Plant	1F31F13D
+Monstera Plant	634E7AE4
+Monstrous Ribs (18)	B152FE95
+Moon Over The Well	7228EA24
+Moon Rock Greatsword (1)	AF9DC07C
+Moonstone (45)	D19987D6
+Moonstone Dust (45)	F312A98D
+Morning Sun	B67C522A
+Morningdew Greatsword (1)	575CB2D6
+Mortar	A5909476
+Moss	D5BAB21F
+Mossy Stone	7E4C6FDF
+Moth (13)	83376EF6
+Mother's Eye (20)	8FED8D38
+Mother-Of-Pearl (40)	7125958D
+Mountain's Shadow Boots (30)	3946391D
+Mountain's Shadow Boots (30)	A0450B67
+Mountain's Shadow Chest (30)	0CA592BF
+Mountain's Shadow Chest (30)	A60460BE
+Mountain's Shadow Gloves (30)	BEEFBC6F
+Mountain's Shadow Gloves (30)	CCE83DD4
+Mountain's Shadow Helmet (30)	CBEC47F3
+Mountain's Shadow Helmet (30)	E0878132
+Mountain's Shadow Shield (30)	4D229713
+Mountain's Shadow Shield (30)	CA5FAEB6
+Mountain's Shadow Trousers (30)	0B3F3D24
+Mountain's Shadow Trousers (30)	B184B413
+Mushroom Flesh	93C408E5
+Mushroom Omelette	8CF3A59C
+Muted Green Hair	687292CB
+Muted Red Hair	8C9D7893
+Mycelium (18)	50B0C754
+Mycelium (5)	D127476B
+Mycelium Overgrown Block	97A19022
+Mysterious Flask	838B5002
+Mysterious Mauve	42F8BBA9
+Mysterious Tome	C5715507
+Mystic Boots (15)	0A5DA75C
+Mystic Chest (15)	B48E9100
+Mystic Gloves (15)	81CB3AAE
+Mystic Hat (15)	33096B96
+Mystic Pants (15)	1B170C4C
+Mythic Wand (1)	98C37576
+Nails (5)	A3872F64
+Nameless One	EBB593F7
+Narrow Wall	02DD1282
+Natural Water Dispenser	4E1BD0C3
+Necromancer's Skull Summoning Vessel (20)	41E0E94E
+Nettle  Seedling	8901E9D5
+New Moon Greatsword (1)	9F427297
+New Moon	91D3ADEF
+Nightfall (1)	D5983175
+Nightnebula (1)	B454FE58
+Nightshade	1EEFF01D
+Nightwind Bow (1)	CEA74428
+Nitrate (25)	838A4980
+Noble Boots	9120AB8A
+Noble Diadem	EB54E797
+Noble Dress	BD87D2E3
+Noble Gloves	1551050D
+Noble Pants	C03369E5
+Noble Sword  (1)	0CBB09C0
+Nomad Highlands Bone Key (18)	91FFD3D3
+Nomad Highlands Broad Tree Seedling	E23C411D
+Nomad Highlands Dirt	A2E35887
+Nomad Highlands Rubble	C0A8858F
+Nomad Highlands Slender Tree Seedling	14FF55DD
+Notice Board	5BFF9B59
+Nova (1)	CAFBC2BF
+Oak Tree Seedling	0B6FC5E0
+Oath Breaker (1)	44F34C7C
+Obsidian (33)	C944E0E9
+Obsidian Arrow (27)	817E7F72
+Obsidian Block	3C37B9D6
+Obsidian Dust (33)	49F535D0
+Of Daggers And Wine	A62AB657
+Old Books (5)	9B99EAFE
+Omen Boots (15)	F126F04F
+Omen Chest (15)	5CF7C376
+Omen Gloves (15)	4162BEAC
+Omen Helmet (15)	A3AE55D0
+Omen Trousers (15)	F499B734
+One-Handed Melee Weapon Rack 	4A42F92D
+One-Handed Melee Weapon Wall Mount 	6CE7D942
+Ony's Map Piece	6E6533A0
+Open Copper Jar	B94DD31A
+Open Sandwich	2F1C7474
+Oracle's Everblue (1)	53B01A74
+Orange Decorative Box	F5C33B46
+Orange Eyes	5C66CDC2
+Orange Fabric (40)	AC5234D9
+Orange Floor Light II	F3610306
+Orange Floor Light I	18DD9F79
+Orange Pendant Light II	0B8448C6
+Orange Pendant Light I	B63B7B6D
+Orange Wall Light II	DB4E9298
+Orange Wall Light I	32DA1C76
+Ornamented Vase III	A840FC50
+Ornamented Vase II	094AB9B1
+Ornamented Vase IV	D77382E1
+Ornamented Vase I	4E1DB24A
+Ornamented Vase VI	4D286A36
+Ornamented Vase V	7023DFAB
+Ornate Flute	50AA0B8B
+Ornate Greatsword (1)	AFBCE7A6
+Ornate Hand Drum	041F7BAF
+Ornate Handpan	015F8042
+Ornate Harp	8FCC54BA
+Ornate Lute	413D03C4
+Ornate Steel Door	985427F1
+Ornate Steel Double Door	A89C1294
+Ornate Wall Banner	5BBFA16E
+Ornate Wood Bow (1)	1C6B8FFF
+Ornate Wooden Bed	89619301
+Orpheus' Map Piece	F00F0C1E
+Oscar Godwin	A6FE0D97
+Oswald Anders	2EE18A0F
+Outer Roof Corner	3ABE2900
+Outer Roof Corner	B2DF757F
+Oven	CA8693CA
+Overgrowth Tool	BE8B0750
+Padding (25)	65FF9103
+Palm Leaf Basket	42112D4B
+Palm Leaf Basket	F91D9A1A
+Palm Leaf Basket	FABC3F0C
+Palm Leaf Roof Block	9F2D57E8
+Palm Leaves (40)	1F11576D
+Palm Wood Banquet Table	B37BB08B
+Palm Wood Bed	1AC8CA2D
+Palm Wood Bedside Table	59469800
+Palm Wood Block	A867C32F
+Palm Wood Chair	F7CFCBA2
+Palm Wood Logs (25)	B025483C
+Palm Wood Shelf	2BEBDD49
+Palm Wood Side Table	DA02D537
+Palm Wood Table	5581674A
+Paper (25)	111B8FB0
+Paper Lantern II	76734ED7
+Paper Lantern I	3F0F579E
+Paper Reed (1)	3D29ABCA
+Papyrus Seedling	1E32A90F
+Parade Daggers (1)	4B3DDAFD
+Passionflower (40)	F7442A68
+Pastel Yearwake	51247795
+Peak Roof Top	ECE79104
+Peak Roof Top	FDD40471
+Pearl (40)	5FA72420
+Pearlfrost Mentor Boots (30)	7D39436B
+Pearlfrost Mentor Boots (30)	D1CDF5B4
+Pearlfrost Mentor Chest (30)	2816A7D9
+Pearlfrost Mentor Chest (30)	5E8D924C
+Pearlfrost Mentor Gloves (30)	935C2FDF
+Pearlfrost Mentor Gloves (30)	D3DD82EC
+Pearlfrost Mentor Hat (30)	2965A204
+Pearlfrost Mentor Hat (30)	F486CB16
+Pearlfrost Mentor Pants (30)	1A40AB6B
+Pearlfrost Mentor Pants (30)	F4FDE06A
+Pendant Ceiling Lantern	7D39129C
+Penny Bun Seedling	2CCAB461
+Penny Bun	23D06EC5
+Petrified Shroud Stalker Shell (18)	D63D3C69
+Philipp_Buoyancy_Platform (35)	C18A2ECE
+Pickaxe (1)	2525BB44
+Pikemead Statue Showcase	0A3FE74E
+Pikemead Statue Showcase	2F31D9CA
+Pikemead Statue Showcase	7D5412AD
+Pikemead's Bulwark (1)	6CF61D2E
+Pikemead's Bulwark (11)	DED1B712
+Pikemead's Bulwark (16)	49BE12F5
+Pikemead's Bulwark (21)	810A0532
+Pikemead's Bulwark (26)	1EAAF56D
+Pikemead's Bulwark (36)	EBE81628
+Pikemead's Bulwark (6)	1B17504D
+Pikemead's Peak	EEE1F180
+Pillbug (40)	74501C7B
+Pine Shortbow (1)	D309C6D7
+Pinewood Fence Gate II	E79FC8FD
+Pinewood Fence Gate I	19C579BE
+Pinewood Fence II	6B28558E
+Pinewood Fence I	5F2C999D
+Pinewood Fence Pole	BF7E651A
+Pinewood Room Divider III	3F30E030
+Pinewood Room Divider II	B28850C9
+Pinewood Room Divider IV	D526C96D
+Pinewood Room Divider I	5CFDE198
+Pink Flower	1260F830
+Pink Flower	6441FE29
+Pink Flower	A3638098
+Pink Flower	AE81433F
+Pink Flower	FEA409B8
+Pink Lily Flower	BBA3356C
+Pink Mushroom Meat (40)	CFD0AF9C
+Pink Wall Flower	1FD2C0B8
+Pink Wall Flower	54693C12
+Pinky Promise	F789265A
+Piscine Ivory Dust (40)	208998DB
+Plaguebringer Boots (15)	37BB5C60
+Plaguebringer Chest (15)	00D1F330
+Plaguebringer Gloves (15)	50A485A6
+Plaguebringer Hood (15)	B518EEC8
+Plaguebringer Trousers (15)	469A1430
+Plaited Block	A4A93911
+Plant Fiber (1)	C5A97B68
+Plant Fiber Roof Block	F303E04F
+Plantain Curry	ABEC4ABA
+Plantain	8C09DDFF
+Plough	58837187
+Pocket Heater	9A202C28
+Poison Sack (13)	599F74AE
+Poisoned Bronze Arrow (18)	20E04287
+Poisoned Copper Arrow (12)	AE01020A
+Poisoned Golden Steel Arrow (42)	3E9E6FDB
+Poisoned Iron Arrow (22)	8D3CF68A
+Poisoned Steel Arrow (32)	0623C745
+Polaris' Map Piece	B1EB7175
+Polished Granite Block	EB78408A
+Polished Scrap Brazier	CE12E91C
+Polished Stone	0626F7EB
+Polished Window Frame	9E039A49
+Polished Wooden Banquet Table	8AF1A6E0
+Polished Wooden Bedside Table	CAEA243D
+Polished Wooden Bench	9661EFCF
+Polished Wooden Chair	70A824DA
+Polished Wooden Door	B3910FB5
+Polished Wooden Double Door	DBDF70D2
+Polished Wooden Shelf	E2CE13E2
+Polished Wooden Side Table	7446FDAA
+Polished Wooden Table	E5DD7F4A
+Polished Wooden Throne	C1043371
+Polymath's Wand (1)	830D76DD
+Pompom Jr.	1FFAC51A
+Popcorn	8E00A463
+Portable Water Pump (40)	3ED083DD
+Pottery Flasks	AABAF673
+Pottery Jar	295E878C
+Pottery Mug	80264D05
+Pottery Vase	9DF004CD
+Pottery Vessel	95A80AE4
+Prawn Fossil	8D4A9286
+Prayer of the Flame Scroll	7AB33FCF
+Pretty In Pink	0D1E09DE
+Primitive Stone Shelf	D6E378FC
+Princely Greatsword (1)	526B6685
+Prismatic Ward (40)	5774F098
+Prismatic Ward (40)	9EC97CDC
+Prison Fence Corner	9B4C11E7
+Prison Fence Gate	76DE9F19
+Prison Fence Pole	D35D2EC8
+Prison Fence	9227A1D5
+Prison Fence	CCAF3919
+Prized Skull Trophy	932A7FA5
+Protector Greatsword (1)	E5C6F529
+Proud Daggers (1)	462F8C3D
+Provisional Scythe (1)	B45D5D42
+Prowl	91A17C87
+Pulley	A3BBE2FE
+Pumpkin Seedling	D7E6FC73
+Pumpkin Soup	AD27B1C5
+Pumpkin	FC6438AF
+Pure Amethyst	6A0A9497
+Purified Slime (5)	801751F9
+Purple Berries	DCF8790D
+Purple Berry Cake	03E43609
+Purple Eyes	D3CD7113
+Purple Floor Light II	56BCABF8
+Purple Floor Light I	1ED3B4A3
+Purple Hair	AE913117
+Purple Pendant Light II	E171FDA5
+Purple Pendant Light I	830966F9
+Purple Rocket	7CBACF85
+Purple Wall Light II	FF094058
+Purple Wall Light I	4F97DFC9
+Pyreblade (1)	96F75F07
+Queen Pikemead Statue Piece	5CCA3BF9
+Queen Pikemead Statue Piece	9C704E92
+Queen Pikemead Statue Piece	E7753BCC
+Quetzal Hunter Chest (40)	3428F3DC
+Quetzal Hunter Chest (40)	D6B6F597
+Quetzal Hunter Gloves (40)	3C21F9C2
+Quetzal Hunter Gloves (40)	47E475B2
+Quetzal Hunter Helmet (40)	26423BA5
+Quetzal Hunter Helmet (40)	BDC70602
+Quetzal Hunter Pants (40)	22CEAF35
+Quetzal Hunter Pants (40)	375FC492
+Quetzal Hunter Shoes (40)	3D9A04BD
+Quetzal Hunter Shoes (40)	CFD4A530
+Quick Stack Station	A9B54DC5
+Radiant Paladin Boots (30)	E4F365E8
+Radiant Paladin Chestplate (30)	E5BEEB7C
+Radiant Paladin Gloves (30)	1C3559EC
+Radiant Paladin Helmet (30)	461E3DAD
+Radiant Paladin Trousers (30)	8640F9CF
+Ragged Boots (3)	F2E57301
+Ragged Pants (3)	86979B74
+Ragged Shirt (3)	6BAB5640
+Rake (1)	99775196
+Ramone Jones	80BA9C8B
+Ranger Boots (10)	0FCE0D71
+Ranger Boots (10)	D6047CFE
+Ranger Gloves (10)	704AF793
+Ranger Gloves (10)	716DAE06
+Ranger Hood (10)	46FD3FA5
+Ranger Hood (10)	606B453A
+Ranger Trousers (10)	59B7684E
+Ranger Trousers (10)	8D8D9FFC
+Ranger Vest (10)	6EA48A82
+Ranger Vest (10)	A5A0CD33
+Rare Fishing Bait (40)	4E494FAB
+Rattlesnake Bow (1)	CFB35684
+Raw Bird Meat	170026BF
+Raw Dune Armadillo Meat	570EFD21
+Raw Fatty Meat	897E7AC8
+Raw Game	95C119CB
+Raw Lean Meat	58FBBB1C
+Raw Meat and Corncob Skewer (5)	ECF3ED22
+Raw Meat and Mushroom Skewer (5)	8B394119
+Raw Meat and Tomato Skewer (5)	ED80DFA5
+Raw Rice (40)	8D8CC80B
+Raw Taro	9018EBF2
+Raw Wolf Meat	B0F45532
+Raw Wool (33)	75FE69B5
+Reaper's Wand (1)	4C19BA43
+Reaper's Wand (11)	DCA2DD29
+Reaper's Wand (16)	16B5B9C8
+Reaper's Wand (21)	B6FF20EF
+Reaper's Wand (26)	00DCFE3B
+Reaper's Wand (36)	009884D8
+Reaper's Wand (6)	82D56128
+Recent Drak Wand (1)	383A1E60
+Red Carpet Block	EB90E07F
+Red Confetti Mortar	CC0252EE
+Red Eyes	12AE8515
+Red Fabric (25)	EC0A4C32
+Red Flower	095DE305
+Red Flower	8D7CC4BF
+Red Flower	8FDF5017
+Red Flower	B86FE973
+Red Flower	E2BD724F
+Red Fountain	A36545FF
+Red Hair	3277C733
+Red Marble Block	DDCF6406
+Red Marble Fragment (5)	96D5E919
+Red Party Hat	DE99AB1F
+Red Wall Flower	654D0666
+Red Wall Flower	78F5CF2A
+Reed Seedling	84E8739D
+Refined Sandstone Block	5CB6C9D3
+Refined Stone Block	11AD3094
+Refined Wood Block	50F99DA9
+Regular Sandstone Block	841A1BEE
+Regular Stone Block	C56BC6D5
+Repair Kit	C948F6AE
+Reptile Hide (13)	A99C63F8
+Reptile Leather (13)	1163C9CE
+Resin (5)	F4F57BB1
+Resin Torch (2)	1FABD22F
+Resource  Bundle I	4E4F8AA8
+Resource Bundle II	85BC875B
+Revelation By The Pond	E901407F
+Revelwood Bone Key (13)	8CBBDC5B
+Revelwood Dirt	EAACB195
+Revelwood Green Leaf Seedling	D7F21BE9
+Revelwood Red Leaf Seedling	F56E1BC9
+Revelwood Rubble	60844AE8
+Revelwood Stone	4668E901
+Revitalizing Health Potion +	474D6AB4
+Revitalizing Health Potion	DCB1DDED
+Rice Seedling	D1D489CB
+Right Cyclops Arm	D226BC9C
+Right Cyclops Leg	8B745CCE
+Ring Of Rapacity (10)	47748781
+Ring Of The Burning Light (15)	79442800
+Ring of Endless Life  (5)	9EF25A09
+Ring of Frost (30)	5EC9FA07
+Ring of Health (10)	F29B7AA9
+Ring of Mana (10)	52122E16
+Ring of Stamina (10)	33182243
+Ring of Thundersnow (40)	4623BCB0
+Ring of the Ancients (20)	3C71BF20
+Ring of the Flame (10)	FED85BEC
+Ring of the Heir (40)	163F820B
+Ripped Alchemist's Wall Hanging	51C91C62
+Ripped Alchemist's Wall Hanging	8CFA0E25
+Riptide (1)	EEAB43FC
+Riptide (11)	B13154AE
+Riptide (16)	33E96AA6
+Riptide (21)	9DA34E3E
+Riptide (26)	AD1254CC
+Riptide (36)	57E7C677
+Rising Fighter Boots (5)	6502A141
+Rising Fighter Boots (5)	7FFC08DE
+Rising Fighter Chest (5)	7A418E55
+Rising Fighter Chest (5)	AF17A28B
+Rising Fighter Gloves (5)	0BE46540
+Rising Fighter Gloves (5)	77A59426
+Rising Fighter Helmet (5)	223555AB
+Rising Fighter Helmet (5)	7B62760E
+Rising Fighter Shield (5)	11E2231E
+Rising Fighter Shield (5)	98FE56A5
+Rising Fighter Trousers (5)	2893E486
+Rising Fighter Trousers (5)	FFEFFC2D
+Ritual Tempest Wand (1)	F4A77A8F
+Roasted Azure Russula	7655EF78
+Roasted Coffee Beans (40)	C911F03E
+Roasted Corncob	FFEDC712
+Roasted Shiitake Mushroom	785E67D0
+Robert Gibson	132687E1
+Rochelle Anders	171D1F69
+Rock 2m	F648D815
+Rocky Shore	173A300C
+Rocky Stone Road Block	EAC0F57A
+Rogue Boots (20)	4792B21A
+Rogue Boots (20)	D7CFB854
+Rogue Chestplate (20)	63E9794B
+Rogue Chestplate (20)	E4B0022C
+Rogue Gloves (20)	2A1E4866
+Rogue Gloves (20)	410064C2
+Rogue Helmet (20)	066BA50E
+Rogue Helmet (20)	22C43BD3
+Rogue Shield (20)	612CCD5A
+Rogue Shield (20)	A893DAB1
+Rogue Trousers (20)	6BDFAAE9
+Rogue Trousers (20)	787E23F7
+Roof Side	408D7A6A
+Roof Side	93F4BC82
+Roof Tiles Block	0BBB57FB
+Rooibos (18)	61119BEE
+Rooibos Seedling	E0610514
+Rooibos Tea	B1CCE55B
+Room Divider "Dragon"	3C1DE241
+Room Divider "Fish"	4212D804
+Room Divider "Flower"	481E688E
+Room Divider "Snake"	CE49B339
+Room Divider III	EDF3E76B
+Room Divider II	30BD747F
+Room Divider I	34BE3B8A
+Root Staff (1)	95E85C0C
+Rotblood (1)	D1EC44F8
+Rough Flintstone Block	53C48CD0
+Rough Sandstone Block	04586087
+Rough Stone Block	81AE592D
+Rough Wood Block	1A843E4F
+Rough Wood Block	55EDC905
+Rough Wood Block	72A0233A
+Rough Wood Block	77F3EB92
+Rough Wood Block	85BB304F
+Roughly Cut Stone Block	C6F2E604
+Round Carved Window Frame	94EF7B6D
+Round Food Plate	CBDADF48
+Round Iron Window Frame	AE7BF7BD
+Round Polished Window Frame	4A1186D1
+Round Sea Urchin	8AE2788D
+Round Steel Window Frame	3372FFEE
+Round Stone Window Frame	00382E0E
+Round Wooden Door Frame	AD55FF2C
+Round Wooden Door	2F1DFCF8
+Round Wooden Window Frame	E6A98463
+Round-Billed Sailer	FB867A98
+Royal Boots	10EF81F1
+Royal Crown	C7E407B5
+Royal Decree	CAD1E51D
+Royal Doublet	FD9BD180
+Royal Gloves	46FBF837
+Royal Gloves	811D08D3
+Royal Gloves	BEEFBCB2
+Royal Gloves	DD66C03B
+Royal Pants	75369F67
+Rubble	4AF862A6
+Ruffian's Axe (1)	6E618213
+Ruffles	A787938E
+Rune Apprentice's Sword (1)	50EFD0EB
+Rune Master's Sword (1)	39F222DA
+Runes (5)	41A792DC
+Rust And Rose	8AF97FFB
+Rust	9B71E58A
+Rustic Banquet Table	D959832B
+Rustic Bed	AEA2084F
+Rustic Bench	A96D4873
+Rustic Chair	D7B6BF62
+Rustic Door	56A6E8A5
+Rustic Door	EE3267E1
+Rustic Side Table	15D47ED8
+Rustic Table	268B82CA
+Rustic Window Frame	42B0236B
+Rustic Window Frame	541D931A
+Rusty Greatsword (1)	3F84DC30
+Rusty Short Sword (1)	466DB1E9
+Rusty Sword (1)	2B76680F
+Sacred Vukah Scroll	A03195A9
+Sacrificial Vukah Dagger (1)	AA838C04
+Sacrificial Vukah Dagger (11)	B94D9036
+Sacrificial Vukah Dagger (16)	3FEC3D70
+Sacrificial Vukah Dagger (21)	44E25E72
+Sacrificial Vukah Dagger (26)	C0A2FD74
+Sacrificial Vukah Dagger (36)	7233FECB
+Sacrificial Vukah Dagger (6)	343C0370
+Sacrilegious Steelsword (1)	53A5AF1E
+Saffron (25)	DC4F0FED
+Saffron Plant	95C758FF
+Saffron Seedling	549801D8
+Sage Boots (20)	35CF5FFF
+Sage Boots (20)	D7873EDC
+Sage Gloves (20)	5AD542C1
+Sage Gloves (20)	6AC0F96B
+Sage Headwrap (20)	490B0480
+Sage Headwrap (20)	CEF54170
+Sage Leaves	D4577120
+Sage Pants (20)	67907DFF
+Sage Pants (20)	BDC46498
+Sage Plant	EB618D9C
+Sage Seedling	EF8839E2
+Sage Tunic (20)	5AFD539A
+Sage Tunic (20)	740E2F5B
+Salon Sign	261CA28F
+Salon Sink	2BFE8A22
+Salon Stool	ED879886
+Salt (5)	5D3EF433
+Sand Throne	D5DC24E0
+Sand	94A506E7
+Sandstone Brazier	77719AD6
+Sandstone Fence Corner	3AF4071A
+Sandstone Fence	9165B722
+Sandstone	538B2F00
+Sandstorm Swiftblades (1)	1D24B9EA
+Sapphire	54868769
+Satin Strings	673ACF25
+Saturated Blue Hair	CE09C5E2
+Saturated Green Hair	FA00772A
+Scaffold II	1D612AFB
+Scaffold I	794F9722
+Scales (25)	F321A3A6
+Scarab (40)	29BE0169
+Scare Crow	AF23A770
+Scavenger Bonfire	0651A65B
+Scavenger Gong	A8A4FE2D
+Scavenger Matron Helmet	D50CC32C
+Scavenger Matron Trophy	B10F88C4
+Scavenger Miner Axe (1)	8E40910A
+Scholar Of The Empyrean Boots	4C52BE82
+Scholar Of The Empyrean Boots	C7FC7752
+Scholar Of The Empyrean Cloak	13DE860B
+Scholar Of The Empyrean Cloak	5121541A
+Scholar Of The Empyrean Gloves	1FA0497D
+Scholar Of The Empyrean Gloves	58191924
+Scholar Of The Empyrean Helmet	E3C8870E
+Scholar Of The Empyrean Helmet	E8FF99A8
+Scholar Of The Empyrean Pants	80D8872E
+Scholar Of The Empyrean Pants	96770FA0
+Scholar of the Young Flame Boots	C3F3B180
+Scholar of the Young Flame Cloak	F39B17C5
+Scholar of the Young Flame Gloves	F593CF73
+Scholar of the Young Flame Helmet	C716B5BD
+Scholar of the Young Flame Pants	43CE7009
+Scholar's Wand (1)	70E0BDC2
+Scientific Instruments	356376C4
+Scorching Wand (1)	E589D7A4
+Scout Boots (5)	63F5425F
+Scout Boots (5)	EE3271F8
+Scout Chest (5)	3D93049F
+Scout Chest (5)	F5336159
+Scout Gloves (5)	44DF7CF4
+Scout Gloves (5)	7590BBBE
+Scout Hood (5)	9811DD43
+Scout Hood (5)	C400A0EF
+Scout Pants (5)	4A123D29
+Scout Pants (5)	962C821E
+Scrap Arrow (8)	6715C2DD
+Scrap Bowl	773413F1
+Scrap Bucket	E02D7902
+Scrap Cage	BB028D4D
+Scrap Cup	79FD36DE
+Scrap Jug	373C6630
+Scrap Ladle	D2D4F672
+Scrap Pan II	2883B80F
+Scrap Pan I	7454BCAB
+Scrap Platter	08A25D2B
+Scrap Pot III	7A8ED144
+Scrap Pot II	4F926E10
+Scrap Pot IV	AF5E90E1
+Scrap Pot I	9F9B500E
+Scrap Pot VI	C307B977
+Scrap Pot V	C1A0F6AA
+Scrap Standing Torch	4705F051
+Scrap Vat II	F625AEF9
+Scrap Vat I	B9093B3D
+Scrappy Axe (5)	A78E2D44
+Scrappy Crate	CB1A34C0
+Scrappy Greatsword (1)	8076B247
+Scrappy Pickaxe (5)	0F4BF035
+Scrappy Sword (5)	4C0D3E02
+Sea Urchin Cluster	E0F07F01
+Seafoam	FF860545
+Seafood Grill	36B56875
+Seared Fish Cutlet	06818A26
+Seared Fish Filet	6CDF6AB0
+Secret Ancient Door	EFA32D23
+Secret Basement Door	89B860E0
+Secret Bookshelf Door	BE6CEE35
+Secret Castle Door	0155A380
+Secret Crude Wooden Bookshelf Door	829A5E69
+Secret Flintstone Door	9BB4064B
+Secret Granite Door	7B975788
+Secret Limestone Door	397EED6A
+Secret Polished Granite Door	65E7E0A4
+Secret Red Marble Door	4D1823F1
+Secret Sandstone Door	D9850508
+Secret Shell Limestone Door	97775EAD
+Secret Stair Passage	B5DBA830
+Secret Stone Door	B9566676
+Secret Stone Floor Passage	6C614AB0
+Secret Temple Door	A9D61B21
+Secret Wooden Door	72441CC8
+Secret Wooden Floor Passage	11A9085F
+Sediment	D018A3A2
+Seedbed	AB204788
+Serpent Warrior Boots	D9935F53
+Serpent Warrior Chest	4BE793B3
+Serpent Warrior Gloves	B9C15FBA
+Serpent Warrior Helmet	43041835
+Serpent Warrior Pants	A55FD19F
+Shades Of Red	31D021F9
+Shadowbane (1)	FA85A3E3
+Shadowbloom (25)	0FF44BE6
+Shadowbloom Wrap	9E9E9F2C
+Shadowtail	30B2CB93
+Sharktooth Greatsword (1)	367552FC
+Sharp Shark Tooth	A06D792C
+Sharpened Broadsword (1)	E556E9DD
+Sharpshooter Boots (15)	08F7826C
+Sharpshooter Boots (15)	5B9B6120
+Sharpshooter Gloves (15)	04416CCE
+Sharpshooter Gloves (15)	9B2160A8
+Sharpshooter Hood (15)	AA96C026
+Sharpshooter Hood (15)	DBFD17D3
+Sharpshooter Trousers (15)	634F0B88
+Sharpshooter Trousers (15)	D74E55AB
+Sharpshooter Vest (15)	11022FB1
+Sharpshooter Vest (15)	115DB875
+Shell Limestone Block	9A3A5DF7
+Shell Limestone Road Block	1210CAD0
+Shell Limestone Shingles	FC67354F
+Shell Limestone	6E80EC0B
+Shellbreaker Daggers (1)	ABD0CE53
+Shepherd's Lightning (1)	C8F9131D
+Shepherd's Staff (1)	44FAD060
+Shield (1)	FB2AB2C2
+Shield Rack	87CE6A14
+Shield Wall Emblem II	0D282CEE
+Shield Wall Emblem I	8267A089
+Shield Wall Mount	0D0899EF
+Shield of Light (20)	9A07AE22
+Shield of Light (20)	B62FA3D7
+Shiitake Mushroom	C7F4B939
+Shiitake Seedling	1908C009
+Shimmerfin	77800C7D
+Shivering Skeans (1)	6E56B6F0
+Shivs (1)	11F8AE5B
+Shock Wisp (38)	17A7D038
+Shockfin	81BC1E18
+Shocking Ice Wand (1)	F8A24363
+Short Sword (1)	A461A4C3
+Shortcrust Pastry Base (18)	D7772BB2
+Shovel Garden Gnome	13DC3BC7
+Shroud Adhesive (18)	3E69D113
+Shroud Arrow I (14)	E036AEB0
+Shroud Arrow II (34)	FB2F04AE
+Shroud Beam Channel (28)	80613B7F
+Shroud Core (5)	5B1C6F3A
+Shroud Corrupted Hammer (1)	DE4F581C
+Shroud Flayer Seedling	538598E6
+Shroud Gelatin (18)	146404A7
+Shroud Infused Farm Soil	C0D07356
+Shroud Liquid (5)	334C64A4
+Shroud Meteor (25)	EAE19975
+Shroud Meteor Shower (2)	079E249C
+Shroud Mushroom (13)	FC1EE8C6
+Shroud Nexus (18)	25D14A91
+Shroud Particles (18)	D7EDC544
+Shroud Radiance (40)	32E53CE5
+Shroud Relic (40)	D5793269
+Shroud Sack (13)	6701C6E0
+Shroud Sand (25)	45E22BF5
+Shroud Slime (25)	6B782B38
+Shroud Sludge (40)	707C2F8C
+Shroud Spores (5)	98946174
+Shroud Survival Flask	6A466200
+Shroud Vapor (33)	228B846F
+Shroud Weaver (1)	BE4DD183
+Shroud Weaver (21)	501249EE
+Shroud Weaver (26)	D4D8FADF
+Shroud Weaver (36)	60A9983D
+Shroud Wood (5)	4EBB5403
+Shroud Wood Block	99E546CC
+Shroudbinder Wand (1)	BD3B0CEC
+Shrub Seedling	F13E32E2
+Sickle Greatsword (1)	0DC79FB1
+Sigil Ring of the Elder Guard (5)	C8CC5263
+Signpost Pole	5738D7EF
+Silent Echo	9BC011AF
+Silver Bars (33)	A3B498FE
+Silver Bowl	F86CAFD8
+Silver Candleholder	B8FB7C73
+Silver Chalice	A1FC56D0
+Silver Chest	6A9ED1BD
+Silver Cup	2EF0560C
+Silver Dust (33)	DE3F8398
+Silver Jug	13CD1626
+Silver Key	DF708DA9
+Silver Ore (33)	C017A732
+Silver Platter	203382FC
+Silver Storm (1)	F5A0652D
+Silverback	9A248157
+Silvernight Greatsword (1)	5F04174F
+Silvershot Bow (1)	F418CFB2
+Simple Coffin Lid	09962278
+Simple Coffin	A2AA0819
+Simple Fishing Bait (5)	BBD82249
+Simple Fishing Rod	195DB0E6
+Simple Tropical Wood Fence with Ropes II	7D5B5FC7
+Simple Tropical Wood Fence with Ropes I	094D99DE
+Simple Wood Support	85AA8291
+Simple Wood Support	9A38F243
+Simple Wood Support	D3FFCBD5
+Simple Wood Support	E0065B0A
+Simple Wooden Fence	DA6E9D11
+Simple Wooden Handrail	BCC0679A
+Simple Wooden Pole	BAB187E7
+Single Gastropod	557E471E
+Single Roof Block 0,5m	BB045990
+Single Terrain Block 0,5m	C262D78E
+Single Wall Block 0,5m	766DA1DB
+Sinister Crescent Staff (1)	D99B6CAC
+Siren Seeker Chest	6CF3594C
+Siren Seeker Chest	766DD5BF
+Siren Seeker Gloves	6204EF1F
+Siren Seeker Gloves	942B5B22
+Siren Seeker Headband	46083B8F
+Siren Seeker Headband	9A9BC130
+Siren Seeker Pants	58978B25
+Siren Seeker Pants	F4163E2B
+Siren Seeker Sandals	1A2B0D76
+Siren Seeker Sandals	632D8E9B
+Skill Point	F2AD8315
+Skull Candle	5907DBE2
+Skull Splitter Axe (1)	A5E5109A
+Skull Stalker Chest (40)	BD4321D3
+Skull Stalker Chest (40)	FED1DBBC
+Skull Stalker Gloves (40)	01A3E825
+Skull Stalker Gloves (40)	20705E87
+Skull Stalker Helmet (40)	40A6BC53
+Skull Stalker Helmet (40)	ED669142
+Skull Stalker Pants (40)	A62238AD
+Skull Stalker Pants (40)	AE6AEB13
+Skull Stalker Shoes (40)	03BAEBD9
+Skull Stalker Shoes (40)	C8029B4C
+Skull Summoning Vessel (15)	BA3DD356
+Skull Trophy III	4902AAFC
+Skull Trophy II	F4D6C7C3
+Skull Trophy IV	23289409
+Skull Trophy I	39DD25D5
+Skull Trophy VI	B56155D5
+Skull Trophy V	29A3EC87
+Sleek Daggers (1)	176B175C
+Small Ancient Plant Pot	1A6CFB99
+Small Backpack	DE38058E
+Small Backpack	FC3D5C4C
+Small Bamboo Baordwalk	7A80D96C
+Small Bamboo Window II	15566842
+Small Bamboo Window I	29684173
+Small Boreal Wood Cupboard	02F24FC3
+Small Boreal Wood Sideboard	BC6440C9
+Small Castle Sideboard	8F658C7A
+Small Castle Table	D139A4D5
+Small Chest	0CC076A8
+Small Crypt Cabinet	3EC4E8B6
+Small Crypt Cupboard	9DF06080
+Small Crypt Sideboard	4A68A47E
+Small Crypt Table	959D99FB
+Small Decorated Tree	85CF215D
+Small Elegant Sofa	E3778BEE
+Small Flask	6378C25C
+Small Hollow's Eve Pumpkin III	66FD35EB
+Small Hollow's Eve Pumpkin II	CF03C931
+Small Hollow's Eve Pumpkin I	C96DEFCA
+Small Magic Chest	F1147751
+Small Mortar	F9A2A56F
+Small Palm Wood Cabinet	43316A62
+Small Palm Wood Cupboard	23D6803E
+Small Plant Pot	70323767
+Small Polished Wooden Cabinet	0735BAFA
+Small Polished Wooden Cupboard	7B7F89FE
+Small Salon Mirror	0CB4A72D
+Small Set of Vials	B3E99582
+Small Shape	1A2BF7B0
+Small Shape	B098ACB2
+Small Silver Brazier	6459EB59
+Small Steel Barrel	70D9DBA3
+Small Steel Brazier	6E5DF5BD
+Small Stone Arc	020BA0EB
+Small Stone Brazier	89FACC67
+Small Throne Room Brazier	488F4F47
+Small Wall Mounted Silver Lamp	734646C7
+Small Wall Mounted Steel Brazier	2578D907
+Small Water Wheel	515A691E
+Small Windmill Sails	B081F2C8
+Smaller Sea Lily Fossil	0D10D9FF
+Smelter	08C2ACCB
+Smithing Tools	26051D2D
+Smooth Stone Road Block	1348363C
+Snakespine Wand (1)	22160F1F
+Snap Trap	B420D78F
+Snow Lantern	52C57A14
+Snow	9780DEA7
+Snowball	F378891E
+Snowfall	1BEE2D9F
+Snowflake Splicer (1)	25C3D403
+Snowpal Child	DBC31FDF
+Snowpal Dad	D391FF5C
+Snowpal Mom	CA2CABE7
+Soldier Boots (20)	24F5302D
+Soldier Boots (20)	61BD1055
+Soldier Chestplate (20)	5D6694EE
+Soldier Chestplate (20)	E80A6097
+Soldier Gloves (20)	58228A4C
+Soldier Gloves (20)	F402F8E4
+Soldier Helmet (20)	33E86F30
+Soldier Helmet (20)	B84763E1
+Soldier Shield (20)	25CB7116
+Soldier Shield (20)	D87F815C
+Soldier Trousers (20)	701500F7
+Soldier Trousers (20)	B71E5E65
+Solid Foundation	43BA5D62
+Soothsayer (1)	96B58BA1
+Soothsayer (16)	6655329E
+Soothsayer (21)	8E36427E
+Soothsayer (26)	9F434B2D
+Soothsayer (36)	86C0C7C6
+Spark (5)	5B9329B8
+Sparkling Dark Crystal	04DFEFA2
+Sparkling Dust (45)	32555998
+Special Ability	19CFDC48
+Special Ability	9A98CBEF
+Spectral Ward (5)	0C0A1710
+Spectral Ward (5)	53BF5455
+Spellbreaker Boots (20)	BCC8BEE1
+Spellbreaker Chest (20)	D45D5004
+Spellbreaker Gloves (20)	5CF665F9
+Spellbreaker Hat (20)	AFCB850D
+Spellbreaker Pants (20)	D1FE6984
+Spice (25)	431EB948
+Spiced Tea	4B50D6AA
+Spider Gland (5)	4842A81F
+Spider Web III	A21BEB57
+Spider Web II	A1E6D6F8
+Spider Web IV	C7B598EC
+Spider Web I	012908A8
+Spiked Club (5)	765E1C9D
+Spiked Greatsword (1)	57488717
+Spine Of Dalszul (1)	E7A6BA03
+Spine Splinter (1)	E45D39C6
+Spinechill Axe (1)	3D6423F6
+Spinning Machine	7D412833
+Spinning Wheel	2AF2BAC2
+Spiral Iron Stairs	6046B32E
+Spiritual Cane (5)	D2C882C0
+Splash Dash	E0B753E2
+Springlands Dirt	5CDEF690
+Springlands Rubble	FC54EB18
+Square Plant Pot	05F1C4DB
+Staff (3)	482345A2
+Staff Of Reeds (1)	AF94A897
+Staff Of The Moor (1)	0CFAB0A5
+Staff Of The Serpent (11)	6F56D711
+Staff Of The Serpent (16)	03746CA8
+Staff Of The Serpent (21)	56B28FBC
+Staff Of The Serpent (26)	AE308A6D
+Staff Of The Serpent (36)	76A35832
+Staff Of The Serpent (6)	BAA654CB
+Staff Of The Serpent (8)	E1ADBB3C
+Staff Wall Mount	412B39A3
+Staff Weapon Rack	FF235070
+Staff of Guidance (1)	5B571414
+Staff of the Ram (1)	1EB7015D
+Staff of the Taurus (1)	7BE0E800
+Stair	67B8D5A6
+Stair	762F8C7B
+Stair	7DB28B0C
+Stair	D5255352
+Standing Crypt Coffin	0D208A23
+Standing Lantern	D2D07F0B
+Standing Target	55885961
+Standing Torch	0086EA26
+Standing Wooden Barrel	F1B0E464
+Stapelia Starflower (33)	12831338
+Starlight Block	290E46D8
+Statue of Queen Pikemead	FB191265
+Steel Arrow (32)	D42AEDF2
+Steel Axe (30)	A91825CE
+Steel Bars (33)	BC1D395A
+Steel Bucket	FEBBA8F2
+Steel Chandelier	274CF3B0
+Steel Fence Pole	5252BFAA
+Steel Fence	7042066A
+Steel Handrail	39535DF5
+Steel Hanging Lamp	360BF756
+Steel Moon Axe (1)	5F81A25D
+Steel Pickaxe (30)	E8C9B19B
+Steel Portcullis	0D2B4E5E
+Steel Standing Lamp	9B51CA99
+Steel Wall Lamp	3A9D3ADC
+Steep ramp 2m	4CAF7966
+Steep ramp 4m	B1B54C2C
+Stepped Wall	1B4AB9F2
+Stepped Wall	7CF340D4
+Stinging Nettle	888C46FD
+Stir-Fried Vegetables	41EBB2D4
+Stone Banquet Table	A0EFFB7C
+Stone Bed	CB98767D
+Stone Bedside Table	B064EB3C
+Stone Bench	C5ED2726
+Stone Chair	571A881F
+Stone Column Base	2811E600
+Stone Column Block	BD8E69D9
+Stone Column	FC61D6BC
+Stone Door	0CA79964
+Stone Double Door	29572962
+Stone Fireplace	DB356AAA
+Stone Lavatory	66423A82
+Stone Shingle Roof Block	654A9AFA
+Stone Shower	7B775056
+Stone Side Table	AAA17D58
+Stone Sink	30F4280A
+Stone Table	B2612367
+Stone Window Frame	DCA0915D
+Stone	25A43C2F
+Stonewrought Sword (1)	F6BB631E
+Stormbound Staff (1)	31DDC7FA
+Straight Roof Top End	5FD9B5AF
+Straight Roof Top End	9D527E78
+Straight Roof Top	026EE372
+Straight Roof Top	C0ED178A
+Straw (18)	E9BA3050
+Straw Mat	4D27C4B0
+Straw Pile	8DA5DEF1
+Straw Roof Block	20DA5E12
+Strawberry Cake	0FCB5281
+Strawberry Milkshake	1A336C0A
+Strawberry Seedling	F93D5C42
+Strawberry	CF65EBD7
+String (5)	18FEB214
+Stripetail	34EB7B8B
+Stun Arrow (18)	8D55F4F2
+Sugar Cane Seedling	0214ABC0
+Sugar Cane	9270781A
+Sugar	6B58413A
+Sulfur (25)	A811BD6E
+Summer Games Bangles	3F6D75D3
+Summer Games Boots	2BC19CE3
+Summer Games Cropped Top	9772BE61
+Summer Games Headband	6A5B0CE2
+Summer Games Pants	D51FB2C2
+Summit Greatsword (1)	113857D8
+Summoning Staff	46783E00
+Sun Axe (1)	DDB0FB84
+Sun Hammer (1)	EAA67E40
+Sunbeam (1)	9EFC077F
+Sunny Loungewear Boots	F50A003C
+Sunny Loungewear Garb	E703CEE8
+Sunny Loungewear Pants	0DDD3987
+Sunpiercer Chestplate (40)	743BEC2B
+Sunpiercer Chestplate (40)	97C78C69
+Sunpiercer Gloves (40)	207A40CB
+Sunpiercer Gloves (40)	5A6F7C4B
+Sunpiercer Helmet (40)	5D2A2171
+Sunpiercer Helmet (40)	DD688A5E
+Sunpiercer Pants (40)	1652001C
+Sunpiercer Pants (40)	48788F2F
+Sunpiercer Shield (40)	29FD729E
+Sunpiercer Shield (40)	AAB15E29
+Sunpiercer Shoes (40)	136FE25D
+Sunpiercer Shoes (40)	6A10B90F
+Sunscale	CD5B8CD2
+Superior Health Potion +	325D044E
+Superior Health Potion	8F5B4BA7
+Superior Mana Potion +	BDB3BC70
+Superior Mana Potion	002F1E04
+Superior Ring of Health (20)	7822499D
+Superior Ring of Mana (20)	0E821068
+Superior Ring of Stamina (20)	A044CD03
+Supply Sacks III	41EA14C8
+Supply Sacks II	52D5525F
+Supply Sacks IV	A7CD9777
+Supply Sacks I	68807EDF
+Supply Sacks V	DE604DC8
+Support Strut	B0C3617B
+Sushi	D25CABBE
+Sweet Mokka	2528CB97
+Swimfins (40)	2266CF18
+Sword Garden Gnome	A5674247
+Sword Of The Serpent (11)	3F1E8A78
+Sword Of The Serpent (13)	7CC161A1
+Sword Of The Serpent (16)	F15A4CD0
+Sword Of The Serpent (21)	5FB64428
+Sword Of The Serpent (26)	C23BFED5
+Sword Of The Serpent (36)	999B0497
+Sword and Shield Rack	CD862ACC
+Sword of Radiance (1)	D295E211
+T6 MultiClass Skeleton Armor Boots name (40)	407889B3
+T6 MultiClass Skeleton Armor Chest  name (40)	FC8A8171
+T6 MultiClass Skeleton Armor Hands name (40)	0C425FD2
+T6 MultiClass Skeleton Armor Helmet name   (40)	E1554899
+T6 MultiClass Skeleton Armor Legs name (40)	26077C3B
+T7 AncientLand Dirt	904F2433
+T7 AncientLand Rubble	A5B43CB6
+T7 AncientLand Sand	E87199FA
+T7 material Ancient Land granite stone	A9F5926E
+T7 material stone	34C2682C
+Table Saw	FD32F816
+Tainted Axe  (1)	BF092A48
+Talion's Bow (1)	9ECD0C33
+Talion's Bow (11)	E7A39749
+Talion's Bow (16)	961390F8
+Talion's Bow (21)	EF698423
+Talion's Bow (26)	56AB8C04
+Talion's Bow (36)	32CADE6F
+Tall Crypt Fence	6B408672
+Tall Stone Brazier	06C28758
+Tank Boots (10)	38579478
+Tank Boots (10)	F907C2A4
+Tank Chestplate (10)	540016FB
+Tank Chestplate (10)	5CBDA3D9
+Tank Gloves (10)	218BEABC
+Tank Gloves (10)	425E32CF
+Tank Helmet (10)	3BD1E3B1
+Tank Helmet (10)	88AA0624
+Tank Trousers (10)	045023EE
+Tank Trousers (10)	9599551A
+Tanning Station	ACF37E75
+Tar (5)	66332507
+Taro Plant	8CF67C28
+Taro Root Curry	F5D5C5E2
+Taro Seedling	BE85212E
+Tarpaulin Corner	D56E6054
+Tarpaulin	83A416B5
+Tarred Bow (1)	3F888D3E
+Tarred Shingle Roof Block	D0CB20E6
+Tarred Straw Block	CA09EDCA
+Tarred Wood Block	6EABEF99
+Temple Keeper's Bow (1)	47FD72B1
+Temple Stones	C9829D2A
+Thaumaturge Boots (30)	8E8C7846
+Thaumaturge Boots (30)	CB5EB883
+Thaumaturge Chest (30)	2853BD83
+Thaumaturge Chest (30)	F111DFB1
+Thaumaturge Gloves (30)	B2443021
+Thaumaturge Gloves (30)	CB192526
+Thaumaturge Hat (30)	088982B9
+Thaumaturge Hat (30)	134ADADA
+Thaumaturge Pants (30)	10C207E4
+Thaumaturge Pants (30)	43EFE91F
+The Dragons' Map	8DEC1E0C
+The Dragons' Map	D01EB1B8
+The Needles (1)	E6E43118
+Thieves Guild	5C4D2F2D
+Thornridge	F1156D69
+Threadbare Pants	ECC1C60C
+Throne Room Floor Lamp	28755194
+Throne Room Wall Brazier	CB5A186E
+Throne Room Wall Lamp	7BEE5541
+Thunderbolt Axe (1)	3812AEBD
+Tidecaller Gloves (40)	F849766F
+Tidecaller Gloves (40)	FE764238
+Tidecaller Headpiece (40)	6B73DA87
+Tidecaller Headpiece (40)	CCAA627C
+Tidecaller Pants (40)	365A690B
+Tidecaller Pants (40)	86374238
+Tidecaller Shoes (40)	72813256
+Tidecaller Shoes (40)	C93D3306
+Tidecaller Tunic (40)	510DCF5B
+Tidecaller Tunic (40)	ACB0EC21
+Tin Bars (18)	3FED66EC
+Tin Ore (18)	DF7D7424
+Tiny Backpack	1FA74ED7
+Tiny Chest	02F09172
+Tiny Plant Pot	B29FCDDA
+Tomato Fish Soup	998983E9
+Tomato Seedling	55C4687E
+Tomato	3DC85885
+Tomb Raider's Bow (1)	391418FB
+Tombstone "Always Loved"	62952439
+Tombstone "Forever In Our Hearts"	AD4A4430
+Tombstone "In Loving Memory"	9FA0D2D5
+Tombstone "Together Again"	047C8FD7
+Tombstone "Until We Meet Again"	EAF36FCC
+Tome of Agony	8F2BA3F3
+Torch (1)	CF128197
+Torchlight Staff (1)	C1E197B0
+Torn Cloth (5)	592F94DF
+Totem Wand (1)	7EAAE516
+Totemhead Mace (1)	1FDBA77E
+Totempole Mace (1)	A86C2785
+Toxic Sack (13)	FFA225B8
+Toxic Slime (5)	5C5FE471
+Trader Hat	3158F848
+Trailblazer Boots (30)	0463B9F2
+Trailblazer Boots (30)	BD122FFC
+Trailblazer Chest (30)	24076798
+Trailblazer Chest (30)	D0EC9BFB
+Trailblazer Gloves (30)	46B42317
+Trailblazer Gloves (30)	C9ECA182
+Trailblazer Hood (30)	3483F155
+Trailblazer Hood (30)	AE056844
+Trailblazer Trousers (30)	3D171550
+Trailblazer Trousers (30)	912A0E12
+Training Doll III	955AF326
+Training Doll II	3243B2A4
+Training Doll I	DBA584BC
+Traitor's Bow (1)	61CD5F05
+Trampoline 	542BC879
+Trampoline 	A9B846F1
+Transcendental Screen (15)	A8273D74
+Transcendental Screen (15)	D0122E38
+Trap Fireball	3BFB207F
+Trap Fireball	5DADB03D
+Trap Fireball	6296479D
+Trap Fireball	68B097C7
+Trap Fireball	75F12CAA
+Trap Fireball	87402383
+Trap Fireball	90F264CE
+Trap Fireball	930DD2A1
+Trap Fireball	AB364284
+Tribal Hammer (1)	A33B1F35
+Tricorn	3B8F9F33
+Trilobite Imprint	1AE99DAA
+Trilobites	6766CAE6
+Tropical Wood (40)	4C7CDFD3
+Turquoise Eyes	BF6DB75B
+Turquoise Hair	5E5CD067
+Twigs (1)	6B356A28
+Twilight Bloom	B19E3B13
+Twin Soul Mace (1)	63E7142C
+Twisting Wand (1)	9915E663
+Two-Handed Melee Weapon Rack	5AA8D538
+Two-Handed Melee Weapon Wall Mount	80061C96
+Two-colored Lily Flower	7275CFF3
+Tyger	F86045BE
+Ultimate Health Potion +	92BED6C3
+Ultimate Health Potion	1D4A13CA
+Ultimate Mana Potion +	3091E277
+Ultimate Mana Potion	ADD3544B
+Ultimate Ring of Health (40)	04569257
+Ultimate Ring of Mana (40)	C33D304E
+Ultimate Ring of Stamina (40)	F32F9AFD
+Uncommon Fishing Bait (13)	963E5039
+Uncooked Fae Deer Milk	77F6897A
+Undergrowth Staff (1)	4AD17068
+Underwater Grappling Hook	C64094BB
+Underwater Luminous Growth	3FABF120
+Underwater Mud	3511D2E8
+Underwater Overgrowth (40)	5AAF850A
+Urn	C42C0E92
+Valiant Shield (10)	18F9FAED
+Valiant Shield (10)	80BB0B51
+Valor Heart Daggers (1)	A0FC0934
+Valor Heart Daggers (11)	67116FFE
+Valor Heart Daggers (16)	A91B910F
+Valor Heart Daggers (21)	DD8EFF60
+Valor Heart Daggers (26)	7597398C
+Valor Heart Daggers (36)	6FAE0399
+Valory	419AF480
+Vaporous Staff (1)	A3E4625D
+Vat III	A6C322A1
+Vat II	BBF40D5B
+Vat I	0BD0BBC4
+Vault Door	125CC963
+Vegetable Puree	A6807B30
+Vegetable Soup	B5CA45F6
+Veil Of Blues	17533BB4
+Veilrift Axe (1)	50D4A0C8
+Veilwater Basin Boardwalk II	473C86E7
+Veilwater Basin Boardwalk II	F0FC11E4
+Veilwater Basin Boardwalk I	01FF4763
+Veilwater Basin Boardwalk I	075FEBE1
+Veilwater Basin Boardwalk I	27E95D18
+Veilwater Basin Boardwalk I	3D709743
+Veilwater Basin Dirt	F41A6341
+Veilwater Basin Rubble	86414DA8
+Veilwater Basin Sand	82001BBA
+Venom Stinger (40)	9CEA65F0
+Venomkiss (1)	AF0225AE
+Verily Verdant	E4FDE83A
+Vertical Banner III	D03117EB
+Vertical Banner II	D005FBE4
+Vertical Banner IV	CAC281A3
+Vertical Banner I	6E1ED117
+Vesztah's Mace (1)	972BE6F0
+Village Oak	61B90EF7
+Violet Decorative Box	7A741026
+Violet Fabric (33)	D1EF11EB
+Violet Party Hat	2226757B
+Violet Storm (2)	5E811303
+Voidcaller (1)	466AD79E
+Vorgoth's War Banner II	2714C532
+Vorgoth's War Banner I	6C8A3B99
+Vukah Brawler Head	8B6B5AFF
+Vukah Brawler Trophy	FAA090E6
+Vukah Nesting Material	D54376B3
+Vukah Shrine	673F5059
+Waggon	F9F81AF2
+Wailing Blade (1)	7265DC3C
+Wailing Blade (11)	0BC292F3
+Wailing Blade (16)	FD80F19D
+Wailing Blade (21)	0EB461AA
+Wailing Blade (26)	1B37A4BE
+Wailing Blade (36)	064693BC
+Wailing Blade (6)	C29F66D7
+Wall Banner	4825F095
+Wall Blocks 1m	10B5C02C
+Wall Drain	42F4A380
+Wall Drain	DB58BCF2
+Wall Lantern	989C5ADB
+Wall Lantern	B3F67666
+Wall Mounted Candleholder	F3BD061C
+Wall Sign	BF61ED97
+Wall Tapestry III	47969BDC
+Wall Tapestry II	DC4E5254
+Wall Tapestry IV	5C270E48
+Wall Tapestry I	1DCF72D7
+Wall Tapestry Piece	863DD8C8
+Wall Tapestry Piece	D6C6BD4C
+Wall Tapestry Showcase	30D78A91
+Wall Tapestry V	8953D990
+Wall Target	96B650DD
+Wall Torch	66F057F6
+Wall	8464A37D
+Wand (3)	DF6897FF
+Wand Of Bloodflow (1)	99007146
+Wand Wall Mount	55E61F29
+Wand Weapon Rack	8D355764
+Wanderer's Boots (5)	E7C3BF66
+Warden Boots (20)	3F1735FC
+Warden Boots (20)	CB0C696E
+Warden Chestplate (20)	180E1BCE
+Warden Chestplate (20)	8E086FB8
+Warden Gloves (20)	3377E914
+Warden Gloves (20)	6D9C27F6
+Warden Helmet (20)	AB177147
+Warden Helmet (20)	EA23307D
+Warden Trousers (20)	20686BF9
+Warden Trousers (20)	E5DBB801
+Warlock Boots (20)	0D1B636F
+Warlock Boots (20)	92BA9025
+Warlock Gloves (20)	6347EFA0
+Warlock Gloves (20)	D973441F
+Warlock Helmet (20)	4718B318
+Warlock Helmet (20)	8EE34154
+Warlock Pants (20)	19098012
+Warlock Pants (20)	5D30576D
+Warlock Shirt (20)	003374AD
+Warlock Shirt (20)	4F588182
+Warm Padding (33)	229744C2
+Warrior Arms (10)	ABB8C2B2
+Warrior Boots (10)	4BEA627F
+Warrior Chest (10)	C4D943F3
+Warrior Helmet (10)	9A16BCFE
+Warrior Trousers (10)	585F68F1
+Water Balloon (10)	5B2973FE
+Water Barrel	1FCAD9DF
+Water Barrier Ground	7659F1F5
+Water Barrier Wall	DCCD11A4
+Water Dispenser	03DEFBA8
+Water Pouch	E4831AD8
+Water Reptile Hide (40)	A82A37BE
+Water Reptile Leather (40)	7AC3DBAC
+Water Trough	FEF6877D
+Water Well	7F5802D9
+Water	F262A2A9
+Watering Can	8EC15337
+Waveborne Ritualist Boots (40)	2937FAF8
+Waveborne Ritualist Boots (40)	E4632ABE
+Waveborne Ritualist Gloves (40)	15B3A625
+Waveborne Ritualist Gloves (40)	CB77F135
+Waveborne Ritualist Helmet (40)	937CA196
+Waveborne Ritualist Helmet (40)	C523001C
+Waveborne Ritualist Pants (40)	106495EA
+Waveborne Ritualist Pants (40)	C8D55DD4
+Waveborne Ritualist Tunic (40)	A2C904A2
+Waveborne Ritualist Tunic (40)	C3A3241F
+Waveleaper	D9BE2E3B
+Waves Of Valor	51689A22
+Wax (5)	5682C2AB
+Wax Torch (3)	E9430638
+Wayfarer Pants (40)	86FA4027
+Weathered Stone Block	53D37532
+Well Block	127C31A5
+Wet Boot (1)	09F2F6D9
+Wheat Grains (18)	91256DD9
+Wheat Seedling	6BFC3047
+Wheel Barrow	3C134978
+Whirlwind Crescendo	8474F607
+Whiskerfin	488815BB
+White Cymbidum Flower	DBD3891D
+White Eyes	74F49B95
+White Flower	0729C036
+White Flower	7F912F16
+White Flower	836B9F44
+White Flower	9874D438
+White Flower	C8B392A8
+White Glowing Substance (5)	EC2EFACC
+White Hair	2011255F
+White Luminescent Block	89B9BB1B
+White Wall Flower	691E75C4
+White Wall Flower	983027C4
+White Wolf Sword (1)	C10E0E09
+Wide Carved Wooden Window Frame	9DC8A25C
+Wide Wall	388C5A32
+Wig Head	0205890E
+Wildheart Seekers (1)	B609840E
+Wildwood Shortbow (1)	85A58FEE
+Window Frame	93EEFCD9
+Window Frame	CF199C14
+Windy Fields	030BC9D5
+Winged Shadow (1)	34D66849
+Winterly Boots	97EAB852
+Winterly Chest	41DA0D72
+Winterly Gloves	F0EE743F
+Winterly Hat	A66C1A7E
+Winterly Pants	732839C3
+Wisp of Light	857A3D9E
+Wisteria (40)	237488FA
+Wizard Boots (10)	569456E4
+Wizard Chest (10)	9F736A04
+Wizard Gloves (10)	EB74A95A
+Wizard Hat (10)	F78E1252
+Wizard Pants (10)	93902676
+Wolf Daggers (1)	5C76C274
+Wolf Pack Axe (1)	F2EE3563
+Wolf's Claw (1)	E10D50CE
+Wolf's Fang Boots (30)	1AB1E3FC
+Wolf's Fang Boots (30)	CE2BA5DA
+Wolf's Fang Chest (30)	0E044AB3
+Wolf's Fang Chest (30)	8470EC05
+Wolf's Fang Gloves (30)	2C53501C
+Wolf's Fang Gloves (30)	E03C67D9
+Wolf's Fang Hood (30)	5DBD0A6B
+Wolf's Fang Hood (30)	7F4EDA12
+Wolf's Fang Shield (30)	18564A92
+Wolf's Fang Shield (30)	ADE15FC0
+Wolf's Fang Trousers (30)	6BCFFD98
+Wolf's Fang Trousers (30)	7F09D4D0
+Wolf's Hydra (1)	20754F9E
+Wolf's Hydra (16)	F49D9A59
+Wolf's Hydra (21)	86F82CFB
+Wolf's Hydra (26)	A89F46D5
+Wolf's Hydra (36)	AB668254
+Wolf's Maw (1)	A5212FEB
+Wolf's Snarl Longbow (1)	29433573
+Wolfsbane (33)	50C4BDFD
+Wolfsbane Plant	7B9B5083
+Wolfsbane Seedling	B3AFB764
+Wood Acid (5)	6177B424
+Wood Banister III	5BE80015
+Wood Banister II	E7BC9422
+Wood Banister I	4C633E94
+Wood Banister VI	8BF8CCD4
+Wood Foundation	234392D9
+Wood Logs (1)	2B0CF1D5
+Wood Planks (13)	60EF3AD1
+Wood Wall III	DAD965A7
+Wood Wall II	589DDFD3
+Wood Wall IV	06638C4D
+Wood Wall I	9EC23A3A
+Wooden Arrow (3)	B03F58C9
+Wooden Banquet Table	1BA4CF9F
+Wooden Bathtub	37B1D5EF
+Wooden Bed	AF3CDCE4
+Wooden Bowl	58BBB7D6
+Wooden Bucket	B93DF332
+Wooden Chair	DD5F8BB9
+Wooden Chest	4D9C3CEE
+Wooden Crate	BF3100EF
+Wooden Cup	792C32BB
+Wooden Door	4E19B997
+Wooden Double Door	C6BE5D11
+Wooden Grate II	6E1275CC
+Wooden Grate I	61A6B083
+Wooden Ladder	93F3CBFA
+Wooden Lavatory	BAF1FB81
+Wooden Palisade III	75E7EA08
+Wooden Palisade II	5F77A482
+Wooden Palisade IV	940A0CD9
+Wooden Palisade I	7EAE1879
+Wooden Palisade VIII	687D2A54
+Wooden Palisade VII	663416A7
+Wooden Palisade VI	A159C902
+Wooden Palisade V	220CCC18
+Wooden Shield (3)	29335B11
+Wooden Side Table	C672CF0D
+Wooden Sink	741D96C3
+Wooden Table	9B3FEB38
+Wooden Tavern Counter	F60B84C2
+Wooden Tooth (1)	D7FA5AE9
+Wooden Window Frame	3D6EB031
+Wool (33)	A91EEFA9
+Workbench	771B4C5D
+Wound Ointment (33)	29DF8CF9
+Yak Feeder	D5966E49
+Yak Food Bait	860C9DC0
+Yak Food	B57E8D1E
+Yak	D5C34DAA
+Yellow Confetti Mortar	98357A1E
+Yellow Cymbidum Flower	BA506BF6
+Yellow Decorative Box	EA576481
+Yellow Eyes	4ABF715A
+Yellow Fabric (25)	CCD6CDEE
+Yellow Flower	09C3BF9D
+Yellow Flower	3060C5DB
+Yellow Flower	483EB2CD
+Yellow Flower	5B02FA4C
+Yellow Flower	5F0C6C77
+Yellow Fountain	E617EA5C
+Yellow Glow Soup	1233CFA4
+Yellow Hair	BC61704F
+Yellow Lily Flower	E60EB0F8
+Yellow Luminescent Block	C403DCAA
+Yellow Party Hat	A3D313D1
+Yellow Wall Flower	AA9BAAF4
+Yellow Wall Flower	D93049B0
+Yellowfin	2E87689F
+Yucca Fruit	77B6F21B
+Yucca Palm Seedling	451BD018
+fertile AncientLand T7 dirt	F1100F2E
+t2 epic ice wand (1)	5F192357
+]====]
+
+local function buildCatalog()
+  local result = {}
+  for line in catalogText:gmatch('[^\r\n]+') do
+    local name, hex = line:match('^(.-)\t(%x%x%x%x%x%x%x%x)$')
+    if not name or not hex then
+      showMessage('Invalid catalog row: ' .. line)
+      return nil
+    end
+    result[#result + 1] = { name = name, hash = tonumber(hex, 16), hex = hex }
+  end
+  table.sort(result, function(a, b)
+    local al, bl = a.name:lower(), b.name:lower()
+    if al == bl then return a.hex < b.hex end
+    return al < bl
+  end)
+  return result
+end
+
+local function pickItem(catalog)
+  local search = inputQuery('FeatherMourn Item Selector',
+    'Enter part of the item name (leave blank to show every item):', '')
+  if search == nil then return nil end
+  search = search:lower()
+  local matches = {}
+  local options = createStringList()
+  for _, row in ipairs(catalog) do
+    if search == '' or row.name:lower():find(search, 1, true) then
+      matches[#matches + 1] = row
+      options.add(string.format('%s   [0x%s]', row.name, row.hex))
+    end
+  end
+  if #matches == 0 then
+    options.destroy()
+    showMessage('No item name matched: ' .. search)
+    return nil
+  end
+  local index = showSelectionList('Select inventory item',
+    'Choose one of ' .. tostring(#matches) .. ' results:', options, false)
+  options.destroy()
+  if index == nil or index < 0 then return nil end
+  return matches[index + 1]
+end
+
+local item, pointerSlot, source, originalHash, originalCount = findCapturedItem()
+if item then
+  local catalog = buildCatalog()
+  if catalog then
+    local selected = pickItem(catalog)
+    if selected then
+      local answer = messageDialog(
+        string.format('Pointer source: %s\nItem address: %X\n'
+          .. 'Old hash: 0x%08X\nOld value at +8: %d\n\n'
+          .. 'Replace selected slot with:\n%s (0x%s)\n'
+          .. 'Set +8 to 1 as in the supplied reference script?\n\n'
+          .. 'Only confirm on a backed-up offline test world.',
+          source, item, unsigned32(originalHash), originalCount,
+          selected.name, selected.hex),
+        mtConfirmation, mbYes, mbNo)
+      if answer == mrYes then
+        -- Fail closed if the selection or either presumed field has changed.
+        local current = readQword(pointerSlot)
+        if current ~= item or readInteger(item) ~= originalHash
+          or readInteger(item + 8) ~= originalCount then
+          showMessage('Inventory slot changed while the selector was open. '
+            .. 'No changes made. Reopen the selector after capturing the item.')
+        elseif not writeInteger(item, selected.hash) then
+          showMessage('Item hash write failed; count not changed.')
+        elseif not writeInteger(item + 8, 1) then
+          local restored = writeInteger(item, originalHash)
+          showMessage('Value at +8 could not be written. '
+            .. (restored and 'Original hash restored.'
+              or 'Hash restoration failed; inspect slot before saving!'))
+        elseif readInteger(item) == nil or
+          unsigned32(readInteger(item)) ~= selected.hash or
+          readInteger(item + 8) ~= 1 then
+          -- Best-effort rollback on verification failure.
+          local r1 = writeInteger(item, originalHash)
+          local r2 = writeInteger(item + 8, originalCount)
+          showMessage('Verification failed. Rollback: '
+            .. ((r1 and r2) and 'both writes attempted successfully.'
+              or 'INCOMPLETE: inspect item slot before saving!'))
+        else
+          showMessage('Memory write verified for ' .. selected.name
+            .. '. In-game item behavior is NOT yet validated.')
+        end
+      end
+    end
+  end
+end
+
+[DISABLE]
+-- One-shot Lua action: no patch or allocated symbols to uninstall.

@@ -1,0 +1,385 @@
+CODE-0042G3C — MULTIPLAYER / QUEST TRACKER EVENT MIGRATION + TRUTHFUL LOCAL-ONLY SEMANTICS
+
+Scope:
+- Architect Toolkit F7 `Render-MultiplayerQuestsPage`
+- Home quest-quarantine telemetry wording only
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change `admin_action_registry.json`.
+- Registry remains 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- add quest or multiplayer gameplay backends;
+- claim remote quest synchronization is blocked;
+- add registry ActionIds for local tracker state;
+- migrate Codex, Map/Wayfinder, Blueprint Browser, or later G3 pages;
+- begin responsive layout work.
+
+GOAL
+
+1. Remove all 4 raw `.Add_Click(...)` source registrations from `Render-MultiplayerQuestsPage`.
+2. Preserve these features as Architect-local tracker/config operations.
+3. Correct UI copy that currently implies real in-game multiplayer quest protection.
+
+SOURCE FACT / TRUTHFULNESS BOUNDARY
+
+Current source only uses `quest_quarantine_enabled` as an Architect preference:
+
+- initialized locally;
+- loaded from `hotkeys.json`;
+- saved to `hotkeys.json`;
+- displayed by Home / quest UI;
+- toggled by the quest UI.
+
+`Save-QuestState` only writes Architect's `quest_state` JSON.
+
+No current source evidence shows:
+- an Enshrouded quest-state write;
+- a multiplayer authority hook;
+- a replication interceptor;
+- remote quest-completion blocking;
+- server/client quest-sync control.
+
+Therefore every G3C event is `UI_ONLY`.
+
+Do not create or enable gameplay AdminActions.
+
+A. GLOBAL LOCAL-TRACKER QUARANTINE TOGGLE
+
+Current raw site:
+`$btnToggleQuar.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.quests.tracker.quarantine.toggle.click`
+
+Page:
+`Entities & Authority`
+
+Operation:
+`Toggle Local Quest Tracker Quarantine`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Preserve the existing local persistence behavior:
+- toggle `$script:activePreferences.quest_quarantine_enabled`
+- mirror `$qState.quarantineEnabled`
+- `Save-QuestState`
+- `Save-ArchitectKeybindings`
+- clear and rerender page
+
+Use a closure-safe handler for `$qState`.
+
+Status text must explicitly say LOCAL TRACKER, for example:
+
+`Local quest-tracker quarantine flag is now ENABLED.`
+
+Do not say the game, server, co-op synchronization, or remote completions were changed.
+
+B. CATEGORY FILTER LOOP
+
+Current raw source site creates four runtime category buttons:
+
+- All
+- Main Flame
+- Artisans & Survivors
+- Exploration & Lore
+
+Classification:
+UI_ONLY
+
+Use exact deterministic EventIds:
+
+- `f7.quests.filter.all.click`
+- `f7.quests.filter.main-flame.click`
+- `f7.quests.filter.artisans-survivors.click`
+- `f7.quests.filter.exploration-lore.click`
+
+Page:
+`Entities & Authority`
+
+Operation:
+`Filter Local Quest Tracker <category>`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Prefer an explicit category->EventId mapping for these four known categories rather than a generic slugger.
+
+Preserve:
+- control Tag = category name
+- `$script:questFilterCategory`
+- `Clear-AdminContent`
+- `Render-MultiplayerQuestsPage`
+
+Use closure-safe handlers.
+
+C. PER-QUEST LOCAL QUARANTINE TOGGLE
+
+Current raw loop site:
+`$btnQQuar.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+For every quest with a stable non-empty `q.id`:
+
+EventId:
+`f7.quests.item.<questId>.quarantine.toggle.click`
+
+Page:
+`Entities & Authority`
+
+Operation:
+`Toggle Local Quest Quarantine <questId>`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Preserve local quest-state JSON behavior only:
+- create local tracker state record when absent;
+- toggle `.quarantined`;
+- `Save-QuestState`;
+- clear/rerender.
+
+Use the button Tag to carry:
+- QuestId
+- StateObj
+
+and use a closure-safe handler.
+
+MISSING-ID FAIL-CLOSED RULE
+
+If `$q.id` is missing/blank:
+- do not invent an EventId;
+- do not mutate the quest object;
+- do not attach a handler;
+- explicitly disable the button;
+- use neutral disabled styling;
+- tooltip/accessibility reason:
+  `Quest tracker action unavailable: stable quest id is missing.`
+
+D. PER-QUEST LOCAL STATUS TOGGLE
+
+Current raw loop site:
+`$btnMark.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+For every stable non-empty quest id:
+
+EventId:
+`f7.quests.item.<questId>.status.toggle.click`
+
+Page:
+`Entities & Authority`
+
+Operation:
+`Toggle Local Quest Tracker Status <questId>`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Preserve local tracker logic:
+- Completed -> In Progress
+- otherwise -> Completed
+- create local state record if absent
+- `Save-QuestState`
+- clear/rerender
+
+Status message must explicitly say local tracker, for example:
+
+`Local tracker quest '<id>' set to <status>.`
+
+Do not say the in-game objective was completed/reset.
+
+Apply the same missing-id fail-closed rule as section C.
+
+E. CORRECT FALSE GAMEPLAY / NETWORK CLAIMS
+
+This is required in the same pass because the source does not support the current claims.
+
+Replace the page presentation so it clearly communicates local-only semantics.
+
+Required concepts:
+
+Header/subtitle:
+- use wording such as `LOCAL QUEST TRACKER & CO-OP NOTES`
+- explain that this page stores Architect-local tracker metadata only
+
+Notice banner:
+- preserve or strengthen:
+  `Local Architect tracker only. In-game quest state and multiplayer quest synchronization are not modified.`
+
+Authority/scope label:
+replace:
+`Authority: CLIENT / CO-OP SESSION`
+
+with:
+`Scope: LOCAL ARCHITECT TRACKER ONLY`
+
+Global badge:
+replace protected/open network language with local flag language, e.g.:
+- `LOCAL TRACKER QUARANTINE FLAG: ON`
+- `LOCAL TRACKER QUARANTINE FLAG: OFF`
+
+Hint:
+replace:
+`remote co-op completions are blocked...`
+
+with:
+`This flag only changes Architect's local tracker metadata. It does not block or alter in-game quest synchronization.`
+
+Global toggle button:
+use truthful local wording, e.g.:
+- `TRACKER QUARANTINE: ON`
+- `TRACKER QUARANTINE: OFF`
+
+Per-quest quarantine button:
+use local/tracker wording, e.g.:
+- `[X] Local Quarantine`
+- `Local Quarantine`
+
+Per-quest status button:
+make local semantics visible, e.g.:
+- `RESET TRACKER STATUS`
+- `MARK COMPLETE (LOCAL)`
+
+F. HOME TELEMETRY TRUTHFULNESS
+
+Current Home telemetry derives from the same local preference and displays:
+
+`QUARANTINE: ACTIVE/OFF`
+
+Change only that text to explicitly local semantics, for example:
+
+- `LOCAL QUEST FLAG: ON`
+- `LOCAL QUEST FLAG: OFF`
+
+Do not alter Home event bindings or layout architecture in this pass.
+
+G. EVENT ID / LIFECYCLE ACCEPTANCE
+
+Expected definitions:
+
+Global:
+- `f7.quests.tracker.quarantine.toggle.click`
+
+Filters:
+- `f7.quests.filter.all.click`
+- `f7.quests.filter.main-flame.click`
+- `f7.quests.filter.artisans-survivors.click`
+- `f7.quests.filter.exploration-lore.click`
+
+For each valid quest id `<id>`:
+- `f7.quests.item.<id>.quarantine.toggle.click`
+- `f7.quests.item.<id>.status.toggle.click`
+
+All:
+- Classification = UI_ONLY
+- ActionId = null
+- LifetimeScope = PAGE
+- Page = `Entities & Authority`
+
+Repeated render must be idempotent:
+- no ambiguous EventIds;
+- no stale PAGE bindings;
+- filter/toggle rerender first clears PAGE content.
+
+H. PRESERVE
+
+Keep unchanged:
+
+- registry 55 / enabled 17 / disabled 38
+- no quest/multiplayer gameplay mutation backend
+- G1 source/offline closure
+- G2 source/offline closure
+- G3A / G3A1 Role Presets closure
+- G3B Settings closure
+- scanner fail-closed
+- position read fail-closed
+- preset orchestration fail-closed
+- skill/parry/world/building fail-closed routes
+- teleport ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch
+- CT catalog = 224
+- schema/adaptor validity
+
+I. TESTS
+
+Run:
+
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. Multiplayer/Quests raw `.Add_Click`: 4 -> 0
+11. raw `Register-SafeUiEvent` = 0
+12. exact global/filter EventId assertions
+13. per-quest EventId uniqueness for every valid quest id
+14. malformed/missing quest-id case:
+    - both action buttons disabled
+    - no handlers
+    - no generated/fallback EventIds
+15. local quarantine toggle persistence:
+    - updates Architect preference and quest-state JSON only
+    - one clear/rerender
+16. local quest-status toggle:
+    - updates local tracker state only
+    - status text says local tracker
+17. page truthfulness assertions:
+    - no claim that remote co-op completions are blocked
+    - no `[PROTECTED]` gameplay claim
+    - no `VANILLA SYNC` claim
+    - explicit local-only / no in-game-sync statement exists
+18. Home telemetry uses explicit local quest wording
+19. G1/G2/G3A/G3B raw closure remains zero
+20. prohibited mutation scan
+
+REPORT
+
+Return:
+
+- files changed
+- Multiplayer/Quests raw count before/after
+- global/filter EventIds
+- per-quest EventId pattern and number produced
+- malformed quest-id behavior
+- exact truthfulness text changes
+- confirmation all four families are UI_ONLY/local state
+- registry counts unchanged
+- lifecycle/truthfulness/UI-smoke results
+- remaining G3 raw counts
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G3D or responsive migration in this pass.

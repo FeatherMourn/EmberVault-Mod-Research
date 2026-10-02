@@ -1,0 +1,15 @@
+CODE-LEGACY-0001
+
+Archived from legacy Architect Toolkit chat during retention pass on 2026-09-16.
+Original thread activity: 2026-09-11 through 2026-09-12.
+Game build context: Enshrouded 0.9.1.2 / revision 1076226 / Hotfix #42 unless otherwise stated.
+
+Purpose: Architect Wand v0.9 pure weapon-wand base
+Artifact: mod_architect_wand_v09_pure_weapon_base.lua
+SHA-256: 24b7829beb28d309b044172ec0ba28d13ba21d845e30519c60e3e062ff61bb39
+Lifecycle/status: PROVEN user-confirmed stable normal wand behavior; historical, not Current.
+
+Retention handoff:
+https://docs.google.com/document/d/1JShRRt60yTcWU_c33JP46gaRCqJxKvmMLR2Sh1jbT3c/edit
+
+Important: This archive is historical append-only evidence. It does not designate or replace Architect_Mod/Current. Current Project Control and Current Engineering State override historical hypotheses when they conflict.

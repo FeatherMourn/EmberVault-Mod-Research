@@ -1,0 +1,309 @@
+Continue Architect Toolkit CODE-0042 from the reconstructed full-package workspace:
+
+C:\Users\JoelT\AppData\Local\Temp\architect-code0042-35e945431cb14cfeb86ba1de87e42726\architect_toolkit
+
+The current Drive overlays are:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json
+
+This pass is CODE-0042D: COMPLETE F7 ACTION-BINDING CLOSURE.
+
+Do NOT begin the broad 11-page responsive-layout migration in this pass.
+Do NOT add new gameplay capabilities.
+Do NOT enable currently disabled/unproven actions.
+Do NOT weaken any existing truthfulness/safety assertion.
+
+Follow Enshrouded Mod Development — Core Method:
+observe -> capture -> map -> validate -> minimally modify -> verify.
+
+==================================================
+CURRENT QUALIFIED BASELINE
+==================================================
+
+Preserve all of the following:
+- PowerShell parses.
+- F7 truthfulness baseline: 53/53.
+- UI smoke baseline: 28/28.
+- UI errors: 0.
+- CT catalog: exactly 224 entries.
+- source_consolidation_catalog.json preserved.
+- cheat_table_1013216_catalog.json preserved.
+- teleport remains ADM-TEST-0002 fail-closed.
+- live Auto Loot remains STARTUP_CANARY_ONLY / unavailable.
+- Glider Flight remains disabled/unqualified.
+- glider-stamina semantic block remains enforced.
+- no PowerShell/F7 direct mutation calls to TogglePatch, EnableAllSurvival, DisableAllSurvival, WritePlayerCoordinates, ToggleAutoLoot, or ToggleGliderFlight.
+- registry currently contains 40 actions.
+- `Register-AdminActionEvent`, `Bind-AdminActionControl`, and `Get-F7ActionBindingAudit` already exist.
+- startup page is now `Home`.
+
+==================================================
+WHY THIS PASS IS NEEDED
+==================================================
+
+The current `Get-F7ActionBindingAudit` only enumerates controls already present in `$script:adminActionControls`.
+
+That means it has no independent denominator and cannot prove zero-gap binding coverage.
+
+Current static inspection of the main F7 renderer region still shows many raw event registrations and only two canonical action-event registrations.
+
+Also, action IDs are not limited to literal calls such as:
+
+Send-CheatCommand "some.id"
+
+There are dynamic dispatch sites such as the Player Vitals `$cheats` table:
+
+Send-CheatCommand $info.Id
+
+The following dynamic UI action IDs are currently missing from the canonical registry and must be evaluated/added truthfully if their F7 controls remain action controls:
+
+- cheat.godmode.toggle
+- cheat.mana.toggle
+- cheat.stamina.toggle
+- cheat.shroud.toggle
+- cheat.durability.toggle
+- cheat.falldamage.toggle
+- cheat.stealth.toggle
+- cheat.oxygen.toggle
+- cheat.cold.toggle
+- cheat.freecraft.toggle
+- cheat.autoloot.toggle
+
+`cheat.parry.toggle` is already represented.
+
+Do not infer that these missing actions are functional. Add truthful disabled entries where current evidence does not support execution.
+
+==================================================
+PRIMARY GOAL
+==================================================
+
+Make every F7 event-bearing control explicitly classifiable as one of:
+
+1. ACTION
+   A gameplay/admin/runtime operation that requests or changes game/admin/runtime state.
+
+2. UI_ONLY
+   Navigation, filtering, search, list/grid selection, view switching, dialog close/cancel, sorting, copying text, opening a folder/wiki, or other presentation-only behavior that does not request a gameplay/admin/runtime action.
+
+Every ACTION control must bind to exactly one canonical ActionId.
+Every ActionId must resolve to exactly one `admin_action_registry.json` action.
+UI_ONLY controls must not be forced into the gameplay action registry.
+
+==================================================
+IMPLEMENT A REAL DENOMINATOR
+==================================================
+
+Extend the registration infrastructure so the runtime can produce a complete machine-readable event/control inventory.
+
+A suitable architecture is:
+
+- `Register-AdminActionEvent`
+  - classifies the control as ACTION
+  - records Page, ControlName, DisplayText, EventName, Operation, ActionId
+  - binds ActionId through `Bind-AdminActionControl`
+  - verifies the registry definition
+  - attaches the safe event only when allowed by the truthful definition
+
+- `Register-AdminUiEvent`
+  - classifies the control as UI_ONLY
+  - records Page, ControlName, DisplayText, EventName, Operation
+  - attaches through `Register-SafeUiEvent`
+  - has no ActionId
+
+You may use another clean design if it provides the same guarantees.
+
+Do not count controls merely by scanning closure text at runtime.
+Identity must be explicit at registration.
+
+Update `Get-F7ActionBindingAudit` (or add a companion audit) so it reports at least:
+
+- totalEventControls
+- totalActionControls
+- boundActionControls
+- unboundActionControls
+- uiOnlyControls
+- missingRegistryIds
+- duplicateRegistryIds
+- ambiguousControlBindings
+- actionId
+- controlName
+- displayText
+- page
+- eventName
+- operation
+- registryEntryFound
+- registryEnabled
+- controlEnabled
+- evidenceStatus
+- backend
+- failureReason
+
+The audit must be able to prove a denominator independent of `$script:adminActionControls`.
+
+==================================================
+MIGRATE THE F7 CONTROL SURFACE
+==================================================
+
+Audit all F7/Admin renderers and event-registration sites, including dynamic loops.
+
+Convert every action-producing F7 control to `Register-AdminActionEvent` or the equivalent explicit ACTION path.
+
+Convert UI-only controls to `Register-AdminUiEvent` or the equivalent explicit UI_ONLY path.
+
+Do not blindly convert every `Add_Click` or `Register-SafeUiEvent` call into an action.
+Classify based on actual behavior.
+
+At minimum inspect:
+- Home / Dashboard quick actions and panic/reset controls
+- Player Vitals / survival badges
+- Player/character/stat controls that dispatch commands
+- Mobility & Navigation
+- teleport/warp/safe-spawn controls
+- Items / Inventory / Crafting / Progression
+- Combat & AI
+- World & Environment / time controls
+- Building & World Editing
+- Entities & Authority
+- Camera & Presentation
+- Mods & Configuration
+- Developer & Diagnostics
+- dynamic Action Registry / command-list controls
+
+Pure navigation/search/filter/list-selection controls stay UI_ONLY.
+
+==================================================
+TELEPORT
+==================================================
+
+The current Warp / custom Warp / Safe Spawn controls call `Invoke-PlayerTeleport`, which correctly fails closed.
+
+Give those controls a truthful canonical action identity if they remain exposed as action controls.
+Prefer one semantic capability such as:
+
+movement.teleport
+
+with coordinates/destination represented as parameters rather than inventing separate action IDs for every button.
+
+The registry entry must remain disabled/unsupported with the current ADM-TEST-0002 reason:
+local-player transform ownership is unresolved and coordinate writes are disarmed.
+
+Do NOT restore any write path.
+
+==================================================
+DYNAMIC PLAYER-VITALS CHEAT IDS
+==================================================
+
+The `$cheats` array generates clickable controls dynamically.
+Each generated control must bind using its `$c.Id` / `$info.Id` canonical identity.
+
+Add missing registry definitions truthfully.
+Do not mark them enabled merely because native mapping strings exist.
+Evidence/backend/authority/readback/revert/failure reason must reflect current canonical project state.
+
+Auto Loot specifically remains startup/canary-only and must not become a live F7 mutation.
+
+==================================================
+DYNAMIC REGISTRY/CATALOG EXECUTION CONTROLS
+==================================================
+
+Where F7 dynamically creates an Execute/Dispatch control from an existing registry action `$cid`, bind the generated control to that exact `$cid`.
+
+If a catalog row is provenance-only and has no canonical executable action, it must not gain an executable control merely to satisfy coverage.
+
+The 224-entry CT catalog remains evidence/provenance, not 224 automatically executable actions.
+
+==================================================
+REGISTRY RULES
+==================================================
+
+Expand `admin_action_registry.json` only where an actual F7 ACTION control requires a canonical identity or an existing canonical action is genuinely missing.
+
+For every new entry:
+- preserve evidence status
+- preserve build scope
+- preserve backend truth
+- preserve authority/risk
+- preserve readback/revert expectations
+- include an explicit failureReason when disabled
+
+Do not mass-enable actions.
+Do not invent backend support.
+Do not infer current-build proof from historical Cheat Engine behavior.
+
+==================================================
+TESTS
+==================================================
+
+Add or strengthen a dedicated F7 binding test in the reconstructed full workspace.
+
+The test must fail if:
+- an ACTION control has no ActionId
+- an ActionId has no registry entry
+- one control has multiple conflicting ActionIds
+- duplicate registry entries exist for the same canonical ActionId
+- an action becomes enabled solely as a side effect of migration
+- prohibited direct mutation calls return
+
+The test should output a compact coverage summary such as:
+
+F7 ACTION CONTROLS: N
+BOUND ACTION CONTROLS: N
+UNBOUND ACTION CONTROLS: 0
+UI-ONLY CONTROLS: M
+MISSING REGISTRY IDS: 0
+AMBIGUOUS BINDINGS: 0
+
+Also rerun:
+- PowerShell parse
+- F7 truthfulness
+- UI smoke
+- UI error check
+- CT catalog count == 224
+- prohibited mutation-call search
+
+Do not weaken existing tests to obtain a pass.
+
+==================================================
+DO NOT DO IN THIS PASS
+==================================================
+
+- no broad responsive page layout conversion yet
+- no new game hooks
+- no new signatures/offsets
+- no player/stat write implementation
+- no live Auto Loot
+- no teleport write
+- no Glider Flight mutation
+- no terrain/prop mutation
+- no multiplayer/quest mutation
+- no arbitrary Lua execution
+- no F8 redesign
+
+==================================================
+DELIVERABLE
+==================================================
+
+Return:
+1. files changed
+2. registry count before/after
+3. enabled vs disabled action counts
+4. ACTION control count
+5. bound ACTION control count
+6. unbound ACTION control count
+7. UI_ONLY control count
+8. missing registry IDs
+9. ambiguous/duplicate bindings
+10. dynamic action IDs added to the registry
+11. teleport canonical identity used
+12. tests run/results
+13. any controls that could not be classified safely, with exact file/line/function and reason
+
+Success for CODE-0042D requires:
+
+unboundActionControls = 0
+missingRegistryIds = 0
+ambiguousBindings = 0
+
+plus all existing safety/catalog/truthfulness baselines preserved.
+
+Do not claim runtime success. This is still an offline/source qualification pass.

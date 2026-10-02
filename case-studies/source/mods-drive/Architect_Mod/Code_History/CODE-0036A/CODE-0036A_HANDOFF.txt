@@ -1,0 +1,50 @@
+CODE-0036A — QoL TemplateResource Runtime Fix
+Date: 2026-09-19
+Game build: 1076226
+Base candidate: CODE-0036 test build
+
+Runtime evidence that triggered this correction:
+[Architect QoL] stack=1901 storage=0 autoLoot=disabled gravity=0 material=0 errors=1
+
+Root cause localized from code + EML evidence:
+1) CODE-0036 requested TemplateResource using the wrong qualified type name:
+   keen::TemplateResource
+   Correct EML type is:
+   keen::ecs::TemplateResource
+2) EML exposes TemplateResource components as Variant objects with .type and .value.
+   CODE-0036 incorrectly treated component Variant objects as the component values directly.
+
+Corrections:
+- P.templateType -> keen::ecs::TemplateResource
+- Added typed componentValue() helper validating Variant .type and returning .value
+- Storage InventorySetup mutation now uses Variant.value
+- AutoLoot donor validation and appended component mutation now use Variant.value
+- Gather-drop mutation now uses Variant.value
+- AutoLoot append path rolls back appended components and donor state on failure
+- Detects/fails closed if mapped-array insert aliases donor components
+- AutoLoot canary updateDelayMs set to 0 to match the current external behavior target
+- Startup log now emits firstError when errorCount > 0
+
+Offline verification in this environment:
+- CODE-0036A static integration suite: PASS (18 checks)
+- Required QoL files present: PASS
+- Nested ZIP count: 0
+- Windows master run_all_tests.ps1: NOT RUN in this Linux environment
+
+Package:
+architect_toolkit_CODE0036A_test.zip
+SHA256: d56bfc319314a431221c3a5e9b3b74f0b45d27ce0fa95e2c74a9963cd560e369
+Size: 22,448,986 bytes
+
+Runtime gate:
+Fresh full restart. Expected log should progress past TemplateResource indexing.
+Target first canary result:
+- stackSizePatched ~1901 (may vary if already-at-target state changes)
+- storagePatched > 0 (target 12 if all exact baseline templates match)
+- autoLootScope = canary
+- gravityPatched = 1
+- materialPatched = 1
+- errorCount = 0
+If errors remain, preserve qol_resource_status.json and the EML log; do not expand AutoLoot to full scope.
+
+Current source was NOT replaced.

@@ -1,0 +1,7 @@
+CODE-0042B HANDOFF
+
+State: registry expanded to 40 actions; two canonical control bindings exist; catalog preservation intact; no runtime claim.
+
+Next: CODE-0042C — complete canonical ActionId binding coverage only. Do not start broad responsive page migration until zero-gap action binding is proven.
+
+Preserve fail-closed teleport, startup-only Auto Loot, disabled Glider Flight, glider-stamina semantic block, native mutation ownership, source catalogs, and 224-entry CT catalog.

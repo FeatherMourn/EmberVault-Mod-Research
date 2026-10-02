@@ -1,0 +1,15 @@
+CODE-LEGACY-0006
+
+Archived from legacy Architect Toolkit chat during retention pass on 2026-09-16.
+Original thread activity: 2026-09-11 through 2026-09-12.
+Game build context: Enshrouded 0.9.1.2 / revision 1076226 / Hotfix #42 unless otherwise stated.
+
+Purpose: Live BuildingPlaceEvent capture v0.6.0
+Artifact: ArchitectToolkit_v0.6.0_LivePlacementCapture.zip
+SHA-256: b2fb54f28afb24c61f9f6e57f70b146b07499834972e10e2b569495a8489163d
+Lifecycle/status: PROVEN observe-only capture hook installed and saw placements; does NOT prove geometry authority.
+
+Retention handoff:
+https://docs.google.com/document/d/1JShRRt60yTcWU_c33JP46gaRCqJxKvmMLR2Sh1jbT3c/edit
+
+Important: This archive is historical append-only evidence. It does not designate or replace Architect_Mod/Current. Current Project Control and Current Engineering State override historical hypotheses when they conflict.

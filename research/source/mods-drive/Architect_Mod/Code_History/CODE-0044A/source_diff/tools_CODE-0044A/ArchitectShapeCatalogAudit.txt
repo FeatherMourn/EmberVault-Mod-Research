@@ -1,0 +1,23 @@
+CODE-0044A ARCHITECT SHAPE CATALOG AUDIT
+Source: src/mod.lua (authoritative Architect-owned definitions)
+Total entries: 12
+Eligible entries: 12 (all are 64 voxels and carrier-compatible)
+Unavailable entries: 0
+Duplicate canonical keys: 0
+Permanent Architect carrier registrations: 1
+
+Key | Dimensions | Voxels | Compatibility | Source
+hollow_ceiling_4m | 8 x 1 x 8 | 64 | AVAILABLE | src/mod.lua
+filled_circle_4m | 8 x 1 x 8 | 64 | AVAILABLE | src/mod.lua
+ring_4m | 8 x 1 x 8 | 64 | AVAILABLE | src/mod.lua
+cross_4m | 8 x 1 x 8 | 64 | AVAILABLE | src/mod.lua
+diamond_4m | 8 x 1 x 8 | 64 | AVAILABLE | src/mod.lua
+diagonal_cross_4m | 8 x 1 x 8 | 64 | AVAILABLE | src/mod.lua
+sphere_2m | 4 x 4 x 4 | 64 | AVAILABLE | src/mod.lua
+filled_cylinder_2m | 4 x 4 x 4 | 64 | AVAILABLE | src/mod.lua
+hollow_cube_2m | 4 x 4 x 4 | 64 | AVAILABLE | src/mod.lua
+stairs_2m | 4 x 4 x 4 | 64 | AVAILABLE | src/mod.lua
+pyramid_2m | 4 x 4 x 4 | 64 | AVAILABLE | src/mod.lua
+archway_2m | 4 x 4 x 4 | 64 | AVAILABLE | src/mod.lua
+
+Unknown metadata is not invented; category/solid-hollow notes are omitted because the source definitions do not authoritatively provide them.

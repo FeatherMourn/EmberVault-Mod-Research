@@ -1,0 +1,46 @@
+CODE-0043G6A RUNTIME UI FIX 1 MANIFEST
+
+Previous candidate:
+architect_toolkit_CODE-0043G6A_candidate_INC0062_final_20260921.zip
+Previous candidate SHA-256: 67B08A63835B4D0FF31F7F03F746D9F2E22BD31014042B1CCB15A8AC4F161A44
+
+New candidate:
+architect_toolkit_CODE-0043G6A_runtimefix1_candidate_20260921.zip
+New candidate SHA-256: 6E24C90E9F15D5AA8DFF3444EBB2EF01FD6557553B1553499CF5293E67DFDB2C
+New candidate size: 66244740 bytes
+
+Install-ready ZIP:
+architect_toolkit_CODE-0043G6A_runtimefix1_GAME_FOLDER_TEST_20260921.zip
+Install-ready ZIP SHA-256: CF3889C7A9A9A559677CC1C560BAC57903EC2E9D3D90B10D3DDC7DD0BF1B827E
+Install-ready ZIP size: 66474378 bytes
+
+New build ID: architect-v040-hybrid-admin-code0043g6a-runtimefix1-20260921
+Version: 0.40.0
+Mode: hybrid_observer_and_admin_mutation
+New DLL SHA-256: D5B5870EF769CD8C872E027361F85848B429F9905DF0F9D84DBC9BA0B6CB89F5
+
+Runtime defects repaired:
+1. Player vital helper registration Boolean output is suppressed so each helper yields one TableLayoutPanel.
+2. Mobility glider +50% LIFT now occupies a dedicated valid fixed-size row cell.
+3. Diagnostics root has a positive runtime height and visible telemetry/phase/Begin/Status/Mark/End hierarchy.
+4. Numeric vital/recovery values are clamped to their declared WinForms bounds during rendering.
+
+Exact files changed:
+- runtime\ArchitectRuntime.ps1
+- runtime\build_identity.json
+- runtime\native\source\ArchitectBuildIdentity.h (generated identity header)
+- runtime\native\ArchitectNativeRuntime.dll and generated build outputs
+- tests\test_g6a_runtime_ui_regressions.ps1
+- tests\test_g6a_contract.ps1, test_f7_truthfulness_g6a.ps1, test_source_consolidation_g6a.ps1, test_ui_smoke.ps1
+- build_scripts\build_dll.py (temporary candidate build root)
+- PREPARE_G6A_RUNTIME_TEST.bat
+- START_ARCHITECT_G6A_TEST.bat
+- README_G6A_RUNTIME_TEST.txt
+
+Registry: 55 total / 17 enabled / 38 disabled / 55 unique command IDs
+CT catalog: 224 entries
+Mutation semantics: unchanged; no movement or stamina mutation added.
+Probe RVAs/spans: unchanged.
+G5B-G5K product semantics: preserved.
+Gate state: OFFLINE_QUALIFIED / RUNTIME_TEST_REQUIRED
+Live proof: not claimed.

@@ -1,0 +1,432 @@
+CODE-0042G5B — RESPONSIVE PLAYER PAGE ONLY
+
+Scope:
+- `Render-PlayerVitalsPage`
+- reuse the G5A responsive helpers
+- temporary responsive/static/UI fixture additions
+- no Mobility migration in this pass
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- DO NOT change `admin_action_registry.json`
+- must remain 55 actions / 17 enabled / 38 disabled
+
+BASELINE
+
+G5A/G5A1 established the responsive Home pattern:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- top-level width managed by `Resize-AdminPageChildren`
+- nested layout owned by TableLayoutPanel/Dock/Margin/Padding
+
+The corrected G4A static zero-gap audit remains the event-regression gate.
+
+The WinForms responsive geometry harness is still not guaranteed to be available.
+If unavailable, report it as skipped rather than passed.
+
+GOAL
+
+Convert `Render-PlayerVitalsPage` from fixed-pixel internal layout to the same responsive model while preserving its current behavior, event identities, canonical gating, and truthfulness state.
+
+This pass is PLAYER ONLY.
+
+DO NOT:
+- migrate `Render-MobilityTravelPage`
+- change any ActionId
+- change any EventId
+- change enabled/disabled state
+- change command handlers or status text
+- change capability qualification
+- add gameplay/native behavior
+- alter Player truthfulness wording
+- touch F8
+- redesign Player functionality
+
+A. RESPONSIVE PLAYER HEADER
+
+Replace the three separate top-level fixed controls:
+
+- `PLAYER VITALS & SURVIVAL OVERRIDES`
+- `Enable All Overrides`
+- `Disable All`
+
+with one responsive top-level header card/table.
+
+Suggested layout:
+- 3 columns
+- title column ~55-60%
+- Enable All ~22-25%
+- Disable All ~18-20%
+
+Title:
+- Dock Fill
+- MiddleLeft
+- AutoEllipsis true
+
+Buttons:
+- Dock Fill
+- small margins
+
+Preserve exact canonical bindings and handlers:
+
+- `f7.player.survival.enableAll.click`
+  -> `cheat.survival.enable_all`
+- `f7.player.survival.disableAll.click`
+  -> `cheat.survival.disable_all`
+
+Preserve all current gating, tooltips, status text, and `Update-AdminCheatBadges`.
+
+Do not change the existing mass-enable gating calculation.
+
+B. VITALS / RECOVERY CARD
+
+Replace `$pnlVitals = New-Panel ...` and all fixed child X/Y positions with one `New-F7ResponsiveCard` containing responsive nested tables.
+
+Keep current approximate card height unless a small increase is needed for minimum-width layout.
+
+Recommended structure:
+
+1. title row spanning all columns
+2. primary-vitals row with 3 equal groups:
+   - Health
+   - Stamina
+   - Mana
+3. recovery row
+4. descriptive footer row
+
+PRIMARY-VITAL GROUPS
+
+Each group should be a nested responsive container/table.
+
+Health group preserves:
+- FILL HEALTH button
+- `$numHp`
+- `Max HP`
+
+Stamina group preserves:
+- FILL STAMINA button
+- `$numStam`
+- `Max Stam`
+
+Mana group preserves:
+- FILL MANA button
+- `$numMana`
+
+Use Dock Fill and percent/AutoSize layout.
+Do not use `.Location` for these controls.
+
+Preserve exact EventIds/ActionIds/handlers:
+
+- `f7.player.health.fill.click` -> `player.health.fill`
+- `f7.player.stamina.fill.click` -> `player.stamina.fill`
+- `f7.player.mana.fill.click` -> `player.mana.fill`
+
+Preserve current `canHeal/canStam/canMana` presentation and tooltips.
+
+Do not add handlers to max-value NumericUpDown controls.
+
+RECOVERY ROW
+
+Lay out responsively:
+
+- HP Rec label + `$numHpRec`
+- Stam Rec label + `$numStamRec`
+- Mana Rec label + `$numManaRec`
+- `$chkZeroSpell`
+- `RECOVERY (UNSUPPORTED)`
+
+Use percent columns or nested groups.
+
+Preserve:
+- NumericUpDown ranges/increments/current values
+- Zero Spell checkbox current state
+- unsupported button disabled/unbound
+
+Do not create EventIds for recovery inputs or the unsupported button.
+
+Footer:
+preserve exact current text and styling.
+
+C. SURVIVAL OVERRIDES CARD
+
+Replace the fixed `$listY` row stacking and fixed child positions with a responsive card.
+
+The card contains:
+- title
+- 12 current cheat rows
+
+Do not change the `$cheats` array or its order.
+
+Recommended structure:
+
+- outer one-column TableLayoutPanel:
+  - title row
+  - one fixed-height row per cheat
+- each cheat row is a Dock=Fill panel/table with 3 columns:
+  - Name ~30-34%
+  - Description ~54-58%
+  - Status badge ~10-14%
+
+Rows may preserve alternating background colors.
+
+NAME/DESCRIPTION
+
+Both labels:
+- Dock Fill
+- AutoEllipsis true
+- sensible internal padding
+- preserve current fonts/colors/text
+
+STATUS BADGE
+
+Preserve exactly:
+- capability lookup
+- unavailable disabled presentation
+- active-state calculation
+- tooltip reason
+- `$script:cheatStatusBadges[$c.Key]`
+- `.Tag = $c` for executable badges
+- current canonical dynamic EventId:
+  `f7.player.survival.<Key>.click`
+- ActionId = `$c.Id`
+- current handler
+- current Page/Operation metadata
+
+Do not bind an unavailable badge merely to make layout uniform.
+
+Do not change capability logic.
+
+Remove:
+- `$listY`
+- fixed row X/Y positioning
+
+D. PRIMARY ATTRIBUTES / WEAPON SCALING CARD
+
+Replace `$pnlAttr` fixed layout with a responsive card/table.
+
+Keep:
+- title
+- six attributes
+- ATTR unsupported button
+- All 50 disabled button
+- five weapon scaling inputs
+- SCALING unsupported button
+- All 2x disabled button
+- footer text
+
+ATTRIBUTES ROW
+
+Preserve `$script:attrControls`.
+
+Recommended:
+- one responsive row/table with 8 logical cells:
+  - STR
+  - CON
+  - DEX
+  - END
+  - INT
+  - SPI
+  - ATTR unsupported
+  - All 50
+
+Each attribute cell should be a nested compact table/container holding:
+- attribute label
+- NumericUpDown
+
+Preserve:
+- GetPlayerAttribute call/fallback
+- min/max/value behavior
+
+Do not attach write handlers.
+
+Remove `$attrX` and fixed `.Location`.
+
+WEAPON SCALING ROW
+
+Use responsive groups for:
+
+- Wand / `$numWand`
+- Staff / `$numStaff`
+- Bow / `$numBow`
+- 2H / `$num2H`
+- Dag / `$numDag`
+- SCALING unsupported
+- All 2x
+
+Preserve all:
+- decimal places
+- increments
+- min/max
+- NativeMemoryEngine current-value reads
+- disabled/unbound buttons
+
+Do not create ActionIds or EventIds for these unsupported controls.
+
+Footer:
+preserve exact current text.
+
+E. NO SEMANTIC DRIFT
+
+This is layout-only.
+
+Do NOT modify:
+- `$cheats` names/descriptions
+- current native read calls
+- status text
+- command handlers
+- `Update-AdminCheatBadges`
+- `Get-CheatCapabilityReady`
+- current Page strings
+- tooltips
+- truthfulness wording
+
+Do not use `[scriptblock]::Create`.
+
+F. ACTIVE PLAYER EVENT IDENTITIES TO PRESERVE
+
+Fixed:
+
+- `f7.player.survival.enableAll.click`
+- `f7.player.survival.disableAll.click`
+- `f7.player.health.fill.click`
+- `f7.player.stamina.fill.click`
+- `f7.player.mana.fill.click`
+
+Dynamic survival rows:
+
+- `f7.player.survival.<Key>.click`
+  with exact existing `$c.Key`
+  and ActionId `$c.Id`
+
+No new Player EventIds.
+No deleted Player EventIds.
+
+G. STATIC RESPONSIVENESS ASSERTIONS
+
+Add fixture checks scoped to the active `Render-PlayerVitalsPage`.
+
+Assert:
+
+1. uses `New-F7ResponsiveCard`
+2. uses `New-F7ResponsiveTable`
+3. no `$listY`
+4. no `$attrX`
+5. no `.Location =` inside active Player renderer
+6. no active `New-Panel <fixed X> <fixed Y> ...` page-card layout
+7. no `[scriptblock]::Create`
+8. exact fixed Player EventIds preserved
+9. dynamic survival EventId expression preserved
+10. unsupported Player controls remain disabled/unbound
+
+Do not inspect comments/archived source as active implementation.
+
+H. RESPONSIVE GEOMETRY TEST
+
+If a WinForms-capable fixture is available, render Player at:
+
+1. 900 x 590
+2. 1000 x 700
+3. 1400 x 850
+
+For each:
+
+- call normal layout path
+- render Player
+- call `Resize-AdminPageChildren`
+- call `PerformLayout`
+
+Assert:
+
+- top-level responsive cards track usable width
+- no visible Player child control has negative coordinates
+- no visible Player child extends beyond immediate parent client rect beyond a tiny tolerance
+- all six attribute NumericUpDown controls have positive width/height
+- all five weapon-scaling NumericUpDown controls have positive width/height
+- all 12 survival rows have positive width/height
+- badges remain visible
+- primary vitals controls remain usable
+- no horizontal scrollbar is required at 900x590
+- vertical scroll is allowed
+- no stale/ambiguous event bindings introduced
+
+If no layout harness:
+report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+Do not infer geometry success from static layout code.
+
+I. G4A / EVENT REGRESSION
+
+Run corrected G4A audit.
+
+Expected:
+
+- boundaryMarkerCount = 1
+- boundaryKind = COMMENT_TOKEN
+- fullF7 = 0
+- legacySafeUiCount = 0
+- directAddEventCount = 0
+- sites.Count = 0
+- stableDefinitionControlReferences = 0
+- stableDefinitionHandlerReferences = 0
+
+No raw event registrations may be introduced.
+
+J. PRESERVE
+
+Keep unchanged:
+
+- Home responsive implementation
+- registry 55 / 17 / 38
+- G3D0 canonical execution gates
+- all prior fail-closed routes
+- CT catalog = 224
+- source-consolidation catalog
+- F8 UI
+- Mobility renderer
+- Current designation
+
+K. STANDARD TESTS
+
+Run:
+
+1. PowerShell parse
+2. real registry import -> 55 unique
+3. lifecycle/static fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema/adaptor validation
+9. prohibited mutation scan
+10. corrected fullF7 zero-gap audit
+11. stable-definition Control/Handler refs = 0
+12. Player static responsiveness assertions
+13. Player geometry test or explicit skipped status
+14. verify Home renderer unchanged from G5A1
+15. verify Mobility renderer unchanged
+
+REPORT
+
+Return:
+
+- files changed
+- Player sections migrated
+- fixed Player EventIds preserved
+- dynamic survival EventId pattern preserved
+- unsupported controls remain disabled/unbound
+- G4A zero-gap result
+- geometry results for each tested size, or exact skip reason
+- horizontal-scroll result only if geometry harness actually ran
+- registry unchanged
+- standard test results
+- explicit statement that Mobility and other F7 pages were NOT migrated
+- explicit statement that no gameplay/runtime mechanism was changed or proven
+
+Do not start Mobility/G5C in this pass.

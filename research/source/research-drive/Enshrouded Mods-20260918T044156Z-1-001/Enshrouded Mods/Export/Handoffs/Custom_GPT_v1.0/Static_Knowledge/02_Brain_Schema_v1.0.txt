@@ -1,0 +1,159 @@
+﻿Enshrouded Mods — Brain Schema v1.0
+
+
+Purpose: Bootstrap and integrity specification for the persistent Google Drive/Docs/Sheets project brain.
+
+
+ROOT WORKSPACE
+Enshrouded Mods/
+- canonical brain/  — curated project intelligence/navigation
+- Architect_Mod/    — Architect source, research, evidence, code history, data
+- ENSHROUDED KFC FILES/ — user-maintained vanilla evidence corpus; read-only to GPT
+- Export/           — deliverables, handoffs, test outputs
+- Incoming/         — untrusted intake/staging
+
+
+CANONICAL BRAIN REQUIRED STRUCTURE
+00_START_HERE/
+- Enshrouded Mods — Project Index [Doc]
+- SYSTEM — Brain Initialization Record [Doc]
+
+
+01_GLOBAL/
+- Enshrouded Mod Development — Core Method [Doc]
+- Enshrouded Mods — Shared Control [Sheet]
+- Enshrouded Mods — Brain Schema v1.0 [Doc]
+
+
+10_ARCHITECT/
+- Architect — Current Engineering State [Doc]
+- Architect — Project Control [Sheet]
+- Architect — Master Architecture & UX [Doc]
+- Architect — Decision Log [Doc]
+- Architect — Research Index [Doc]
+- Architect — Current Roadmap [Doc]
+
+
+99_ARCHIVE/
+- superseded canonical material retained for history
+
+
+ARCHITECT_MOD REQUIRED STRUCTURE
+Current/
+Archive/
+Code_History/
+Research/
+- Core/
+- Building/
+- Terrain/
+- Entities/
+- Camera/
+- Movement/
+- Inventory/
+- Map/
+- Water/
+- Multiplayer/
+- CustomContent/
+- UI/
+Evidence/
+- Runtime_Captures/
+- Logs/
+- Static_Maps/
+- Disassembly/
+- Crash_Evidence/
+- Test_Results/
+Data/
+- SQLite/
+- JSON/
+- Generated_Indexes/
+
+
+EXPORT REQUIRED STRUCTURE
+Releases/
+Test_Builds/
+Reports/
+Handoffs/
+Generated_Data/
+Brain_System_Tests/
+
+
+INCOMING POLICY
+Create date folders only when needed: Incoming/YYYY-MM-DD/INC-####/. Preserve the exact original attachment plus intake metadata. Incoming is never canonical by itself.
+
+
+PROJECT CONTROL REQUIRED TABS
+Architect — Project Control:
+- Current_State
+- Capability_Map
+- Experiments
+- Negative_Results
+- Code_History
+- Tests
+- Roadmap
+- Build_Compatibility
+- Intake_Register
+
+
+Shared Control:
+- Mods
+- KFC_Index
+- System_Config
+
+
+CANONICAL OWNERSHIP
+Project Index owns navigation. Core Method owns development methodology. Project Control owns structured current state, experiments, negative results, tests, roadmap, build compatibility, code history and intake records. Current Engineering State is the human-readable summary. Decision Log owns approved architectural/project decisions. Master Architecture & UX owns current architecture/product direction. Architect_Mod/Current owns current source. Architect_Mod/Evidence owns raw technical evidence. ENSHROUDED KFC FILES is read-only vanilla evidence.
+
+
+AUTHORITY ORDER
+1. Current user-confirmed in-game behavior
+2. Current runtime/test/capture evidence
+3. Current project source
+4. Current structured engineering state
+5. Current static analysis/build-profile evidence
+6. Current KFC/resource evidence
+7. Current research summaries
+8. Active architecture/decision docs
+9. Archived/historical material
+10. Historical handoffs
+11. Chat recollection/plans/hypotheses
+Evidence must match the relevant game build/system before superseding older evidence.
+
+
+BOOTSTRAP RULES
+Bootstrap is idempotent. Locate the Enshrouded Mods root and initialization record. Create only missing required folders/files/tabs/headers. Never replace an existing canonical resource merely because bootstrap expects one. If duplicates or ambiguous canonical candidates exist, preserve them and flag the conflict. Never delete during bootstrap. Never modify KFC. Verify each write. If interrupted, leave status PARTIAL and resume only missing work next session. Mark COMPLETE only after verification.
+
+
+STARTUP RULES
+For substantial project work: Project Index → relevant Project Control/Current_State → Current Engineering State → active Roadmap/Capability_Map → task-specific research/source/evidence. Do not load the whole workspace unnecessarily.
+
+
+SOURCE HISTORY
+Architect_Mod/Current is the one mutable current-source location. Before changing Current, verify user intent and archive the previous snapshot. Architect_Mod/Archive and Code_History are append-only by default.
+
+
+EVIDENCE STATES
+PROVEN / INFERRED / EXPERIMENTAL / UNSOLVED / PLANNED / SPECULATIVE / DISPROVEN. Build-specific states may use suffixes such as PROVEN_BUILD_<revision>. Canonical promotion requires provenance.
+
+
+PROVENANCE FIELDS
+Important claims should be traceable to: claim, status, subsystem, game build, evidence type, evidence ID/location, validation date, contradictions, superseded state, and notes. Evidence types should distinguish user runtime observation, runtime capture/log, automated test, source code, static disassembly, KFC/resource evidence, external artifact evidence, inference, and planning.
+
+
+CODE HISTORY
+Implementation-ready code intended for Codex/copy-paste receives a unique CODE ID. Archive the exact delivered code with intended filenames/paths, a MANIFEST, and a Codex handoff when practical. Track GENERATED, ARCHIVED, SENT_TO_CODEX, CODEX_MODIFIED, COMPILED, OFFLINE_TESTED, RUNTIME_TESTED, ACCEPTED, REJECTED, SUPERSEDED. Never equate compilation with runtime proof.
+
+
+WRITE BOUNDARIES
+Routine writes: intake records, code packages, research notes, experiment/test rows, evidence metadata. Evidence-gated canonical status changes require supporting evidence and provenance. Explicit approval is required for major architecture changes, roadmap-priority changes, designation of new Current source, deletion, destructive reorganization, or changing approved product philosophy unless the user has already clearly authorized that action.
+
+
+SESSION CLOSEOUT
+After meaningful work, check whether uploads, experiments, tests, negative results, code/Codex outcomes, current-state changes, research summaries, compatibility, or roadmap dependencies need recording. The command “Refresh the brain” invokes this checkpoint.
+
+
+BRAIN TEST MODE
+When BRAIN_TEST_MODE = ON, test retrieval/write/conflict/duplicate/upload/code-archive behavior without modifying production canonical conclusions or Current source. Store outputs under Export/Brain_System_Tests.
+
+
+KFC POLICY
+The GPT may search, read, index, reference and correlate ENSHROUDED KFC FILES. It must not modify, rename, move, replace or delete KFC files. The user updates the KFC corpus manually.

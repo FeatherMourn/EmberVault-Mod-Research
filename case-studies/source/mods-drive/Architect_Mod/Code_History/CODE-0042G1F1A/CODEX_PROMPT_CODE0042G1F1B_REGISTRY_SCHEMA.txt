@@ -1,0 +1,292 @@
+CODE-0042G1F1B — ADMINACTION V2 SCHEMA NORMALIZATION
+
+Scope: Architect Toolkit F7 canonical admin registry
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/admin_action_registry.json
+
+Read-only schema authority:
+- reconstructed full workspace `runtime/AdminActionRegistry.psm1`
+- preserved INC-0062 baseline module
+
+Test file:
+- `tests/test_f7_event_lifecycle.ps1`
+- other existing truthfulness/registry tests as applicable
+
+DO NOT:
+- change ArchitectRuntime.ps1 behavior unless a test exposes a strictly necessary registry-consumer bug;
+- widen `architect.admin_action_registry.v2`;
+- add new enum values to AdminActionRegistry.psm1;
+- enable any currently disabled action;
+- disable any currently enabled/proven action;
+- migrate AOB Scanner;
+- begin responsive layout work;
+- add gameplay/native backends.
+
+GOAL
+
+Make the current 54-action `admin_action_registry.json` valid under the existing canonical `architect.admin_action_registry.v2` importer.
+
+The full lifecycle harness currently cannot start because registry import fails on invalid enum values. Fix the registry, not the schema.
+
+CANONICAL V2 VOCABULARY
+
+Use exactly the existing schema enums from `AdminActionRegistry.psm1`:
+
+Evidence states:
+- `UNSOLVED`
+- `PLANNED`
+- `EXPERIMENTAL`
+- `PROVEN_BUILD_1076226`
+- `DISPROVEN_BUILD_1076226`
+
+Runtime modes:
+- `LIVE`
+- `SESSION`
+- `RELOAD`
+- `UNAVAILABLE`
+
+Control types:
+- `toggle`
+- `button`
+- `integer`
+- `float`
+- `slider`
+- `dropdown`
+- `read_only`
+
+Authorities:
+- `local`
+- `host`
+- `server`
+- `unknown`
+
+Backends:
+- `LUA_API`
+- `VANILLA_ACTION`
+- `RESOURCE`
+- `NATIVE_OBJECT`
+- `NATIVE_MEMORY`
+- `NATIVE_HOOK`
+- `NONE`
+
+Known adapter table:
+- `PlayerAdapter`
+- `MovementAdapter`
+- `TravelAdapter`
+- `InventoryAdapter`
+- `CraftingAdapter`
+- `GameSettingsAdapter`
+- `WorldAdapter`
+- `CameraAdapter`
+- `GliderAdapter`
+- `BuildingAdminAdapter`
+- `MultiplayerAdminAdapter`
+- `DiagnosticsAdapter`
+
+Do not introduce `NativeCorrelationAdapter`, `ItemAdapter`, `StartupCanary`, `ArchitectPresetAdapter`, or `None` as adapter names in the canonical registry.
+
+CURRENT INVALID ENUM COUNTS
+
+The current 54-action registry has:
+- 13 invalid `controlType` values
+- 13 invalid `evidenceStatus` values
+- 1 invalid `runtimeMode`
+- 33 invalid `authority` values
+- 29 invalid `backend` values
+
+This is a full-registry normalization task, not a one-row `cheat.item.reroll` fix.
+
+NORMALIZATION RULES
+
+A. controlType
+
+Replace invalid:
+- `action` -> `button`
+- `numeric` -> choose `integer` when valueType is integer, otherwise `float`
+
+Do not change existing valid `toggle`, `button`, `dropdown`, `read_only`, etc.
+
+B. evidenceStatus
+
+Do not preserve custom engineering labels in the enum field.
+
+Use the canonical evidence state that most conservatively matches accepted evidence.
+
+Required conservative mapping:
+- `BUILD_GATED` -> `UNSOLVED`
+- `ADM-TEST-0002` -> `UNSOLVED`
+- `SEMANTIC_MISMATCH` -> `EXPERIMENTAL`
+  - preserve the more specific partial-proven / infinite-semantics-disproven detail in description/failureReason
+- `STARTUP_CANARY_ONLY` -> `EXPERIMENTAL`
+  - preserve STARTUP_CANARY_ONLY wording in description/failureReason
+- `ORCHESTRATION_ONLY` -> `EXPERIMENTAL`
+  - preserve ORCHESTRATION_ONLY wording in description/failureReason
+
+Do not promote any action to `PROVEN_BUILD_1076226`.
+
+C. runtimeMode
+
+- `STARTUP` is not a valid v2 runtime mode.
+- For `cheat.autoloot.toggle`, use `UNAVAILABLE` because the F7 live action is intentionally unavailable; preserve startup-canary semantics in failureReason/description.
+
+D. authority
+
+Normalize non-schema descriptive values conservatively:
+- `native_runtime` -> `unknown`
+- `startup_canary` -> `unknown`
+- `unresolved` -> `unknown`
+- `none` -> `unknown`
+
+Do not infer `local`, `host`, or `server` without accepted authority evidence.
+
+E. backend
+
+For disabled/unqualified actions currently using descriptive pseudo-backends:
+- `NATIVE_CORRELATION` -> `NONE`
+- `EXISTING_DISPATCH_ONLY` -> `NONE`
+
+Preserve correlation/orchestration details in failureReason/description.
+
+Do NOT invent `NATIVE_MEMORY` or `NATIVE_HOOK` merely because legacy code contains native paths. Backend fields describe accepted canonical execution ownership, not every historical implementation clue.
+
+F. backendAdapter
+
+Normalize adapter names to the existing `New-AdminAdapterTable` vocabulary.
+
+Use domain-appropriate existing adapters without changing enablement. Suggested conservative mapping:
+
+- `ItemAdapter` -> `InventoryAdapter`
+- `NativeCorrelationAdapter`:
+  - movement actions -> `MovementAdapter`
+  - teleport/travel -> `TravelAdapter`
+  - player/vitals/survival/combat toggles -> `PlayerAdapter`
+  - skill/crafting actions -> `CraftingAdapter` where appropriate
+  - world/time/plant actions -> `WorldAdapter`
+  - altar/build range -> `BuildingAdminAdapter`
+- `StartupCanary` -> `InventoryAdapter` for Auto Loot
+- `None`:
+  - glider stamina -> `GliderAdapter`
+  - teleport -> `TravelAdapter`
+  - position read -> `MovementAdapter`
+- `ArchitectPresetAdapter` -> `DiagnosticsAdapter` (internal admin orchestration, backend remains NONE)
+
+If a row does not map cleanly, keep it disabled and choose the closest existing domain adapter. Do not add a new adapter class/name in this pass.
+
+G. preserve semantics in prose
+
+Keep specific engineering labels in:
+- `description`
+- `failureReason`
+
+Examples that must remain visible in prose where relevant:
+- ADM-TEST-0002
+- STARTUP_CANARY_ONLY
+- semantic mismatch / residual glider drain
+- ORCHESTRATION_ONLY
+- executable-hook risk for movement.position.read
+- build-gated / unqualified state
+
+Do not erase useful provenance merely to satisfy enum validation.
+
+ENABLED ACTION INVARIANTS
+
+There are 17 enabled actions.
+
+Do not alter:
+- their `enabled=true`;
+- their existing `PROVEN_BUILD_1076226` status;
+- their backend/runtime/authority semantics unless the importer proves one is already invalid.
+
+The canonical importer requires:
+- enabled actions must be `PROVEN_BUILD_1076226`;
+- enabled non-read-only mutations must have readback verification.
+
+Preserve those invariants.
+
+IMPORT GATE
+
+Add/strengthen a test that invokes the REAL:
+
+`Import-AdminActionRegistry -LiteralPath <current registry>`
+
+against the current reconstructed workspace module.
+
+Acceptance requires:
+- import succeeds;
+- returned action count = 54;
+- all commandIds unique;
+- no invalid enum values;
+- all 17 enabled actions remain enabled;
+- all previously disabled actions remain disabled.
+
+Do not mock the importer for this gate.
+
+LIFECYCLE FIXTURE
+
+Update `tests/test_f7_event_lifecycle.ps1` so it no longer stops at registry import.
+
+Keep its current 54-action expectations.
+
+Add explicit schema assertions for:
+- zero invalid controlType values;
+- zero invalid evidenceStatus values;
+- zero invalid runtimeMode values;
+- zero invalid authority values;
+- zero invalid backend values;
+- zero backendAdapter names outside the known adapter table.
+
+Then allow the existing PAGE/SHELL lifecycle assertions to execute.
+
+PRESERVE CURRENT SAFETY STATE
+
+Keep:
+- `movement.position.read` disabled and fail-closed;
+- teleport disabled / ADM-TEST-0002 prose retained;
+- Auto Loot live F7 action disabled / STARTUP_CANARY_ONLY prose retained;
+- Glider Flight disabled/unqualified;
+- glider-stamina semantic mismatch detail retained;
+- Home raw events = 0;
+- Player raw events = 0;
+- Mobility raw events = 0;
+- shell UI-only raw = 0;
+- shell ACTION raw = 1 (AOB Scanner only);
+- registry count = 54;
+- CT catalog = 224;
+- prohibited direct mutation-call exclusions unchanged.
+
+TESTS
+
+Run:
+1. real `Import-AdminActionRegistry` against current registry;
+2. PowerShell parse;
+3. lifecycle fixture;
+4. F7 truthfulness;
+5. UI smoke;
+6. UI errors;
+7. CT catalog count = 224;
+8. registry count = 54 unique;
+9. schema enum violation counts all = 0;
+10. adapter-table mismatch count = 0;
+11. Home/Player/Mobility raw counts = 0;
+12. shell UI-only raw = 0;
+13. shell ACTION raw = 1 scanner only;
+14. prohibited mutation scan.
+
+REPORT
+
+Return:
+- files changed;
+- importer result before/after;
+- exact counts of each invalid enum category before/after;
+- any per-action normalization decisions that were not mechanical;
+- enabled action count before/after;
+- disabled action count before/after;
+- adapter mismatch count before/after;
+- lifecycle test result now that real registry import succeeds;
+- shell raw metrics;
+- confirmation scanner remains intentionally raw;
+- no runtime/gameplay proof claim.
+
+Do not start scanner canonicalization until this registry import gate is green.

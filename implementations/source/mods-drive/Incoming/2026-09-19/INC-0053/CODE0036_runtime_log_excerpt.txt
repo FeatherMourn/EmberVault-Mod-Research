@@ -1,0 +1,23 @@
+2026-09-19 user runtime excerpt from CODE-0036 test candidate:
+
+2026-09-19T21:06:05.302090Z  INFO eml::lua: Running lua with options: RunArgs { file_name: "enshrouded", options: RunOptions { skip_cache: false, is_server: None, patch: true, export: true, runtime: true, export_dir: Some("export") } }
+2026-09-19T21:06:06.141711Z  INFO eml::lua: Type registry loaded successfully path="H:\\SteamLibrary\\steamapps\\common\\Enshrouded\\.cache\\types.json" exe_path="H:\\SteamLibrary\\steamapps\\common\\Enshrouded\\enshrouded.exe" kfc_path="H:\\SteamLibrary\\steamapps\\common\\Enshrouded\\enshrouded.kfc" version="1076226|^/game38/branches/ea_update_08|2026-06-29T10:27:39.052394Z" is_dirty=false
+2026-09-19T21:06:06.308340Z  INFO eml::lua: Running mods...
+2026-09-19T21:06:06.308544Z  INFO mod_loader_lua::runner: Running mod mod_id="architect_toolkit" mod_name="Architect Toolkit"
+2026-09-19T21:06:06.314408Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: Architect Toolkit loaded!
+2026-09-19T21:06:07.166009Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: Architect Toolkit: generating ring_4m
+2026-09-19T21:06:07.221651Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: Architect Toolkit: Blueprint Generator v1 complete!
+2026-09-19T21:06:07.222260Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: Architect Toolkit: registering Architect's Wand v0.9...
+2026-09-19T21:06:07.254588Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: Architect Toolkit: Wand UI recipe links=1 across FbUiBundle resources=1
+2026-09-19T21:06:07.255928Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: Architect Toolkit: Architect's Wand registered. itemId=2077670299 recipeId=1932263044
+2026-09-19T21:06:07.257463Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: Architect Toolkit: backend bridge manifest exported - 1 shape(s).
+2026-09-19T21:06:08.400209Z  INFO lua{mod_id="architect_toolkit"}: eml::lua: [Architect QoL] stack=1901 storage=0 autoLoot=disabled gravity=0 material=0 errors=1
+2026-09-19T21:06:08.400333Z  INFO eml::lua: Applying patches...
+2026-09-19T21:06:08.736152Z  INFO eml::lua: Applied 1909 patches
+2026-09-19T21:06:09.170607Z  INFO eml::lua: Attaching runtime loader
+
+Interpretation:
+- Architect mod loaded successfully.
+- Stack patch path executed successfully on 1901 ItemInfo resources.
+- Storage and AutoLoot did not run because template indexing failed before those phases.
+- Single QoL error recorded.

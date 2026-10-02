@@ -1,0 +1,28 @@
+INTAKE ID: INC-0002
+TITLE: Legacy chat retention raw evidence — Architect Wand / F8 UI
+BRAIN INTAKE DATE: 2026-09-16
+ORIGINAL THREAD CONTEXT: 2026-09-11 through 2026-09-12 Architect Toolkit development conversation
+SOURCE: User-provided screenshots in legacy ChatGPT project conversation
+CLASSIFICATION: Historical raw conversation evidence / untrusted staging
+AUTHORITY: Evidence only. Upload alone does not establish canonical status.
+PROMOTED_TO: None. Retention handoff references this intake. Historical code packages were archived separately under Architect_Mod/Code_History.
+
+FILES
+1. wand_v09_user_confirmation.png
+   Original local attachment: a7896efe-8eff-40f6-8de4-02aaca709134.png
+   SHA-256: 6e880226cc2c7ca8d575d5d9581b2bd327f054d7ff32fc1c5b8626914ac918fc
+   Context: Screenshot accompanying user confirmation that the v0.9 pure weapon-wand item appeared as Crackling Wand and behaved/acted like a normal wand rather than normalizing to a construction/summoning tool.
+
+2. f8_overlay_before_input_capture_fix.png
+   Original local attachment: e2c91e91-443a-4db4-8640-41e612f534ee.png
+   SHA-256: 679f2b684a130f2efc04785ee187a1a9149a20b3c3d160161c4e8e76e7c2780f
+   Context: Screenshot of the early F8 Architect Runtime overlay rendering over Enshrouded while game mouse/camera input still remained active. This negative observation drove the later input/focus capture fix.
+
+RELATED RETENTION HANDOFF
+CHAT-HANDOFF — Architect early EML / Wand / Runtime bridge / Admin design — 2026-09-16
+Google Doc ID: 1JShRRt60yTcWU_c33JP46gaRCqJxKvmMLR2Sh1jbT3c
+
+NOTES
+- Do not treat this intake as current source.
+- Do not designate or replace Architect_Mod/Current from this intake.
+- Later/current project state may supersede historical hypotheses described by the legacy thread.

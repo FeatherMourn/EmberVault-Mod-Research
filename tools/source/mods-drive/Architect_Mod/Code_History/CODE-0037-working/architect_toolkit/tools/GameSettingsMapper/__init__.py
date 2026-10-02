@@ -1,0 +1,1 @@
+"""Offline GameSettings mapping tools."""

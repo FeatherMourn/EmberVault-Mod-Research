@@ -1,0 +1,607 @@
+CODE-0042G5C — AUTONOMOUS GOAL: MOBILITY & NAVIGATION RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Fully migrate F7 `Render-MobilityTravelPage` from its fixed-pixel layout to the existing responsive F7 framework, preserve every current semantic/safety contract, and close G5C with one final verification report.
+
+Work autonomously toward that goal.
+
+Do NOT stop for recoverable TEMP staging issues, stale test-fixture source-pattern assumptions, fixture path mismatches, missing TEMP support files, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5C satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting SHA-256:
+
+`05BCD81A8E46ABEAC8B22151091F6E48BD1A775D1A925700D62C6C30FAD0C76E`
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry state:
+
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- start any new gameplay/runtime research
+- start G5D or F8 work
+- enable any currently disabled Mobility action
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a UI/responsive migration, not a gameplay-feature implementation.
+
+Preserve existing working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+SCOPE BOUNDARY
+
+The intended product-source change is `Render-MobilityTravelPage`.
+
+`Update-MobilityLocationsList` should remain unchanged unless there is a concrete, demonstrated responsive-layout defect that cannot be fixed from the renderer alone.
+
+`Render-TeleportHubPage` should continue to delegate to `Render-MobilityTravelPage`.
+
+Do not alter:
+
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- other F7 pages
+- F8 shell
+- dispatch/backend logic
+- canonical registry
+- native mechanisms
+
+Before editing, record exact source/function hashes for at least:
+
+- full `ArchitectRuntime.ps1`
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+
+After editing:
+
+- Home hash must be unchanged
+- Player hash must be unchanged
+- Mobility hash should change
+- all unrelated functions should remain source-identical unless a narrowly required shared responsive-helper fix is discovered
+
+If a shared-helper change appears necessary, stop and report why before making it.
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use the existing proven helpers:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Respect the existing helper contract:
+
+- `New-F7ResponsiveTable` uses percentage columns
+- numeric row-height values represent absolute heights
+- only `{Type='Percent';Value=...}` has special percent-row behavior
+- do not introduce invalid `{Type='Absolute';...}` row-height objects
+
+Prefer:
+
+- Dock / Anchor
+- responsive percentage columns
+- table-based grouping
+- bounded minimum sizes
+- AutoEllipsis where labels can compress
+
+Avoid recreating the page as a pile of hardcoded X/Y coordinates.
+
+Do not redesign styling beyond what is necessary to make the page responsive.
+
+CURRENT MOBILITY SEMANTIC CONTRACT — PRESERVE EXACTLY
+
+A. MOVEMENT SPEED
+
+Presets must remain exactly:
+
+- 1.0
+- 1.5
+- 2.0
+- 3.0
+- 5.0
+
+ActionId:
+
+`movement.speed`
+
+Dynamic EventId must remain source-equivalent to:
+
+`f7.mobility.speed.<invariant value>.click`
+
+The current invariant-culture numeric construction must be preserved semantically.
+
+Handlers must still publish:
+
+`movement.speed`
+
+with numeric `value`.
+
+Do not enable the action.
+
+Canonical registry currently marks `movement.speed` UNSOLVED / backend NONE / enabled false.
+
+B. JUMP HEIGHT
+
+Presets must remain exactly:
+
+- 1.0
+- 1.5
+- 2.0
+- 3.0
+
+ActionId:
+
+`movement.jump_height`
+
+Dynamic EventId must remain source-equivalent to:
+
+`f7.mobility.jumpHeight.<invariant value>.click`
+
+Preserve handler/status semantics.
+
+Do not enable the action.
+
+Canonical registry currently marks it UNSOLVED / backend NONE / enabled false.
+
+C. AUTORUN
+
+ActionId:
+
+`movement.autorun`
+
+EventId:
+
+`f7.mobility.autorun.click`
+
+Preserve:
+
+- `$script:autorunActive`
+- ON/OFF text change
+- ON/OFF BackColor behavior
+- `Send-CheatCommand "movement.autorun" @{ enabled = ... }`
+- existing status message wording/meaning
+
+Do not promote the action.
+
+Registry remains enabled false.
+
+D. FLIGHT / AIR JUMP UNSUPPORTED CONTROLS
+
+Preserve the unsupported fail-closed controls:
+
+`ALWAYS FLYING (UNSUPPORTED / UNQUALIFIED)`
+
+and:
+
+`INFINITE AIR JUMP (UNSUPPORTED)`
+
+They must remain:
+
+- disabled
+- unbound
+- not assigned new ActionIds/EventIds
+
+Preserve the Always Flying AccessibleDescription meaning:
+
+Glider Flight remains unsupported/unqualified; no direct F7 bypass.
+
+E. GRAVITY
+
+Canonical ZERO-G control:
+
+ActionId:
+
+`movement.gravity`
+
+EventId:
+
+`f7.mobility.gravity.click`
+
+Preserve its status-read presentation based on:
+
+`GetPatchStatus("gravityZero")`
+
+but do not create any new mutation path.
+
+Registry marks `movement.gravity`:
+
+- UNSOLVED
+- backend NONE
+- runtime UNAVAILABLE
+- enabled false
+- no direct F7 mutation fallback permitted
+
+Canonical binding must continue to fail closed.
+
+Preserve unsupported controls:
+
+- `LOW GRAVITY (UNSUPPORTED)`
+- `RESET GRAVITY (UNSUPPORTED)`
+
+They remain disabled and unbound.
+
+F. GLIDER AERODYNAMICS
+
+Glider-speed display presets remain exactly:
+
+- 1.0
+- 1.5
+- 2.5
+- 4.0
+
+These remain disabled and unbound.
+
+Glider stamina:
+
+ActionId:
+
+`cheat.world.glider_stamina`
+
+EventId:
+
+`f7.mobility.gliderStamina.click`
+
+Preserve capability-gated presentation and canonical binding.
+
+Do NOT relabel or imply that true infinite glider stamina is proven.
+
+Registry currently says:
+
+- EXPERIMENTAL
+- backend NONE
+- runtime UNAVAILABLE
+- enabled false
+- patch readiness does not prove true infinite glider stamina
+
+Preserve:
+
+`+50% LIFT (UNSUPPORTED)`
+
+as disabled and unbound.
+
+G. LOCATION BROWSER / FAST TRAVEL UI
+
+Preserve the existing location data source/loading behavior.
+
+Preserve:
+
+- category ComboBox
+- search TextBox
+- safe-elevation CheckBox
+- location ListBox
+- X/Y/Z coordinate TextBoxes
+- `$script:filteredLocations`
+- `Update-MobilityLocationsList`
+
+The coordinate text boxes must still exist before list-selection handlers depend on them.
+
+Preserve these UI_ONLY EventIds exactly:
+
+`f7.mobility.locations.category.changed`
+
+`f7.mobility.locations.search.changed`
+
+`f7.mobility.locations.selection.changed`
+
+They must remain `Register-F7UiEvent` UI-only bindings, not canonical mutation actions.
+
+Preserve list-selection behavior that copies selected X/Y/Z values into the coordinate fields.
+
+H. TELEPORT / POSITION FAIL-CLOSED CONTRACT
+
+Selected warp:
+
+ActionId:
+
+`movement.teleport`
+
+EventId:
+
+`f7.mobility.teleport.selected.click`
+
+Custom warp:
+
+ActionId:
+
+`movement.teleport`
+
+EventId:
+
+`f7.mobility.teleport.custom.click`
+
+Safe spawn:
+
+ActionId:
+
+`movement.teleport`
+
+EventId:
+
+`f7.mobility.teleport.safeSpawn.click`
+
+Current position:
+
+ActionId:
+
+`movement.position.read`
+
+EventId:
+
+`f7.mobility.position.read.click`
+
+These canonical actions must remain registry-disabled and fail closed.
+
+`movement.teleport` remains disabled because:
+
+local-player transform ownership is unresolved and coordinate writes are disarmed.
+
+`movement.position.read` remains disabled because the legacy read path can reach `EnsurePositionHook`, install an executable detour, and write process memory; no safe non-mutating position source is proven.
+
+Do NOT bypass the canonical binder.
+
+Do NOT add `AllowDisabled`.
+
+Do NOT directly attach raw events to make the buttons work.
+
+Do NOT implement a new position source.
+
+Do NOT implement teleport.
+
+Preserve the existing handler bodies/validation semantics even though canonical binding disables the controls.
+
+Preserve safe elevation semantics:
+
+- selected/custom teleport uses +3.0 when checked
+- safe-spawn handler retains its existing constants
+
+I. EVENT LIFECYCLE
+
+Do not introduce direct `.add_Click`, `.add_SelectedIndexChanged`, `.add_TextChanged`, etc. inside F7.
+
+Use only canonical registration helpers already established:
+
+- `Register-AdminActionEvent`
+- `Register-F7UiEvent`
+
+Preserve the G4A zero-gap boundary and lifecycle model.
+
+No `[scriptblock]::Create`.
+
+RESPONSIVE DESIGN TARGET
+
+Rebuild the visual hierarchy using responsive cards/tables while keeping the same conceptual sections:
+
+1. Mobility header
+2. Locomotion / physics
+3. Glider aerodynamics
+4. Fast travel / teleport hub
+
+The exact table decomposition is yours to design.
+
+The migration should behave sensibly when the F7 content width changes.
+
+At minimum:
+
+- major cards stretch with the content area
+- controls do not rely on the old 590px page width
+- button groups distribute across available width
+- long unsupported labels do not silently overlap neighbors
+- teleport filter/search/safe-elevation controls have responsive allocation
+- location list stretches horizontally
+- coordinate/action row remains usable at narrower widths
+- page keeps vertical ordering and existing semantics
+
+Do not claim exact geometry is proven unless a real WinForms layout harness is available.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- make bounded edits inside `Render-MobilityTravelPage`
+- create TEMP staging roots
+- adapt TEMP copies of test fixtures for toolkit-root/path issues
+- add TEMP-only G5C parity assertions
+- update TEMP-only stale source-pattern assertions when you prove the product invariant is preserved semantically
+- rerun tests as many times as needed
+- inspect Current source/registry/archive evidence
+- fix formatting/parse issues introduced by your migration
+- iterate on responsive table/card decomposition
+
+Do not ask for user approval for those recoverable implementation/test issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- authoritative Current hash unexpectedly differs before your first edit
+- a required Mobility behavior cannot be preserved without changing backend/gameplay semantics
+- current evidence materially contradicts canonical registry/safety state
+- a change outside the bounded renderer/shared test infrastructure is genuinely required
+- a shared responsive helper must be changed
+- completing the task would require recreating H:
+- completing the task would require enabling a currently disabled action
+- completing the task would require inventing an API, offset, signature, pointer, layout, calling convention, runtime mechanism, or game behavior
+- a safety-sensitive ambiguity cannot be discriminated from existing evidence/tests
+
+Do NOT stop merely because a TEMP test fixture is stale or has a hardcoded path.
+
+TEMP VERIFICATION LINEAGE
+
+Use the already-qualified G5B testing lesson:
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use the preserved input archive only for missing support artifacts such as the CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native sources to the older archive generation.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+Do not write TEMP fixture changes back into product source unless explicitly justified as a real canonical test-source maintenance task.
+
+G5C PARITY TEST
+
+Create a TEMP-only Mobility parity fixture.
+
+It should verify at least the following independent groups:
+
+1. speed preset values unchanged
+2. speed ActionId unchanged
+3. speed dynamic EventId unchanged
+4. jump preset values unchanged
+5. jump ActionId unchanged
+6. jump dynamic EventId unchanged
+7. autorun EventId/ActionId unchanged
+8. autorun state/text/status semantics preserved
+9. Always Flying remains disabled/unbound
+10. Infinite Air Jump remains disabled/unbound
+11. gravity EventId/ActionId unchanged
+12. Low Gravity and Reset Gravity remain disabled/unbound
+13. glider-speed preset values unchanged and disabled/unbound
+14. glider-stamina EventId/ActionId unchanged
+15. +50% Lift remains disabled/unbound
+16. category/search/selection EventIds remain exact UI_ONLY registrations
+17. X/Y/Z controls exist before dependent selection logic
+18. selection still populates X/Y/Z
+19. selected teleport EventId/ActionId unchanged
+20. custom teleport EventId/ActionId unchanged
+21. position-read EventId/ActionId unchanged
+22. safe-spawn EventId/ActionId unchanged
+23. safe-elevation semantics remain +3.0 for selected/custom
+24. canonical registry still disables movement.speed
+25. canonical registry still disables movement.jump_height
+26. canonical registry still disables movement.autorun
+27. canonical registry still disables movement.gravity
+28. canonical registry still disables movement.teleport
+29. canonical registry still disables movement.position.read
+30. canonical registry still disables cheat.world.glider_stamina
+31. no direct raw F7 event registration introduced in Mobility
+32. `Render-DashboardPage` hash unchanged
+33. `Render-PlayerVitalsPage` hash unchanged
+34. Mobility renderer now uses responsive card/table infrastructure
+35. no invalid Absolute row-height hashtable introduced
+
+You may split or strengthen these checks if useful.
+Do not reduce coverage merely to get green.
+
+SUCCESS CRITERIA
+
+G5C is closed only when all applicable source/static evidence is green:
+
+- exact starting runtime SHA verified
+- product source parses successfully
+- only intended Mobility renderer product semantics/layout changed
+- Home function hash unchanged
+- Player function hash unchanged
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- G5C Mobility parity fixture fully PASS
+- existing Player parity remains 18/18 PASS
+- current truthfulness suite fully PASS after only justified TEMP semantic refresh if responsive source structure changes stale patterns
+- current UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static fixture PASS
+- source consolidation/schema validation PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new direct F7 event sites
+- Current runtime final SHA recorded
+- H: remains absent
+- no gameplay/runtime mechanism was changed or promoted to PROVEN
+
+GEOMETRY
+
+If no real WinForms layout harness is available, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+A UI smoke test is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- exact authoritative source path
+- starting SHA
+- ending SHA
+- Home hash before/after
+- Player hash before/after
+- Mobility hash before/after
+- concise description of responsive layout architecture
+- list of product-source files changed
+- list of TEMP-only test files changed
+- full Mobility parity results
+- Player parity result
+- truthfulness result
+- UI smoke result
+- UI error count
+- catalog count
+- lifecycle result
+- schema/source-consolidation result
+- prohibited-mutation result
+- G4A result
+- stable-definition refs
+- registry counts
+- geometry status
+- any justified TEMP assertion refreshes and evidence
+- confirmation H: was not recreated
+- confirmation G5D/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5C Mobility responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay behavior PROVEN from these tests.

@@ -1,0 +1,164 @@
+
+PAT F3 0F 11 50 04 F3 0F 11 40 COUNT 5
+  ('enshrouded.CT', 'flying (for build mode)', 'flying', 'enshrouded.exe')
+  ('enshrouded.CT', 'infinite silent jumps (press E)', 'flying', 'enshrouded.exe')
+  ('enshrouded.CT', 'flying for all (press 9)', 'flying', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'flying (for build mode)', 'flying', 'enshrouded_server.exe')
+  ('enshrouded_server.ct', 'infinite silent jumps (press E)', 'flying', 'enshrouded_server.exe')
+
+PAT 88 41 3D 48 8B 4D 98 COUNT 4
+  ('enshrouded.CT', 'swimming in air (need do one jump) fixxx', 'swimming', 'enshrouded.exe')
+  ('enshrouded.CT', 'walking in air (use with flying) fixxx', 'walking', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'swimming in air (need do one jump) fixxx', 'swimming', 'enshrouded_server.exe')
+  ('enshrouded_server.ct', 'walking in air (use with flying) fixxx', 'walking', 'enshrouded_server.exe')
+
+PAT B0 02 0F 28 74 24 30 COUNT 4
+  ('enshrouded.CT', 'swimming in air alt', 'swimming_air', 'enshrouded.exe')
+  ('enshrouded.CT', 'walking in air alt', 'walking_air', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'swimming in air alt', 'swimming_air', 'enshrouded_server.exe')
+  ('enshrouded_server.ct', 'walking in air alt', 'walking_air', 'enshrouded_server.exe')
+
+PAT 0F 97 C0 88 43 4E 0F COUNT 3
+  ('enshrouded.CT', 'force infinite silent jumps (press E)', 'force_jump', 'enshrouded.exe')
+  ('enshrouded.CT', 'force flying for all (press 9)', 'force_jump', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'force infinite silent jumps (press E)', 'force_jump', 'enshrouded_server.exe')
+
+PAT 0F B7 40 14 3B C8 COUNT 3
+  ('enshrouded_1013216.CT', 'Enable 1013216 > stack size', 'stack_size', 'enshrouded.exe')
+  ('enshrouded.CT', 'stack size', 'stack_size', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'stack size', 'stack_size', 'enshrouded_server.exe')
+
+PAT 41 89 47 04 48 8B D3 COUNT 3
+  ('enshrouded_1013216.CT', 'Enable 1013216 > items in slots', 'slot_items', 'enshrouded.exe')
+  ('enshrouded.CT', 'items in slots', 'slot_items', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'items in slots', 'slot_items', 'enshrouded_server.exe')
+
+PAT 48 89 47 48 49 3B 07 COUNT 3
+  ('enshrouded_1013216.CT', 'Enable 1013216 > day time (temporary)', 'day_time', 'enshrouded.exe')
+  ('enshrouded.CT', 'day time (temporary)', 'day_time', 'enshrouded.exe')
+  ('Enshrouded Building Companion Water Update WIP V2.CT', 'Misc Codes > Override Time of Day', 'ToDAOB', 'enshrouded.exe')
+
+PAT F3 41 0F 10 84 24 A4 04 00 00 COUNT 3
+  ('enshrouded_1013216.CT', 'Enable 1013216 > glider', 'glider', 'enshrouded.exe')
+  ('enshrouded.CT', 'glider', 'glider', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'glider', 'glider', 'enshrouded_server.exe')
+
+PAT 0F 10 00 41 0F 11 46 18 80 COUNT 2
+  ('Enshrouded Building Companion Water Update WIP V2.CT', 'Building Tools > Prop Placement Flags > Global Prop Rotation (Quaternion)', 'FinalPropRotationAOB', 'enshrouded.exe')
+  ('Enshrouded Building Companion Water Update WIP V2.CT', 'Building Tools > Prop Placement Flags > Global Prop Rotation (Euler)', 'FinalPropRotationAOB', 'enshrouded.exe')
+
+PAT 3C F3 41 0F 11 4E 04 COUNT 2
+  ('enshrouded.CT', 'high jump', 'high_jump', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'high jump', 'high_jump', 'enshrouded_server.exe')
+
+PAT 41 01 04 88 48 8B CB E8 * * * * 48 8B 44 24 40 COUNT 2
+  ('enshrouded.CT', 'infinite fog timer', 'fog_timer', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite fog timer', 'fog_timer', 'enshrouded_server.exe')
+
+PAT 41 83 0F 04 F3 0F 10 44 24 60 COUNT 2
+  ('enshrouded.CT', 'fog area', 'fog_area', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'fog area', 'fog_area', 'enshrouded_server.exe')
+
+PAT 41 89 4C 24 60 COUNT 2
+  ('enshrouded.CT', 'invisibility (before detection) fixxx', 'invisibility', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'invisibility (before detection) fixxx', 'invisibility', 'enshrouded_server.exe')
+
+PAT 44 01 2C 91 48 8D 4D B7 COUNT 2
+  ('enshrouded.CT', 'infinite weapon durability', 'weapon_durability', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite weapon durability', 'weapon_durability', 'enshrouded_server.exe')
+
+PAT 44 0F B6 A0 48 04 00 00 COUNT 2
+  ('enshrouded_server.ct', 'id building block fixxx', 'id_building_block', 'enshrouded_server.exe')
+  ('Enshrouded Building Companion Water Update WIP V2.CT', 'Building Tools > Override Placed Terrain/Block', 'BlockPreviewAOB', 'enshrouded.exe')
+
+PAT 45 89 0C 88 48 8B CB COUNT 2
+  ('enshrouded.CT', 'remove fall damage', 'fall_damage', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'remove fall damage', 'fall_damage', 'enshrouded_server.exe')
+
+PAT 48 83 C4 28 C3 CC CC CC CC CC CC CC CC CC F3 0F 10 COUNT 2
+  ('enshrouded.CT', 'fall speed max(imitate low gravity)', 'fall_speed', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'fall speed max(imitate low gravity)', 'fall_speed', 'enshrouded_server.exe')
+
+PAT 48 8B 42 08 48 2B 41 08 F3 48 0F 2A F0 48 8B 42 10 48 2B 41 10 F3 0F COUNT 2
+  ('enshrouded.CT', 'coordinates', 'coordinates', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'coordinates', 'coordinates', 'enshrouded_server.exe')
+
+PAT 48 8B 43 30 0F 57 C0 F3 COUNT 2
+  ('enshrouded.CT', 'walking under water alt', 'walking_underwater_alt', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'walking under water alt', 'walking_underwater_alt', 'enshrouded_server.exe')
+
+PAT 48 8B 45 EF 0F B7 40 0C 0F B7 C8 48 85 DB COUNT 2
+  ('enshrouded.CT', 'infinite frost timer', 'frost', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite frost timer', 'frost', 'enshrouded_server.exe')
+
+PAT 49 8B E3 41 5E C3 48 89 5C 24 10 COUNT 2
+  ('enshrouded.CT', 'infinite health and fast kill', 'infinite_health', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite health and fast kill', 'infinite_health', 'enshrouded_server.exe')
+
+PAT 4C 03 C3 41 29 04 88 E9 COUNT 2
+  ('enshrouded.CT', 'infinite oxygen', 'oxygen', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite oxygen', 'oxygen', 'enshrouded_server.exe')
+
+PAT 4C 8D 5C 24 70 48 8B C3 49 8B 5B 10 49 8B 6B 18 49 8B 73 20 49 8B 7B 28 COUNT 2
+  ('enshrouded.CT', 'infinite health', 'health', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite health', 'health', 'enshrouded_server.exe')
+
+PAT 59 42 0C F3 0F 11 42 0C COUNT 2
+  ('enshrouded.CT', 'low gravity', 'gravity', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'low gravity', 'gravity', 'enshrouded_server.exe')
+
+PAT 89 42 34 0F B6 46 10 COUNT 2
+  ('enshrouded.CT', 'invisibility alt (after detection)', 'invisibility_alt', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'invisibility alt (after detection)', 'invisibility_alt', 'enshrouded_server.exe')
+
+PAT 8B 04 91 89 44 24 40 * * C6 44 24 COUNT 2
+  ('enshrouded.CT', 'infinite stamina', 'stamina', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite stamina', 'stamina', 'enshrouded_server.exe')
+
+PAT D7 33 F6 8B 1C 91 COUNT 2
+  ('enshrouded.CT', 'infinite mana', 'mana', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'infinite mana', 'mana', 'enshrouded_server.exe')
+
+PAT F2 0F 10 04 82 COUNT 2
+  ('enshrouded.CT', 'build area size', 'build_area', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'build area size', 'build_area', 'enshrouded_server.exe')
+
+PAT F2 0F 10 08 F2 41 0F 59 C2 COUNT 2
+  ('enshrouded.CT', 'high speed', 'speed_a', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'high speed', 'speed_a', 'enshrouded_server.exe')
+
+PAT F2 0F 11 4C 24 40 77 COUNT 2
+  ('enshrouded.CT', 'Glider Flight > upward pitch angle', 'upward_pitch_angle', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'Glider Flight > upward pitch angle', 'upward_pitch_angle', 'enshrouded_server.exe')
+
+PAT F3 0F 10 01 0F 2F 41 04 COUNT 2
+  ('enshrouded.CT', 'fall damage height fixxx', 'fall_damage_height', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'fall damage height fixxx', 'fall_damage_height', 'enshrouded_server.exe')
+
+PAT F3 0F 10 4B 08 0F 28 F0 F3 0F 59 COUNT 2
+  ('enshrouded.CT', 'slope angle', 'slope_angle', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'slope angle', 'slope_angle', 'enshrouded_server.exe')
+
+PAT F3 0F 10 C1 0F C6 C0 E1 F2 41 COUNT 2
+  ('enshrouded.CT', 'walking under water', 'walking_underwater', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'walking under water', 'walking_underwater', 'enshrouded_server.exe')
+
+PAT F3 0F 11 85 A8 1B 00 00 COUNT 2
+  ('enshrouded.CT', 'build hologram color alt (require activate coordinates alt) fixxx', 'build_hologram_color', 'enshrouded.exe')
+  ('enshrouded.CT', 'build hologram color fixxx', 'build_hologram_color', 'enshrouded.exe')
+
+PAT F3 0F 58 50 04 F3 0F 58 40 COUNT 2
+  ('enshrouded.CT', 'flying alt (require activate pitch angle)', 'flying_alt', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'flying alt (require activate pitch angle)', 'flying_alt', 'enshrouded_server.exe')
+
+PAT F3 0F 59 58 08 F3 0F 59 COUNT 2
+  ('enshrouded.CT', 'high speed', 'speed_b', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'high speed', 'speed_b', 'enshrouded_server.exe')
+
+PAT F3 0F 59 D4 0F 28 CF 0F COUNT 2
+  ('enshrouded.CT', 'Glider Flight >  turn angle', 'turn_angle', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'Glider Flight >  turn angle', 'turn_angle', 'enshrouded_server.exe')
+
+PAT F3 41 0F 5D F1 EB COUNT 2
+  ('enshrouded.CT', 'Glider Flight > downward pitch angle', 'downward_pitch_angle', 'enshrouded.exe')
+  ('enshrouded_server.ct', 'Glider Flight > downward pitch angle', 'downward_pitch_angle', 'enshrouded_server.exe')

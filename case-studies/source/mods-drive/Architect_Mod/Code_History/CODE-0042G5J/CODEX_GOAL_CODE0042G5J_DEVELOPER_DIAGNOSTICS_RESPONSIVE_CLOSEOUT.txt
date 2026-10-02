@@ -1,0 +1,1168 @@
+CODE-0042G5J — AUTONOMOUS GOAL: DEVELOPER & DIAGNOSTICS RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Complete the F7 main-navigation responsive migration by converting the composite `Developer & Diagnostics` page to the established responsive F7 framework while preserving all current diagnostic, catalog, Codex, canonical-action, UI_ONLY event-lifecycle, fail-closed, and truthfulness semantics.
+
+The Developer & Diagnostics page is composite. Current dispatch order is:
+
+1. `Render-DiagnosticsPage`
+2. `New-AdminCatalogGrid "Source Map / External Source Consolidation" $sourceConsolidationCatalogFile`
+3. `New-AdminCatalogGrid "Cheat Table Catalog (1013216)" $cheatTableCatalogFile`
+4. `Render-CodexWikiPage`
+
+The catalog-grid helpers are already dock/auto-size based and are protected during G5J.
+
+Expected product-source edits are limited to:
+
+- `Render-DiagnosticsPage`
+- `Render-CodexWikiPage`
+- `Update-CodexDetails`
+
+`Update-CodexFilter`, catalog helpers, dispatcher composition, backend logic, registry, and all earlier responsive renderers must remain source-identical.
+
+This milestone is UI/responsive work only. It does NOT authorize new native probes, new diagnostic commands, new gameplay mutations, new Codex actions, registry changes, backend changes, or runtime research.
+
+Work autonomously toward the goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded fixture paths, stale fixed-pixel source assertions, fixture-version mismatches, missing TEMP support artifacts, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5J satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting identity:
+
+- Length: `448462` bytes
+- SHA-256:
+  `2CFD1FA80A0B8FF6647E0816489AD3534D78F43F264D75B9330A857DECE0751C`
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry identity:
+
+- SHA-256:
+  `7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- modify backend routing
+- modify `Send-CheatCommand`
+- modify `Dispatch-AdminCommand`
+- add or remove diagnostic command IDs
+- install new hooks
+- modify the correlation harness implementation
+- modify catalog loading semantics
+- modify `New-AdminCatalogGrid`
+- modify `Get-ArchitectCatalogRows`
+- modify `Update-CodexFilter`
+- modify page dispatch
+- modify F7 lifecycle infrastructure
+- modify Role Presets
+- start G5K or later responsive work
+- start F8 work
+- turn disabled Codex actions into enabled actions
+- invent new EventIds/ActionIds
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a presentation/layout migration over existing qualified semantics.
+
+Preserve working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+CURRENT EVIDENCE BOUNDARY
+
+Developer tooling and diagnostics have mixed evidence states.
+
+The current bounded correlation controls are read-only research actions and are registry-enabled for build 1076226:
+
+`cheatcorrelation.begin`
+- display: Begin Movement/Stamina Correlation
+- evidenceStatus: PROVEN_BUILD_1076226
+- runtimeMode: LIVE
+- authority: local
+- persistence: capture_only
+- risk: read_only
+- enabled: true
+- backend: NONE
+- readback: native_ack
+- revertSupport: clean_hook_uninstall
+
+`cheatcorrelation.status`
+- display: Correlation Status
+- evidenceStatus: PROVEN_BUILD_1076226
+- runtimeMode: LIVE
+- authority: local
+- persistence: none
+- risk: read_only
+- enabled: true
+- backend: NONE
+- readback: diagnostic_state
+
+Do not generalize this into proof for unrelated entity, gameplay, mutation, or developer capabilities.
+
+`CAP-ENT-0001` / Entity Inspector remains UNSOLVED and parked pending new ECS registration evidence.
+
+`MILESTONE-0011` remains parked for crosshair entity inspector / developer diagnostics research because no typed gameplay owner/callback has been recovered.
+
+G5J must preserve those evidence boundaries.
+
+CURRENT FUNCTION IDENTITIES
+
+Using the same source-function extraction convention used during G5I closeout, the starting Current contains:
+
+- `Render-DiagnosticsPage`
+  `BE583D36F3079940E1B12A2F129C47A3E4D642BAB8C50FB06E58862A76201A16`
+
+- `Render-CodexWikiPage`
+  `CE52F9CCDADA70CB623FEEFCC4AF15AAE84BFDB1C13287C2C033F3D95D3A5AB9`
+
+- `Update-CodexDetails`
+  `4FE2AE9D93AD106E9C01DBDD4CCCE2A41CD4D067F90EE077C0E0CFA2F910037D`
+
+Protected helpers:
+
+- `Update-CodexFilter`
+  `C5F3C91992201B1BF55A264EC5DDEB17B981A46316F8E3E4B59DB70A0241747B`
+
+- `New-AdminCatalogGrid`
+  `985229C610BEEF8A9185D522107E4F0F02C50FD94CDB55652DB327D047F8C3C4`
+
+- `Get-ArchitectCatalogRows`
+  `497477A7DAE355CDAC6DB17F0E72968BA03927F2F3E6BEE0EA037D102D6D0A67`
+
+Protected adjacent subpage:
+
+- `Render-RolePresetsPage`
+  `4F85385E794C0C487840103DEE28B390A9A3A273F093F6B1EDDF2069E55449E2`
+
+G5I closed Settings renderer:
+
+- `Render-SettingsDevPage`
+  `59FE4E3EF9BD537C622B9F92C1F7E47BFA27B2A3E164505C33A6F54022BC255F`
+
+Use a single consistent AST/function extraction convention for your own before/after verification.
+If your extraction hashes differ solely because your extractor uses a different normalization convention, compare semantic source ranges and report the convention rather than treating that as product drift.
+
+SCOPE BOUNDARY
+
+Expected changed product functions:
+
+1. `Render-DiagnosticsPage`
+2. `Render-CodexWikiPage`
+3. `Update-CodexDetails`
+
+Protected / must remain unchanged:
+
+- `Update-CodexFilter`
+- `New-AdminCatalogGrid`
+- `Get-ArchitectCatalogRows`
+- `Render-RolePresetsPage`
+- `Render-SettingsDevPage`
+- all G5A-G5I closed page renderers
+- page dispatcher / nav
+- `Register-AdminActionEvent`
+- `Register-F7UiEvent`
+- `Dispatch-AdminCommand`
+- `Send-CheatCommand`
+- registry
+- native runtime
+- Lua/EML
+- F8
+
+Do not add:
+- `Render-DiagnosticsPageLegacy`
+- `Render-CodexWikiPageLegacy`
+- `Update-CodexDetailsLegacy`
+- any backup/copy/old renderer or helper in Current
+
+Code History already preserves pre-G5J source.
+
+If completing G5J genuinely requires changing any protected function/helper:
+
+STOP and report the blocker before changing it.
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use existing proven helpers where practical:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Existing catalog infrastructure is already responsive-oriented:
+- `New-AdminSection` uses Dock Top, AutoSize, percent-width column
+- `New-AdminCatalogGrid` uses Dock Top, AutoSizeColumns Fill, displayed-cell row sizing, minimum 320x120
+
+Do not rewrite these helpers during G5J.
+
+Respect helper contracts:
+
+- percentage columns for `New-F7ResponsiveTable`
+- numeric row heights are absolute heights
+- only `{Type='Percent';Value=...}` is the special percent-row form
+- never introduce `{Type='Absolute';Value=...}` row-height hashtables
+
+Prefer:
+
+- Dock / Anchor
+- percentage-column tables
+- responsive split panes/tables
+- bounded minimum sizes
+- AutoEllipsis where appropriate
+- multiline/wrapped description labels where needed
+- FlowLayoutPanel-compatible top-level cards
+
+Avoid fixed page assumptions such as 580/604 px wide panels.
+
+============================================================
+A. DEVELOPER & DIAGNOSTICS DISPATCH COMPOSITION
+============================================================
+
+Preserve exact dispatcher route:
+
+`"Developer & Diagnostics"`
+
+Preserve exact conceptual order:
+
+1. `Render-DiagnosticsPage`
+2. Source Map / External Source Consolidation catalog
+3. Cheat Table Catalog (1013216)
+4. `Render-CodexWikiPage`
+
+Preserve exact catalog calls:
+
+`New-AdminCatalogGrid "Source Map / External Source Consolidation" $sourceConsolidationCatalogFile`
+
+`New-AdminCatalogGrid "Cheat Table Catalog (1013216)" $cheatTableCatalogFile`
+
+Do not move Codex before diagnostics/catalogs.
+Do not remove catalogs.
+Do not rename the catalog headings.
+Do not change their data sources.
+
+No dispatcher change should be necessary.
+
+============================================================
+B. DIAGNOSTICS STATUS SOURCE
+============================================================
+
+Preserve:
+
+`$status = Get-CheatCorrelationStatus`
+
+Preserve initial text semantics:
+
+if status exists:
+- serialize through `ConvertTo-Json -Depth 4`
+
+otherwise:
+- `No native cheat correlation status file found.`
+
+Preserve visible heading:
+
+`NATIVE HARNESS DIAGNOSTICS AND TELEMETRY`
+
+Preserve a multiline, vertically scrollable, read-only-style telemetry presentation area with:
+- dark background
+- green telemetry foreground
+- Consolas 8 equivalent
+- initial `$statusText`
+
+Do not change the status data source or JSON depth.
+
+Responsive migration may replace fixed Location/Size with Dock/Anchor/table layout.
+
+============================================================
+C. DIAGNOSTICS — ARM / INITIALIZE HOOKS
+============================================================
+
+Preserve visible control:
+
+`ARM / INITIALIZE HOOKS`
+
+ActionId:
+
+`cheatcorrelation.begin`
+
+EventId:
+
+`f7.developer.correlation.begin.click`
+
+Registration:
+
+`Register-AdminActionEvent`
+
+Page:
+
+`Developer & Diagnostics`
+
+Operation:
+
+`Begin native observation`
+
+Preserve handler semantics:
+
+- call:
+  `Send-CheatCommand "cheatcorrelation.begin"`
+- preserve status message:
+  `Sent cheatcorrelation.begin`
+
+Do not add new hook operations.
+Do not add phase markers/end controls in G5J.
+Do not modify the native correlation harness.
+
+This is a read-only diagnostic action; preserve canonical binder behavior.
+
+============================================================
+D. DIAGNOSTICS — REFRESH STATUS
+============================================================
+
+Preserve visible control:
+
+`REFRESH STATUS`
+
+ActionId:
+
+`cheatcorrelation.status`
+
+EventId:
+
+`f7.developer.correlation.status.click`
+
+Registration:
+
+`Register-AdminActionEvent`
+
+Page:
+
+`Developer & Diagnostics`
+
+Operation:
+
+`Refresh native status`
+
+Preserve handler semantics:
+
+1. call:
+   `Send-CheatCommand "cheatcorrelation.status"`
+2. `Start-Sleep -Milliseconds 100`
+3. `$st = Get-CheatCorrelationStatus`
+4. if `$st` exists:
+   update diagnostics text with:
+   `$st | ConvertTo-Json -Depth 4`
+5. report:
+   `Refreshed status`
+
+Do not alter timing or status source during responsive-only work.
+
+============================================================
+E. DIAGNOSTICS EVENT BOUNDARY
+============================================================
+
+Inside `Render-DiagnosticsPage` preserve:
+
+- canonical `Register-AdminActionEvent` source sites = exactly 2
+- raw `.Add_Click` / `.add_Click` = 0
+- direct `Register-SafeUiEvent` = 0
+- `Register-F7UiEvent` = 0
+- `[scriptblock]::Create` = 0
+
+The two EventIds must remain exact and stable.
+
+============================================================
+F. CODEX DATABASE / COMMAND INDEX
+============================================================
+
+Preserve `Render-CodexWikiPage` data behavior:
+
+- reset `$script:codexDb = $null`
+- initialize `$items = @()`
+- use `$script:codexDbFile` when present, otherwise:
+  `Join-Path $PSScriptRoot "codex_database.json"`
+- load JSON when the file exists
+- append canonical admin actions from:
+  `$script:adminActionCatalog.actions`
+
+For each canonical action preserve command-object semantic fields:
+
+- `id = commandId`
+- `name = displayName`
+- category prefix:
+  `Commands: `
+- description uses action description else failureReason
+
+Player view metadata:
+- tier = `Admin Command`
+- station = category/subcategory
+- crafting includes controlType and risk
+- dropSource includes backend and authority
+- isCommand = true
+- commandId = canonical commandId
+
+Developer view metadata:
+- internalId = commandId
+- guid = backendAdapter
+- hash = evidenceStatus
+- resourceType = runtimeMode
+- command = `Send-CheatCommand <commandId>`
+- isCommand = true
+
+Do not change command indexing or registry semantics.
+
+============================================================
+G. CODEX EMPTY / DEFAULT STATE
+============================================================
+
+If database is empty preserve user-visible meaning:
+
+`Codex database could not be loaded.`
+
+Preserve default script state:
+
+- `$script:codexViewMode = "PLAYER"` if unset
+- `$script:codexFilterCat = "All Categories"` if unset
+- `$script:codexSearchQuery = ""` if unset
+
+Do not reset valid existing user state unnecessarily.
+
+============================================================
+H. CODEX SEARCH / CATEGORY / VIEW HEADER
+============================================================
+
+Preserve controls:
+
+- `Search:`
+- search TextBox
+- category ComboBox
+- `Player` view button
+- `Developer` view button
+
+Preserve search value source:
+
+`$script:codexSearchQuery`
+
+Preserve category values:
+- `All Categories`
+- `All Commands`
+- unique command categories sorted
+- unique non-command categories sorted
+
+Preserve selected category fallback:
+- current valid `$script:codexFilterCat`
+- else `All Categories`
+
+Preserve view-mode selected colors semantically:
+- selected: `FromArgb(60, 95, 140)`
+- inactive: `FromArgb(35, 45, 60)`
+
+Responsive layout may restructure into a percentage table, but all controls must remain readable and unambiguous.
+
+============================================================
+I. CODEX RESULTS / DETAIL SPLIT
+============================================================
+
+Preserve:
+- results ListBox
+- detail inspector container
+- `$script:filteredCodexItems = @()`
+
+Responsive goal:
+- replace fixed 220/376 widths with a responsive split/table
+- maintain a usable minimum width for results
+- allow detail panel to consume remaining width
+- no overlap between search/header and results/detail
+- detail content must resize with detail container
+
+Do not change filtered-item ordering or selection semantics.
+
+============================================================
+J. CODEX PAGE UI_ONLY EVENTS
+============================================================
+
+Preserve exact PAGE EventIds:
+
+1. `f7.codex.results.selection.changed`
+2. `f7.codex.search.text.changed`
+3. `f7.codex.category.changed`
+4. `f7.codex.view.player.click`
+5. `f7.codex.view.developer.click`
+
+All remain:
+
+- `Register-F7UiEvent`
+- Page = `Codex & Commands`
+- LifetimeScope = `PAGE`
+
+Preserve semantics:
+
+Selection:
+- if selected index valid, call `Update-CodexDetails` with the corresponding `$script:filteredCodexItems` item
+
+Search:
+- update `$script:codexSearchQuery`
+- call `Update-CodexFilter`
+
+Category:
+- update `$script:codexFilterCat`
+- call `Update-CodexFilter`
+
+Player view:
+- set `codexViewMode = "PLAYER"`
+- selected/inactive button colors updated
+- rerender selected detail when selection is valid
+
+Developer view:
+- set `codexViewMode = "DEV"`
+- selected/inactive button colors updated
+- rerender selected detail when selection is valid
+
+Preserve `.GetNewClosure()` on these event handlers.
+
+No raw direct events may be introduced.
+
+============================================================
+K. CODEX FILTER HELPER — PROTECTED
+============================================================
+
+`Update-CodexFilter` is protected and must remain source-identical.
+
+Its current semantics include:
+- clear result items
+- lowercase/trim search query
+- All Categories / All Commands / exact category matching
+- search name/id/description/developer internalId
+- update `$script:filteredCodexItems`
+- populate list
+- maintain/update detail selection behavior
+
+Do not alter filtering during responsive work.
+
+============================================================
+L. DETAIL LIFECYCLE CLEANUP
+============================================================
+
+At the start of `Update-CodexDetails`, preserve:
+
+- no-op if detail container is null
+- iterate current `$script:f7ActiveBindings.Keys`
+- remove active bindings only when:
+  - Page == `Codex & Commands`
+  - LifetimeScope == `DETAIL`
+- clear detail controls after narrow DETAIL cleanup
+
+Do not clear PAGE or SHELL bindings.
+Do not delete stable event definitions.
+
+Preserve empty-state meaning:
+
+`Select an item or command from the list to view details.`
+
+============================================================
+M. DETAIL COMMON CONTENT
+============================================================
+
+Preserve display of:
+
+- item name
+- `[category]`
+- item description
+
+Responsive migration may wrap/ellipsis as appropriate but must not drop content.
+
+============================================================
+N. PLAYER VIEW DETAILS
+============================================================
+
+When `$script:codexViewMode -eq "PLAYER"` preserve heading:
+
+`SPECIFICATIONS & DETAILS`
+
+Preserve labels/data:
+
+- `Classification:` -> `$item.playerView.tier`
+- `Domain / Sub:` -> `$item.playerView.station`
+- `Properties:` -> `$item.playerView.crafting`
+- `Provenance:` -> `$item.playerView.dropSource`
+
+Responsive design should use label/value rows or a table so long values do not collide.
+
+============================================================
+O. PLAYER COMMAND ACTION
+============================================================
+
+If `$item.playerView.isCommand`:
+
+Preserve:
+- `$cid = [string]$item.playerView.commandId`
+- canonical definition from `Get-AdminCommandDefinition`
+
+Button text:
+- enabled definition -> `EXECUTE CANONICAL ACTION`
+- missing/disabled -> `ACTION UNAVAILABLE`
+
+Tag:
+- canonical ActionId
+
+If definition missing/disabled:
+- button disabled
+- disabled styling
+- reason:
+  - definition failureReason when available
+  - otherwise:
+    `Codex action unavailable: canonical ActionId is missing or unregistered.`
+- AccessibleDescription
+- tooltip
+
+If enabled:
+- `Register-AdminActionEvent`
+- dynamic EventId:
+  `f7.codex.player.action.<ActionId>.click`
+- Page:
+  `Codex & Commands`
+- Operation:
+  `Dispatch Player Codex Action <ActionId>`
+- LifetimeScope:
+  `DETAIL`
+- handler resolves ActionId from sender Tag
+- dispatches:
+  `Dispatch-AdminCommand @{ action = $actionId; commandId = [Guid]::NewGuid().ToString(); parameters = @{} }`
+- reports returned state/message:
+  `Codex action '<id>' -> <state>: <message>`
+
+Do not directly call `Send-CheatCommand` from the Codex action button.
+Do not enable disabled registry actions.
+Do not report unconditional success.
+
+============================================================
+P. PLAYER NON-COMMAND WIKI ACTION
+============================================================
+
+If Player view item is not a command:
+
+Preserve button:
+
+`Open Official Wiki Page`
+
+EventId:
+
+`f7.codex.detail.wiki.click`
+
+Registration:
+- `Register-F7UiEvent`
+- Page = `Codex & Commands`
+- LifetimeScope = `DETAIL`
+
+Preserve URL semantics:
+
+- URI escape `$item.name`
+- open:
+  `https://enshrouded.wiki.gg/wiki/<escaped name>`
+
+Preserve closure-safe handler.
+
+============================================================
+Q. DEVELOPER VIEW DETAILS
+============================================================
+
+Developer view heading:
+
+`ENGINE IDENTIFIERS & METRICS`
+
+Preserve labels/values:
+
+- `Identifier:` -> `$item.developerView.internalId`
+- `Adapter:` -> `$item.developerView.guid`
+- `Evidence:` -> `$item.developerView.hash`
+- `Mode:` -> `$item.developerView.resourceType`
+- `Payload:` -> `$item.developerView.command`
+
+Preserve read-only text presentation semantics.
+
+Responsive migration should make value fields stretch within available width.
+
+============================================================
+R. DEVELOPER COMMAND ACTION
+============================================================
+
+If `$item.developerView.isCommand`:
+
+Preserve:
+- `$cid = [string]$item.developerView.internalId`
+- canonical definition lookup
+
+Button text:
+- enabled -> `DISPATCH CANONICAL ACTION`
+- unavailable -> `ACTION UNAVAILABLE`
+
+Missing/disabled behavior:
+- disabled styling
+- failureReason or canonical-missing reason
+- AccessibleDescription
+- tooltip
+
+Enabled behavior:
+- `Register-AdminActionEvent`
+- dynamic EventId:
+  `f7.codex.developer.action.<ActionId>.click`
+- Page:
+  `Codex & Commands`
+- Operation:
+  `Dispatch Developer Codex Action <ActionId>`
+- LifetimeScope:
+  `DETAIL`
+- handler dispatches through `Dispatch-AdminCommand`
+- reports returned state/message
+
+Do not bypass the canonical registry.
+
+============================================================
+S. DEVELOPER NON-COMMAND COPY ACTION
+============================================================
+
+If Developer view item is not a command:
+
+Preserve button:
+
+`Copy Cheat / Spawn Command`
+
+EventId:
+
+`f7.codex.detail.copyCommand.click`
+
+Registration:
+- `Register-F7UiEvent`
+- Page = `Codex & Commands`
+- LifetimeScope = `DETAIL`
+
+Preserve handler:
+- clipboard receives `[string]$item.developerView.command`
+- status:
+  `Copied to clipboard: <command>`
+
+Preserve closure-safe behavior.
+
+============================================================
+T. CODEX EVENT LIFECYCLE / ZERO-GAP
+============================================================
+
+Historical G3D source-verified contract must remain intact.
+
+`Render-CodexWikiPage`:
+- raw `.Add_Click` = 0
+- raw direct event registrations = 0
+- direct `Register-SafeUiEvent` = 0
+- PAGE UI EventIds exactly as listed above
+
+`Update-CodexDetails`:
+- DETAIL UI EventIds:
+  - `f7.codex.detail.wiki.click`
+  - `f7.codex.detail.copyCommand.click`
+- dynamic canonical ACTION EventIds:
+  - `f7.codex.player.action.<ActionId>.click`
+  - `f7.codex.developer.action.<ActionId>.click`
+- narrow DETAIL binding cleanup preserved
+
+No:
+- `[scriptblock]::Create`
+- raw `.Add_Click`
+- raw `.add_Click`
+- raw `.Add_TextChanged`
+- raw `.Add_SelectedIndexChanged`
+- direct `Register-SafeUiEvent`
+
+============================================================
+U. CATALOG HELPERS — PROTECTED
+============================================================
+
+`New-AdminCatalogGrid` and `Get-ArchitectCatalogRows` must remain source-identical.
+
+Do not change:
+- catalog parsing
+- fallback id/name/source/status fields
+- DataGridView read-only state
+- auto-size column behavior
+- data sources
+- catalog titles
+
+G5J should treat these as already responsive-enough infrastructure and verify that the composite page preserves them.
+
+============================================================
+V. RESPONSIVE DESIGN TARGET
+============================================================
+
+Diagnostics:
+
+- heading stretches
+- telemetry text area stretches horizontally
+- telemetry area has a sensible bounded minimum height
+- ARM and REFRESH controls distribute responsively
+- no fixed 580px width dependency
+
+Codex search/header:
+
+- search label/text field, category ComboBox, Player/Developer mode controls remain readable
+- use percentage columns and/or stacked responsive rows at narrow widths
+- avoid text/control collision
+
+Codex main body:
+
+- result list and detail pane use responsive split/table proportions
+- preserve usable minimum list width
+- detail pane fills remaining width
+- vertical size is adequate for dynamic detail content
+
+Codex detail:
+
+- title/category/description resize cleanly
+- Player and Developer data use responsive label/value tables
+- command/wiki/copy action fills available width without fixed 352px dependency
+- long provenance/payload/description values remain readable
+- empty state stretches with detail pane
+
+The top-level Developer page must remain compatible with the F7 FlowLayoutPanel and `Resize-AdminPageChildren`.
+
+Do not claim exact geometry unless a real WinForms layout harness exists.
+
+============================================================
+W. NO LEGACY / DUPLICATE SOURCE
+============================================================
+
+Final Current must contain:
+
+- exactly one `Render-DiagnosticsPage`
+- exactly one `Render-CodexWikiPage`
+- exactly one `Update-CodexDetails`
+- zero corresponding Legacy/Old/Backup/Copy variants introduced by G5J
+
+Parity fixtures must be scoped to active AST/function extents.
+
+Do not let dead duplicate strings satisfy assertions.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- edit only the three allowed product functions
+- create TEMP staging roots
+- create a TEMP-only G5J Developer & Diagnostics parity fixture
+- create function/AST-scoped source tests
+- adapt TEMP fixture paths
+- repair TEMP-only stale fixed-pixel assertions when semantic invariants are independently demonstrated
+- rerun tests as needed
+- iterate responsive table/card decomposition
+- fix renderer-local parse/layout-construction issues
+- fix renderer-local UI smoke overlap/clipping caused by G5J
+- inspect Current registry/source and archived G3D audit evidence
+
+Do not ask the user for intermediate approval for recoverable TEMP/test-layout issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- starting Current hash differs
+- registry hash/count differs
+- a semantic fix outside the three allowed product functions is necessary
+- `Update-CodexFilter` must change
+- catalog helpers must change
+- dispatcher must change
+- backend/registry/native/Lua must change
+- completing the task requires enabling a disabled action
+- completing the task requires inventing new ActionIds/EventIds
+- completing the task requires new native/runtime research
+- H deployment would be required
+- a safety-sensitive ambiguity cannot be resolved from source/evidence
+
+Do NOT stop merely because a TEMP fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified G5B-G5I lineage.
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native source trees from the older archive generation.
+
+Overlay authoritative loose Current runtime/registry/etc into TEMP as required.
+
+G5J PARITY FIXTURE
+
+Create a TEMP-only, AST/function-scoped G5J fixture.
+
+Verify at least these independent groups:
+
+1. Developer & Diagnostics route remains present
+2. dispatcher order remains Diagnostics -> Source Map catalog -> Cheat Table catalog -> Codex
+3. Source Map catalog title exact
+4. Source Map catalog data source exact
+5. Cheat Table catalog title exact
+6. Cheat Table catalog data source exact
+7. `New-AdminCatalogGrid` hash unchanged
+8. `Get-ArchitectCatalogRows` hash unchanged
+9. Diagnostics heading exact
+10. status source remains `Get-CheatCorrelationStatus`
+11. status JSON depth remains 4
+12. missing-status fallback exact meaning
+13. diagnostics telemetry remains multiline
+14. diagnostics telemetry vertical scrolling preserved
+15. diagnostics telemetry monospace presentation preserved
+16. ARM label exact
+17. ARM ActionId exact
+18. ARM EventId exact
+19. ARM Page exact
+20. ARM Operation exact
+21. ARM remains canonical `Register-AdminActionEvent`
+22. ARM handler sends `cheatcorrelation.begin`
+23. ARM status message preserved
+24. REFRESH label exact
+25. REFRESH ActionId exact
+26. REFRESH EventId exact
+27. REFRESH Page exact
+28. REFRESH Operation exact
+29. REFRESH remains canonical `Register-AdminActionEvent`
+30. REFRESH sends `cheatcorrelation.status`
+31. REFRESH sleep remains 100 ms
+32. REFRESH rereads `Get-CheatCorrelationStatus`
+33. REFRESH updates JSON with depth 4
+34. REFRESH status message preserved
+35. diagnostics canonical source sites exactly 2
+36. diagnostics raw direct events = 0
+37. diagnostics uses responsive infrastructure
+38. Codex DB path fallback exact
+39. canonical admin actions still indexed
+40. command id/name/category semantics preserved
+41. Player command metadata semantics preserved
+42. Developer command metadata semantics preserved
+43. empty database message preserved
+44. default view mode PLAYER preserved
+45. default category All Categories preserved
+46. default search empty preserved
+47. Search label preserved
+48. search query source preserved
+49. category All Categories option preserved
+50. category All Commands option preserved
+51. command categories unique/sorted
+52. vanilla categories unique/sorted
+53. selected-category fallback preserved
+54. Player view button preserved
+55. Developer view button preserved
+56. selected/inactive view colors preserved
+57. results ListBox semantics preserved
+58. detail pane semantics preserved
+59. `filteredCodexItems` reset preserved
+60. selection EventId exact
+61. search EventId exact
+62. category EventId exact
+63. Player-view EventId exact
+64. Developer-view EventId exact
+65. all five page events remain UI_ONLY `Register-F7UiEvent`
+66. all five page events remain PAGE lifetime
+67. selection handler calls Update-CodexDetails on valid index
+68. search handler updates script query + filter
+69. category handler updates script category + filter
+70. Player handler updates mode/colors/detail
+71. Developer handler updates mode/colors/detail
+72. all five handlers remain closure-safe
+73. `Update-CodexFilter` hash unchanged
+74. DETAIL cleanup remains Page Codex & Commands + LifetimeScope DETAIL only
+75. detail controls cleared after narrow cleanup
+76. detail empty-state text preserved
+77. detail item name preserved
+78. detail category preserved
+79. detail description preserved
+80. Player heading preserved
+81. Classification mapping preserved
+82. Domain/Sub mapping preserved
+83. Properties mapping preserved
+84. Provenance mapping preserved
+85. Player canonical definition lookup preserved
+86. Player disabled/missing fail-closed semantics preserved
+87. Player missing-canonical reason preserved
+88. Player dynamic Action EventId preserved
+89. Player command dispatch uses Dispatch-AdminCommand
+90. Player status reports returned state/message
+91. Player non-command wiki EventId exact
+92. Player wiki URL semantics preserved
+93. Developer heading preserved
+94. Identifier mapping preserved
+95. Adapter mapping preserved
+96. Evidence mapping preserved
+97. Mode mapping preserved
+98. Payload mapping preserved
+99. Developer canonical definition lookup preserved
+100. Developer disabled/missing fail-closed semantics preserved
+101. Developer dynamic Action EventId preserved
+102. Developer command dispatch uses Dispatch-AdminCommand
+103. Developer status reports returned state/message
+104. Developer copy EventId exact
+105. Clipboard payload semantics preserved
+106. clipboard status message preserved
+107. DETAIL wiki/copy events remain UI_ONLY
+108. dynamic command events remain canonical ACTION bindings
+109. raw direct Codex events remain zero
+110. direct Register-SafeUiEvent in Codex slice remains zero
+111. no scriptblock::Create in G5J functions
+112. exactly one Diagnostics renderer
+113. exactly one Codex renderer
+114. exactly one Codex detail helper
+115. zero legacy/backup variants
+116. Home hash unchanged
+117. Player hash unchanged
+118. Mobility hash unchanged
+119. Inventory hash unchanged
+120. Crafting/Progression hash unchanged
+121. Combat hash unchanged
+122. World/Camera hash unchanged
+123. Building hash unchanged
+124. Entities/Authority hash unchanged
+125. Mods/Configuration hash unchanged
+126. Role Presets hash unchanged
+127. catalog helper hashes unchanged
+128. registry unchanged
+129. no backend/dispatch/native/Lua change
+130. no invalid Absolute row-height hashtable introduced
+
+You may split or strengthen checks.
+
+Do not reduce coverage merely to get green.
+
+REGRESSION / SUCCESS CRITERIA
+
+G5J is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only the three allowed product functions changed
+- G5A-G5I closed renderer hashes unchanged
+- Role Presets unchanged
+- `Update-CodexFilter` unchanged
+- catalog helpers unchanged
+- registry unchanged 55 / 17 / 38 / 55 unique
+- registry SHA unchanged
+- G5J AST-scoped parity fully PASS
+- G5B Player parity 18/18 PASS
+- G5C Mobility parity fully PASS
+- G5D Items/Progression parity fully PASS
+- G5E Combat parity fully PASS
+- G5F World/Camera parity fully PASS
+- G5G Building parity fully PASS
+- repaired G5H Entities/Authority parity fully PASS
+- G5I Mods/Configuration parity fully PASS
+- truthfulness fully PASS
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new raw F7 event sites
+- no disabled action enabled
+- no runtime/gameplay evidence promoted
+- final Current runtime SHA/length recorded
+- H remains absent
+- G5K/F8 not started
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA/length
+- ending SHA/length
+- `Render-DiagnosticsPage` hash before/after
+- `Render-CodexWikiPage` hash before/after
+- `Update-CodexDetails` hash before/after
+- `Update-CodexFilter` hash before/after
+- catalog helper hashes before/after
+- G5A-G5I protected renderer hashes before/after
+- Role Presets hash before/after
+- exact product functions changed
+- confirmation no legacy/backup functions exist
+- concise responsive architecture for diagnostics/search/results/detail
+- product-source files changed
+- TEMP-only fixture files changed
+- G5J parity count/result
+- G5B-G5I regression results
+- truthfulness result
+- UI smoke result
+- UI error count
+- CT count
+- lifecycle result
+- source consolidation/schema result
+- prohibited mutation result
+- G4A result
+- stable-definition refs
+- registry hash/counts
+- diagnostics canonical event-site counts
+- Codex PAGE/DETAIL/canonical event-site results
+- geometry status
+- any justified TEMP test refreshes
+- confirmation catalog infrastructure remained unchanged
+- confirmation no entity-inspector/runtime research was started
+- confirmation H was not recreated
+- confirmation G5K/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5J Developer & Diagnostics responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay/runtime behavior PROVEN from these tests.

@@ -1,0 +1,49 @@
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: Two v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: One v1.0.0
+[INFO] Loaded module: Probe v0.0
+[WARNING] Blocked unverified/custom tuning module: probe
+[INFO] Loaded module: Test v1.0.0
+[INFO] Loaded module: Test v1.0.0
+[INFO] Loaded module: Test v1.0.0
+[INFO] Loaded module: Test v1.0.0
+[INFO] Loaded module: Test v1.0.0
+[INFO] Loaded module: Test v1.0.0
+[INFO] Loaded module: Test v1.0.0
+======================================================================
+Generated metadata probe suite for 2 types: C:\Users\JoelT\AppData\Local\Temp\tmpq_bt8hto\suite
+Generated recipe customization probe: C:\Users\JoelT\AppData\Local\Temp\tmpjw49tsyn\recipe_probe
+Generated registered visual substitution probe: C:\Users\JoelT\AppData\Local\Temp\tmphf0_en0f\probe
+Generated localization item transition probe: C:\Users\JoelT\AppData\Local\Temp\tmpfzg9gcmb\transition
+FAIL: test_versioned_quality_snapshot_is_valid_machine_readable_evidence (test_milestone_verifier.MilestoneVerifierTests.test_versioned_quality_snapshot_is_valid_machine_readable_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "I:\My Drive\Enshrouded Mods\Control_Center\tests\test_milestone_verifier.py", line 27, in test_versioned_quality_snapshot_is_valid_machine_readable_evidence
+    self.assertTrue(data["passed"])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 498 tests in 28.176s
+
+FAILED (failures=1)

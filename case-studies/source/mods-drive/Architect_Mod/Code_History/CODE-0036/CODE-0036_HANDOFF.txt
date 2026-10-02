@@ -1,0 +1,35 @@
+CODE-0036 — External Mod Integration Accelerator / First Runtime Canary
+Date: 2026-09-19
+Game build: 1076226
+Base: user-designated Current package architect_toolkit.zip SHA256 a1ab3aeee18987c0f4f27cc0b49a371c89f3f82be5ec8342bd9536b86516835a
+Candidate ZIP: architect_toolkit_CODE0036_test.zip
+Candidate ZIP SHA256: 0cb8536f926a3da95090c55026321911bc2847d13ba1d7b6a641c96f92c66728
+Candidate ZIP bytes: 22448336
+
+Purpose:
+- Correct coding-agent QoL integration before runtime testing.
+- Stack-size resource path retained with fail-closed readback.
+- Storage remapped from wrong DefaultInventoryResource.capacity approach to current-build TemplateResource InventorySetup component fields for 12 known storage templates.
+- Auto Loot E-key simulation removed; replaced with canary vanilla pickup-zone composition for LootPickup_Gravity_Stone and LootPickup_Material_FogEssence.
+- Teleport writes re-disarmed pending proven local-player transform authority.
+- Historical Mod 118 flight hook remains disarmed pending build-1076226 remap.
+- Prior 0x39E73C Glider Stamina control disabled because user-confirmed gameplay proves movement-speed effect rather than infinite stamina.
+- PowerShell duplicate native mutation ownership removed.
+
+Runtime output path after EML loads successfully:
+H:\SteamLibrary\steamapps\common\Enshrouded\export\architect_toolkit\qol_resource_status.json
+
+Offline status:
+- CODE-0036 static integration suite PASS (15 checks).
+- Packaging verified required QoL files present and nested ZIP count = 0.
+- Windows master run_all_tests.ps1 NOT executed in this environment; runtime remains EXPERIMENTAL.
+
+First runtime test:
+1. Install candidate in a TEST copy / test world. Do not replace canonical Current without explicit approval.
+2. Fresh Enshrouded process build 1076226.
+3. Confirm qol_resource_status.json exists under export\architect_toolkit.
+4. Expected initial canary: stackSize enabled; storage targets patched; autoLootScope=canary; gravityPatched=1; materialPatched=1; errorCount=0.
+5. Validate storage UI/behavior.
+6. Validate Stone and Fog Essence pickup from several meters away.
+7. Verify normal manual pickup still works.
+8. Do not test teleport, Always Flying, or the old Infinite Glider Stamina control in this candidate; they are intentionally disarmed.

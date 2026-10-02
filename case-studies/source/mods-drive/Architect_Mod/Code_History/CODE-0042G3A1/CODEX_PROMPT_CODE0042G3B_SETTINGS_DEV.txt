@@ -1,0 +1,373 @@
+CODE-0042G3B — SETTINGS / DEVELOPER EVENT MIGRATION ONLY
+
+Scope: Architect Toolkit F7 `Render-SettingsDevPage`
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change `admin_action_registry.json`.
+- Registry remains 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate Multiplayer/Quests, Codex, Map/Wayfinder, Blueprint Browser, or other G3 pages;
+- begin responsive layout work;
+- add gameplay/native backends;
+- enable `cheat.survival.disable_all`;
+- add registry IDs for local config/UI operations.
+
+GOAL
+
+Remove all 5 raw `.Add_Click(...)` registrations inside `Render-SettingsDevPage`.
+
+Current raw count:
+- `.Add_Click(...)`: 5
+- `Register-SafeUiEvent`: 0
+
+After this pass:
+- Settings/Developer raw `.Add_Click(...)` = 0
+- raw `Register-SafeUiEvent` = 0
+- G1/G2/G3A raw-closure state remains intact
+
+CURRENT 5 RAW SITES
+
+A. ROLE PRESETS SUBNAV
+
+Current:
+
+`$btnSubPresets.Add_Click({ Clear-AdminContent; Render-RolePresetsPage })`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.settings.subnav.presets.click`
+
+Page:
+`Mods & Configuration`
+
+Operation:
+`Open Role Presets`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Handler:
+- `Clear-AdminContent`
+- `Render-RolePresetsPage`
+
+Do not create a registry action.
+
+B. NATIVE DIAGNOSTICS SUBNAV
+
+Current:
+
+`$btnSubDiag.Add_Click({ Clear-AdminContent; Render-DiagnosticsPage })`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.settings.subnav.diagnostics.click`
+
+Page:
+`Mods & Configuration`
+
+Operation:
+`Open Native Diagnostics`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Handler:
+- `Clear-AdminContent`
+- `Render-DiagnosticsPage`
+
+Do not create a registry action.
+
+C. PANIC RESET
+
+Current raw handler:
+
+```powershell
+[void](Send-CheatCommand "cheat.survival.disable_all")
+Set-AdminStatus "EMERGENCY PANIC: Reset all patches to Vanilla."
+```
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.survival.disable_all`
+
+EventId:
+`f7.settings.panicReset.click`
+
+Page:
+`Mods & Configuration`
+
+Operation:
+`Panic Reset`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-AdminActionEvent`
+
+Canonical registry truth:
+
+`cheat.survival.disable_all`
+- enabled=false
+- evidenceStatus=`UNSOLVED`
+- backend=`NONE`
+- runtimeMode=`UNAVAILABLE`
+- authority=`unknown`
+- risk=`mutation`
+
+Therefore canonical binding must disable the Panic Reset button.
+
+Do NOT use `AllowDisabled`.
+
+IMPORTANT TRUTHFULNESS FIX
+
+The handler must not unconditionally claim that patches were reset.
+
+Use the returned command result.
+
+Required pattern:
+
+```powershell
+$result = Send-CheatCommand "cheat.survival.disable_all"
+if (-not $result.success) {
+    Set-AdminStatus ([string]$result.error)
+    return
+}
+Set-AdminStatus "EMERGENCY PANIC: Reset all patches to Vanilla."
+```
+
+Equivalent wording is acceptable.
+
+On the current disabled/fail-closed action:
+- no reset occurs;
+- no success text is shown;
+- the existing `Send-CheatCommand` fail-closed route remains authoritative.
+
+Do not add another native fallback.
+
+D. SAVE KEYBINDINGS
+
+Current raw handler:
+- reads the current ComboBox selections;
+- updates `$script:activeKeybindings`;
+- calls `Save-ArchitectKeybindings`;
+- updates local status label;
+- updates HUD close hint.
+
+This is local Architect configuration persistence, not a gameplay AdminAction.
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.settings.hotkeys.save.click`
+
+Page:
+`Mods & Configuration`
+
+Operation:
+`Save Keybindings`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Preserve existing behavior exactly.
+
+CLOSURE REQUIREMENT
+
+The handler depends on local controls/data:
+- `$comboMap`
+- `$lblHkStatus`
+- `$hudCloseHint`
+
+Use a closure-safe handler (`GetNewClosure()` where needed) so rerenders do not point at stale/last-scope locals.
+
+Do not add `SelectedIndexChanged` save behavior.
+The ComboBoxes remain input-only until Save is clicked.
+
+E. APPLY PREFERENCES
+
+Current raw handler:
+- reads `$chkSummon.Checked`
+- reads `$chkDock.Checked`
+- updates `$script:activePreferences`
+- calls `Save-ArchitectKeybindings`
+- reports status
+
+This is local Architect configuration persistence.
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.settings.preferences.apply.click`
+
+Page:
+`Mods & Configuration`
+
+Operation:
+`Apply Preferences`
+
+LifetimeScope:
+PAGE
+
+Use:
+`Register-F7UiEvent`
+
+Preserve current behavior.
+
+CLOSURE REQUIREMENT
+
+Capture:
+- `$chkSummon`
+- `$chkDock`
+
+safely for the current page render.
+
+Do not attach direct checkbox mutation/save handlers.
+
+F. HOTKEYS SUBTAB BUTTON
+
+`$btnSubHk` represents the already-visible current Settings view.
+
+It currently has no click handler.
+
+Leave it handler-free.
+
+Do NOT invent a no-op EventId.
+
+G. LIFECYCLE / IDENTITY
+
+Expected new stable definitions:
+
+1. `f7.settings.subnav.presets.click`
+   - UI_ONLY
+   - Page `Mods & Configuration`
+   - PAGE
+
+2. `f7.settings.subnav.diagnostics.click`
+   - UI_ONLY
+   - Page `Mods & Configuration`
+   - PAGE
+
+3. `f7.settings.panicReset.click`
+   - ACTION
+   - ActionId `cheat.survival.disable_all`
+   - Page `Mods & Configuration`
+   - PAGE
+
+4. `f7.settings.hotkeys.save.click`
+   - UI_ONLY
+   - Page `Mods & Configuration`
+   - PAGE
+
+5. `f7.settings.preferences.apply.click`
+   - UI_ONLY
+   - Page `Mods & Configuration`
+   - PAGE
+
+Repeated render must be idempotent:
+- no ambiguous EventIds;
+- stale PAGE bindings are removed;
+- subnav navigation clears current PAGE content before rendering the target subview.
+
+H. PRESERVE
+
+Keep unchanged:
+
+- registry 55 / enabled 17 / disabled 38
+- G1 source/offline closure
+- G2 source/offline closure
+- G3A/G3A1 Role Presets closure
+- scanner fail-closed
+- position read fail-closed
+- skill set/reset fail-closed
+- parry fail-closed
+- world time/pause/plant fail-closed
+- altar/build-range fail-closed
+- preset orchestration fail-closed
+- Inventory reroll disabled/unqualified
+- teleport ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch
+- CT catalog = 224
+- schema/adaptor validity
+
+I. TESTS
+
+Run:
+
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. Settings/Developer raw `.Add_Click` count: 5 -> 0
+11. Settings/Developer raw `Register-SafeUiEvent` = 0
+12. exact five EventId assertions
+13. Panic Reset maps to `cheat.survival.disable_all`
+14. Panic Reset remains disabled by canonical action gating
+15. failed Panic Reset:
+    - reports returned failure
+    - does not report reset success
+    - creates no pending/native fallback
+16. Save Keybindings closure test:
+    - selected values update intended binding keys
+    - one save action only
+    - no stale-control reference after rerender
+17. Apply Preferences closure test:
+    - reads current checkbox values
+    - one save action only
+    - no stale-control reference after rerender
+18. subnav navigation:
+    - clears PAGE content
+    - renders target view once
+    - no duplicate/ambiguous definitions
+19. G1/G2/G3A raw counts remain zero
+20. prohibited mutation scan
+
+REPORT
+
+Return:
+
+- files changed
+- Settings/Developer raw count before/after
+- exact five EventIds and classifications
+- Panic Reset canonical mapping and disabled presentation
+- failed Panic Reset status behavior
+- keybinding-save closure behavior
+- preference-save closure behavior
+- registry counts unchanged
+- lifecycle/truthfulness/UI-smoke results
+- remaining G3 raw counts
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G3C or responsive migration in this pass.

@@ -1,0 +1,92 @@
+Architect Toolkit — CODE-0041A safety completion pass
+
+Work against the current Architect_Mod/Current source. Do not start the responsive-page migration yet. First finish restoring the 0.42.0 fail-closed mutation ownership contract.
+
+AUTHORITATIVE CONTEXT
+- Game build: Enshrouded 1076226.
+- Uploaded 0.42.0 baseline from INC-0062 is the pre-refactor behavior reference.
+- CODE-0036 established the in-process native runtime / canonical backend path as mutation owner. F7 PowerShell must not independently mutate game memory through NativeMemoryEngine fallbacks.
+- Teleport remains ADM-TEST-0002 fail-closed.
+- Glider Flight remains unqualified/disabled.
+- Auto Loot remains STARTUP_CANARY_ONLY for the current path.
+- Glider Stamina remains semantically blocked unless current higher-authority evidence explicitly says the effect is now proven as true infinite stamina.
+- Do not add any new hooks, offsets, signatures, pointers, or gameplay features in this pass.
+
+CURRENT GOOD CHANGES TO PRESERVE
+- `Invoke-PlayerTeleport` now fails closed.
+- Teleport action IDs are rejected before mutation.
+- Direct Glider Flight F7 mutation is rejected.
+- Live Auto Loot is rejected as STARTUP_CANARY_ONLY.
+- ActionId binding helper and responsive helper definitions remain available.
+
+CRITICAL REMAINING DEFECT
+`Send-CheatCommand` still mutates via NativeMemoryEngine before it performs authoritative capability gating.
+
+Current examples include:
+- `movement.gravity` -> `NativeMemoryEngine::TogglePatch("gravityZero")`
+- `cheat.survival.enable_all` -> `NativeMemoryEngine::EnableAllSurvival()`
+- `cheat.survival.disable_all` -> `NativeMemoryEngine::DisableAllSurvival()`
+- generic `$patchKeyMap` -> `NativeMemoryEngine::TogglePatch($pKey)` for multiple gameplay patches
+
+The `Get-AdminCapabilities` check currently happens after these mutation calls. This is fail-open ordering.
+
+There are also direct UI-handler bypasses, including:
+- Zero-G button -> `TogglePatch("gravityZero")`
+- Easy Parry button -> `TogglePatch("easyParry")`
+- panic/reset buttons -> `DisableAllSurvival()` before canonical dispatch
+
+GOAL
+Restore a single authoritative mutation path:
+UI control -> canonical ActionId -> capability gate -> canonical dispatch/backend -> ACK/readback/status.
+
+No F7 UI handler may directly call a NativeMemoryEngine mutation API.
+No command dispatcher may perform a C# mutation before capability validation.
+
+TASKS
+1. In `Send-CheatCommand`, move capability resolution/gating ahead of every possible mutation or side effect.
+2. Remove the direct C# mutation branches for gravity and survival enable/disable.
+3. Remove the generic PowerShell-side `$patchKeyMap` / `NativeMemoryEngine::TogglePatch` mutation fallback from F7 dispatch. Preserve only read-only status/diagnostic use of NativeMemoryEngine where justified.
+4. Remove direct mutation calls from individual UI handlers such as Zero-G, Easy Parry, panic/reset, and any other executable F7 handler discovered by search.
+5. Route every still-supported executable action only through the existing canonical native/backend command path. If an action lacks an authoritative backend, reject/disable it; do not invent a fallback.
+6. Preserve teleport fail-closed, glider-flight disabled, and Auto Loot STARTUP_CANARY_ONLY behavior.
+7. Restore/retain the glider-stamina semantic block from the 0.42.0 baseline if it is not already present. Technical patch readiness must not override the known gameplay-semantic mismatch.
+8. Search the entire F7 runtime for direct mutation calls to `NativeMemoryEngine` and classify each occurrence as:
+   - read-only/status/diagnostic (may remain), or
+   - mutation (must be removed from F7 unless it is explicitly part of the approved canonical backend architecture).
+9. Add/repair offline tests that assert:
+   - capability gating occurs before mutation dispatch;
+   - no F7 UI handler directly invokes `TogglePatch`, `EnableAllSurvival`, `DisableAllSurvival`, `WritePlayerCoordinates`, `ToggleAutoLoot`, or `ToggleGliderFlight`;
+   - unsupported actions cannot cause mutation before returning UNSUPPORTED;
+   - teleport remains disarmed;
+   - Auto Loot remains startup/canary-only;
+   - Glider Flight remains disabled;
+   - glider-stamina semantic mismatch remains blocked.
+10. Run PowerShell parse plus all relevant available safety/routing tests.
+
+DO NOT YET
+- expand the 20-entry registry;
+- wire Bind-AdminActionControl across the UI;
+- migrate fixed-position pages to responsive containers;
+- restore/rework Source Map or CT Catalog;
+- add attributes/derived-stat writes;
+- add Lua config editing;
+- add loot/chest/autopickup runtime features.
+
+Those are the next passes after the safety contract is clean.
+
+ACCEPTANCE CRITERIA
+- Static search finds zero F7 mutation call sites to the prohibited NativeMemoryEngine mutation APIs listed above.
+- `Send-CheatCommand` does not mutate anything before capability validation.
+- Unsupported actions return without game-memory side effects.
+- Existing canonical backend dispatch remains intact.
+- PS_PARSE_OK.
+- Relevant safety/routing tests pass, or any unavailable test is reported with exact missing-path/tool reason.
+- No runtime-success claim.
+
+DELIVERABLE
+Return:
+1. exact files changed;
+2. list of direct mutation bypasses removed;
+3. list of NativeMemoryEngine references that remain and why each is read-only/safe;
+4. test commands/results;
+5. any remaining blocker.

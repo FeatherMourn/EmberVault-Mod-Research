@@ -1,0 +1,23 @@
+CODE-0044B authoritative BUILD catalog audit (Enshrouded 1076226)
+
+Source: CODE-0044A src/mod.lua, unchanged by CODE-0044B.
+Catalog entries: 12. Duplicate keys: 0. Permanent Architect carrier registrations: 1.
+No procedural preset adds a catalog entry, Blueprint registration, item, or carrier.
+
+Exactly reproducible through the procedural designer (6):
+  hollow_ceiling_4m: 8x1x8, Shapes.hollowRectangle, hollow box perimeter
+  filled_circle_4m: 8x1x8, Shapes.filledCircle, filled Y-axis cylinder
+  ring_4m: 8x1x8, Shapes.ring, X/Z ring, thickness 1.5
+  sphere_2m: 4x4x4, Shapes.sphere, solid sphere
+  filled_cylinder_2m: 4x4x4, Shapes.filledCylinder, filled Y-axis cylinder
+  hollow_cube_2m: 4x4x4, Shapes.hollowBox, hollow box thickness 1
+
+Not represented by this feature pack (6):
+  cross_4m, diamond_4m, diagonal_cross_4m,
+  stairs_2m, pyramid_2m, archway_2m.
+
+Matching requires the canonical key, the source shape-function name, source dimensions,
+and identical packed occupancy bytes/hash. A changed source shape function or size
+fails closed. One negative size perturbation and two source-metadata perturbations
+were tested. A matching design may only stage the corresponding catalog key for the
+next restart through CODE-0044A. Generated geometry itself is never installed.

@@ -1,0 +1,805 @@
+CODE-0042G5K — AUTONOMOUS GOAL: ROLE PRESETS RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Migrate the F7 `Render-RolePresetsPage` subpage from its fixed-pixel layout to the established responsive F7 framework while preserving all current preset loading, local preset saving, canonical preset-apply gating, stable-ID fail-closed behavior, event lifecycle, and all closed G5A–G5J responsive baselines.
+
+This milestone is UI/responsive work only.
+
+It does NOT authorize:
+- enabling preset execution,
+- changing preset orchestration,
+- changing child cheat actions,
+- changing preset persistence format,
+- adding gameplay/native preset behavior,
+- changing Home or Mods & Configuration navigation behavior,
+- changing F8.
+
+Work autonomously toward the goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded fixture paths, stale fixed-pixel source assertions, fixture-version mismatches, missing TEMP support artifacts, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5K satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting identity:
+
+- Length: `449835` bytes
+- SHA-256:
+  `D510D65A3A25FB4080DC3BC466AD9D0736661FF0E2F3F291989721437F366EF8`
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry identity:
+
+- SHA-256:
+  `7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- modify backend routing
+- modify `Send-CheatCommand`
+- modify `Dispatch-AdminCommand`
+- modify `Load-ArchitectPresets`
+- modify `Save-ArchitectPresets`
+- modify `Invoke-ArchitectPreset`
+- modify `Render-SettingsDevPage`
+- modify `Render-DashboardPage`
+- modify page dispatch/nav
+- enable `admin.preset.apply`
+- add preset child actions
+- add/remove/reorder built-in fallback presets
+- change the preset schema
+- start later UI work or F8
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a presentation/layout migration over an existing fail-closed preset system.
+
+Preserve working infrastructure.
+Do not redesign the preset system because the page is being made responsive.
+
+CURRENT PRESET EVIDENCE BOUNDARY
+
+Canonical action:
+
+`admin.preset.apply`
+
+Registry truth:
+- displayName = `Apply Architect Preset`
+- category = `Home`
+- subcategory = `Presets`
+- evidenceStatus = `EXPERIMENTAL`
+- backendAdapter = `DiagnosticsAdapter`
+- backend = `NONE`
+- runtimeMode = `SESSION`
+- authority = `unknown`
+- persistence = `session`
+- risk = `compound_mutation`
+- readbackVerification = `child_action_ack_readback`
+- revertSupport = `child_action_policy`
+- enabled = `false`
+- failureReason =
+  `Preset execution must fail closed when any child action is unavailable.`
+
+`Invoke-ArchitectPreset` also fails closed before child execution when the canonical definition is missing or disabled:
+
+`PRESET_APPLY_UNAVAILABLE: canonical preset orchestration is disabled.`
+
+`Send-CheatCommand "admin.preset.apply"` is likewise rejected as unsupported.
+
+G5K must preserve this defense in depth.
+
+Do not represent preset application as runtime-proven.
+Do not enable the action merely because the UI exists.
+
+CURRENT FUNCTION BOUNDARY
+
+Expected product-source change:
+
+- `Render-RolePresetsPage`
+
+Protected functions/helpers:
+
+- `Load-ArchitectPresets`
+- `Save-ArchitectPresets`
+- `Invoke-ArchitectPreset`
+- `Render-DashboardPage`
+- `Render-SettingsDevPage`
+- `Render-DiagnosticsPage`
+- `Render-CodexWikiPage`
+- `Update-CodexDetails`
+- `Update-CodexFilter`
+- all G5A–G5J closed renderers/helpers
+- page dispatcher/nav
+- responsive helper functions
+- lifecycle/event infrastructure
+
+Prior protected-function hash for `Render-RolePresetsPage` from the G5I/G5J lineage:
+
+`4F85385E794C0C487840103DEE28B390A9A3A273F093F6B1EDDF2069E55449E2`
+
+Use one consistent AST/function extraction method for your own before/after checks.
+
+Do not create:
+- `Render-RolePresetsPageLegacy`
+- `Render-RolePresetsPageOld`
+- backup/copy variants
+
+Code History already preserves the pre-G5K source.
+
+============================================================
+A. ENTRY / NAVIGATION CONTRACT
+============================================================
+
+Role Presets remains a subpage, not a new F7 main-nav route.
+
+Preserve existing navigation callers by keeping their source unchanged:
+
+From Mods & Configuration:
+- visible label `ROLE PRESETS`
+- EventId `f7.settings.subnav.presets.click`
+- UI_ONLY `Register-F7UiEvent`
+- handler:
+  `Clear-AdminContent; Render-RolePresetsPage`
+
+From Home:
+- visible control `CUSTOMIZE PRESETS >>`
+- EventId `f7.home.presets.manage.click`
+- UI_ONLY event
+- handler:
+  `Clear-AdminContent; Render-RolePresetsPage`
+
+Do not change either caller during G5K.
+
+============================================================
+B. PAGE HEADER
+============================================================
+
+Preserve heading:
+
+`ONE-CLICK ROLE PRESETS`
+
+Preserve subtitle exactly in meaning:
+
+`Instantly activate curated combinations of cheats, physics, and god powers, or save custom snapshots.`
+
+Do not change product semantics or add claims during responsive migration.
+
+Responsive layout should allow heading/subtitle to stretch and avoid fixed 580px assumptions.
+
+============================================================
+C. PRESET SOURCE / FALLBACK
+============================================================
+
+Preserve:
+
+`$presets = Load-ArchitectPresets`
+
+If no presets exist, preserve the exact four built-in fallback presets and their order:
+
+1. `preset-master-architect`
+   - name: `MASTER ARCHITECT (Creative Mode)`
+   - desc:
+     `God Mode, Free Crafting (0 Materials), Infinite Stamina, No Fall Damage, 2.0x Movement Speed.`
+   - color: `#2E7D32`
+   - builtIn = true
+   - hotkeyBinding = `preset_slot_1`
+
+2. `preset-world-explorer`
+   - name: `WORLD EXPLORER`
+   - desc:
+     `Shroud Immunity, Underwater Breathing, Cold Immunity, Infinite Stamina, 2.5x Movement Speed.`
+   - color: `#1565C0`
+   - builtIn = true
+   - hotkeyBinding = `preset_slot_2`
+
+3. `preset-combat-master`
+   - name: `COMBAT MASTER`
+   - desc:
+     `God Mode, Infinite Mana, Infinite Stamina, Easy Parry, No Durability Loss.`
+   - color: `#C62828`
+   - builtIn = true
+   - hotkeyBinding = `preset_slot_3`
+
+4. `preset-reset-vanilla`
+   - name: `RESET TO VANILLA`
+   - desc:
+     `Restores all game mechanics, physics, and material costs to vanilla defaults.`
+   - color: `#455A64`
+   - builtIn = true
+   - hotkeyBinding = `panic_reset_vanilla`
+
+Do not add, remove, reorder, or reinterpret these fallback definitions.
+
+============================================================
+D. PRESET CARD COLOR
+============================================================
+
+For each preset preserve default button color:
+
+`FromArgb(46, 125, 50)`
+
+If `$p.color` exists, preserve HTML color parsing:
+
+`[System.Drawing.ColorTranslator]::FromHtml($p.color)`
+
+Preserve fail-safe `try/catch` behavior if a color is invalid.
+
+Responsive layout may change card/table structure only.
+
+============================================================
+E. PRESET APPLY BUTTON
+============================================================
+
+For each preset preserve:
+
+- button text = `$p.name`
+- button Tag = `$p`
+- bold Segoe UI 8.5 equivalent
+- semantic color from preset/default
+
+Preserve:
+
+`$presetId = [string]$p.id`
+
+For a VALID, nonblank preset id:
+
+ActionId:
+
+`admin.preset.apply`
+
+Dynamic EventId:
+
+`f7.presets.apply.<presetId>.click`
+
+Registration:
+
+`Register-AdminActionEvent`
+
+Page:
+
+`Presets`
+
+Operation:
+
+`Apply Preset <presetId>`
+
+LifetimeScope:
+
+`PAGE`
+
+Handler semantics:
+
+- obtain sender/closure control
+- if control Tag exists:
+  `Invoke-ArchitectPreset $t.Tag`
+
+Do not call preset child commands directly from the renderer.
+
+Do not use `AllowDisabled`.
+
+Because the canonical action is disabled, binder gating must keep valid preset-apply controls fail closed.
+
+============================================================
+F. MISSING / BLANK PRESET ID FAIL-CLOSED
+============================================================
+
+For a missing/blank preset id preserve:
+
+- button disabled
+- no event registration
+- no generated dynamic EventId
+- no synthesized fallback id
+- BackColor:
+  `FromArgb(45, 45, 52)`
+- ForeColor:
+  `FromArgb(140, 140, 150)`
+- AccessibleDescription
+- tooltip when `$script:adminToolTip` exists
+
+Preserve reason exactly:
+
+`Preset unavailable: stable preset id is missing.`
+
+Do not use array index, name, GUID-at-render-time, or other unstable identity as a fallback.
+
+============================================================
+G. PRESET DESCRIPTION
+============================================================
+
+Preserve visible description source:
+
+`$p.desc`
+
+Responsive migration should allow description text to consume remaining horizontal width and remain readable.
+
+Do not truncate the underlying text or replace it with generated summaries.
+
+============================================================
+H. CUSTOM PRESET SAVE CARD
+============================================================
+
+Preserve heading:
+
+`SAVE ACTIVE CONFIGURATION AS CUSTOM PRESET`
+
+Preserve field label:
+
+`Preset Name:`
+
+Preserve default TextBox value:
+
+`My Custom Profile`
+
+Preserve save button:
+
+`SNAPSHOT & SAVE`
+
+This card remains local preset-file management.
+Do not add gameplay/native actions.
+
+============================================================
+I. CUSTOM PRESET SAVE EVENT
+============================================================
+
+Preserve EventId:
+
+`f7.presets.save.click`
+
+Registration:
+
+`Register-F7UiEvent`
+
+Page:
+
+`Presets`
+
+Operation:
+
+`Save Custom Preset`
+
+LifetimeScope:
+
+`PAGE`
+
+Preserve handler semantics:
+
+1. `$pName = $txtPName.Text.Trim()`
+2. only continue when `$pName` is non-empty
+3. create local object:
+   - id =
+     `preset-custom-` + first 8 chars of new GUID string
+   - name = `$pName`
+   - desc = `User customized preset snapshot.`
+   - color = `#00838F`
+   - builtIn = false
+   - cheats = `@{}`
+4. append to current preset collection:
+   `@(Load-ArchitectPresets) + @($newP)`
+5. `Save-ArchitectPresets $allP`
+6. status:
+   `Saved custom preset: <name>`
+7. `Clear-AdminContent`
+8. `Render-RolePresetsPage`
+
+Do not change the custom-preset object schema in G5K.
+
+Do not add `actions`, runtime state capture, or gameplay semantics as part of this responsive milestone.
+
+============================================================
+J. PRESET STORAGE HELPERS — PROTECTED
+============================================================
+
+`Load-ArchitectPresets`, `Save-ArchitectPresets`, and `Invoke-ArchitectPreset` must remain source-identical.
+
+Preserve persistence schema:
+
+`architect.presets.v1`
+
+Preserve atomic JSON write behavior through:
+
+`Write-AtomicUtf8Json`
+
+Preserve save depth:
+
+`6`
+
+Do not rename or relocate the preset file.
+
+============================================================
+K. INVOKE PRESET FAIL-CLOSED HELPER — PROTECTED
+============================================================
+
+`Invoke-ArchitectPreset` must remain unchanged.
+
+Critical semantics to verify:
+
+- canonical definition lookup:
+  `Get-AdminCommandDefinition "admin.preset.apply"`
+- missing/disabled canonical action immediately returns unsupported
+- disabled error:
+  `PRESET_APPLY_UNAVAILABLE: canonical preset orchestration is disabled.`
+- missing preset also returns unsupported
+- only if canonical preset orchestration were enabled may actions be iterated
+- child action command/params route through `Send-CheatCommand`
+- 80 ms child delay preserved
+- final success/status behavior preserved
+
+G5K does not authorize testing or enabling this runtime path.
+
+============================================================
+L. EVENT LIFECYCLE / ZERO-GAP
+============================================================
+
+Inside the active `Render-RolePresetsPage` preserve:
+
+- dynamic canonical preset-apply registration source sites = exactly 1
+- UI_ONLY custom-save registration source sites = exactly 1
+
+No:
+- raw `.Add_Click`
+- raw `.add_Click`
+- raw `.Add_TextChanged`
+- raw `.Add_SelectedIndexChanged`
+- direct `Register-SafeUiEvent`
+- `[scriptblock]::Create`
+
+Valid preset applies use canonical ACTION binding.
+Custom save remains UI_ONLY.
+Missing preset id remains handler-free.
+
+Parity fixture must scope assertions to the active `Render-RolePresetsPage` AST/function extent.
+
+============================================================
+M. RESPONSIVE DESIGN TARGET
+============================================================
+
+Rebuild `Render-RolePresetsPage` with responsive F7 cards/tables.
+
+Conceptual hierarchy:
+
+1. Role Presets heading
+2. explanatory subtitle
+3. dynamic preset list
+4. custom preset save card
+
+Preset cards:
+
+- stretch to available width
+- avoid fixed `580` width
+- preserve preset button + description association
+- use percentage columns
+- give the apply button a bounded practical share of width
+- allow long preset descriptions to remain readable
+- preserve preset order
+- preserve preset colors
+- maintain stable vertical spacing/order
+- fit the F7 FlowLayoutPanel model
+
+Custom save card:
+
+- stretch to width
+- label/name field/save action remain unambiguous
+- TextBox expands responsively
+- save button remains readable at narrow widths
+
+Do not add new user controls just to fill space.
+
+Do not claim exact geometry unless a real WinForms layout harness exists.
+
+============================================================
+N. NO LEGACY / DUPLICATE SOURCE
+============================================================
+
+Final Current must contain:
+
+- exactly one `Render-RolePresetsPage`
+- zero RolePresets legacy/old/backup/copy variants introduced by G5K
+
+Use active-AST/function-scoped parity.
+
+Do not allow dead source to satisfy parity checks.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- edit only `Render-RolePresetsPage`
+- create TEMP staging roots
+- create a TEMP-only G5K Role Presets parity fixture
+- create AST/function-scoped source assertions
+- adapt TEMP fixture paths
+- refresh TEMP-only fixed-pixel assertions when semantic invariants are independently preserved
+- rerun tests as needed
+- iterate card/table decomposition
+- fix renderer-local parse/layout-construction problems
+- fix renderer-local overlap/clipping found by UI smoke
+- inspect Current source/registry and prior closed responsive evidence
+
+Do not ask the user for intermediate approval for recoverable TEMP/test-layout issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- starting Current hash differs
+- registry hash/count differs
+- a change outside `Render-RolePresetsPage` is genuinely required
+- preset storage helpers must change
+- `Invoke-ArchitectPreset` must change
+- Home or Settings navigation must change
+- responsive helpers must change
+- registry/backend/native/Lua must change
+- preset apply must be enabled to complete the layout
+- completing the task requires new runtime/gameplay research
+- completing the task requires recreating H:
+- a safety-sensitive ambiguity cannot be resolved from source/evidence
+
+Do NOT stop merely because a TEMP fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified G5B–G5J lineage.
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native source trees from the old archive.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+G5K PARITY FIXTURE
+
+Create a TEMP-only, active-AST/function-scoped Role Presets parity fixture.
+
+Verify at least these independent groups:
+
+1. exactly one active `Render-RolePresetsPage`
+2. zero legacy/backup RolePresets definitions
+3. Mods & Configuration Role Presets caller remains unchanged
+4. Home Customize Presets caller remains unchanged
+5. page heading preserved
+6. page subtitle preserved
+7. presets still loaded through `Load-ArchitectPresets`
+8. fallback activates only when loaded presets are empty
+9. fallback preset count remains four
+10. fallback preset order remains exact
+11. master preset id exact
+12. master preset name exact
+13. master preset description exact
+14. master preset color exact
+15. master preset builtIn/hotkey exact
+16. explorer preset id exact
+17. explorer preset name exact
+18. explorer preset description exact
+19. explorer preset color exact
+20. explorer preset builtIn/hotkey exact
+21. combat preset id exact
+22. combat preset name exact
+23. combat preset description exact
+24. combat preset color exact
+25. combat preset builtIn/hotkey exact
+26. reset preset id exact
+27. reset preset name exact
+28. reset preset description exact
+29. reset preset color exact
+30. reset preset builtIn/hotkey exact
+31. default preset button color preserved
+32. HTML preset color parsing preserved
+33. color parsing remains fail-safe
+34. apply button text remains preset name
+35. apply button Tag remains preset object
+36. stable id source remains `$p.id`
+37. valid preset ActionId exact
+38. dynamic EventId format exact
+39. Page remains `Presets`
+40. Operation format preserved
+41. LifetimeScope remains PAGE
+42. valid apply remains `Register-AdminActionEvent`
+43. apply handler invokes `Invoke-ArchitectPreset` from Tag
+44. apply handler does not directly call child commands
+45. missing-id button disabled
+46. missing-id BackColor preserved
+47. missing-id ForeColor preserved
+48. missing-id reason exact
+49. missing-id AccessibleDescription preserved
+50. missing-id tooltip preserved
+51. missing-id path registers no event
+52. no synthesized fallback preset id
+53. description source remains `$p.desc`
+54. custom card heading exact
+55. Preset Name label exact
+56. default custom name exact
+57. SNAPSHOT & SAVE label exact
+58. custom save EventId exact
+59. custom save remains `Register-F7UiEvent`
+60. custom save Page/Operation/PAGE lifetime preserved
+61. custom name is trimmed
+62. empty custom name performs no save
+63. custom id format remains preset-custom + 8-char GUID prefix
+64. custom desc exact
+65. custom color exact
+66. custom builtIn remains false
+67. custom cheats remains empty hashtable
+68. current presets are reloaded before append
+69. custom save uses `Save-ArchitectPresets`
+70. save status text preserved
+71. save clears content
+72. save rerenders Role Presets
+73. `Load-ArchitectPresets` hash unchanged
+74. `Save-ArchitectPresets` hash unchanged
+75. `Invoke-ArchitectPreset` hash unchanged
+76. canonical `admin.preset.apply` remains disabled
+77. preset action remains EXPERIMENTAL
+78. preset backend remains NONE
+79. preset runtimeMode remains SESSION
+80. preset risk remains compound_mutation
+81. preset failureReason preserved
+82. `Invoke-ArchitectPreset` disabled gate preserved
+83. `PRESET_APPLY_UNAVAILABLE` disabled error preserved
+84. `Send-CheatCommand` direct rejection for admin.preset.apply preserved
+85. renderer canonical ACTION registration source sites remain exactly one
+86. renderer UI_ONLY registration source sites remain exactly one
+87. renderer raw direct event registrations remain zero
+88. no `Register-SafeUiEvent`
+89. no `scriptblock::Create`
+90. renderer now uses responsive F7 card/table infrastructure
+91. no invalid Absolute row-height hashtable introduced
+92. Home hash unchanged
+93. Player hash unchanged
+94. Mobility hash unchanged
+95. Inventory hash unchanged
+96. Crafting/Progression hash unchanged
+97. Combat hash unchanged
+98. World/Camera hash unchanged
+99. Building hash unchanged
+100. Entities/Authority hash unchanged
+101. Mods/Configuration hash unchanged
+102. Developer/Diagnostics G5J target hashes unchanged
+103. Codex filter/catalog helpers unchanged
+104. page dispatcher/nav unchanged
+105. registry unchanged
+106. no backend/native/Lua change
+
+You may split or strengthen checks.
+
+Do not reduce coverage merely to get green.
+
+REGRESSION / SUCCESS CRITERIA
+
+G5K is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only `Render-RolePresetsPage` changed
+- all G5A–G5J closed renderer/helper hashes unchanged
+- preset load/save/invoke helper hashes unchanged
+- exactly one RolePresets renderer
+- zero legacy/backup copies
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- registry SHA unchanged
+- `admin.preset.apply` remains disabled/fail-closed
+- G5K Role Presets parity fully PASS
+- G5B Player parity 18/18 PASS
+- G5C Mobility parity fully PASS
+- G5D Items/Progression parity fully PASS
+- G5E Combat parity fully PASS
+- G5F World/Camera parity fully PASS
+- G5G Building parity fully PASS
+- repaired G5H Entities/Authority parity fully PASS
+- G5I Mods/Configuration parity fully PASS
+- G5J Developer/Diagnostics parity fully PASS
+- truthfulness fully PASS
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new raw F7 event sites
+- no preset runtime behavior promoted
+- final Current runtime SHA/length recorded
+- H remains absent
+- F8 not started
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA/length
+- ending SHA/length
+- `Render-RolePresetsPage` hash before/after
+- `Load-ArchitectPresets` hash before/after
+- `Save-ArchitectPresets` hash before/after
+- `Invoke-ArchitectPreset` hash before/after
+- G5A–G5J protected renderer/helper hashes before/after
+- exact list of product functions changed
+- confirmation no legacy/backup renderer exists
+- concise responsive layout architecture
+- product-source files changed
+- TEMP-only fixture files changed
+- G5K parity count/result
+- G5B–G5J regression results
+- truthfulness result
+- UI smoke result
+- UI error count
+- CT count
+- lifecycle result
+- source consolidation/schema result
+- prohibited mutation result
+- G4A result
+- stable-definition refs
+- registry counts/hash
+- `admin.preset.apply` evidence/enabled state
+- canonical/UI_ONLY/raw event-site results
+- geometry status
+- any justified TEMP assertion refreshes
+- confirmation Home/Settings preset navigation remained unchanged
+- confirmation preset helpers/persistence remained unchanged
+- confirmation H was not recreated
+- confirmation F8/later work was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5K Role Presets responsive/parity verification is closed at source/static level.`
+
+Do not call preset execution or gameplay behavior PROVEN from these tests.

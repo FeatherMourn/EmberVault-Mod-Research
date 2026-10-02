@@ -1,0 +1,238 @@
+CODE-0042G5B1R — COMPLETE PLAYER SEMANTIC-PARITY REPAIR
+
+Scope:
+- `Render-PlayerVitalsPage` only
+- finish the incomplete G5B1 repair
+- no Mobility/G5C work
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Semantic baseline:
+- `Architect_Mod/Code_History/CODE-0042G5A1/ArchitectRuntime.ps1`
+
+Registry:
+- unchanged 55 / 17 enabled / 38 disabled
+
+IMPORTANT
+
+The current G5B1 source only landed the Enable-All capability gate.
+Do not report G5B1 complete until every item below is present in source.
+
+A. KEEP THE ENABLE-ALL REPAIR
+
+Preserve the current working block:
+- `$canEnableAll = ($canHeal -and $canStam -and $canMana)`
+- `$enableAllBtn.Enabled = $canEnableAll`
+- exact disabled colors
+- exact tooltip reason
+
+Do not change its EventId, ActionId, or handler.
+
+B. REBUILD RECOVERY ROW EXPLICITLY
+
+Remove the current `foreach($pair...)` recovery implementation.
+
+Create explicit controls:
+
+- `$numHpRec`
+- `$numStamRec`
+- `$numManaRec`
+
+Each must:
+- DecimalPlaces = 1
+- Increment = 0.5
+- Minimum = 1.0
+- Maximum = 20.0
+- Dock = Fill
+
+Values:
+- HealthRecoveryMultiplier
+- StaminaRecoveryMultiplier
+- ManaRecoveryMultiplier
+
+Visible labels:
+- `HP Rec:`
+- `Stam Rec:`
+- `Mana Rec:`
+
+Actually add all three numeric controls to the responsive table.
+
+Do not use `IndexOf` to map semantic cells.
+
+C. RESTORE ZERO SPELL COST BASELINE
+
+Use:
+- Text = `Zero Spell Cost`
+- Checked = `[NativeMemoryEngine]::ZeroSpellCost`
+- ForeColor `(200,220,240)`
+- Segoe UI 7.5 Bold
+- Dock Fill
+
+Do NOT set `.Enabled = $false`.
+Do NOT add an event handler.
+
+D. RESTORE PRIMARY-VITAL LABELS
+
+Health group visible trailing label:
+- `Max HP`
+
+Stamina:
+- `Max Stam`
+
+Mana:
+- do not invent `Mana refill`; leave the third cell empty or span appropriately.
+
+Keep exact fill EventIds/ActionIds/handlers/status strings.
+
+E. RESTORE SURVIVAL ACTIVE-STATE LOGIC
+
+For capability-qualified rows restore exactly:
+
+```powershell
+$isActive = ($status -and [bool]$status.($c.Key))
+
+if (-not $isActive) {
+    try {
+        if ($c.Key -eq "autoLoot") {
+            $isActive = [NativeMemoryEngine]::IsAutoLootActive
+        } else {
+            $st = [NativeMemoryEngine]::GetPatchStatus($c.Key)
+            if ($st -eq "ON") { $isActive = $true }
+        }
+    } catch {}
+}
+```
+
+Then:
+- ON text/color `(50,180,100)`
+- OFF text/color `(100,110,120)`
+
+F. RESTORE BADGE PRESENTATION
+
+Unavailable badge:
+- BackColor `(28,28,35)`
+- MiddleCenter
+- FixedSingle
+- Default cursor
+- disabled
+- existing tooltip reason
+
+Qualified badge:
+- BackColor `(18,22,30)`
+- MiddleCenter
+- FixedSingle
+- Hand cursor
+- Tag = `$c`
+- existing dynamic canonical binding
+
+Keep Dock Fill.
+
+G. RESTORE ALTERNATING ROW BACKGROUNDS
+
+Even:
+- `(28,35,46)`
+
+Odd:
+- `(24,30,39)`
+
+Apply to the responsive row container.
+
+H. FIX ROW HEIGHTS
+
+Do not pass:
+- `@{Type='Absolute';Value=...}`
+
+Use numeric absolute heights:
+
+```powershell
+$rowHeights = @(22)
+for (...) { $rowHeights += 20 }
+```
+
+Do not modify `New-F7ResponsiveTable` for this repair.
+
+I. RESTORE UNSUPPORTED CONTROL STYLING
+
+Restore pre-G5B font/foreground/disabled presentation for:
+- RECOVERY (UNSUPPORTED)
+- ATTR (UNSUPPORTED)
+- All 50
+- SCALING (UNSUPPORTED)
+- All 2x
+
+No EventIds.
+No handlers.
+
+J. PRESERVE
+
+Keep:
+- responsive Player layout
+- no `$listY`
+- no `$attrX`
+- no active Player `.Location`
+- no `[scriptblock]::Create`
+- all Player EventIds/ActionIds
+- exact command handlers/status text
+- Home unchanged
+- Mobility unchanged
+- registry 55 / 17 / 38
+- G4A zero-gap
+
+K. REQUIRED STATIC ASSERTIONS
+
+Add or run assertions that fail unless:
+
+1. `$numHpRec`, `$numStamRec`, `$numManaRec` exist
+2. each numeric control is added to a Controls collection
+3. no recovery `IndexOf` mapping
+4. Zero Spell is not force-disabled
+5. `Max HP` and `Max Stam` exist
+6. `Health refill`, `Stamina refill`, `Mana refill` do not exist in Player
+7. Player survival logic contains:
+   - `$status`
+   - `IsAutoLootActive`
+   - `GetPatchStatus`
+8. badge code contains:
+   - BackColor
+   - TextAlign
+   - BorderStyle
+   - Hand cursor
+   - Default cursor
+9. both alternating row colors are present
+10. no `Type='Absolute'` hashtable row styles in Player
+11. exact Player EventIds/ActionIds preserved
+12. Home function unchanged
+13. Mobility function unchanged
+
+L. STANDARD TESTS
+
+Run:
+- PowerShell parse
+- real registry import = 55 unique
+- lifecycle/static fixture
+- F7 truthfulness
+- UI smoke
+- UI errors
+- CT catalog = 224
+- schema/adaptor validation
+- prohibited mutation scan
+- G4A zero-gap
+- stable-definition refs = 0
+- all G5B1R parity assertions
+
+Geometry:
+- if unavailable, report exactly `SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+REPORT
+
+Return:
+- exact repairs completed
+- all 13 parity assertion results
+- registry unchanged
+- G4A result
+- geometry status
+- explicit statement that Mobility/G5C was NOT started
+- explicit statement that no gameplay/runtime mechanism was changed or proven

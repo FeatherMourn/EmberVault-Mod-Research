@@ -1,0 +1,265 @@
+CODE-0042G1 — F7 EVENT-CLOSURE BATCH 1
+
+Context
+-------
+CODE-0042F did not complete zero-gap event closure. Do not claim it did.
+
+Current source of truth for the edited runtime files:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json
+
+Full reconstructed verification workspace:
+C:\Users\JoelT\AppData\Local\Temp\architect-code0042-35e945431cb14cfeb86ba1de87e42726\architect_toolkit
+
+Before editing, overlay the two Current runtime files above into that reconstructed workspace so tests run against the latest source while retaining the full INC-0062 catalogs/native/tests.
+
+Important current measurement
+-----------------------------
+Static source inspection finds 106 raw event-registration call sites file-wide:
+- 48 Register-SafeUiEvent
+- 58 .Add_Click(...)
+
+Do NOT treat 106 as the F7 denominator. That count includes helper internals and F8-only handlers. The current F7 audit surface is approximately 96 raw registrations after excluding the two intended wrapper internals and F8-only sites.
+
+The goal is to eliminate raw registrations INSIDE THE DEFINED F7 SURFACE, not to blindly replace every event in the file.
+
+This pass is intentionally bounded. Do NOT try to migrate all ~96 F7 events in one edit.
+
+Primary goal
+------------
+Finish the EVENT-INVENTORY ARCHITECTURE and fully migrate the FIRST PAGE BATCH so the pattern is proven before expanding to the rest of F7.
+
+Batch 1 scope:
+1. event-inventory lifecycle / identity infrastructure
+2. F7 shell/navigation event registrations
+3. Render-DashboardPage / canonical Home
+4. Render-PlayerVitalsPage
+5. Render-MobilityTravelPage
+
+Do not perform broad responsive-layout migration yet.
+Do not add gameplay functionality.
+Do not weaken any safety restriction.
+
+A. STABLE EVENT-DEFINITION INVENTORY
+-----------------------------------
+Refactor the existing event inventory into two distinct concepts.
+
+1. Stable event definitions (metadata only; no strong Control references)
+Each event definition MUST have a mandatory stable EventId supplied by the renderer/helper.
+Suggested fields:
+- EventId
+- Page
+- Classification: ACTION or UI_ONLY
+- ActionId (ACTION only)
+- EventName
+- Operation
+- Renderer/source context if useful
+
+EventId must be deterministic and stable across rerenders.
+Do not use Control.Name, display text, object hash, or runtime memory identity as the primary key.
+
+2. Active render bindings
+Maintain a separate map such as:
+EventId -> current Control reference + render generation/page
+
+Active bindings must be removed/replaced deterministically when a page is cleared or rerendered.
+Disposed controls must not remain in the active map.
+
+Clear-AdminContent or the page-render lifecycle must clean active bindings for the page being destroyed without deleting stable event definitions.
+
+B. REGISTRATION HELPERS
+-----------------------
+Update both helpers so EventId is mandatory.
+
+Register-AdminActionEvent
+- Classification = ACTION
+- requires EventId
+- requires canonical ActionId
+- records stable event definition
+- binds current control to the ActionId
+- registers the actual event handler through the safe wrapper
+
+Register-F7UiEvent
+- Classification = UI_ONLY
+- requires EventId
+- records stable event definition
+- registers current control event through the safe wrapper
+- does NOT create a gameplay/admin registry action
+
+Re-rendering an already-known EventId must update active render state, not append duplicate stable definitions.
+
+C. REAL DIRECT-UNCLASSIFIED PROOF
+---------------------------------
+Do not compute directUnclassifiedEventRegistrations by looking only at inventory rows.
+
+For this batch, implement a deterministic static/source audit for the DEFINED F7 SURFACE, or equivalent test-time scan, that identifies raw:
+- Register-SafeUiEvent
+- .Add_Click(...)
+
+outside the two approved wrapper helpers.
+
+The audit must distinguish:
+- migrated Batch-1 F7 functions
+- F7 functions not yet migrated in later batches
+- F8-only functions
+- helper internals
+
+For Batch 1, report both:
+- directUnclassifiedEventRegistrationsBatch1
+- directUnclassifiedEventRegistrationsFullF7
+
+Batch-1 count MUST reach 0.
+Full-F7 count is expected to remain nonzero after this bounded pass and must NOT be misrepresented as complete.
+
+D. MIGRATE THE F7 SHELL / NAVIGATION
+------------------------------------
+Migrate F7 shell/navigation events in the canonical F7 path to Register-F7UiEvent with stable EventIds.
+
+Navigation/open/close/view switching is UI_ONLY unless it dispatches a backend/admin action.
+Do not force navigation into admin_action_registry.json.
+
+Preserve canonical startup page Home.
+
+E. MIGRATE Render-DashboardPage (HOME)
+--------------------------------------
+Classify every event-bearing control in Render-DashboardPage.
+
+Examples:
+- navigation/manage buttons -> UI_ONLY if they only switch/open views
+- quick Health/Stamina/Mana -> ACTION with their existing canonical ActionIds
+- Revert All / panic-style backend reset -> ACTION with a truthful canonical ActionId
+
+If an actual ACTION lacks a registry entry, add one truthfully.
+Do not enable anything merely to satisfy coverage.
+
+After migration, Render-DashboardPage must contain no direct Register-SafeUiEvent or .Add_Click registration.
+
+F. MIGRATE Render-PlayerVitalsPage
+----------------------------------
+Classify and migrate every event-bearing control in Render-PlayerVitalsPage.
+
+This includes:
+- dynamic vitals cheat badges (already partially migrated)
+- survival enable/disable
+- fill Health
+- fill Stamina
+- fill Mana
+- any filters/view-only interactions in the function
+
+Every ACTION must have one canonical ActionId.
+Unsupported/unqualified actions remain disabled/fail-closed.
+
+After migration, Render-PlayerVitalsPage must contain no direct Register-SafeUiEvent or .Add_Click registration.
+
+G. MIGRATE Render-MobilityTravelPage
+------------------------------------
+Classify and migrate every event-bearing control in Render-MobilityTravelPage.
+
+Likely ACTION examples include, subject to actual handler semantics:
+- movement speed
+- jump height
+- autorun
+- gravity/Zero-G request
+- glider stamina request
+- selected-location warp
+- custom warp
+- safe-spawn warp
+- get-position/read-position request if it invokes backend/runtime behavior
+
+Likely UI_ONLY examples include, subject to actual handler semantics:
+- category selection
+- search text
+- location-list selection
+
+Teleport controls MUST bind to canonical movement.teleport and remain disabled/fail-closed under ADM-TEST-0002. Do not re-enable coordinate writes.
+
+After migration, Render-MobilityTravelPage must contain no direct Register-SafeUiEvent or .Add_Click registration.
+
+H. AUDIT OUTPUT
+---------------
+Get-F7ActionBindingAudit (or adjacent audit function) must report at least:
+- totalEventDefinitions
+- actionDefinitions
+- uiOnlyDefinitions
+- activeBindings
+- boundActionControls
+- unboundActionControls
+- missingRegistryIds
+- duplicateRegistryIds
+- duplicateEventIds
+- ambiguousBindings
+- staleOrDisposedActiveBindings
+- directUnclassifiedEventRegistrationsBatch1
+- directUnclassifiedEventRegistrationsFullF7
+
+For Batch 1 acceptance:
+- unboundActionControls for migrated Batch-1 ACTION controls = 0
+- missingRegistryIds for migrated Batch-1 controls = 0
+- duplicateEventIds = 0
+- ambiguousBindings = 0
+- staleOrDisposedActiveBindings = 0 after page transitions
+- directUnclassifiedEventRegistrationsBatch1 = 0
+
+Do NOT require directUnclassifiedEventRegistrationsFullF7 = 0 in this pass. The remaining pages are intentionally deferred.
+
+I. LIFECYCLE TEST
+-----------------
+Add or extend headless tests to render and revisit:
+Home -> Player -> Mobility & Navigation -> Home -> Mobility & Navigation -> Player
+
+Verify:
+- stable event-definition counts do not grow on repeat visits
+- active bindings reflect only currently rendered/live controls as designed
+- no disposed control remains in active binding map
+- EventIds remain stable
+- no duplicate definitions appear
+
+J. PRESERVE CURRENT SAFETY/EVIDENCE
+-----------------------------------
+Must remain unchanged:
+- no direct F7 TogglePatch calls
+- no EnableAllSurvival/DisableAllSurvival direct mutation fallback
+- no WritePlayerCoordinates
+- no live ToggleAutoLoot path
+- no ToggleGliderFlight path
+- teleport fail-closed ADM-TEST-0002
+- Auto Loot STARTUP_CANARY_ONLY
+- Glider Flight disabled/unqualified
+- glider-stamina semantic block
+- CODE-0022B crash guard
+- mutation ownership policy
+- source-consolidation catalog
+- 224-entry CT catalog
+
+No new hooks, offsets, signatures, pointers, or gameplay writes.
+
+K. TESTS
+--------
+Run from the full reconstructed workspace:
+- PowerShell parse
+- F7 truthfulness
+- UI smoke
+- new event-inventory lifecycle/batch-coverage tests
+- prohibited mutation-call scan
+- CT catalog count = 224
+
+Do not weaken existing assertions to make tests pass.
+
+L. DELIVERABLE
+--------------
+Report:
+1. files changed
+2. registry count before/after and any new ActionIds
+3. exact migrated functions
+4. Batch-1 ACTION count and UI_ONLY count
+5. Batch-1 bound/unbound counts
+6. duplicate EventId count
+7. stale/disposed active-binding count after traversal test
+8. directUnclassifiedEventRegistrationsBatch1
+9. directUnclassifiedEventRegistrationsFullF7 (remaining work)
+10. truthfulness/UI test results
+11. any blocker
+
+Do not claim CODE-0042 event closure complete unless full-F7 raw count is also zero in a later pass.
+
+After successful Batch 1, stop. Do not continue into Items/Combat/World/etc. in the same pass.

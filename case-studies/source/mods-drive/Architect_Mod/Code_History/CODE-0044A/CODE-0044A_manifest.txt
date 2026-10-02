@@ -1,0 +1,63 @@
+CODE-0044A MANIFEST — F8 BUILD MENU FOUNDATION
+Date: 2026-09-21
+
+Baseline
+Path: I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip
+SHA-256: A1AB3AEEE18987C0F4F27CC0B49A371C89F3F82BE5EC8342BD9536B86516835A
+Size: 61,956,660 bytes
+Build ID: architect-v031-single-placement-carrier-20260915-a
+Selection reason: Architect_Mod\Current\SOURCE_MANIFEST.md designates this archive as CURRENT_SOURCE_BASELINE. It preserves the current product F7/F8 shell and one-carrier direction. The later recorded CODE-0042G5B1R13/G5K product runtime was retained for the F7 closure; CODE-0043G6A archived runtimefix3 was not used as the parent package and was not modified.
+
+CODE-0044A changes
+- F8 BUILD Architect Shapes uses the existing Architect-owned definitions in src/mod.lua.
+- Added authoritative catalog parsing, duplicate-key rejection, eligibility metadata, and catalog audit.
+- Added immutable ActiveSessionShapeKey startup snapshot distinct from configured next-launch key.
+- Added atomic, validated, idempotent ArchitectToolkit_ActiveShapeKey staging.
+- Added responsive TableLayoutPanel catalog/detail/action layout and stable closure-backed handlers.
+- Added CODE-0044A tests and runtime runbook.
+- No live carrier switch, placement, native mutation, or correlation command is emitted by staging.
+
+Catalog audit
+Total entries: 12
+Eligible entries: 12
+Unavailable entries: 0
+Duplicate canonical keys: 0
+Carrier-compatible dimensions: 8x1x8 and 4x4x4, each 64 voxels
+Permanent Architect carrier registrations: 1
+Catalog audit: tools/CODE-0044A/ArchitectShapeCatalogAudit.txt
+Catalog source: src/mod.lua
+
+Configuration
+File: src/Config/Architect_Blueprint_Config.lua
+Key: ArchitectToolkit_ActiveShapeKey
+Meaning: configured next-start shape; no invented pending key
+ActiveSessionShapeKey: runtime snapshot of validated startup selection
+
+Identity
+New build ID: architect-code0044a-build-menu-foundation-20260921
+Version: 0.31.0
+Mode: single_architect_carrier_startup_selection
+DLL: identity-only rebuild from unchanged baseline native sources; ArchitectNativeRuntime.dll SHA-256 03DE6059540F23EEF58264C54B6C165024BCAC18AC33EB52B57D2E1B65960433
+
+Artifacts
+Candidate: architect_toolkit_CODE-0044A_candidate_20260921.zip
+Candidate size: 61,766,216 bytes
+Candidate SHA-256: 899D954412CE6B68EFE3D1F29B6CC5D34548A21C84CC69F5E43B9CBEFB93352D
+Install-ready: architect_toolkit_CODE-0044A_BUILD_MENU_TEST_20260921.zip
+Install-ready size: 61,984,960 bytes
+Install-ready SHA-256: 5D9A18A75F9328169DA82EBD992DBD65A399D12ABA85B87D084481530ACE8E67
+
+Tests
+PowerShell parse: PASS
+CODE-0044A catalog/state/one-carrier contract: PASS
+Catalog selection/config test: PASS, including invalid-key rejection, idempotence, and simulated failed-write preservation
+F8 Architect Shapes static contract: PASS
+F8 responsive/stable-handler contract: PASS
+F7 prefix boundary: unchanged within merged product runtime; later recorded F7 closure retained
+F7 truthfulness suite: baseline legacy test reports 61/72 because its assertions target older source labels; no F7 source region was edited by CODE-0044A
+Bridge evidence: excluded from candidate and install-ready packages
+Live/runtime/gameplay proof: NOT CLAIMED; runtime test required
+
+Explicit boundary
+CODE-0043G6A artifacts were not modified.
+F7, Cheat Correlation, movement hooks, stamina hooks, and native correlation analyzer were not changed by CODE-0044A.

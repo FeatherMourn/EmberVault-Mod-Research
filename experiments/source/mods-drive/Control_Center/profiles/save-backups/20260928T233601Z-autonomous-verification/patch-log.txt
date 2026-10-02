@@ -1,0 +1,1 @@
+2025-07-11T19:28:17.034Z - error: Invalid game folder. Neither enshrouded_server.exe nor enshrouded.exe found.

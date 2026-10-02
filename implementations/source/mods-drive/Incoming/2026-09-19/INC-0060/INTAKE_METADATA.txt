@@ -1,0 +1,29 @@
+INTAKE RECORD
+=============
+Intake_ID: INC-0060
+Received: 2026-09-19
+Filename: Enshrouded Mod Manager 114 2.4.4 2026-07-28T22-20Z LRF4M9sAS (2).zip
+Type: EXTERNAL_MOD_PACKAGE (Thunderstore / mod manager package, 15.8 MB)
+SHA256: EC213D4C6E64B34DBA50D1D41D9C5FC0761EBA127CAA1F8A4C8B7D822C37086F
+Size_Bytes: 15786307
+Source: User-provided attachment from F:\1-Terrabite - Downloads\enshrouded\
+
+CLASSIFICATION
+==============
+UNTRUSTED_STAGING / EXTERNAL_ARTIFACT_EVIDENCE
+Filename suggests a standalone mod manager utility (version 2.4.4) packaged
+as a zip. Not a cheat table. Will inspect contents to determine whether it
+contains in-game mod logic, a separate executable, or both.
+
+PROMOTION STATUS
+================
+Promoted_To: None (research/correlation only)
+Related: None direct.
+
+HANDLING NOTES
+==============
+- Original preserved byte-exact; hash verified after copy on 2026-09-19.
+- Large file (15.8 MB); will list entries and inspect manifest/README before
+  deeper analysis. Not a runtime candidate; treated as a third-party tool
+  for the user, not a target for Architect integration.
+- File name "(2)" suggests duplicate name in source folder.

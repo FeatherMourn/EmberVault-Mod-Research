@@ -1,0 +1,13 @@
+CODE-0042F HANDOFF
+Status: partial; do not begin broad responsive migration yet.
+
+Confirmed source change: directUnclassifiedEventRegistrations field exists.
+Critical flaw: it currently counts only unclassified rows already inside f7EventInventory, so raw Register-SafeUiEvent/.Add_Click handlers that bypass the inventory remain invisible.
+
+Current static volume:
+- 48 Register-SafeUiEvent calls
+- 58 Add_Click registrations
+- 106 file-wide registrations
+- approximately 96 direct registrations in the defined F7 surface after excluding wrapper internals and F8-specific sites
+
+Next: CODE-0042G must migrate/classify the entire F7 event surface, add mandatory stable EventId identity, make inventory/control binding lifecycle-safe, and independently prove directUnclassifiedEventRegistrations=0.

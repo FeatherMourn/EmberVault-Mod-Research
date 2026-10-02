@@ -1,0 +1,675 @@
+ARCHITECT TOOLKIT — CODEX TASK
+F7 ACTION-BINDING REPAIR + RESPONSIVE ADMIN UI REFACTOR
+
+SOURCE BASE
+Use the supplied/latest Architect Toolkit source as the working source base.
+Detected identity:
+- Architect version: 0.42.0
+- buildId: architect-v042-hotbar-0022b-crash-guard-20260920
+- mode: hybrid_observer_and_admin_mutation
+- target Enshrouded build: revision 1076226 / 0.9.1.2 Hotfix #42
+
+Before editing, read and obey:
+- Enshrouded Mod Development — Core Method
+- project/current engineering evidence available in the source tree
+- docs/research/CODE-0040_external_source_consolidation.md
+- CODE-0037C_qualification_report.md
+- CODE-0037D_qualification_report.md
+- CODE-0037E_qualification_report.md
+- VERIFICATION_REPORT.txt
+- runtime/source_consolidation_catalog.json
+- runtime/cheat_table_1013216_catalog.json
+- runtime/admin_action_registry.json
+- runtime/ArchitectRuntime.ps1
+- tests/test_ui_smoke.ps1
+- tests/test_f7_truthfulness.ps1
+
+Use observe → capture → map → validate → minimally modify → verify.
+
+DO NOT REBUILD F7 FROM SCRATCH.
+DO NOT ADD NEW GAMEPLAY MUTATION IN THIS TASK.
+PRESERVE EXISTING WORKING BACKENDS AND F8.
+
+==================================================
+WHY THIS TASK EXISTS
+==================================================
+
+The outer F7 form is already resizable and uses a docked header/nav/body shell, but the page contents remain fixed-pixel layouts.
+
+The current page renderers still use:
+- New-Label(Text, X, Y, W, H, ...)
+- New-Panel(X, Y, W, H, ...)
+- New-Button(Text, X, Y, W, H, ...)
+- direct .Location = Point(...)
+- direct .Size = Size(...)
+
+There are currently no TableLayoutPanel, FlowLayoutPanel, or DataGridView-based responsive page layouts in the main F7 runtime.
+
+Most page content is built around roughly 590–700 px fixed widths. Enlarging F7 therefore enlarges the viewport while leaving the actual controls clustered in the upper-left.
+
+The current UI smoke test resizes the window, but only verifies the outer Dock hierarchy. It does not verify that page content expands, reflows, avoids overlap, or consumes available width.
+
+There is also a separate action-registry/testability blocker documented by CODE-0037C/D/E:
+- ArchitectRuntime.ps1 initially builds a compatibility action ledger.
+- It later replaces $adminCommandRegistry with runtime/admin_action_registry.json.
+- The JSON registry currently contains only 20 actual actions.
+- Many visible F7 mutation routes exist only in closures/capability aliases/actionFamilies, not canonical action entries.
+- Register-SafeUiEvent does not receive a canonical ActionId.
+- Many clickable controls have no stable ActionId -> Control binding.
+- The current F7 Truthfulness & Safety suite is therefore not qualified.
+
+FIX THIS FOUNDATION BEFORE ADDING MORE F7 FEATURES.
+
+==================================================
+PRIMARY GOALS
+==================================================
+
+Goal A — Canonical action/control binding
+
+Create one authoritative mapping between every executable F7 control and a canonical Admin action definition.
+
+Every clickable/toggle/edit/apply/revert control that can cause a command or mutation request must have a stable canonical action ID.
+
+The mapping must be available to:
+- UI construction
+- capability gating
+- dispatch
+- status/readback display
+- tests
+- diagnostics/history
+
+Do not infer action IDs from labels.
+Do not create a second independent registry.
+Do not leave action identity hidden only inside closure text.
+
+Goal B — Responsive F7 page architecture
+
+Rebuild the page-content layer using WinForms responsive layout containers so controls resize/reflow with the F7 window.
+
+Keep the already-working outer resizable form/window-bounds infrastructure unless a specific defect requires a minimal change.
+
+Goal C — New 11-page F7 product grouping
+
+Migrate existing content into:
+
+1. Home
+2. Player
+3. Mobility & Navigation
+4. Items & Progression
+5. Combat & AI
+6. World & Environment
+7. Building & World Editing
+8. Entities & Authority
+9. Camera & Presentation
+10. Mods & Configuration
+11. Developer & Diagnostics
+
+This is a UI/product grouping change, not a backend rewrite.
+
+Goal D — Truthful disabled/planned controls
+
+Attributes and derived stats are intended to become editable product features, but the current crash-guarded CODE-0022B hook path must NOT be re-enabled.
+
+Render future edit controls as disabled/planned where the backend is not proven.
+
+==================================================
+PHASE 1 — INSPECT BEFORE EDITING
+==================================================
+
+First produce a concise implementation plan based on the actual current code.
+
+Confirm at minimum:
+- current F7 form/container hierarchy
+- current page render functions
+- current nav construction
+- action registry load/overwrite sequence
+- Get-AdminCommandDefinition behavior
+- Get-AdminCapabilities behavior
+- Send-CheatCommand routing
+- Dispatch-AdminCommand routing
+- Register-SafeUiEvent limitations
+- existing direct NativeMemoryEngine assignments from UI handlers
+- CODE-0022B crash guard state
+- auto-loot current startup/canary ownership
+- current truthfulness and UI smoke test gaps
+
+Then implement. Do not stop after analysis unless a genuine blocker exists.
+
+==================================================
+PHASE 2 — REPAIR THE CANONICAL ACTION REGISTRY
+==================================================
+
+runtime/admin_action_registry.json must become the canonical definition source for every current F7 executable action/control.
+
+Do NOT enable new actions merely because you add them to the registry.
+
+For each existing F7 route, include truthful metadata such as:
+- commandId
+- displayName
+- productPage
+- section/subcategory
+- controlType
+- valueType
+- evidenceStatus
+- backend/backendAdapter
+- runtimeMode
+- authority
+- persistence
+- risk
+- readbackVerification
+- revertSupport
+- enabled/defaultEnabled
+- failureReason / disabledReason
+
+If a capability is unsupported, crash-guarded, startup-only, research-only, or unresolved, encode that truthfully.
+
+Important current-state constraints:
+
+1. CODE-0022B PLAYER ATTRIBUTE HOOKS
+The source currently contains a Player Attributes & Stats page with ARM/DISARM controls, but the current build is explicitly a 0022B crash-guard build.
+The native PlayerAttributeObserver remains disabled behind SEMANTIC_PLAYER_ATTRIBUTE_OBSERVER_READY == false and CODE-0040 records repeated access violations / toolbar crash.
+
+Therefore:
+- do not re-enable these hooks;
+- do not make ARM clickable as though it can succeed;
+- mark the old observer path DISABLED_CRASH_GUARD / RESEARCH_ONLY;
+- preserve the research data and 27-stat catalog;
+- future writable Attribute/Derived Stat controls must remain disabled until a new independently qualified backend exists.
+
+2. TELEPORT
+Teleport remains fail-closed because local-player transform ownership is unresolved.
+Do not restore coordinate writes.
+Correct any stale registry family metadata that implies teleport is validated/executable.
+
+3. AUTO LOOT
+The current source-consolidation policy keeps Architect_QoL_ResourceFeatures.lua as the startup/canary owner.
+Send-CheatCommand currently rejects the live toggle as STARTUP_CANARY_ONLY.
+Reconcile Get-AdminCapabilities so it does not simultaneously claim live Auto Loot is ready/executable.
+Do not add simulated interaction or repeated keypress pickup.
+
+4. DIRECT UI-LOCAL MUTATION VARIABLES
+Current page code contains direct assignments to NativeMemoryEngine properties for various multipliers/settings.
+Do not carry this pattern into the new UI.
+If there is no canonical proven backend action, render the control disabled.
+A local property assignment is not proof that Enshrouded changed.
+
+==================================================
+PHASE 3 — ACTION/CONTROL BINDING
+==================================================
+
+Add a single reusable binding mechanism.
+
+Preferred shape:
+- every executable control is created/bound with an explicit ActionId;
+- control.Tag may contain structured metadata, but do not rely on display text;
+- maintain one ActionId -> Control(s) registry for testing/refresh/diagnostics;
+- Register-SafeUiEvent should either accept ActionId directly or an adjacent Bind-AdminActionControl helper should own event wiring and metadata;
+- capability gating should be applied from the canonical action definition + runtime capability state;
+- status/result should use backend ACK/readback, not optimistic UI text.
+
+Required invariant:
+EVERY enabled executable F7 control must resolve to exactly one canonical action definition.
+
+Unsupported/planned display-only controls may have canonical action definitions but remain disabled.
+
+==================================================
+PHASE 4 — RESPONSIVE UI FOUNDATION
+==================================================
+
+Preserve the current separate F7 form and outer docking where it is already correct.
+
+Replace page-local absolute layout with reusable responsive helpers based primarily on:
+- TableLayoutPanel
+- FlowLayoutPanel
+- Dock = Fill / Top
+- AutoSize / AutoSizeMode
+- AutoScroll
+- percentage-based columns where appropriate
+- minimum sizes rather than hard-coded global widths
+
+Avoid fixed Location/Size positioning for ordinary page controls.
+
+Create reusable layout primitives, for example:
+- New-AdminPageRoot
+- New-AdminSection
+- New-AdminResponsiveGrid
+- New-AdminSettingRow
+- New-AdminToggleRow
+- New-AdminNumericRow
+- New-AdminChoiceRow
+- New-AdminStatusRow
+- New-AdminDataGrid
+
+Names may differ if a better fit exists, but responsibilities should be modular.
+
+Do not create one giant replacement function.
+
+==================================================
+RESPONSIVE BEHAVIOR
+==================================================
+
+At minimum:
+
+Small/minimum window:
+- one major section per row where needed
+- content vertically scrollable
+- no overlap
+- labels/controls remain readable
+
+Medium window:
+- two-column section layout where practical
+
+Large/maximized window:
+- two or three sections side-by-side where practical
+- sections and data controls consume available width
+- no giant empty right-hand area caused by fixed 700 px panels
+
+Use a deterministic responsive policy. WinForms does not have CSS breakpoints, so implement the behavior using container width / SizeChanged layout rules only where needed.
+
+Do not constantly rebuild the entire page on every resize if normal docking/table layout can solve it.
+
+==================================================
+REUSABLE SETTING ROWS
+==================================================
+
+Create standard row patterns for:
+
+1. Toggle
+   Label | current/status | toggle/action | evidence state
+
+2. Numeric editable
+   Label | base/current | requested value | Apply | Revert | state
+
+3. Numeric multiplier
+   Label | effective/current | multiplier | Apply | Revert
+
+4. Choice
+   Label | current | ComboBox | Apply
+
+5. Read-only
+   Label | current value | evidence/runtime state
+
+6. Restart-required config
+   Label | saved value | edited value | pending/restart state
+
+Unsupported rows must remain disabled and visibly explain why.
+
+==================================================
+NEW F7 PAGE STRUCTURE
+==================================================
+
+1. HOME
+Sections:
+- Runtime/Compatibility Summary
+- Quick Actions
+- Favorites
+- Active Changes
+- Presets
+- Recent Actions
+
+Only actually supported actions may be clickable.
+
+2. PLAYER
+Sections:
+- Vitals
+- Attributes
+- Derived Combat Stats
+- Critical Stats
+- Regeneration
+- Survival
+- Status
+
+Product-required future editable fields:
+Attributes:
+- Strength
+- Constitution
+- Dexterity
+- Endurance
+- Intelligence
+- Spirit
+
+Derived stats:
+- Wand Damage
+- Staff Damage
+- One-Handed Damage
+- Two-Handed Damage
+- Bow Damage
+- Dagger Damage
+- Melee Damage
+- Ranged Damage
+- Magic Damage
+
+Critical:
+- Melee Crit Chance
+- Ranged Crit Chance
+- Magic Crit Chance
+
+Regeneration:
+- Health Regen
+- Health Regen Delay
+- Stamina Regen
+- Stamina Regen Delay
+- Mana Regen
+- Mana Regen Delay
+
+These are intended to be editable eventually.
+DO NOT invent or reconnect a write backend in this task.
+Render them disabled/planned/research where appropriate.
+
+Keep the 27-stat CODE-0022B research information accessible in Developer & Diagnostics or an expandable evidence view, not as a live ARM-HOOKS user flow.
+
+3. MOBILITY & NAVIGATION
+Sections:
+- Movement
+- Jump/Gravity
+- Flight/Hover
+- Glider
+- Coordinates
+- Waypoints
+- Map/Travel
+
+Teleport remains disabled/fail-closed.
+
+4. ITEMS & PROGRESSION
+Sections:
+- Inventory
+- Item Browser
+- Selected Item Editor
+- Loot Pickup / Auto Pickup
+- Crafting
+- XP / Level
+- Skill Points
+- Unlocks
+
+Auto Pickup live toggle remains startup/canary-only unless current evidence says otherwise.
+Do not implement new pickup backend.
+
+5. COMBAT & AI
+Sections:
+- Player Combat
+- Weapon/Damage Scaling
+- Critical
+- Enemy Stats
+- Enemy Behavior
+- Boss Controls
+
+Do not wire unvalidated stat/combat mutations.
+
+6. WORLD & ENVIRONMENT
+Sections:
+- Time
+- Gameplay/World Settings
+- Resources
+- Plant Growth
+- Loot & Chests
+- Chest Profiles
+- Weather/Fog
+
+Keep loot generation separate from auto pickup.
+
+7. BUILDING & WORLD EDITING
+Sections:
+- Building Authority
+- Build Restrictions
+- Flame Altar Rules
+- Terrain Admin
+- Prop Admin
+
+This is administrative authority/world editing, not normal F8 creative building.
+Do not move F8 BUILD/CREATE/DESIGN workflows here.
+
+8. ENTITIES & AUTHORITY
+Sections:
+- Entity Inspector
+- Entity Actions
+- Players
+- Multiplayer
+- Permissions/Authority
+
+Entity mutation and multiplayer authority remain disabled unless proven.
+
+9. CAMERA & PRESENTATION
+Sections:
+- Camera
+- FOV/Distance
+- First Person / Freecam
+- HUD
+- Photo/Presentation
+- Saved Views
+
+Do not invent a camera backend.
+
+10. MODS & CONFIGURATION
+Build the UI architecture for:
+- Lua Configurations
+- Gem Configuration
+- Mod Profiles
+- Pending Changes
+- Configuration Files
+- Backup / Restore
+- Advanced Raw Configuration
+
+Do NOT implement arbitrary Lua execution.
+Do NOT implement a generic raw editor that can save arbitrary executable Lua without schema/validation.
+
+The intended later workflow is:
+read supported config -> typed controls -> edit -> validate -> snapshot -> save -> reread -> verify -> Restart Required.
+
+For this task, layout and truthful disabled/planned state are enough unless an already-proven backend exists.
+
+11. DEVELOPER & DIAGNOSTICS
+Preserve and reorganize:
+- Source Map
+- CT Catalog
+- backend capabilities
+- runtime/build identity
+- diagnostics
+- command history
+- evidence/status
+- crash-guard states
+- raw research views
+
+Do not delete:
+- runtime/source_consolidation_catalog.json view
+- runtime/cheat_table_1013216_catalog.json view
+
+Move them under this page instead of keeping them as top-level navigation pages.
+
+Keep Enshrouded Wiki as a utility/link inside Developer & Diagnostics or another sensible location; it does not need to consume one of the 11 product page slots.
+
+==================================================
+DATASET UI
+==================================================
+
+Use DataGridView or an equivalent proper data control for datasets such as:
+- Active Changes
+- Command History
+- Item Browser
+- Waypoints
+- capability/evidence matrix where useful
+
+Configure columns with sensible AutoSizeMode/Fill behavior so they use available width.
+
+Do not simulate tables by placing dozens of labels at fixed X coordinates.
+
+==================================================
+TRUTHFULNESS CONTRACT
+==================================================
+
+No UI-local success claims.
+
+A control state should distinguish, where applicable:
+- UNSUPPORTED
+- PLANNED
+- RESEARCH_ONLY
+- DISABLED_CRASH_GUARD
+- AVAILABLE
+- QUEUED
+- ACTIVE_PENDING_READBACK
+- ACTIVE_VERIFIED
+- FAILED_DEPENDENCY
+- FAILED_WRITE
+- FAILED_READBACK
+- RESTART_REQUIRED
+
+Do not display ON/APPLIED/SET merely because:
+- a local variable changed;
+- a command file was written;
+- a command was queued;
+- a control was clicked.
+
+Use authoritative backend ACK/readback when available.
+
+==================================================
+TEST REPAIR
+==================================================
+
+Preserve existing working suites.
+
+1. test_f7_truthfulness.ps1
+
+Do not continue brittle source-pattern-only assertions for controls whose identities are now bound canonically.
+
+After ActionId -> Control binding exists, build behavior/metadata tests that assert:
+- every enabled executable control has a canonical action ID;
+- every action ID resolves to exactly one canonical action definition;
+- disabled reason matches capability state;
+- unsupported actions cannot dispatch successfully;
+- crash-guarded actions remain disabled;
+- teleport remains disarmed;
+- Auto Loot live toggle remains startup/canary-only;
+- no enabled control depends only on a NativeMemoryEngine local property assignment.
+
+Do not weaken safety assertions just to get green tests.
+
+2. test_ui_smoke.ps1
+
+Update the page list to the 11 new product pages.
+
+At multiple window sizes, test actual page-content responsiveness, not merely outer Dock state.
+
+Test sizes approximately:
+- minimum supported size
+- 1000x700
+- 1280x720 / 1366x768 class
+- 1600x900
+- 1920x1080 / maximized
+
+For every page, assert as practical:
+- page root fills content area;
+- main section container width tracks available client width;
+- sections do not overlap;
+- visible enabled controls are within a containing client region or reachable by the intended scroll container;
+- large window uses meaningfully more horizontal space than minimum window;
+- DataGridView/list/table controls expand with available width;
+- no giant fixed ~700 px content island remains on large windows;
+- zero UI exceptions are written to ui_errors.log.
+
+Add focused tests for navigation and ActionId binding.
+
+==================================================
+DO NOT CHANGE IN THIS TASK
+==================================================
+
+Do not:
+- enable new native hooks;
+- re-enable CODE-0022B player attribute hooks;
+- add guessed offsets/signatures/pointers;
+- add player attribute/derived-stat writes;
+- restore teleport coordinate writes;
+- implement live auto pickup;
+- implement terrain/prop destructive mutation;
+- implement quest or multiplayer mutation;
+- implement arbitrary Lua execution;
+- redesign the native runtime architecture;
+- rewrite F8 behavior;
+- change the single Architect Blueprint carrier implementation;
+- silently remove Source Map or CT Catalog coverage;
+- silently change canonical project/Drive Current designation.
+
+==================================================
+CODE QUALITY
+==================================================
+
+Keep responsibilities modular:
+- F7 shell/window
+- navigation/page routing
+- canonical action definitions
+- action/control binding
+- capability/status refresh
+- responsive layout helpers
+- standard setting-row helpers
+- data-grid helpers
+- page definitions
+- diagnostics/evidence views
+
+Backend action IDs must remain separate from display grouping.
+Changing a page/category must not require changing the backend implementation.
+
+Prefer complete coherent files/modules over scattered patch fragments.
+
+==================================================
+OFFLINE SUCCESS CRITERIA
+==================================================
+
+Before packaging a runtime candidate:
+
+1. PowerShell parses cleanly.
+2. C#/native existing compilation suites remain green.
+3. Every enabled executable F7 control has a canonical ActionId.
+4. No canonical ActionId is guessed from text.
+5. F7 Truthfulness suite passes for the new binding model without weakening fail-closed behavior.
+6. Responsive UI smoke passes all 11 pages at all target sizes.
+7. CODE-0022B hooks remain disarmed.
+8. Teleport remains disarmed.
+9. Auto Loot live command remains startup/canary-only.
+10. F8 source/behavior is unchanged except any unavoidable shared helper compilation changes.
+11. Source Map and full 224-entry CT catalog remain accessible.
+12. ui_errors.log remains empty during headless UI tests.
+
+Compilation/offline tests are not runtime proof.
+
+==================================================
+DELIVERABLE
+==================================================
+
+Produce a complete implementation-ready change set and report:
+
+1. Files changed
+2. New files added
+3. Exact action-registry repairs
+4. Exact ActionId -> Control binding design
+5. Old F7 navigation -> new 11-page mapping
+6. Old fixed-layout architecture -> new responsive architecture
+7. Controls intentionally disabled and why
+8. Stale/conflicting metadata corrected
+9. Tests changed/added
+10. Full offline test results
+11. Any remaining blockers
+12. Exact in-game runtime test instructions
+
+Do not claim runtime success until the user tests it in Enshrouded.
+
+==================================================
+USER RUNTIME ACCEPTANCE TEST TO PREPARE
+==================================================
+
+Prepare instructions for this exact smoke test:
+
+1. Launch Enshrouded build 1076226 in a safe test world.
+2. Open F7.
+3. Visit all 11 product pages.
+4. Resize continuously between minimum, medium, large, and maximized sizes.
+5. Verify content expands/reflows instead of staying packed in the upper-left.
+6. Verify no section/control overlaps or disappears.
+7. Verify grids/lists expand to use available width.
+8. Verify unsupported/research/crash-guarded controls are disabled with truthful reasons.
+9. Verify Player Attributes/Derived Stats are visible as planned editable fields but do not expose the old crashy ARM path.
+10. Verify Source Map and CT Catalog are accessible under Developer & Diagnostics.
+11. Run one safe/read-only existing action and verify status/history/ACK behavior.
+12. Open F8 and verify it is unchanged.
+13. Close/reopen F7 and verify bounds persist.
+14. Clean shutdown and inspect ui_errors.log.
+
+STOP CONDITION:
+If the registry cannot be made canonical without materially redefining backend semantics, stop and report the exact conflict rather than inventing routes or enabling controls.

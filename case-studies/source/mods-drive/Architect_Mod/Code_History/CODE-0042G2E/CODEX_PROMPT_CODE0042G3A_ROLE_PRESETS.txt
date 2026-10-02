@@ -1,0 +1,262 @@
+CODE-0042G3A — ROLE PRESETS EVENT MIGRATION + PRESET FAIL-CLOSED GATE
+
+Scope: Architect Toolkit F7 `Render-RolePresetsPage` and shared preset invocation safety
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change `admin_action_registry.json`.
+- Registry must remain 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate Settings, Multiplayer/Quests, Codex, Map/Wayfinder, Blueprint Browser, or other G3 pages;
+- begin responsive layout work;
+- enable `admin.preset.apply`;
+- add gameplay/native backends;
+- invent new preset execution semantics.
+
+GOAL
+
+Remove the 2 raw `.Add_Click(...)` registrations in `Render-RolePresetsPage` while making preset execution itself fail closed at the shared helper boundary.
+
+CURRENT CANONICAL TRUTH
+
+`admin.preset.apply` already exists and is:
+
+- enabled=false
+- evidenceStatus=`EXPERIMENTAL`
+- backendAdapter=`DiagnosticsAdapter`
+- backend=`NONE`
+- runtimeMode=`SESSION`
+- authority=`unknown`
+- risk=`compound_mutation`
+- failureReason states that preset execution must fail closed when child actions are unavailable
+
+Home preset buttons already bind through this canonical ActionId.
+
+However the shared helper `Invoke-ArchitectPreset` currently loops child actions directly and always reports the preset as activated. That means a programmatic/direct call to the helper can bypass the disabled canonical preset action.
+
+G3A must fix that shared boundary.
+
+A. ROLE PRESET APPLY BUTTONS
+
+Current raw source site:
+`$btnApply.Add_Click(...)`
+
+Replace with `Register-AdminActionEvent`.
+
+ActionId:
+`admin.preset.apply`
+
+Each preset gets a stable deterministic EventId:
+
+`f7.presets.apply.<presetId>.click`
+
+Requirements:
+
+- use the preset's stable `id` property;
+- do not derive identity from display name or Control.Name;
+- if a preset has no stable non-empty id, leave its Apply button disabled and do not register an ambiguous/generated fallback EventId;
+- Page: `Presets`
+- Operation: `Apply Preset <presetId>`
+- LifetimeScope: PAGE
+- do NOT use `AllowDisabled`
+
+Handler may call `Invoke-ArchitectPreset $t.Tag`, but the shared helper itself must also fail closed as specified below.
+
+Because `admin.preset.apply` is disabled, all role-preset Apply buttons must remain disabled by canonical registry gating.
+
+B. FAIL-CLOSE `Invoke-ArchitectPreset`
+
+At the very start of `Invoke-ArchitectPreset`, resolve:
+
+`admin.preset.apply`
+
+If the definition is missing or `enabled != true`:
+
+- do not iterate child actions;
+- do not call `Send-CheatCommand` for any child;
+- do not sleep;
+- do not report "Activated";
+- return a structured failure object, for example:
+
+```powershell
+@{
+    success = $false
+    state = "UNSUPPORTED"
+    error = "PRESET_APPLY_UNAVAILABLE: canonical preset orchestration is disabled."
+}
+```
+
+Set truthful admin status if appropriate.
+
+This protects:
+- Role Presets
+- existing Home preset buttons
+- any future direct/helper caller
+
+Do not implement partial preset execution in this pass.
+Do not enable the action.
+
+If the gate ever becomes enabled in a future evidence-backed pass, child preflight/transaction semantics can be designed then.
+
+C. DEFENSE-IN-DEPTH `Send-CheatCommand` REJECTION
+
+Add an explicit rejection for:
+
+`admin.preset.apply`
+
+before native command publication.
+
+Return a truthful failure such as:
+
+`PRESET_APPLY_UNAVAILABLE: canonical preset orchestration is disabled.`
+
+Requirements:
+
+- no pending native command;
+- no native publication;
+- no child dispatch;
+- no fallback.
+
+This is defense-in-depth only.
+
+D. CUSTOM PRESET SAVE BUTTON
+
+Current raw source site:
+`$btnSavePreset.Add_Click(...)`
+
+This is local Architect configuration persistence, not an Enshrouded gameplay mutation and not a canonical AdminAction.
+
+Migrate it with `Register-F7UiEvent`.
+
+EventId:
+`f7.presets.save.click`
+
+Page:
+`Presets`
+
+Operation:
+`Save Custom Preset`
+
+LifetimeScope:
+PAGE
+
+Preserve:
+- trimmed preset name validation;
+- generated `preset-custom-<guid8>` id;
+- `Save-ArchitectPresets`;
+- status message.
+
+After save, do NOT directly append another full RolePresets render onto existing controls.
+
+Use a lifecycle-safe refresh:
+
+```powershell
+Clear-AdminContent
+Render-RolePresetsPage
+```
+
+or an equivalent existing page refresh path that first clears PAGE controls/bindings.
+
+Do not create a registry ActionId for local preset-file saving in this pass.
+
+E. STABLE EVENT DEFINITIONS
+
+Expected Role Presets definitions:
+
+For every preset with a valid stable id:
+- `f7.presets.apply.<presetId>.click`
+  - Classification = ACTION
+  - ActionId = `admin.preset.apply`
+  - Page = `Presets`
+  - LifetimeScope = PAGE
+
+One save definition:
+- `f7.presets.save.click`
+  - Classification = UI_ONLY
+  - ActionId = null
+  - Page = `Presets`
+  - LifetimeScope = PAGE
+
+Repeated render must be idempotent:
+- no ambiguous EventIds;
+- old PAGE active bindings are cleared before refresh;
+- no duplicate visible panels after custom preset save.
+
+F. PRESERVE
+
+Keep unchanged:
+
+- registry = 55 / enabled 17 / disabled 38
+- G1 raw counts = 0
+- all G2 raw counts = 0
+- scanner fail-closed
+- position read fail-closed
+- skill set/reset fail-closed
+- parry fail-closed
+- world time/pause/plant fail-closed
+- altar/build-range fail-closed
+- Inventory reroll disabled/unqualified
+- teleport ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch
+- CT catalog = 224
+- schema/adaptor validity
+
+G. TESTS
+
+Run:
+
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. Role Presets raw `.Add_Click` count: 2 -> 0
+11. Role Presets raw `Register-SafeUiEvent` = 0
+12. stable Apply EventId assertions for all loaded/fallback presets with ids
+13. `f7.presets.save.click` exact UI_ONLY assertion
+14. `admin.preset.apply` remains disabled
+15. direct `Invoke-ArchitectPreset` while disabled:
+    - returns failure
+    - dispatches zero child actions
+    - does not report Activated
+16. direct `Send-CheatCommand "admin.preset.apply"`:
+    - returns failure
+    - creates no pending command
+    - publishes nothing
+17. custom preset save refresh:
+    - one page/control set only
+    - no duplicate/ambiguous event definitions
+    - no stale PAGE bindings
+18. G1 + G2 raw counts remain zero
+19. prohibited mutation scan
+
+REPORT
+
+Return:
+
+- files changed
+- Role Presets raw count before/after
+- Apply EventId pattern and concrete loaded ids
+- save EventId
+- `Invoke-ArchitectPreset` fail-closed behavior
+- `Send-CheatCommand` preset rejection behavior
+- custom-save refresh behavior
+- registry counts unchanged
+- lifecycle/truthfulness/UI-smoke results
+- remaining G3 raw counts
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G3B or responsive migration in this pass.

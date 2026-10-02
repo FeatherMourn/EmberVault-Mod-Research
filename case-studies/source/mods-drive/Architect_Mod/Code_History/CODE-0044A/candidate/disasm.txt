@@ -1,0 +1,901 @@
+    0x39E000: 00 00                    add byte ptr [rax], al
+    0x39E002: 00 48 8B                 add byte ptr [rax - 0x75], cl
+    0x39E005: 86 90 00 00 00 48        xchg byte ptr [rax + 0x48000000], dl
+    0x39E00B: 85 C0                    test eax, eax
+    0x39E00D: 74 03                    je 0x39e012
+    0x39E00F: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E012: 48 8B 86 88 00 00 00     mov rax, qword ptr [rsi + 0x88]
+    0x39E019: 80 78 1A 00              cmp byte ptr [rax + 0x1a], 0
+    0x39E01D: 0F 84 CC 00 00 00        je 0x39e0ef
+    0x39E023: 33 D2                    xor edx, edx
+    0x39E025: 48 8D 4D 67              lea rcx, [rbp + 0x67]
+    0x39E029: E8 C2 EE 40 00           call 0x7acef0
+    0x39E02E: 48 8D 55 67              lea rdx, [rbp + 0x67]
+    0x39E032: 49 8B CC                 mov rcx, r12
+    0x39E035: E8 66 CC 53 00           call 0x8daca0
+    0x39E03A: 48 8B 56 08              mov rdx, qword ptr [rsi + 8]
+    0x39E03E: 48 8D 4D 67              lea rcx, [rbp + 0x67]
+    0x39E042: 4C 8B 82 80 00 00 00     mov r8, qword ptr [rdx + 0x80]
+    0x39E049: 48 8B 52 78              mov rdx, qword ptr [rdx + 0x78]
+    0x39E04D: E8 5E 69 F9 FF           call 0x3349b0
+    0x39E052: 48 8D 55 77              lea rdx, [rbp + 0x77]
+    0x39E056: 49 8B CC                 mov rcx, r12
+    0x39E059: 48 8B D8                 mov rbx, rax
+    0x39E05C: E8 3F 9A 53 00           call 0x8d7aa0
+    0x39E061: 48 8B D3                 mov rdx, rbx
+    0x39E064: 48 8B 08                 mov rcx, qword ptr [rax]
+    0x39E067: E8 C4 B8 DC FF           call 0x169930
+    0x39E06C: 48 8B 8E 90 00 00 00     mov rcx, qword ptr [rsi + 0x90]
+    0x39E073: 48 85 C9                 test rcx, rcx
+    0x39E076: 74 03                    je 0x39e07b
+    0x39E078: F0 FF 01                 lock inc dword ptr [rcx]
+    0x39E07B: B2 03                    mov dl, 3
+    0x39E07D: EB 5D                    jmp 0x39e0dc
+    0x39E07F: 33 D2                    xor edx, edx
+    0x39E081: 48 8D 4D 67              lea rcx, [rbp + 0x67]
+    0x39E085: E8 66 EE 40 00           call 0x7acef0
+    0x39E08A: 48 8D 55 67              lea rdx, [rbp + 0x67]
+    0x39E08E: 49 8B CC                 mov rcx, r12
+    0x39E091: E8 0A CC 53 00           call 0x8daca0
+    0x39E096: 48 8B 56 08              mov rdx, qword ptr [rsi + 8]
+    0x39E09A: 48 8D 4D 67              lea rcx, [rbp + 0x67]
+    0x39E09E: 4C 8B 82 90 00 00 00     mov r8, qword ptr [rdx + 0x90]
+    0x39E0A5: 48 8B 92 88 00 00 00     mov rdx, qword ptr [rdx + 0x88]
+    0x39E0AC: E8 FF 68 F9 FF           call 0x3349b0
+    0x39E0B1: 48 8D 55 77              lea rdx, [rbp + 0x77]
+    0x39E0B5: 49 8B CC                 mov rcx, r12
+    0x39E0B8: 48 8B D8                 mov rbx, rax
+    0x39E0BB: E8 E0 99 53 00           call 0x8d7aa0
+    0x39E0C0: 48 8B D3                 mov rdx, rbx
+    0x39E0C3: 48 8B 08                 mov rcx, qword ptr [rax]
+    0x39E0C6: E8 65 B8 DC FF           call 0x169930
+    0x39E0CB: 48 8B 8E 90 00 00 00     mov rcx, qword ptr [rsi + 0x90]
+    0x39E0D2: 48 85 C9                 test rcx, rcx
+    0x39E0D5: 74 03                    je 0x39e0da
+    0x39E0D7: F0 FF 01                 lock inc dword ptr [rcx]
+    0x39E0DA: B2 02                    mov dl, 2
+    0x39E0DC: 48 8B 8E 88 00 00 00     mov rcx, qword ptr [rsi + 0x88]
+    0x39E0E3: 48 89 41 08              mov qword ptr [rcx + 8], rax
+    0x39E0E7: 48 8B CE                 mov rcx, rsi
+    0x39E0EA: E8 71 2E 00 00           call 0x3a0f60
+    0x39E0EF: 48 8B 46 70              mov rax, qword ptr [rsi + 0x70]
+    0x39E0F3: 48 85 C0                 test rax, rax
+    0x39E0F6: 74 03                    je 0x39e0fb
+    0x39E0F8: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E0FB: 48 8B 46 68              mov rax, qword ptr [rsi + 0x68]
+    0x39E0FF: 48 B9 00 00 00 00 80 00 00 00 movabs rcx, 0x8000000000
+    0x39E109: 48 09 88 F8 0B 00 00     or qword ptr [rax + 0xbf8], rcx
+    0x39E110: 48 8B 86 A0 00 00 00     mov rax, qword ptr [rsi + 0xa0]
+    0x39E117: 48 85 C0                 test rax, rax
+    0x39E11A: 74 03                    je 0x39e11f
+    0x39E11C: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E11F: 48 8B 86 98 00 00 00     mov rax, qword ptr [rsi + 0x98]
+    0x39E126: F6 40 3C 01              test byte ptr [rax + 0x3c], 1
+    0x39E12A: 0F 85 02 F9 FF FF        jne 0x39da32
+    0x39E130: 41 0F 28 C2              movaps xmm0, xmm10
+    0x39E134: 0F 57 C6                 xorps xmm0, xmm6
+    0x39E137: F3 44 0F 5F D0           maxss xmm10, xmm0
+    0x39E13C: 41 0F 2F FA              comiss xmm7, xmm10
+    0x39E140: 72 37                    jb 0x39e179
+    0x39E142: 41 0F 28 C1              movaps xmm0, xmm9
+    0x39E146: 0F 57 C6                 xorps xmm0, xmm6
+    0x39E149: F3 44 0F 5F C8           maxss xmm9, xmm0
+    0x39E14E: 41 0F 2F F9              comiss xmm7, xmm9
+    0x39E152: 72 25                    jb 0x39e179
+    0x39E154: 41 0F 28 C0              movaps xmm0, xmm8
+    0x39E158: 0F 57 C6                 xorps xmm0, xmm6
+    0x39E15B: F3 44 0F 5F C0           maxss xmm8, xmm0
+    0x39E160: 41 0F 2F F8              comiss xmm7, xmm8
+    0x39E164: 72 13                    jb 0x39e179
+    0x39E166: F2 0F 10 05 1A 79 06 01  movsd xmm0, qword ptr [rip + 0x106791a]
+    0x39E16E: 8B 0D 1C 79 06 01        mov ecx, dword ptr [rip + 0x106791c]
+    0x39E174: E9 E7 00 00 00           jmp 0x39e260
+    0x39E179: 48 8D 55 67              lea rdx, [rbp + 0x67]
+    0x39E17D: 49 8B CC                 mov rcx, r12
+    0x39E180: E8 FB 98 53 00           call 0x8d7a80
+    0x39E185: 0F 57 C0                 xorps xmm0, xmm0
+    0x39E188: F2 48 0F 2A 00           cvtsi2sd xmm0, qword ptr [rax]
+    0x39E18D: 48 8B 46 08              mov rax, qword ptr [rsi + 8]
+    0x39E191: F2 0F 59 05 5F BE F0 00  mulsd xmm0, qword ptr [rip + 0xf0be5f]
+    0x39E199: F3 0F 10 18              movss xmm3, dword ptr [rax]
+    0x39E19D: 48 8B 86 A0 00 00 00     mov rax, qword ptr [rsi + 0xa0]
+    0x39E1A4: 66 0F 5A F0              cvtpd2ps xmm6, xmm0
+    0x39E1A8: 48 85 C0                 test rax, rax
+    0x39E1AB: 74 03                    je 0x39e1b0
+    0x39E1AD: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E1B0: 48 8B 86 98 00 00 00     mov rax, qword ptr [rsi + 0x98]
+    0x39E1B7: F2 0F 10 08              movsd xmm1, qword ptr [rax]
+    0x39E1BB: 0F 28 C1                 movaps xmm0, xmm1
+    0x39E1BE: F3 0F 11 4D B7           movss dword ptr [rbp - 0x49], xmm1
+    0x39E1C3: 0F C6 C0 55              shufps xmm0, xmm0, 0x55
+    0x39E1C7: F3 0F 11 45 BB           movss dword ptr [rbp - 0x45], xmm0
+    0x39E1CC: F3 0F 10 40 08           movss xmm0, dword ptr [rax + 8]
+    0x39E1D1: 48 8B 86 C0 00 00 00     mov rax, qword ptr [rsi + 0xc0]
+    0x39E1D8: F3 0F 11 45 BF           movss dword ptr [rbp - 0x41], xmm0
+    0x39E1DD: F2 0F 11 4D A7           movsd qword ptr [rbp - 0x59], xmm1
+    0x39E1E2: 48 85 C0                 test rax, rax
+    0x39E1E5: 74 03                    je 0x39e1ea
+    0x39E1E7: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E1EA: 0F 28 45 B7              movaps xmm0, xmmword ptr [rbp - 0x49]
+    0x39E1EE: 4C 8D 45 A7              lea r8, [rbp - 0x59]
+    0x39E1F2: 0F 28 6D B7              movaps xmm5, xmmword ptr [rbp - 0x49]
+    0x39E1F6: 48 8D 55 B7              lea rdx, [rbp - 0x49]
+    0x39E1FA: 48 8B 86 B8 00 00 00     mov rax, qword ptr [rsi + 0xb8]
+    0x39E201: 48 8D 4D C7              lea rcx, [rbp - 0x39]
+    0x39E205: F3 0F 11 74 24 28        movss dword ptr [rsp + 0x28], xmm6
+    0x39E20B: F2 0F 10 08              movsd xmm1, qword ptr [rax]
+    0x39E20F: F3 0F 10 60 08           movss xmm4, dword ptr [rax + 8]
+    0x39E214: F3 0F 10 E9              movss xmm5, xmm1
+    0x39E218: 0F C6 ED E1              shufps xmm5, xmm5, 0xe1
+    0x39E21C: 0F 28 D1                 movaps xmm2, xmm1
+    0x39E21F: 0F C6 D2 55              shufps xmm2, xmm2, 0x55
+    0x39E223: F3 0F 10 EA              movss xmm5, xmm2
+    0x39E227: F2 0F 11 4D A7           movsd qword ptr [rbp - 0x59], xmm1
+    0x39E22C: 0F C6 ED C6              shufps xmm5, xmm5, 0xc6
+    0x39E230: F3 0F 10 EC              movss xmm5, xmm4
+    0x39E234: 66 0F 7F 45 A7           movdqa xmmword ptr [rbp - 0x59], xmm0
+    0x39E239: F3 0F 10 05 0F AB F0 00  movss xmm0, dword ptr [rip + 0xf0ab0f]
+    0x39E241: 0F C6 ED C9              shufps xmm5, xmm5, 0xc9
+    0x39E245: 0F 29 6D B7              movaps xmmword ptr [rbp - 0x49], xmm5
+    0x39E249: 66 0F 7F 6D B7           movdqa xmmword ptr [rbp - 0x49], xmm5
+    0x39E24E: F3 0F 11 44 24 20        movss dword ptr [rsp + 0x20], xmm0
+    0x39E254: E8 F7 29 FF FF           call 0x390c50
+    0x39E259: F2 0F 10 00              movsd xmm0, qword ptr [rax]
+    0x39E25D: 8B 48 08                 mov ecx, dword ptr [rax + 8]
+    0x39E260: 48 8B 86 C0 00 00 00     mov rax, qword ptr [rsi + 0xc0]
+    0x39E267: 48 85 C0                 test rax, rax
+    0x39E26A: 74 03                    je 0x39e26f
+    0x39E26C: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E26F: 48 8B 86 B8 00 00 00     mov rax, qword ptr [rsi + 0xb8]
+    0x39E276: F2 0F 11 00              movsd qword ptr [rax], xmm0
+    0x39E27A: 89 48 08                 mov dword ptr [rax + 8], ecx
+    0x39E27D: E9 B0 F7 FF FF           jmp 0x39da32
+    0x39E282: 66 90                    nop 
+    0x39E284: 0B D9                    or ebx, ecx
+    0x39E286: 39 00                    cmp dword ptr [rax], eax
+    0x39E288: 6B DA 39                 imul ebx, edx, 0x39
+    0x39E28B: 00 04 DB                 add byte ptr [rbx + rbx*8], al
+    0x39E28E: 39 00                    cmp dword ptr [rax], eax
+    0x39E290: 04 DB                    add al, 0xdb
+    0x39E292: 39 00                    cmp dword ptr [rax], eax
+    0x39E294: 04 DB                    add al, 0xdb
+    0x39E296: 39 00                    cmp dword ptr [rax], eax
+    0x39E298: E2 DA                    loop 0x39e274
+    0x39E29A: 39 00                    cmp dword ptr [rax], eax
+    0x39E29C: 90                       nop 
+    0x39E29D: DE 39                    fidivr word ptr [rcx]
+    0x39E29F: 00 DD                    add ch, bl
+    0x39E2A1: DE 39                    fidivr word ptr [rcx]
+    0x39E2A3: 00 0A                    add byte ptr [rdx], cl
+    0x39E2A5: DF 39                    fistp qword ptr [rcx]
+    0x39E2A7: 00 CC                    add ah, cl
+    0x39E2A9: CC                       int3 
+    0x39E2AA: CC                       int3 
+    0x39E2AB: CC                       int3 
+    0x39E2AC: CC                       int3 
+    0x39E2AD: CC                       int3 
+    0x39E2AE: CC                       int3 
+    0x39E2AF: CC                       int3 
+    0x39E2B0: 40 55                    push rbp
+    0x39E2B2: 56                       push rsi
+    0x39E2B3: 41 57                    push r15
+    0x39E2B5: 48 8D 6C 24 A0           lea rbp, [rsp - 0x60]
+    0x39E2BA: 48 81 EC 60 01 00 00     sub rsp, 0x160
+    0x39E2C1: 4C 8B 39                 mov r15, qword ptr [rcx]
+    0x39E2C4: 48 8D 95 80 00 00 00     lea rdx, [rbp + 0x80]
+    0x39E2CB: 48 8B F1                 mov rsi, rcx
+    0x39E2CE: 49 8B CF                 mov rcx, r15
+    0x39E2D1: E8 BA 51 53 00           call 0x8d3490
+    0x39E2D6: 48 8B 96 10 01 00 00     mov rdx, qword ptr [rsi + 0x110]
+    0x39E2DD: 41 B1 01                 mov r9b, 1
+    0x39E2E0: 48 8B 8E 18 01 00 00     mov rcx, qword ptr [rsi + 0x118]
+    0x39E2E7: 44 8B 00                 mov r8d, dword ptr [rax]
+    0x39E2EA: E8 11 82 F9 FF           call 0x336500
+    0x39E2EF: 84 C0                    test al, al
+    0x39E2F1: 74 24                    je 0x39e317
+    0x39E2F3: 48 8B 86 80 00 00 00     mov rax, qword ptr [rsi + 0x80]
+    0x39E2FA: 48 85 C0                 test rax, rax
+    0x39E2FD: 74 03                    je 0x39e302
+    0x39E2FF: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E302: 48 8B 4E 78              mov rcx, qword ptr [rsi + 0x78]
+    0x39E306: E8 55 44 FF FF           call 0x392760
+    0x39E30B: 48 81 C4 60 01 00 00     add rsp, 0x160
+    0x39E312: 41 5F                    pop r15
+    0x39E314: 5E                       pop rsi
+    0x39E315: 5D                       pop rbp
+    0x39E316: C3                       ret 
+    0x39E317: 48 83 7E 58 00           cmp qword ptr [rsi + 0x58], 0
+    0x39E31C: 75 24                    jne 0x39e342
+    0x39E31E: 48 8B 86 80 00 00 00     mov rax, qword ptr [rsi + 0x80]
+    0x39E325: 48 85 C0                 test rax, rax
+    0x39E328: 74 03                    je 0x39e32d
+    0x39E32A: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E32D: 48 8B 4E 78              mov rcx, qword ptr [rsi + 0x78]
+    0x39E331: E8 2A 44 FF FF           call 0x392760
+    0x39E336: 48 81 C4 60 01 00 00     add rsp, 0x160
+    0x39E33D: 41 5F                    pop r15
+    0x39E33F: 5E                       pop rsi
+    0x39E340: 5D                       pop rbp
+    0x39E341: C3                       ret 
+    0x39E342: 48 8B 46 70              mov rax, qword ptr [rsi + 0x70]
+    0x39E346: 48 8B 96 F8 00 00 00     mov rdx, qword ptr [rsi + 0xf8]
+    0x39E34D: 48 89 BC 24 58 01 00 00  mov qword ptr [rsp + 0x158], rdi
+    0x39E355: 4C 89 A4 24 50 01 00 00  mov qword ptr [rsp + 0x150], r12
+    0x39E35D: 48 85 C0                 test rax, rax
+    0x39E360: 74 03                    je 0x39e365
+    0x39E362: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E365: 48 8B 4E 68              mov rcx, qword ptr [rsi + 0x68]
+    0x39E369: 8B 49 38                 mov ecx, dword ptr [rcx + 0x38]
+    0x39E36C: E8 DF 67 91 00           call 0xcb4b50
+    0x39E371: 48 8B 0D 60 76 06 01     mov rcx, qword ptr [rip + 0x1067660]
+    0x39E378: 33 FF                    xor edi, edi
+    0x39E37A: 48 89 4D 84              mov qword ptr [rbp - 0x7c], rcx
+    0x39E37E: 4C 8B E0                 mov r12, rax
+    0x39E381: 0F B7 0D 62 76 06 01     movzx ecx, word ptr [rip + 0x1067662]
+    0x39E388: 66 89 4D 96              mov word ptr [rbp - 0x6a], cx
+    0x39E38C: 48 8B 4E 70              mov rcx, qword ptr [rsi + 0x70]
+    0x39E390: 48 89 85 98 00 00 00     mov qword ptr [rbp + 0x98], rax
+    0x39E397: 48 89 7C 24 70           mov qword ptr [rsp + 0x70], rdi
+    0x39E39C: 48 89 7D 8C              mov qword ptr [rbp - 0x74], rdi
+    0x39E3A0: 66 89 7D 94              mov word ptr [rbp - 0x6c], di
+    0x39E3A4: 48 85 C9                 test rcx, rcx
+    0x39E3A7: 74 03                    je 0x39e3ac
+    0x39E3A9: F0 FF 01                 lock inc dword ptr [rcx]
+    0x39E3AC: 48 8B 46 68              mov rax, qword ptr [rsi + 0x68]
+    0x39E3B0: 48 8D 95 80 00 00 00     lea rdx, [rbp + 0x80]
+    0x39E3B7: 48 89 44 24 60           mov qword ptr [rsp + 0x60], rax
+    0x39E3BC: 49 8B CF                 mov rcx, r15
+    0x39E3BF: 48 8B 86 D8 00 00 00     mov rax, qword ptr [rsi + 0xd8]
+    0x39E3C6: 48 89 44 24 68           mov qword ptr [rsp + 0x68], rax
+    0x39E3CB: 4C 89 64 24 78           mov qword ptr [rsp + 0x78], r12
+    0x39E3D0: E8 BB 50 53 00           call 0x8d3490
+    0x39E3D5: 8B 08                    mov ecx, dword ptr [rax]
+    0x39E3D7: 89 4D 80                 mov dword ptr [rbp - 0x80], ecx
+    0x39E3DA: 48 8D 4C 24 60           lea rcx, [rsp + 0x60]
+    0x39E3DF: E8 5C DC FE FF           call 0x38c040
+    0x39E3E4: 4D 85 E4                 test r12, r12
+    0x39E3E7: 0F 84 9C 0A 00 00        je 0x39ee89
+    0x39E3ED: 84 C0                    test al, al
+    0x39E3EF: 0F 84 94 0A 00 00        je 0x39ee89
+    0x39E3F5: 48 8B 56 20              mov rdx, qword ptr [rsi + 0x20]
+    0x39E3F9: 4C 8D 44 24 50           lea r8, [rsp + 0x50]
+    0x39E3FE: 48 89 9C 24 88 01 00 00  mov qword ptr [rsp + 0x188], rbx
+    0x39E406: 48 8D 4C 24 40           lea rcx, [rsp + 0x40]
+    0x39E40B: 44 0F 29 8C 24 00 01 00 00 movaps xmmword ptr [rsp + 0x100], xmm9
+    0x39E414: 0F 57 C0                 xorps xmm0, xmm0
+    0x39E417: 44 0F 29 94 24 F0 00 00 00 movaps xmmword ptr [rsp + 0xf0], xmm10
+    0x39E420: 45 0F 57 C9              xorps xmm9, xmm9
+    0x39E424: F3 44 0F 10 15 23 A9 F0 00 movss xmm10, dword ptr [rip + 0xf0a923]
+    0x39E42D: 48 83 C2 18              add rdx, 0x18
+    0x39E431: 44 0F 29 9C 24 E0 00 00 00 movaps xmmword ptr [rsp + 0xe0], xmm11
+    0x39E43A: 44 0F 29 A4 24 D0 00 00 00 movaps xmmword ptr [rsp + 0xd0], xmm12
+    0x39E443: 41 0F 14 C1              unpcklps xmm0, xmm9
+    0x39E447: 44 0F 29 AC 24 C0 00 00 00 movaps xmmword ptr [rsp + 0xc0], xmm13
+    0x39E450: 44 0F 29 B4 24 B0 00 00 00 movaps xmmword ptr [rsp + 0xb0], xmm14
+    0x39E459: F2 0F 11 44 24 50        movsd qword ptr [rsp + 0x50], xmm0
+    0x39E45F: F3 44 0F 11 54 24 58     movss dword ptr [rsp + 0x58], xmm10
+    0x39E466: E8 25 1A E4 FF           call 0x1dfe90
+    0x39E46B: 48 8B 5E 60              mov rbx, qword ptr [rsi + 0x60]
+    0x39E46F: F2 44 0F 10 2D 08 20 F1 00 movsd xmm13, qword ptr [rip + 0xf12008]
+    0x39E478: F3 44 0F 10 1D CF BB F0 00 movss xmm11, dword ptr [rip + 0xf0bbcf]
+    0x39E481: F2 44 0F 10 20           movsd xmm12, qword ptr [rax]
+    0x39E486: F3 44 0F 10 70 08        movss xmm14, dword ptr [rax + 8]
+    0x39E48C: F2 44 0F 11 64 24 40     movsd qword ptr [rsp + 0x40], xmm12
+    0x39E493: 40 38 7B 54              cmp byte ptr [rbx + 0x54], dil
+    0x39E497: 0F 84 A2 01 00 00        je 0x39e63f
+    0x39E49D: 40 38 7B 50              cmp byte ptr [rbx + 0x50], dil
+    0x39E4A1: 0F 84 98 01 00 00        je 0x39e63f
+    0x39E4A7: 89 7C 24 24              mov dword ptr [rsp + 0x24], edi
+    0x39E4AB: 48 8D 4C 24 20           lea rcx, [rsp + 0x20]
+    0x39E4B0: 0F 28 44 24 20           movaps xmm0, xmmword ptr [rsp + 0x20]
+    0x39E4B5: F3 41 0F 10 C4           movss xmm0, xmm12
+    0x39E4BA: 0F C6 C0 D2              shufps xmm0, xmm0, 0xd2
+    0x39E4BE: F3 41 0F 10 C6           movss xmm0, xmm14
+    0x39E4C3: 0F C6 C0 C9              shufps xmm0, xmm0, 0xc9
+    0x39E4C7: 0F 29 44 24 20           movaps xmmword ptr [rsp + 0x20], xmm0
+    0x39E4CC: 66 0F 7F 44 24 20        movdqa xmmword ptr [rsp + 0x20], xmm0
+    0x39E4D2: E8 29 9D D1 FF           call 0xb8200
+    0x39E4D7: F3 0F 10 43 1C           movss xmm0, dword ptr [rbx + 0x1c]
+    0x39E4DC: 48 8D 4C 24 30           lea rcx, [rsp + 0x30]
+    0x39E4E1: F3 0F 10 4B 24           movss xmm1, dword ptr [rbx + 0x24]
+    0x39E4E6: 89 7C 24 34              mov dword ptr [rsp + 0x34], edi
+    0x39E4EA: 0F 28 54 24 30           movaps xmm2, xmmword ptr [rsp + 0x30]
+    0x39E4EF: F3 0F 10 D0              movss xmm2, xmm0
+    0x39E4F3: 0F C6 D2 D2              shufps xmm2, xmm2, 0xd2
+    0x39E4F7: F3 0F 10 D1              movss xmm2, xmm1
+    0x39E4FB: 0F C6 D2 C9              shufps xmm2, xmm2, 0xc9
+    0x39E4FF: 0F 29 54 24 30           movaps xmmword ptr [rsp + 0x30], xmm2
+    0x39E504: 66 0F 7F 54 24 30        movdqa xmmword ptr [rsp + 0x30], xmm2
+    0x39E50A: E8 F1 9C D1 FF           call 0xb8200
+    0x39E50F: F3 0F 10 54 24 30        movss xmm2, dword ptr [rsp + 0x30]
+    0x39E515: F3 0F 10 44 24 24        movss xmm0, dword ptr [rsp + 0x24]
+    0x39E51B: 41 0F 57 D3              xorps xmm2, xmm11
+    0x39E51F: F3 0F 59 54 24 20        mulss xmm2, dword ptr [rsp + 0x20]
+    0x39E525: F3 0F 59 44 24 34        mulss xmm0, dword ptr [rsp + 0x34]
+    0x39E52B: F3 0F 10 4C 24 28        movss xmm1, dword ptr [rsp + 0x28]
+    0x39E531: F3 0F 59 4C 24 38        mulss xmm1, dword ptr [rsp + 0x38]
+    0x39E537: F3 0F 10 1D 8D C8 F0 00  movss xmm3, dword ptr [rip + 0xf0c88d]
+    0x39E53F: F3 0F 5C D0              subss xmm2, xmm0
+    0x39E543: F3 0F 5C D1              subss xmm2, xmm1
+    0x39E547: 0F 2F DA                 comiss xmm3, xmm2
+    0x39E54A: 77 08                    ja 0x39e554
+    0x39E54C: 41 0F 28 DA              movaps xmm3, xmm10
+    0x39E550: F3 0F 5D DA              minss xmm3, xmm2
+    0x39E554: 48 8B 46 40              mov rax, qword ptr [rsi + 0x40]
+    0x39E558: F2 0F 10 00              movsd xmm0, qword ptr [rax]
+    0x39E55C: F3 0F 10 48 08           movss xmm1, dword ptr [rax + 8]
+    0x39E561: 0F 28 D0                 movaps xmm2, xmm0
+    0x39E564: F2 0F 11 44 24 30        movsd qword ptr [rsp + 0x30], xmm0
+    0x39E56A: F3 0F 10 44 24 30        movss xmm0, dword ptr [rsp + 0x30]
+    0x39E570: 0F C6 D2 55              shufps xmm2, xmm2, 0x55
+    0x39E574: F3 0F 59 D2              mulss xmm2, xmm2
+    0x39E578: F3 0F 59 C0              mulss xmm0, xmm0
+    0x39E57C: F3 0F 59 C9              mulss xmm1, xmm1
+    0x39E580: F3 0F 58 D0              addss xmm2, xmm0
+    0x39E584: F3 0F 10 05 6C C3 F0 00  movss xmm0, dword ptr [rip + 0xf0c36c]
+    0x39E58C: F3 0F 58 D1              addss xmm2, xmm1
+    0x39E590: 0F 2F C2                 comiss xmm0, xmm2
+    0x39E593: 76 05                    jbe 0x39e59a
+    0x39E595: 0F 57 E4                 xorps xmm4, xmm4
+    0x39E598: EB 66                    jmp 0x39e600
+    0x39E59A: 0F 28 C3                 movaps xmm0, xmm3
+    0x39E59D: E8 66 90 E9 00           call 0x1237608
+    0x39E5A2: F3 0F 5C 05 36 40 06 01  subss xmm0, dword ptr [rip + 0x1064036]
+    0x39E5AA: F3 0F 5E 05 26 76 06 01  divss xmm0, dword ptr [rip + 0x1067626]
+    0x39E5B2: 44 0F 2F C8              comiss xmm9, xmm0
+    0x39E5B6: 72 05                    jb 0x39e5bd
+    0x39E5B8: 0F 57 E4                 xorps xmm4, xmm4
+    0x39E5BB: EB 08                    jmp 0x39e5c5
+    0x39E5BD: 41 0F 28 E2              movaps xmm4, xmm10
+    0x39E5C1: F3 0F 5D E0              minss xmm4, xmm0
+    0x39E5C5: 0F 28 DC                 movaps xmm3, xmm4
+    0x39E5C8: 0F 28 CC                 movaps xmm1, xmm4
+    0x39E5CB: F3 41 0F 5C DA           subss xmm3, xmm10
+    0x39E5D0: 41 0F 57 CB              xorps xmm1, xmm11
+    0x39E5D4: 0F 28 D4                 movaps xmm2, xmm4
+    0x39E5D7: F3 0F 5F D1              maxss xmm2, xmm1
+    0x39E5DB: 0F 28 C3                 movaps xmm0, xmm3
+    0x39E5DE: 41 0F 57 C3              xorps xmm0, xmm11
+    0x39E5E2: F3 41 0F 5F D2           maxss xmm2, xmm10
+    0x39E5E7: F3 0F 5F D8              maxss xmm3, xmm0
+    0x39E5EB: F3 0F 59 15 79 FE F0 00  mulss xmm2, dword ptr [rip + 0xf0fe79]
+    0x39E5F3: F3 0F 5F 15 71 FE F0 00  maxss xmm2, dword ptr [rip + 0xf0fe71]
+    0x39E5FB: 0F 2F D3                 comiss xmm2, xmm3
+    0x39E5FE: 73 3F                    jae 0x39e63f
+    0x39E600: F3 0F 59 25 4C A7 F0 00  mulss xmm4, dword ptr [rip + 0xf0a74c]
+    0x39E608: 48 8B 86 98 00 00 00     mov rax, qword ptr [rsi + 0x98]
+    0x39E60F: 0F 5A C4                 cvtps2pd xmm0, xmm4
+    0x39E612: F2 41 0F 59 C5           mulsd xmm0, xmm13
+    0x39E617: F2 48 0F 2C C8           cvttsd2si rcx, xmm0
+    0x39E61C: 48 39 48 60              cmp qword ptr [rax + 0x60], rcx
+    0x39E620: 7E 1D                    jle 0x39e63f
+    0x39E622: 48 8B 86 80 00 00 00     mov rax, qword ptr [rsi + 0x80]
+    0x39E629: 48 85 C0                 test rax, rax
+    0x39E62C: 74 03                    je 0x39e631
+    0x39E62E: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E631: 48 8B 4E 78              mov rcx, qword ptr [rsi + 0x78]
+    0x39E635: E8 26 41 FF FF           call 0x392760
+    0x39E63A: E9 97 06 00 00           jmp 0x39ecd6
+    0x39E63F: 4C 89 AC 24 48 01 00 00  mov qword ptr [rsp + 0x148], r13
+    0x39E647: 48 8D 95 80 00 00 00     lea rdx, [rbp + 0x80]
+    0x39E64E: 4C 89 B4 24 40 01 00 00  mov qword ptr [rsp + 0x140], r14
+    0x39E656: 49 8B CF                 mov rcx, r15
+    0x39E659: 0F 29 B4 24 30 01 00 00  movaps xmmword ptr [rsp + 0x130], xmm6
+    0x39E661: 0F 29 BC 24 20 01 00 00  movaps xmmword ptr [rsp + 0x120], xmm7
+    0x39E669: 44 0F 29 84 24 10 01 00 00 movaps xmmword ptr [rsp + 0x110], xmm8
+    0x39E672: 44 0F 29 BC 24 A0 00 00 00 movaps xmmword ptr [rsp + 0xa0], xmm15
+    0x39E67B: E8 00 94 53 00           call 0x8d7a80
+    0x39E680: 48 8B 56 20              mov rdx, qword ptr [rsi + 0x20]
+    0x39E684: 4C 8D 44 24 50           lea r8, [rsp + 0x50]
+    0x39E689: 0F 57 C0                 xorps xmm0, xmm0
+    0x39E68C: F3 44 0F 11 4C 24 58     movss dword ptr [rsp + 0x58], xmm9
+    0x39E693: 48 83 C2 18              add rdx, 0x18
+    0x39E697: 48 8D 4C 24 20           lea rcx, [rsp + 0x20]
+    0x39E69C: F2 48 0F 2A 00           cvtsi2sd xmm0, qword ptr [rax]
+    0x39E6A1: F2 0F 59 05 4F B9 F0 00  mulsd xmm0, qword ptr [rip + 0xf0b94f]
+    0x39E6A9: 66 0F 5A C0              cvtpd2ps xmm0, xmm0
+    0x39E6AD: F3 0F 11 85 80 00 00 00  movss dword ptr [rbp + 0x80], xmm0
+    0x39E6B5: 0F 57 C0                 xorps xmm0, xmm0
+    0x39E6B8: 41 0F 14 C2              unpcklps xmm0, xmm10
+    0x39E6BC: F2 0F 11 44 24 50        movsd qword ptr [rsp + 0x50], xmm0
+    0x39E6C2: E8 C9 17 E4 FF           call 0x1dfe90
+    0x39E6C7: 48 8B 9E 98 00 00 00     mov rbx, qword ptr [rsi + 0x98]
+    0x39E6CE: 48 8D 54 24 50           lea rdx, [rsp + 0x50]
+    0x39E6D3: 49 8B CF                 mov rcx, r15
+    0x39E6D6: F2 0F 10 00              movsd xmm0, qword ptr [rax]
+    0x39E6DA: F3 0F 10 BB FC 00 00 00  movss xmm7, dword ptr [rbx + 0xfc]
+    0x39E6E2: 8B 40 08                 mov eax, dword ptr [rax + 8]
+    0x39E6E5: F3 0F 59 3D 7B 23 06 01  mulss xmm7, dword ptr [rip + 0x106237b]
+    0x39E6ED: 48 8B 5B 40              mov rbx, qword ptr [rbx + 0x40]
+    0x39E6F1: F2 0F 11 44 24 30        movsd qword ptr [rsp + 0x30], xmm0
+    0x39E6F7: 89 85 90 00 00 00        mov dword ptr [rbp + 0x90], eax
+    0x39E6FD: E8 9E 93 53 00           call 0x8d7aa0
+    0x39E702: 48 8B D3                 mov rdx, rbx
+    0x39E705: 48 8B 08                 mov rcx, qword ptr [rax]
+    0x39E708: E8 A3 CC D4 FF           call 0xeb3b0
+    0x39E70D: 0F 57 C0                 xorps xmm0, xmm0
+    0x39E710: F2 48 0F 2A C0           cvtsi2sd xmm0, rax
+    0x39E715: F2 0F 59 05 DB B8 F0 00  mulsd xmm0, qword ptr [rip + 0xf0b8db]
+    0x39E71D: 66 0F 5A C8              cvtpd2ps xmm1, xmm0
+    0x39E721: F3 0F 59 0D D7 B8 F0 00  mulss xmm1, dword ptr [rip + 0xf0b8d7]
+    0x39E729: 44 0F 2F C9              comiss xmm9, xmm1
+    0x39E72D: 72 05                    jb 0x39e734
+    0x39E72F: 0F 57 D2                 xorps xmm2, xmm2
+    0x39E732: EB 08                    jmp 0x39e73c
+    0x39E734: 41 0F 28 D2              movaps xmm2, xmm10
+    0x39E738: F3 0F 5D D1              minss xmm2, xmm1
+>>> 0x39E73C: F3 41 0F 10 84 24 A4 04 00 00 movss xmm0, dword ptr [r12 + 0x4a4]
+    0x39E746: 4C 8D AE C0 00 00 00     lea r13, [rsi + 0xc0]
+    0x39E74D: F3 44 0F 10 7C 24 44     movss xmm15, dword ptr [rsp + 0x44]
+    0x39E754: 4C 8D A6 B8 00 00 00     lea r12, [rsi + 0xb8]
+    0x39E75B: 49 8B 45 00              mov rax, qword ptr [r13]
+    0x39E75F: 48 8D 9E 98 00 00 00     lea rbx, [rsi + 0x98]
+    0x39E766: 41 0F 28 CA              movaps xmm1, xmm10
+    0x39E76A: 41 0F 28 DC              movaps xmm3, xmm12
+    0x39E76E: F3 0F 59 D8              mulss xmm3, xmm0
+    0x39E772: F3 0F 5C CF              subss xmm1, xmm7
+    0x39E776: 41 0F 28 FE              movaps xmm7, xmm14
+    0x39E77A: 41 0F 28 F7              movaps xmm6, xmm15
+    0x39E77E: F3 0F 59 F8              mulss xmm7, xmm0
+    0x39E782: F3 0F 59 F0              mulss xmm6, xmm0
+    0x39E786: F3 0F 59 D9              mulss xmm3, xmm1
+    0x39E78A: F3 0F 59 F9              mulss xmm7, xmm1
+    0x39E78E: F3 0F 59 F1              mulss xmm6, xmm1
+    0x39E792: F3 0F 59 DA              mulss xmm3, xmm2
+    0x39E796: F3 0F 59 FA              mulss xmm7, xmm2
+    0x39E79A: F3 0F 59 F2              mulss xmm6, xmm2
+    0x39E79E: 48 85 C0                 test rax, rax
+    0x39E7A1: 74 0A                    je 0x39e7ad
+    0x39E7A3: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E7A6: 48 8D 9E 98 00 00 00     lea rbx, [rsi + 0x98]
+    0x39E7AD: 49 8B 04 24              mov rax, qword ptr [r12]
+    0x39E7B1: 48 8D 54 24 20           lea rdx, [rsp + 0x20]
+    0x39E7B6: F3 44 0F 10 44 24 34     movss xmm8, dword ptr [rsp + 0x34]
+    0x39E7BD: 48 8D 4C 24 40           lea rcx, [rsp + 0x40]
+    0x39E7C2: 41 0F 28 D0              movaps xmm2, xmm8
+    0x39E7C6: F2 0F 10 00              movsd xmm0, qword ptr [rax]
+    0x39E7CA: 0F 28 E0                 movaps xmm4, xmm0
+    0x39E7CD: F2 0F 11 44 24 20        movsd qword ptr [rsp + 0x20], xmm0
+    0x39E7D3: 0F 28 E8                 movaps xmm5, xmm0
+    0x39E7D6: F3 0F 58 E3              addss xmm4, xmm3
+    0x39E7DA: F3 0F 10 58 08           movss xmm3, dword ptr [rax + 8]
+    0x39E7DF: 48 8B 85 98 00 00 00     mov rax, qword ptr [rbp + 0x98]
+    0x39E7E6: F3 0F 58 DF              addss xmm3, xmm7
+    0x39E7EA: F3 0F 10 7C 24 30        movss xmm7, dword ptr [rsp + 0x30]
+    0x39E7F0: 0F C6 ED 55              shufps xmm5, xmm5, 0x55
+    0x39E7F4: 0F 28 C7                 movaps xmm0, xmm7
+    0x39E7F7: F3 0F 59 C4              mulss xmm0, xmm4
+    0x39E7FB: F3 0F 58 EE              addss xmm5, xmm6
+    0x39E7FF: F3 0F 10 B5 90 00 00 00  movss xmm6, dword ptr [rbp + 0x90]
+    0x39E807: 0F 28 CE                 movaps xmm1, xmm6
+    0x39E80A: F3 0F 59 CB              mulss xmm1, xmm3
+    0x39E80E: F3 0F 59 D5              mulss xmm2, xmm5
+    0x39E812: F3 0F 58 D0              addss xmm2, xmm0
+    0x39E816: 41 0F 28 C4              movaps xmm0, xmm12
+    0x39E81A: F3 0F 59 C4              mulss xmm0, xmm4
+    0x39E81E: F3 0F 58 D1              addss xmm2, xmm1
+    0x39E822: 41 0F 28 CE              movaps xmm1, xmm14
+    0x39E826: F3 0F 59 CB              mulss xmm1, xmm3
+    0x39E82A: F3 0F 59 FA              mulss xmm7, xmm2
+    0x39E82E: F3 44 0F 59 C2           mulss xmm8, xmm2
+    0x39E833: F3 0F 59 F2              mulss xmm6, xmm2
+    0x39E837: 41 0F 28 D7              movaps xmm2, xmm15
+    0x39E83B: F3 0F 59 D5              mulss xmm2, xmm5
+    0x39E83F: F3 0F 58 D0              addss xmm2, xmm0
+    0x39E843: 0F 28 44 24 20           movaps xmm0, xmmword ptr [rsp + 0x20]
+    0x39E848: F3 0F 58 D1              addss xmm2, xmm1
+    0x39E84C: F3 44 0F 59 E2           mulss xmm12, xmm2
+    0x39E851: F3 44 0F 59 FA           mulss xmm15, xmm2
+    0x39E856: F3 44 0F 59 F2           mulss xmm14, xmm2
+    0x39E85B: F3 41 0F 5C E4           subss xmm4, xmm12
+    0x39E860: F3 0F 10 90 AC 04 00 00  movss xmm2, dword ptr [rax + 0x4ac]
+    0x39E868: F3 41 0F 5C EF           subss xmm5, xmm15
+    0x39E86D: F3 41 0F 5C DE           subss xmm3, xmm14
+    0x39E872: F3 0F 5C E7              subss xmm4, xmm7
+    0x39E876: F3 41 0F 5C E8           subss xmm5, xmm8
+    0x39E87B: F3 0F 5C DE              subss xmm3, xmm6
+    0x39E87F: F3 0F 10 C4              movss xmm0, xmm4
+    0x39E883: 0F C6 C0 E1              shufps xmm0, xmm0, 0xe1
+    0x39E887: F3 0F 10 C5              movss xmm0, xmm5
+    0x39E88B: 0F C6 C0 C6              shufps xmm0, xmm0, 0xc6
+    0x39E88F: F3 0F 10 C3              movss xmm0, xmm3
+    0x39E893: F3 0F 10 9D 80 00 00 00  movss xmm3, dword ptr [rbp + 0x80]
+    0x39E89B: 0F C6 C0 C9              shufps xmm0, xmm0, 0xc9
+    0x39E89F: 0F 29 44 24 20           movaps xmmword ptr [rsp + 0x20], xmm0
+    0x39E8A4: 66 0F 7F 44 24 20        movdqa xmmword ptr [rsp + 0x20], xmm0
+    0x39E8AA: E8 F1 7F 8F 00           call 0xc968a0
+    0x39E8AF: F3 0F 11 7C 24 20        movss dword ptr [rsp + 0x20], xmm7
+    0x39E8B5: 48 8D 54 24 20           lea rdx, [rsp + 0x20]
+    0x39E8BA: F3 0F 10 BD 80 00 00 00  movss xmm7, dword ptr [rbp + 0x80]
+    0x39E8C2: 48 8D 4C 24 30           lea rcx, [rsp + 0x30]
+    0x39E8C7: 0F 28 DF                 movaps xmm3, xmm7
+    0x39E8CA: F3 44 0F 11 44 24 24     movss dword ptr [rsp + 0x24], xmm8
+    0x39E8D1: 0F 28 00                 movaps xmm0, xmmword ptr [rax]
+    0x39E8D4: 48 8B 85 98 00 00 00     mov rax, qword ptr [rbp + 0x98]
+    0x39E8DB: 0F 29 44 24 40           movaps xmmword ptr [rsp + 0x40], xmm0
+    0x39E8E0: F3 0F 10 85 80 00 00 00  movss xmm0, dword ptr [rbp + 0x80]
+    0x39E8E8: F3 0F 11 74 24 28        movss dword ptr [rsp + 0x28], xmm6
+    0x39E8EE: F3 0F 10 90 B0 04 00 00  movss xmm2, dword ptr [rax + 0x4b0]
+    0x39E8F6: F3 0F 11 44 24 2C        movss dword ptr [rsp + 0x2c], xmm0
+    0x39E8FC: E8 9F 7F 8F 00           call 0xc968a0
+    0x39E901: F3 0F 10 85 80 00 00 00  movss xmm0, dword ptr [rbp + 0x80]
+    0x39E909: 48 8D 54 24 20           lea rdx, [rsp + 0x20]
+    0x39E90E: F3 44 0F 11 64 24 20     movss dword ptr [rsp + 0x20], xmm12
+    0x39E915: 48 8D 4C 24 30           lea rcx, [rsp + 0x30]
+    0x39E91A: F3 44 0F 11 7C 24 24     movss dword ptr [rsp + 0x24], xmm15
+    0x39E921: 0F 28 DF                 movaps xmm3, xmm7
+    0x39E924: 0F 28 30                 movaps xmm6, xmmword ptr [rax]
+    0x39E927: 48 8B 85 98 00 00 00     mov rax, qword ptr [rbp + 0x98]
+    0x39E92E: F3 44 0F 11 74 24 28     movss dword ptr [rsp + 0x28], xmm14
+    0x39E935: F3 0F 11 44 24 2C        movss dword ptr [rsp + 0x2c], xmm0
+    0x39E93B: F3 0F 10 90 A8 04 00 00  movss xmm2, dword ptr [rax + 0x4a8]
+    0x39E943: E8 58 7F 8F 00           call 0xc968a0
+    0x39E948: 0F 28 5C 24 40           movaps xmm3, xmmword ptr [rsp + 0x40]
+    0x39E94D: 0F 28 CE                 movaps xmm1, xmm6
+    0x39E950: 44 0F 28 BC 24 A0 00 00 00 movaps xmm15, xmmword ptr [rsp + 0xa0]
+    0x39E959: 0F 28 E3                 movaps xmm4, xmm3
+    0x39E95C: 0F C6 E3 55              shufps xmm4, xmm3, 0x55
+    0x39E960: 49 8B CC                 mov rcx, r12
+    0x39E963: 0F 28 10                 movaps xmm2, xmmword ptr [rax]
+    0x39E966: 49 8B D5                 mov rdx, r13
+    0x39E969: 48 8B 86 C0 00 00 00     mov rax, qword ptr [rsi + 0xc0]
+    0x39E970: 0F 28 EA                 movaps xmm5, xmm2
+    0x39E973: 0F C6 CE 55              shufps xmm1, xmm6, 0x55
+    0x39E977: F3 0F 58 EB              addss xmm5, xmm3
+    0x39E97B: 0F C6 DB AA              shufps xmm3, xmm3, 0xaa
+    0x39E97F: 0F 28 C2                 movaps xmm0, xmm2
+    0x39E982: 0F C6 C2 55              shufps xmm0, xmm2, 0x55
+    0x39E986: 0F C6 D2 AA              shufps xmm2, xmm2, 0xaa
+    0x39E98A: F3 0F 58 E0              addss xmm4, xmm0
+    0x39E98E: F3 0F 58 DA              addss xmm3, xmm2
+    0x39E992: F3 0F 58 EE              addss xmm5, xmm6
+    0x39E996: 0F C6 F6 AA              shufps xmm6, xmm6, 0xaa
+    0x39E99A: F3 0F 58 E1              addss xmm4, xmm1
+    0x39E99E: F3 0F 58 DE              addss xmm3, xmm6
+    0x39E9A2: 48 85 C0                 test rax, rax
+    0x39E9A5: 74 11                    je 0x39e9b8
+    0x39E9A7: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E9AA: 48 8D 8E B8 00 00 00     lea rcx, [rsi + 0xb8]
+    0x39E9B1: 48 8D 96 C0 00 00 00     lea rdx, [rsi + 0xc0]
+    0x39E9B8: 49 8B 04 24              mov rax, qword ptr [r12]
+    0x39E9BC: F3 0F 11 28              movss dword ptr [rax], xmm5
+    0x39E9C0: F3 0F 11 60 04           movss dword ptr [rax + 4], xmm4
+    0x39E9C5: F3 0F 11 58 08           movss dword ptr [rax + 8], xmm3
+    0x39E9CA: 48 8B 86 A0 00 00 00     mov rax, qword ptr [rsi + 0xa0]
+    0x39E9D1: 48 85 C0                 test rax, rax
+    0x39E9D4: 74 10                    je 0x39e9e6
+    0x39E9D6: F0 FF 00                 lock inc dword ptr [rax]
+    0x39E9D9: 4C 8B E1                 mov r12, rcx
+    0x39E9DC: 48 8D 9E 98 00 00 00     lea rbx, [rsi + 0x98]
+    0x39E9E3: 4C 8B EA                 mov r13, rdx
+    0x39E9E6: 48 8B 8E D0 00 00 00     mov rcx, qword ptr [rsi + 0xd0]
+    0x39E9ED: 4C 8B B6 98 00 00 00     mov r14, qword ptr [rsi + 0x98]
+    0x39E9F4: E8 E7 78 8F 00           call 0xc962e0
+    0x39E9F9: 84 C0                    test al, al
+    0x39E9FB: 0F 84 AC 03 00 00        je 0x39edad
+    0x39EA01: 33 D2                    xor edx, edx
+    0x39EA03: 48 8D 8D 80 00 00 00     lea rcx, [rbp + 0x80]
+    0x39EA0A: E8 E1 E4 40 00           call 0x7acef0
+    0x39EA0F: 48 8D 95 80 00 00 00     lea rdx, [rbp + 0x80]
+    0x39EA16: 49 8B CF                 mov rcx, r15
+    0x39EA19: E8 82 C2 53 00           call 0x8daca0
+    0x39EA1E: 49 8B 45 00              mov rax, qword ptr [r13]
+    0x39EA22: 48 85 C0                 test rax, rax
+    0x39EA25: 74 03                    je 0x39ea2a
+    0x39EA27: F0 FF 00                 lock inc dword ptr [rax]
+    0x39EA2A: 49 8B 04 24              mov rax, qword ptr [r12]
+    0x39EA2E: F2 0F 10 00              movsd xmm0, qword ptr [rax]
+    0x39EA32: F3 0F 10 48 08           movss xmm1, dword ptr [rax + 8]
+    0x39EA37: 0F 28 D0                 movaps xmm2, xmm0
+    0x39EA3A: F2 0F 11 44 24 40        movsd qword ptr [rsp + 0x40], xmm0
+    0x39EA40: F3 0F 10 44 24 40        movss xmm0, dword ptr [rsp + 0x40]
+    0x39EA46: 0F C6 D2 55              shufps xmm2, xmm2, 0x55
+    0x39EA4A: F3 0F 59 D2              mulss xmm2, xmm2
+    0x39EA4E: F3 0F 59 C0              mulss xmm0, xmm0
+    0x39EA52: F3 0F 59 C9              mulss xmm1, xmm1
+    0x39EA56: F3 0F 58 D0              addss xmm2, xmm0
+    0x39EA5A: 0F 57 C0                 xorps xmm0, xmm0
+    0x39EA5D: F3 0F 58 D1              addss xmm2, xmm1
+    0x39EA61: 0F 2E C2                 ucomiss xmm0, xmm2
+    0x39EA64: 77 09                    ja 0x39ea6f
+    0x39EA66: 0F 57 C0                 xorps xmm0, xmm0
+    0x39EA69: F3 0F 51 C2              sqrtss xmm0, xmm2
+    0x39EA6D: EB 08                    jmp 0x39ea77
+    0x39EA6F: 0F 28 C2                 movaps xmm0, xmm2
+    0x39EA72: E8 99 51 E9 00           call 0x1233c10
+    0x39EA77: F3 0F 5C 05 FD C5 F0 00  subss xmm0, dword ptr [rip + 0xf0c5fd]
+    0x39EA7F: F3 0F 59 05 C5 B7 F0 00  mulss xmm0, dword ptr [rip + 0xf0b7c5]
+    0x39EA87: 44 0F 2F C8              comiss xmm9, xmm0
+    0x39EA8B: 72 06                    jb 0x39ea93
+    0x39EA8D: 45 0F 57 D2              xorps xmm10, xmm10
+    0x39EA91: EB 05                    jmp 0x39ea98
+    0x39EA93: F3 44 0F 5D D0           minss xmm10, xmm0
+    0x39EA98: 48 8D 95 90 00 00 00     lea rdx, [rbp + 0x90]
+    0x39EA9F: F3 45 0F 11 96 0C 01 00 00 movss dword ptr [r14 + 0x10c], xmm10
+    0x39EAA8: 49 8B CF                 mov rcx, r15
+    0x39EAAB: E8 D0 8F 53 00           call 0x8d7a80
+    0x39EAB0: 49 B8 FF FF FF FF FF FF FF 7F movabs r8, 0x7fffffffffffffff
+    0x39EABA: 48 8B 08                 mov rcx, qword ptr [rax]
+    0x39EABD: 49 8B 86 10 01 00 00     mov rax, qword ptr [r14 + 0x110]
+    0x39EAC4: 49 3B C0                 cmp rax, r8
+    0x39EAC7: 75 09                    jne 0x39ead2
+    0x39EAC9: 49 3B C8                 cmp rcx, r8
+    0x39EACC: 49 0F 45 F8              cmovne rdi, r8
+    0x39EAD0: EB 2F                    jmp 0x39eb01
+    0x39EAD2: 48 BA 00 00 00 00 00 00 00 80 movabs rdx, 0x8000000000000000
+    0x39EADC: 48 3B C2                 cmp rax, rdx
+    0x39EADF: 75 09                    jne 0x39eaea
+    0x39EAE1: 48 3B CA                 cmp rcx, rdx
+    0x39EAE4: 48 0F 45 FA              cmovne rdi, rdx
+    0x39EAE8: EB 17                    jmp 0x39eb01
+    0x39EAEA: 49 3B C8                 cmp rcx, r8
+    0x39EAED: 75 05                    jne 0x39eaf4
+    0x39EAEF: 48 8B FA                 mov rdi, rdx
+    0x39EAF2: EB 0D                    jmp 0x39eb01
+    0x39EAF4: 48 8B F8                 mov rdi, rax
+    0x39EAF7: 48 2B F9                 sub rdi, rcx
+    0x39EAFA: 48 3B CA                 cmp rcx, rdx
+    0x39EAFD: 49 0F 44 F8              cmove rdi, r8
+    0x39EB01: 49 89 BE 10 01 00 00     mov qword ptr [r14 + 0x110], rdi
+    0x39EB08: F2 41 0F 10 86 00 01 00 00 movsd xmm0, qword ptr [r14 + 0x100]
+    0x39EB11: 41 0F 2E C1              ucomiss xmm0, xmm9
+    0x39EB15: F2 0F 11 44 24 40        movsd qword ptr [rsp + 0x40], xmm0
+    0x39EB1B: 0F 8A 0F 02 00 00        jp 0x39ed30
+    0x39EB21: 0F 85 09 02 00 00        jne 0x39ed30
+    0x39EB27: F3 0F 10 44 24 44        movss xmm0, dword ptr [rsp + 0x44]
+    0x39EB2D: 41 0F 2E C1              ucomiss xmm0, xmm9
+    0x39EB31: 0F 8A F9 01 00 00        jp 0x39ed30
+    0x39EB37: 0F 85 F3 01 00 00        jne 0x39ed30
+    0x39EB3D: F3 41 0F 10 86 08 01 00 00 movss xmm0, dword ptr [r14 + 0x108]
+    0x39EB46: 41 0F 2E C1              ucomiss xmm0, xmm9
+    0x39EB4A: 0F 8A E0 01 00 00        jp 0x39ed30
+    0x39EB50: 0F 85 DA 01 00 00        jne 0x39ed30
+    0x39EB56: 48 85 FF                 test rdi, rdi
+    0x39EB59: 0F 8F 4E 01 00 00        jg 0x39ecad
+    0x39EB5F: 8B 95 84 00 00 00        mov edx, dword ptr [rbp + 0x84]
+    0x39EB65: 48 8D 8D 80 00 00 00     lea rcx, [rbp + 0x80]
+    0x39EB6C: 0F B7 C2                 movzx eax, dx
+    0x39EB6F: C1 EA 10                 shr edx, 0x10
+    0x39EB72: 69 F8 69 90 00 00        imul edi, eax, 0x9069
+    0x39EB78: 03 FA                    add edi, edx
+    0x39EB7A: 8B 95 80 00 00 00        mov edx, dword ptr [rbp + 0x80]
+    0x39EB80: 0F B7 C2                 movzx eax, dx
+    0x39EB83: 69 D8 50 46 00 00        imul ebx, eax, 0x4650
+    0x39EB89: C1 EA 10                 shr edx, 0x10
+    0x39EB8C: 89 BD 84 00 00 00        mov dword ptr [rbp + 0x84], edi
+    0x39EB92: 03 DA                    add ebx, edx
+    0x39EB94: 89 9D 80 00 00 00        mov dword ptr [rbp + 0x80], ebx
+    0x39EB9A: E8 41 57 42 00           call 0x7c42e0
+    0x39EB9F: 0F 28 F8                 movaps xmm7, xmm0
+    0x39EBA2: E8 69 6C E9 00           call 0x1235810
+    0x39EBA7: 8B 8D 84 00 00 00        mov ecx, dword ptr [rbp + 0x84]
+    0x39EBAD: 44 0F 28 C0              movaps xmm8, xmm0
+    0x39EBB1: 8B 95 80 00 00 00        mov edx, dword ptr [rbp + 0x80]
+    0x39EBB7: 0F 57 C0                 xorps xmm0, xmm0
+    0x39EBBA: F3 44 0F 10 0D 5D E8 F0 00 movss xmm9, dword ptr [rip + 0xf0e85d]
+    0x39EBC3: 45 0F 57 C3              xorps xmm8, xmm11
+    0x39EBC7: 0F B7 C1                 movzx eax, cx
+    0x39EBCA: 44 69 C0 69 90 00 00     imul r8d, eax, 0x9069
+    0x39EBD1: 0F B7 C2                 movzx eax, dx
+    0x39EBD4: 69 C0 50 46 00 00        imul eax, eax, 0x4650
+    0x39EBDA: C1 E9 10                 shr ecx, 0x10
+    0x39EBDD: C1 EA 10                 shr edx, 0x10
+    0x39EBE0: 44 03 C1                 add r8d, ecx
+    0x39EBE3: 41 C1 E0 10              shl r8d, 0x10
+    0x39EBE7: 41 03 C0                 add eax, r8d
+    0x39EBEA: 03 C2                    add eax, edx
+    0x39EBEC: F3 48 0F 2A C0           cvtsi2ss xmm0, rax
+    0x39EBF1: F3 41 0F 59 C1           mulss xmm0, xmm9
+    0x39EBF6: F3 0F 59 05 EE 39 06 01  mulss xmm0, dword ptr [rip + 0x10639ee]
+    0x39EBFE: F3 0F 5C 05 6A C4 F0 00  subss xmm0, dword ptr [rip + 0xf0c46a]
+    0x39EC06: E8 05 6C E9 00           call 0x1235810
+    0x39EC0B: 0F 28 F0                 movaps xmm6, xmm0
+    0x39EC0E: 0F 28 C7                 movaps xmm0, xmm7
+    0x39EC11: E8 FA 66 E9 00           call 0x1235310
+    0x39EC16: 0F 28 4C 24 20           movaps xmm1, xmmword ptr [rsp + 0x20]
+    0x39EC1B: 48 8D 4C 24 20           lea rcx, [rsp + 0x20]
+    0x39EC20: F3 41 0F 10 C8           movss xmm1, xmm8
+    0x39EC25: 0F C6 C9 E1              shufps xmm1, xmm1, 0xe1
+    0x39EC29: F3 0F 10 CE              movss xmm1, xmm6
+    0x39EC2D: 0F C6 C9 C6              shufps xmm1, xmm1, 0xc6
+    0x39EC31: F3 0F 10 C8              movss xmm1, xmm0
+    0x39EC35: 0F C6 C9 C9              shufps xmm1, xmm1, 0xc9
+    0x39EC39: 0F 29 4C 24 20           movaps xmmword ptr [rsp + 0x20], xmm1
+    0x39EC3E: 66 0F 7F 4C 24 20        movdqa xmmword ptr [rsp + 0x20], xmm1
+    0x39EC44: E8 B7 95 D1 FF           call 0xb8200
+    0x39EC49: F3 0F 10 44 24 20        movss xmm0, dword ptr [rsp + 0x20]
+    0x39EC4F: F3 0F 10 4C 24 24        movss xmm1, dword ptr [rsp + 0x24]
+    0x39EC55: F3 0F 10 54 24 28        movss xmm2, dword ptr [rsp + 0x28]
+    0x39EC5B: F3 41 0F 11 86 00 01 00 00 movss dword ptr [r14 + 0x100], xmm0
+    0x39EC64: 0F 57 C0                 xorps xmm0, xmm0
+    0x39EC67: F3 41 0F 11 8E 04 01 00 00 movss dword ptr [r14 + 0x104], xmm1
+    0x39EC70: F3 41 0F 11 96 08 01 00 00 movss dword ptr [r14 + 0x108], xmm2
+    0x39EC79: C1 E7 10                 shl edi, 0x10
+    0x39EC7C: 8D 04 3B                 lea eax, [rbx + rdi]
+    0x39EC7F: F3 48 0F 2A C0           cvtsi2ss xmm0, rax
+    0x39EC84: F3 41 0F 59 C1           mulss xmm0, xmm9
+    0x39EC89: F3 0F 59 05 5F BC F0 00  mulss xmm0, dword ptr [rip + 0xf0bc5f]
+    0x39EC91: F3 0F 58 05 DB F7 F0 00  addss xmm0, dword ptr [rip + 0xf0f7db]
+    0x39EC99: 0F 5A C0                 cvtps2pd xmm0, xmm0
+    0x39EC9C: F2 41 0F 59 C5           mulsd xmm0, xmm13
+    0x39ECA1: F2 48 0F 2C C0           cvttsd2si rax, xmm0
+    0x39ECA6: 49 89 86 10 01 00 00     mov qword ptr [r14 + 0x110], rax
+    0x39ECAD: 4C 8B B4 24 40 01 00 00  mov r14, qword ptr [rsp + 0x140]
+    0x39ECB5: 0F 28 B4 24 30 01 00 00  movaps xmm6, xmmword ptr [rsp + 0x130]
+    0x39ECBD: 0F 28 BC 24 20 01 00 00  movaps xmm7, xmmword ptr [rsp + 0x120]
+    0x39ECC5: 44 0F 28 84 24 10 01 00 00 movaps xmm8, xmmword ptr [rsp + 0x110]
+    0x39ECCE: 4C 8B AC 24 48 01 00 00  mov r13, qword ptr [rsp + 0x148]
+    0x39ECD6: 44 0F 28 8C 24 00 01 00 00 movaps xmm9, xmmword ptr [rsp + 0x100]
+    0x39ECDF: 44 0F 28 94 24 F0 00 00 00 movaps xmm10, xmmword ptr [rsp + 0xf0]
+    0x39ECE8: 44 0F 28 9C 24 E0 00 00 00 movaps xmm11, xmmword ptr [rsp + 0xe0]
+    0x39ECF1: 44 0F 28 A4 24 D0 00 00 00 movaps xmm12, xmmword ptr [rsp + 0xd0]
+    0x39ECFA: 44 0F 28 AC 24 C0 00 00 00 movaps xmm13, xmmword ptr [rsp + 0xc0]
+    0x39ED03: 48 8B 9C 24 88 01 00 00  mov rbx, qword ptr [rsp + 0x188]
+    0x39ED0B: 44 0F 28 B4 24 B0 00 00 00 movaps xmm14, xmmword ptr [rsp + 0xb0]
+    0x39ED14: 48 8B BC 24 58 01 00 00  mov rdi, qword ptr [rsp + 0x158]
+    0x39ED1C: 4C 8B A4 24 50 01 00 00  mov r12, qword ptr [rsp + 0x150]
+    0x39ED24: 48 81 C4 60 01 00 00     add rsp, 0x160
+    0x39ED2B: 41 5F                    pop r15
+    0x39ED2D: 5E                       pop rsi
+    0x39ED2E: 5D                       pop rbp
+    0x39ED2F: C3                       ret 
+    0x39ED30: 48 85 FF                 test rdi, rdi
+    0x39ED33: 0F 8F 74 FF FF FF        jg 0x39ecad
+    0x39ED39: 8B 05 51 6D 06 01        mov eax, dword ptr [rip + 0x1066d51]
+    0x39ED3F: F2 0F 10 05 41 6D 06 01  movsd xmm0, qword ptr [rip + 0x1066d41]
+    0x39ED47: 8B 8D 84 00 00 00        mov ecx, dword ptr [rbp + 0x84]
+    0x39ED4D: 8B 95 80 00 00 00        mov edx, dword ptr [rbp + 0x80]
+    0x39ED53: F2 41 0F 11 86 00 01 00 00 movsd qword ptr [r14 + 0x100], xmm0
+    0x39ED5C: 0F 57 C0                 xorps xmm0, xmm0
+    0x39ED5F: 41 89 86 08 01 00 00     mov dword ptr [r14 + 0x108], eax
+    0x39ED66: 0F B7 C1                 movzx eax, cx
+    0x39ED69: 44 69 C0 69 90 00 00     imul r8d, eax, 0x9069
+    0x39ED70: 0F B7 C2                 movzx eax, dx
+    0x39ED73: 69 C0 50 46 00 00        imul eax, eax, 0x4650
+    0x39ED79: C1 E9 10                 shr ecx, 0x10
+    0x39ED7C: C1 EA 10                 shr edx, 0x10
+    0x39ED7F: 44 03 C1                 add r8d, ecx
+    0x39ED82: 41 C1 E0 10              shl r8d, 0x10
+    0x39ED86: 41 03 C0                 add eax, r8d
+    0x39ED89: 03 C2                    add eax, edx
+    0x39ED8B: F3 48 0F 2A C0           cvtsi2ss xmm0, rax
+    0x39ED90: F3 0F 59 05 88 E6 F0 00  mulss xmm0, dword ptr [rip + 0xf0e688]
+    0x39ED98: F3 0F 59 05 34 6E 06 01  mulss xmm0, dword ptr [rip + 0x1066e34]
+    0x39EDA0: F3 0F 58 05 44 B2 F0 00  addss xmm0, dword ptr [rip + 0xf0b244]
+    0x39EDA8: E9 EC FE FF FF           jmp 0x39ec99
+    0x39EDAD: 48 8B 03                 mov rax, qword ptr [rbx]
+    0x39EDB0: F2 0F 10 35 D0 6C 06 01  movsd xmm6, qword ptr [rip + 0x1066cd0]
+    0x39EDB8: 44 8B 35 D1 6C 06 01     mov r14d, dword ptr [rip + 0x1066cd1]
+    0x39EDBF: F3 0F 10 80 0C 01 00 00  movss xmm0, dword ptr [rax + 0x10c]
+    0x39EDC7: 41 0F 2E C1              ucomiss xmm0, xmm9
+    0x39EDCB: 7A 07                    jp 0x39edd4
+    0x39EDCD: 75 05                    jne 0x39edd4
+    0x39EDCF: 40 32 F6                 xor sil, sil
+    0x39EDD2: EB 03                    jmp 0x39edd7
+    0x39EDD4: 40 B6 01                 mov sil, 1
+    0x39EDD7: F2 0F 10 88 00 01 00 00  movsd xmm1, qword ptr [rax + 0x100]
+    0x39EDDF: 48 8D 54 24 40           lea rdx, [rsp + 0x40]
+    0x39EDE4: F3 0F 10 98 08 01 00 00  movss xmm3, dword ptr [rax + 0x108]
+    0x39EDEC: 48 8D 4C 24 20           lea rcx, [rsp + 0x20]
+    0x39EDF1: F2 0F 11 4C 24 20        movsd qword ptr [rsp + 0x20], xmm1
+    0x39EDF7: 0F 28 D1                 movaps xmm2, xmm1
+    0x39EDFA: 0F 28 64 24 20           movaps xmm4, xmmword ptr [rsp + 0x20]
+    0x39EDFF: F3 0F 10 E1              movss xmm4, xmm1
+    0x39EE03: 48 89 7C 24 40           mov qword ptr [rsp + 0x40], rdi
+    0x39EE08: 0F C6 E4 E1              shufps xmm4, xmm4, 0xe1
+    0x39EE0C: 89 7C 24 48              mov dword ptr [rsp + 0x48], edi
+    0x39EE10: 0F 28 44 24 40           movaps xmm0, xmmword ptr [rsp + 0x40]
+    0x39EE15: 0F C6 D2 55              shufps xmm2, xmm2, 0x55
+    0x39EE19: F3 0F 10 E2              movss xmm4, xmm2
+    0x39EE1D: 66 0F 7F 44 24 40        movdqa xmmword ptr [rsp + 0x40], xmm0
+    0x39EE23: 0F C6 E4 C6              shufps xmm4, xmm4, 0xc6
+    0x39EE27: F3 0F 10 E3              movss xmm4, xmm3
+    0x39EE2B: 0F C6 E4 C9              shufps xmm4, xmm4, 0xc9
+    0x39EE2F: 0F 29 64 24 20           movaps xmmword ptr [rsp + 0x20], xmm4
+    0x39EE34: 66 0F 7F 64 24 20        movdqa xmmword ptr [rsp + 0x20], xmm4
+    0x39EE3A: E8 A1 43 D8 FF           call 0x1231e0
+    0x39EE3F: 0F B6 C8                 movzx ecx, al
+    0x39EE42: 40 0A CE                 or cl, sil
+    0x39EE45: 0F 84 62 FE FF FF        je 0x39ecad
+    0x39EE4B: 48 8B 4B 08              mov rcx, qword ptr [rbx + 8]
+    0x39EE4F: 48 8B 13                 mov rdx, qword ptr [rbx]
+    0x39EE52: 40 84 F6                 test sil, sil
+    0x39EE55: 74 0E                    je 0x39ee65
+    0x39EE57: 48 85 C9                 test rcx, rcx
+    0x39EE5A: 74 03                    je 0x39ee5f
+    0x39EE5C: F0 FF 01                 lock inc dword ptr [rcx]
+    0x39EE5F: 89 BA 0C 01 00 00        mov dword ptr [rdx + 0x10c], edi
+    0x39EE65: 84 C0                    test al, al
+    0x39EE67: 0F 84 40 FE FF FF        je 0x39ecad
+    0x39EE6D: 48 85 C9                 test rcx, rcx
+    0x39EE70: 74 03                    je 0x39ee75
+    0x39EE72: F0 FF 01                 lock inc dword ptr [rcx]
+    0x39EE75: F2 0F 11 B2 00 01 00 00  movsd qword ptr [rdx + 0x100], xmm6
+    0x39EE7D: 44 89 B2 08 01 00 00     mov dword ptr [rdx + 0x108], r14d
+    0x39EE84: E9 24 FE FF FF           jmp 0x39ecad
+    0x39EE89: 48 8B 86 80 00 00 00     mov rax, qword ptr [rsi + 0x80]
+    0x39EE90: 48 85 C0                 test rax, rax
+    0x39EE93: 74 03                    je 0x39ee98
+    0x39EE95: F0 FF 00                 lock inc dword ptr [rax]
+    0x39EE98: 48 8B 4E 78              mov rcx, qword ptr [rsi + 0x78]
+    0x39EE9C: E8 BF 38 FF FF           call 0x392760
+    0x39EEA1: E9 6E FE FF FF           jmp 0x39ed14
+    0x39EEA6: CC                       int3 
+    0x39EEA7: CC                       int3 
+    0x39EEA8: CC                       int3 
+    0x39EEA9: CC                       int3 
+    0x39EEAA: CC                       int3 
+    0x39EEAB: CC                       int3 
+    0x39EEAC: CC                       int3 
+    0x39EEAD: CC                       int3 
+    0x39EEAE: CC                       int3 
+    0x39EEAF: CC                       int3 
+    0x39EEB0: 4C 8B DC                 mov r11, rsp
+    0x39EEB3: 55                       push rbp
+    0x39EEB4: 53                       push rbx
+    0x39EEB5: 57                       push rdi
+    0x39EEB6: 49 8D 6B A8              lea rbp, [r11 - 0x58]
+    0x39EEBA: 48 81 EC 40 01 00 00     sub rsp, 0x140
+    0x39EEC1: 48 8B 41 50              mov rax, qword ptr [rcx + 0x50]
+    0x39EEC5: 48 8B D9                 mov rbx, rcx
+    0x39EEC8: 48 8B 39                 mov rdi, qword ptr [rcx]
+    0x39EECB: 48 85 C0                 test rax, rax
+    0x39EECE: 0F 84 42 06 00 00        je 0x39f516
+    0x39EED4: 48 8B 51 30              mov rdx, qword ptr [rcx + 0x30]
+    0x39EED8: 48 85 D2                 test rdx, rdx
+    0x39EEDB: 0F 84 35 06 00 00        je 0x39f516
+    0x39EEE1: 48 8B 49 28              mov rcx, qword ptr [rcx + 0x28]
+    0x39EEE5: 48 85 C9                 test rcx, rcx
+    0x39EEE8: 0F 84 28 06 00 00        je 0x39f516
+    0x39EEEE: 80 79 10 00              cmp byte ptr [rcx + 0x10], 0
+    0x39EEF2: 0F 84 1E 06 00 00        je 0x39f516
+    0x39EEF8: 45 0F 29 43 B8           movaps xmmword ptr [r11 - 0x48], xmm8
+    0x39EEFD: F3 44 0F 10 40 08        movss xmm8, dword ptr [rax + 8]
+    0x39EF03: F3 44 0F 59 05 7C 06 F1 00 mulss xmm8, dword ptr [rip + 0xf1067c]
+    0x39EF0C: 45 0F 29 4B A8           movaps xmmword ptr [r11 - 0x58], xmm9
+    0x39EF11: F3 44 0F 10 48 04        movss xmm9, dword ptr [rax + 4]
+    0x39EF17: F3 44 0F 59 0D 68 06 F1 00 mulss xmm9, dword ptr [rip + 0xf10668]
+    0x39EF20: 45 0F 2F C8              comiss xmm9, xmm8
+    0x39EF24: 0F 83 DA 05 00 00        jae 0x39f504
+    0x39EF2A: 49 89 73 10              mov qword ptr [r11 + 0x10], rsi
+    0x39EF2E: 48 8B CA                 mov rcx, rdx
+    0x39EF31: 4D 89 73 20              mov qword ptr [r11 + 0x20], r14
+    0x39EF35: 41 0F 29 73 D8           movaps xmmword ptr [r11 - 0x28], xmm6
+    0x39EF3A: 41 0F 29 7B C8           movaps xmmword ptr [r11 - 0x38], xmm7
+    0x39EF3F: 45 0F 29 53 98           movaps xmmword ptr [r11 - 0x68], xmm10
+    0x39EF44: 45 0F 29 5B 88           movaps xmmword ptr [r11 - 0x78], xmm11
+    0x39EF49: 45 0F 29 A3 78 FF FF FF  movaps xmmword ptr [r11 - 0x88], xmm12
+    0x39EF51: 45 0F 29 AB 68 FF FF FF  movaps xmmword ptr [r11 - 0x98], xmm13
+    0x39EF59: 45 0F 29 B3 58 FF FF FF  movaps xmmword ptr [r11 - 0xa8], xmm14
+    0x39EF61: 45 0F 29 BB 48 FF FF FF  movaps xmmword ptr [r11 - 0xb8], xmm15
+    0x39EF69: E8 02 6A FF FF           call 0x395970
+    0x39EF6E: 48 8D 55 60              lea rdx, [rbp + 0x60]
+    0x39EF72: 48 8B CF                 mov rcx, rdi
+    0x39EF75: 0F 28 F8                 movaps xmm7, xmm0
+    0x39EF78: E8 03 8B 53 00           call 0x8d7a80
+    0x39EF7D: 48 8B 53 30              mov rdx, qword ptr [rbx + 0x30]
+    0x39EF81: 48 8D 4D 80              lea rcx, [rbp - 0x80]
+    0x39EF85: 0F 57 C9                 xorps xmm1, xmm1
+    0x39EF88: F2 48 0F 2A 08           cvtsi2sd xmm1, qword ptr [rax]
+    0x39EF8D: F2 0F 59 0D 63 B0 F0 00  mulsd xmm1, qword ptr [rip + 0xf0b063]
+    0x39EF95: 66 0F 5A C1              cvtpd2ps xmm0, xmm1
+    0x39EF99: F3 0F 11 45 70           movss dword ptr [rbp + 0x70], xmm0
+    0x39EF9E: E8 6D 41 91 00           call 0xcb3110
+    0x39EFA3: F3 44 0F 10 7D 90        movss xmm15, dword ptr [rbp - 0x70]
+    0x39EFA9: 48 8D 4C 24 40           lea rcx, [rsp + 0x40]
+    0x39EFAE: F3 44 0F 10 5D 94        movss xmm11, dword ptr [rbp - 0x6c]
+    0x39EFB4: 0F 57 F6                 xorps xmm6, xmm6
+    0x39EFB7: F3 44 0F 10 55 8C        movss xmm10, dword ptr [rbp - 0x74]
+    0x39EFBD: 41 0F 28 CF              movaps xmm1, xmm15
+    0x39EFC1: F3 0F 59 CE              mulss xmm1, xmm6
+    0x39EFC5: 41 0F 28 C3              movaps xmm0, xmm11
+    0x39EFC9: F3 0F 59 05 7F 9D F0 00  mulss xmm0, dword ptr [rip + 0xf09d7f]
+    0x39EFD1: 41 0F 28 D3              movaps xmm2, xmm11
+    0x39EFD5: F3 0F 59 D6              mulss xmm2, xmm6
+    0x39EFD9: 45 0F 57 E4              xorps xmm12, xmm12
+    0x39EFDD: F3 0F 5C C8              subss xmm1, xmm0
+    0x39EFE1: F3 0F 11 74 24 50        movss dword ptr [rsp + 0x50], xmm6
+    0x39EFE7: 41 0F 28 C2              movaps xmm0, xmm10
+    0x39EFEB: F3 0F 11 74 24 70        movss dword ptr [rsp + 0x70], xmm6
+    0x39EFF1: F3 0F 59 C6              mulss xmm0, xmm6
+    0x39EFF5: F3 0F 11 74 24 60        movss dword ptr [rsp + 0x60], xmm6

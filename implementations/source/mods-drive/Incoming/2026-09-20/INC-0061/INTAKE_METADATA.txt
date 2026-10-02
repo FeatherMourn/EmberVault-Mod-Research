@@ -1,0 +1,27 @@
+INTAKE-ID: INC-0061
+DATE: 2026-09-20
+PROJECT: Architect Toolkit / Enshrouded Mods
+CLASSIFICATION: Untrusted external technical artifacts for research only
+PURPOSE: F7 Admin capability inventory, deduplication, vanilla-overlap review, reverse-engineering clues
+CURRENT PROJECT BUILD SCOPE: Enshrouded 0.9.1.2 / revision 1076226 / Hotfix #42
+IMPORTANT: Cheat-table addresses, AOBs, pointer layouts, Lua resource fields, and DLL behavior are artifact evidence only. They must be independently validated against the current build before use. No external artifact result is promoted to PROVEN solely from static inspection.
+
+FILES:
+- Screenshot 2026-09-19 233938.png | sha256 d500e89e3089ecc25910a8dec676ca46c886d6fe97828c77864dac5bde7bab6b
+- Screenshot 2026-09-19 234025.png | sha256 4798cebead2ba521b76302627adec58aff192e974af6c83f35afe2d37e7ff6f5
+- Screenshot 2026-09-19 234044.png | sha256 3aa7989381df98a6dad9c8036746adb75ec4d950086e6f523212c90038bbb476
+- Screenshot 2026-09-19 234056.png | sha256 9b3d2592a34524fbaf3acf1637cfe5ad15f42db2ae2d8c0c653efebb4d3b0cba
+- Enshrouded Building Companion Water Update WIP V2.CT | sha256 101f529fd3cc0b1463ef1b625790301653834b2670c5c0962d2b6833006a56da
+- enshrouded.CT | sha256 d83d5f309b5e39e863d20c0147fb968d992ad06b0d8894c6dc40e564eabc15ce
+- enshrouded_server.ct | sha256 9e3fb84885a00d92595631386ace862eb12515a7cb1f09cfffd5341e6c706079
+- enshrouded_1013216.CT | sha256 31cca4a726f7d305f281fc4df3af54c550c7a847149bb0b57090de93c71f6eea
+- Ember.zip | sha256 674a93c3229ac6295fcbb741a684c49d7a87feaef28ea6279d023b964884f7c1
+- flight_mod.zip | sha256 6bf2ea58d36f150e7124d84648c94fbec279e84b5fbe18d56cf74e934eade2bc
+
+INITIAL STATIC INSPECTION SUMMARY:
+- enshrouded_1013216.CT: 224 cheat entries; 164 Auto Assembler scripts; 43 typed data children; 117 fixed teleport destinations under Gem Forge/Fast Travels/Vaults/Misc/Hollow Halls; 3 manual save slots plus dynamic save/load/delete; 3,459 item-hash rows in Change Item (2,957 unique names before table-side duplicate renaming).
+- Enshrouded Building Companion Water Update WIP V2.CT: 73 entries; 27 scripts; placement/block/prop manipulation, glider, time, border/shroud/map/crafting/item-use research clues.
+- enshrouded.CT: 119 entries; 75 scripts; player/movement/camera/build/world/glider/water/resource experiments.
+- enshrouded_server.ct: 78 entries; 42 scripts; subset focused on server-oriented/player/build movement experiments.
+- Ember.zip: Lua source included; uses resource-level APIs such as game.assets.get_resources_by_type/create_resource and patches ItemInfo/BalancingTable/GameSettingsPresetsResource/FbUiBundle/TemplateResource/etc. Useful as external-artifact hypotheses, not current-build proof.
+- flight_mod.zip: native x64 DLL, exports CreateModInstance, imports VirtualQuery/VirtualProtectEx/VirtualAllocEx/GetModuleHandleW; contains description 'Enables free glider flight.' and a byte-mask string 'xxxx????xxxx'. Requires independent decompilation/runtime validation.

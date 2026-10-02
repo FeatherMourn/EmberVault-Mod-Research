@@ -1,0 +1,361 @@
+Searched for "architect-v040-hybrid-admin"
+Searched for "loadedInsideGame"
+Searched for "expectedBuildId"
+Viewed ArchitectInjector.ps1:150-260
+Searched for "0.39.0"
+Viewed ArchitectRuntime.ps1:885-915
+Viewed ArchitectRuntime.ps1:1920-1945
+Searched for "ArchitectInjector"
+Viewed WaitAndInject.ps1:1-68
+Searched for "build_identity"
+Viewed build_dll.py:1-46
+Viewed arm_carrier_refresh_probe.ps1:1-55
+Searched for "buildId"
+Searched for "0.40.0"
+Searched for "ARCHITECT_RUNTIME_"
+Searched for "native_status.json"
+Searched for "g_statusPath"
+Viewed ArchitectNativeRuntime.c:5400-5505
+Ran command: `Get-Process -Name enshrouded -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, Path`
+Searched for "enshrouded.exe"
+Listed directory runtime
+Viewed Launch%20Enshrouded%20with%20Architect.bat:1-15
+Searched for "Start-Process.*enshrouded"
+Searched for "steam://rungameid"
+Searched for "enshrouded.exe"
+Ran command: `Get-Process -Name steam -ErrorAction SilentlyContinue | Select-Object Id, ProcessName`
+Created build_identity.json
+Created ArchitectBuildIdentity.h
+Viewed ArchitectNativeRuntime.c:30-45
+Edited ArchitectNativeRuntime.c
+Viewed build_dll.py:1-45
+Edited build_dll.py
+Viewed ArchitectInjector.ps1:160-260
+Edited ArchitectInjector.ps1
+Viewed ArchitectInjector.ps1:162-178
+Ran command: `Get-Location; Test-Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit"`
+Ran command: `Get-ChildItem "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit"`
+Ran command: `Get-ChildItem -Directory "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit"`
+Ran command: `Get-ChildItem "h:\enshroudedresearch\Enshrouded Mods-20260918T044156Z-1-001\Enshrouded Mods"`
+Viewed build_identity.json:1-6
+Viewed ArchitectBuildIdentity.h:1-13
+Viewed ArchitectInjector.ps1:1-260
+Viewed ArchitectInjector.ps1:245-266
+Ran command: `$errors = $null; [System.Management.Automation.Language.Parser]::ParseFile("H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\ArchitectInjector.ps1", [ref]$null, [ref]$errors); $errors`
+Searched for "buildFingerprintValidated"
+Searched for "loadedInsideGame"
+Searched for "loadedInsideGame"
+Viewed ArchitectNativeRuntime.c:5395-5440
+Searched for "buildFingerprintValidated"
+Viewed ArchitectNativeRuntime.c:5500-5580
+Viewed ArchitectNativeRuntime.c:5440-5499
+Searched for "g_buildFingerprintValidated"
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\native\source\ArchitectNativeRuntime.c" -Pattern "buildFingerprintValidated"`
+Viewed ArchitectInjector.ps1:160-190
+Searched for "identity"
+Viewed build_dll.py:1-67
+Viewed ArchitectInjector.ps1:160-266
+Edited ArchitectInjector.ps1
+Edited ArchitectInjector.ps1
+Ran command: `$errors = $null; [System.Management.Automation.Language.Parser]::ParseFile("H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\ArchitectInjector.ps1", [ref]$null, [ref]$errors); if ($errors) { $errors } else { "Syntax OK!" }`
+Ran command: `$tokens = $null; $errors = $null; $ast = [System.Management.Automation.Language.Parser]::ParseFile("H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\ArchitectInjector.ps1", [ref]$tokens, [ref]$errors); if ($errors.Count -gt 0) { $errors } else { "Clean parse! 0 errors" }`
+Ran command: `python build_scripts\build_dll.py`
+Ran command: `powershell -ExecutionPolicy Bypass -File build_scripts\run_all_tests.ps1`
+
+I have updated the injector handshake and recompiled the native DLL with the authoritative build identity (`0.40.0`, `architect-v040-hybrid-admin-code0034-20260918`, `hybrid_observer_and_admin_mutation`). The master test suite (`run_all_tests.ps1`) is now running in the background. I will await its completion.
+
+Ran command: `Get-Process -Name "enshrouded" -ErrorAction SilentlyContinue`
+Ran command: `Get-Process -Name "steam" -ErrorAction SilentlyContinue`
+Ran command: `Start-Process "steam://rungameid/1203620"; Start-Sleep -Seconds 8; Get-Process -Name "enshrouded" -ErrorAction SilentlyContinue`
+Ran command: `Start-Sleep -Seconds 5; Get-Process -Name "enshrouded" -ErrorAction SilentlyContinue`
+Ran command: `powershell -ExecutionPolicy Bypass -File runtime\ArchitectInjector.ps1`
+Viewed injector.log:1-82
+Viewed native_status.json:1-51
+Viewed siteA_probe_status.json:1-14
+Searched for "siteA_probe"
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\native\source\ArchitectNativeRuntime.c" -Pattern "siteA"`
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\native\source\ArchitectNativeRuntime.c" -Pattern "diagnostics"`
+Viewed ArchitectNativeRuntime.c:1700-1760
+Viewed native_last_command.json
+Viewed ArchitectNativeRuntime.c:1620-1690
+Viewed ArchitectNativeRuntime.c:1500-1550
+Viewed ArchitectNativeRuntime.c:1400-1460
+Viewed ArchitectNativeRuntime.c:1270-1350
+Searched for "parse_cheat_correlation_command"
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\native\source\ArchitectNativeRuntime.c" -Pattern "g_cheatCorrelationCommandPath"`
+Viewed ArchitectNativeRuntime.c:5665-5745
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\native\source\ArchitectNativeRuntime.c" -Pattern "parse_current_command"`
+Viewed ArchitectNativeRuntime.c:5260-5340
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\tests\*.c" -Pattern "siteA_probe"`
+Viewed ArchitectNativeRuntime.c:5330-5390
+Viewed test_command_routing.c:1-75
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\ArchitectRuntime.ps1" -Pattern "command"`
+Viewed ArchitectRuntime.ps1:2330-2370
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\ArchitectRuntime.ps1" -Pattern "function Send-CheatCommand"`
+Viewed ArchitectRuntime.ps1:1458-1510
+Viewed ArchitectRuntime.ps1:1511-1570
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\ArchitectRuntime.ps1" -Pattern "function Publish-CheatCorrelationCommand"`
+Viewed ArchitectRuntime.ps1:1381-1420
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\ArchitectRuntime.ps1" -Pattern "command.json"`
+Ran command: `Select-String -Path "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\runtime\native\source\ArchitectNativeRuntime.c" -Pattern "g_commandPath"`
+Ran command: `$bridge = "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\bridge";
+Set-Content -Path (Join-Path $bridge "cheat_correlation_command.json") -Value '{"action": "diagnostics.siteA_probe.enable", "commandId": "test_enable_1"}' -Encoding UTF8;
+Start-Sleep -Milliseconds 500;
+Get-Content -Path (Join-Path $bridge "siteA_probe_status.json") -Raw`
+Viewed native_runtime.log:1-331
+Viewed ArchitectNativeRuntime.c:5260-5295
+Edited ArchitectNativeRuntime.c
+Ran command: `python build_scripts\build_dll.py`
+Ran command: `Stop-Process -Name "enshrouded" -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2; Get-Process -Name "enshrouded" -ErrorAction SilentlyContinue`
+Edited ArchitectNativeRuntime.c
+Ran command: `python build_scripts\build_dll.py`
+Ran command: `Start-Process "steam://rungameid/1203620"; Start-Sleep -Seconds 8; Get-Process -Name "enshrouded" -ErrorAction SilentlyContinue`
+Ran command: `Start-Sleep -Seconds 5; powershell -ExecutionPolicy Bypass -File runtime\ArchitectInjector.ps1`
+Ran command: `$bridge = "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\bridge";
+$cmdFile = Join-Path $bridge "command.json";
+Set-Content -Path $cmdFile -Value '{"action": "diagnostics.siteA_probe.enable", "commandId": "cmd_siteA_enable"}' -Encoding UTF8;
+Start-Sleep -Milliseconds 600;
+Get-Content -Path (Join-Path $bridge "siteA_probe_status.json") -Raw`
+Ran command: `$bridge = "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\bridge";
+Test-Path (Join-Path $bridge "siteA_probe.jsonl");
+Get-Item (Join-Path $bridge "siteA_probe.jsonl") -ErrorAction SilentlyContinue`
+Ran command: `$bridge = "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\bridge";
+$cmdFile = Join-Path $bridge "command.json";
+Set-Content -Path $cmdFile -Value '{"action": "diagnostics.siteA_probe.reset", "commandId": "cmd_siteA_reset"}' -Encoding UTF8;
+Start-Sleep -Milliseconds 600;
+Get-Content -Path (Join-Path $bridge "siteA_probe_status.json") -Raw`
+Ran command: `$bridge = "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\bridge";
+$cmdFile = Join-Path $bridge "command.json";
+Set-Content -Path $cmdFile -Value '{"action": "diagnostics.siteA_probe.disable", "commandId": "cmd_siteA_disable"}' -Encoding UTF8;
+Start-Sleep -Milliseconds 600;
+Get-Content -Path (Join-Path $bridge "siteA_probe_status.json") -Raw`
+Ran command: `$code = @"
+using System;
+using System.Runtime.InteropServices;
+public static class MemChecker {
+    [DllImport("kernel32.dll")] public static extern IntPtr OpenProcess(uint access, bool inherit, uint pid);
+    [DllImport("kernel32.dll")] public static extern bool ReadProcessMemory(IntPtr h, IntPtr addr, byte[] buf, int size, out IntPtr read);
+    [DllImport("kernel32.dll")] public static extern bool CloseHandle(IntPtr h);
+    public static string ReadBytes(uint pid, long addr, int size) {
+        IntPtr h = OpenProcess(0x0010, false, pid);
+        if (h == IntPtr.Zero) return "OpenProcessFailed";
+        byte[] buf = new byte[size];
+        IntPtr read;
+        bool ok = ReadProcessMemory(h, (IntPtr)addr, buf, size, out read);
+        CloseHandle(h);
+        if (!ok) return "ReadFailed";
+        return BitConverter.ToString(buf);
+    }
+}
+"@
+Add-Type -TypeDefinition $code
+$p = Get-Process -Name "enshrouded" -First 1
+$base = $p.MainModule.BaseAddress.ToInt64()
+$siteAAddr = $base + 0x291678
+$bytes = [MemChecker]::ReadBytes($p.Id, $siteAAddr, 14)
+"Target Addr: 0x{0:X}" -f $siteAAddr
+"Live Bytes:  $bytes"
+"Expected:    F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00"
+"Match:       {0}" -f ($bytes -eq "F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00")`
+Ran command: `$p = (Get-Process -Name "enshrouded") | Select-Object -First 1
+$base = $p.MainModule.BaseAddress.ToInt64()
+$siteAAddr = $base + 0x291678
+$bytes = [MemChecker]::ReadBytes($p.Id, $siteAAddr, 14)
+"PID:         $($p.Id)"
+"Target Addr: 0x{0:X}" -f $siteAAddr
+"Live Bytes:  $bytes"
+"Expected:    F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00"
+"Match:       {0}" -f ($bytes -eq "F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00")`
+Ran command: `$script = @"
+using System;
+using System.Runtime.InteropServices;
+public static class MemChecker2 {
+    [DllImport("kernel32.dll")] public static extern IntPtr OpenProcess(uint access, bool inherit, uint pid);
+    [DllImport("kernel32.dll")] public static extern bool ReadProcessMemory(IntPtr h, IntPtr addr, byte[] buf, int size, out IntPtr read);
+    [DllImport("kernel32.dll")] public static extern bool CloseHandle(IntPtr h);
+    public static string ReadBytes(uint pid, long addr, int size) {
+        IntPtr h = OpenProcess(0x0010, false, pid);
+        if (h == IntPtr.Zero) return "OpenProcessFailed";
+        byte[] buf = new byte[size];
+        IntPtr read;
+        bool ok = ReadProcessMemory(h, (IntPtr)addr, buf, size, out read);
+        CloseHandle(h);
+        if (!ok) return "ReadFailed";
+        return BitConverter.ToString(buf);
+    }
+}
+"@
+Add-Type -TypeDefinition $script
+$p = (Get-Process -Name "enshrouded") | Select-Object -First 1
+$base = $p.MainModule.BaseAddress.ToInt64()
+$siteAAddr = $base + 0x291678
+$bytes = [MemChecker2]::ReadBytes($p.Id, $siteAAddr, 14)
+"PID:         $($p.Id)"
+"Target Addr: 0x{0:X}" -f $siteAAddr
+"Live Bytes:  $bytes"
+"Expected:    F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00"
+"Match:       {0}" -f ($bytes -eq "F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00")`
+Ran command: `$bridge = "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\bridge"
+$cmdFile = Join-Path $bridge "command.json"
+Set-Content -Path $cmdFile -Value '{"action": "diagnostics.siteA_probe.enable", "commandId": "cmd_cycle_enable"}' -Encoding UTF8
+Start-Sleep -Milliseconds 600
+$p = (Get-Process -Name "enshrouded") | Select-Object -First 1
+$base = $p.MainModule.BaseAddress.ToInt64()
+$siteAAddr = $base + 0x291678
+$detourBytes = [MemChecker2]::ReadBytes($p.Id, $siteAAddr, 14)
+"Detour Bytes: $detourBytes"
+"Starts with FF-25-00-00-00-00: {0}" -f ($detourBytes.StartsWith("FF-25-00-00-00-00"))
+Set-Content -Path $cmdFile -Value '{"action": "diagnostics.siteA_probe.disable", "commandId": "cmd_cycle_disable"}' -Encoding UTF8
+Start-Sleep -Milliseconds 600
+$restoredBytes = [MemChecker2]::ReadBytes($p.Id, $siteAAddr, 14)
+"Restored:     $restoredBytes"
+"Match Vanilla: {0}" -f ($restoredBytes -eq "F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00")`
+Ran command: `$script = @"
+using System;
+using System.Runtime.InteropServices;
+public static class LiveProbeInspector {
+    [DllImport("kernel32.dll")] public static extern IntPtr OpenProcess(uint access, bool inherit, uint pid);
+    [DllImport("kernel32.dll")] public static extern bool ReadProcessMemory(IntPtr h, IntPtr addr, byte[] buf, int size, out IntPtr read);
+    [DllImport("kernel32.dll")] public static extern bool CloseHandle(IntPtr h);
+    public static string ReadBytes(uint pid, long addr, int size) {
+        IntPtr h = OpenProcess(0x0010, false, pid);
+        if (h == IntPtr.Zero) return "OpenProcessFailed";
+        byte[] buf = new byte[size];
+        IntPtr read;
+        bool ok = ReadProcessMemory(h, (IntPtr)addr, buf, size, out read);
+        CloseHandle(h);
+        if (!ok) return "ReadFailed";
+        return BitConverter.ToString(buf);
+    }
+}
+"@
+Add-Type -TypeDefinition $script
+$bridge = "H:\SteamLibrary\steamapps\common\Enshrouded\mods\architect_toolkit\bridge"
+$cmdFile = Join-Path $bridge "command.json"
+$p = (Get-Process -Name "enshrouded") | Select-Object -First 1
+$base = $p.MainModule.BaseAddress.ToInt64()
+$siteAAddr = $base + 0x291678
+
+# 1. Enable probe
+Set-Content -Path $cmdFile -Value '{"action": "diagnostics.siteA_probe.enable", "commandId": "cycle_enable"}' -Encoding UTF8
+Start-Sleep -Milliseconds 600
+$detourBytes = [LiveProbeInspector]::ReadBytes($p.Id, $siteAAddr, 14)
+$status1 = Get-Content (Join-Path $bridge "siteA_probe_status.json") -Raw | ConvertFrom-Json
+
+# 2. Disable probe
+Set-Content -Path $cmdFile -Value '{"action": "diagnostics.siteA_probe.disable", "commandId": "cycle_disable"}' -Encoding UTF8
+Start-Sleep -Milliseconds 600
+$restoredBytes = [LiveProbeInspector]::ReadBytes($p.Id, $siteAAddr, 14)
+$status2 = Get-Content (Join-Path $bridge "siteA_probe_status.json") -Raw | ConvertFrom-Json
+
+[ordered]@{
+    DetourBytes = $detourBytes
+    DetourStartsWithFF25 = $detourBytes.StartsWith("FF-25-00-00-00-00")
+    StatusAfterEnable = [ordered]@{ probeInstalled = $status1.probeInstalled; probeActive = $status1.probeActive; installedByArchitect = $status1.installedByArchitect }
+    RestoredBytes = $restoredBytes
+    RestoredVanillaExact = ($restoredBytes -eq "F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00")
+    StatusAfterDisable = [ordered]@{ probeInstalled = $status2.probeInstalled; probeActive = $status2.probeActive; installedByArchitect = $status2.installedByArchitect; recoveryRequired = $status2.recoveryRequired; inFlight = $status2.inFlight }
+} | ConvertTo-Json -Depth 4`
+Ran command: `powershell -ExecutionPolicy Bypass -File build_scripts\run_all_tests.ps1`
+
+I have launched the master verification suite (`run_all_tests.ps1`) to ensure all 289 invariants pass following the live test. I will await its completion.
+
+Viewed run_all_tests.ps1:90-96
+Viewed run_all_tests.ps1:50-90
+Ran command: `powershell -ExecutionPolicy Bypass -File tests\test_ui_smoke.ps1`
+Ran command: `Get-Process | Where-Object { $_.ProcessName -like "*powershell*" -or $_.ProcessName -like "*pwsh*" }`
+Ran command: `Get-CimInstance Win32_Process | Where-Object { $_.ProcessName -like "*powershell*" } | Select-Object ProcessId, CommandLine`
+Ran command: `Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -in @(29504, 28900) } | ForEach-Object { "$($_.ProcessId): $($_.CommandLine)" }`
+Ran command: `Stop-Process -Id 28900, 29504 -Force -ErrorAction SilentlyContinue`
+Ran command: `powershell -ExecutionPolicy Bypass -File tests\test_ui_smoke.ps1`
+Ran command: `powershell -ExecutionPolicy Bypass -File build_scripts\run_all_tests.ps1`
+
+The test runner (`run_all_tests.ps1`) is now running with the background singleton cleared. I will await the final results.
+
+Viewed walkthrough.md:1-258
+Created walkthrough.md
+
+### Summary of Work & Verification
+
+The injector and launcher identity handshake has been synchronized to consume a single authoritative build identity definition, successfully verified against a fresh instance of Enshrouded, and the Site A observe-only probe was validated live in process memory using `bridge\command.json`.
+
+---
+
+### 1. Authoritative Build Identity Architecture
+- **Authoritative Definition**: [`runtime\build_identity.json`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/runtime/build_identity.json):
+  ```json
+  {
+    "version": "0.40.0",
+    "buildId": "architect-v040-hybrid-admin-code0034-20260918",
+    "mode": "hybrid_observer_and_admin_mutation"
+  }
+  ```
+- **Synchronized C Header**: [`runtime\native\source\ArchitectBuildIdentity.h`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/runtime/native/source/ArchitectBuildIdentity.h) is automatically kept in lockstep by [`build_scripts\build_dll.py`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/build_scripts/build_dll.py).
+- **Native C Implementation**: [`ArchitectNativeRuntime.c`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/runtime/native/source/ArchitectNativeRuntime.c) consumes these macros directly rather than hardcoded literals.
+- **PowerShell Injector**: [`runtime\ArchitectInjector.ps1`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/runtime/ArchitectInjector.ps1) dynamically loads `build_identity.json`.
+- **Preserved Gating**: The Enshrouded build SHA-256 gate (`af2f5a1227911d8aa06b3908d6bd0211838211cae14ea91099cb57d0df990781`) and the DLL hash check against `SHA256.txt` were preserved 100% intact.
+
+---
+
+### 2. Fresh Process Handshake Verification
+A fresh process of `enshrouded.exe` was started via Steam, and injection was executed using [`ArchitectInjector.ps1`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/runtime/ArchitectInjector.ps1):
+
+```text
+Architect Native Runtime candidate: version=0.40.0 buildId=architect-v040-hybrid-admin-code0034-20260918 mode=hybrid_observer_and_admin_mutation SHA256=ba1c4aae3b90a1383e37c7002ba183116e9845a1bd72c93b77cbb986bc6eda7f
+Architect Native Runtime verified: version=0.40.0 buildId=architect-v040-hybrid-admin-code0034-20260918 mode=hybrid_observer_and_admin_mutation loadedInsideGame=True buildFingerprintValidated=True SHA256=ba1c4aae3b90a1383e37c7002ba183116e9845a1bd72c93b77cbb986bc6eda7f
+Architect Native Runtime: ONLINE inside Enshrouded PID 28268
+```
+
+- [x] Candidate SHA matches `native\SHA256.txt`
+- [x] `loadedInsideGame = true`
+- [x] `buildFingerprintValidated = true`
+- [x] `version`, `buildId`, and `mode` matched exactly
+- [x] Zero identity warnings in logs or console
+
+---
+
+### 3. Site A Live Process Memory & Lifecycle Testing via `command.json`
+
+The observe-only probe at **RVA 0x291678** was controlled live through [`bridge\command.json`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/bridge/command.json) and inspected in live virtual memory (`0x7FF6A8841678`):
+
+1. **`diagnostics.siteA_probe.enable`**:
+   - `bridge\siteA_probe_status.json`: `probeInstalled: true`, `probeActive: true`, `installedByArchitect: true`, `originalBytesValid: true`, `installReadbackValid: true`, `recoveryRequired: false`, `probeLastError: "NONE"`.
+   - **In-process memory readback**: Confirmed 14-byte `FF 25 00 00 00 00` detour installed in memory.
+2. **`diagnostics.siteA_probe.reset`**:
+   - Safely reset ring buffer head/tail, dropped counts, and serial counters under atomic producer lock.
+3. **`diagnostics.siteA_probe.disable`**:
+   - `bridge\siteA_probe_status.json`: `probeInstalled: false`, `probeActive: false`, `installedByArchitect: false`, `recoveryRequired: false`, `inFlight: 0`.
+   - **In-process memory readback (`ReadProcessMemory`)**:
+     ```text
+     Live Bytes:   F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00
+     Expected:     F3-0F-58-30-F3-0F-11-30-41-B8-88-00-00-00
+     Match:        True (100% exact bit-for-bit vanilla restoration)
+     ```
+
+---
+
+### 4. Master Dynamic Test Suite Verification
+All 16 test suites were executed via [`build_scripts\run_all_tests.ps1`](file:///H:/SteamLibrary/steamapps/common/Enshrouded/mods/architect_toolkit/build_scripts/run_all_tests.ps1):
+```text
+Native DLL Compilation                             : 1 / 1 PASS
+C# Compilation                                     : 72 / 72 PASS
+PowerShell AST Syntax                              : 4 / 4 PASS
+Packaging Verification                             : 1 / 1 PASS
+Nested-ZIP Verification                            : 1 / 1 PASS
+Command Routing Independence                       : 14 / 14 PASS
+Direct Patch Integration                           : 3 / 3 PASS
+Patch Engine Behavioral Lifecycle                  : 15 / 15 PASS
+Synthetic Hook Transparency Harness                : 8 / 8 PASS
+Site A Probe Lifecycle & Rollback                  : 26 / 26 PASS
+Patch Readiness Regression Test                    : 13 / 13 PASS
+Pipeline Regression Suite                          : 10 / 10 PASS
+ADM-TEST-0002 Teleport Disarmament                 : 15 / 15 PASS
+INC-0015 Hook-Off Baseline                         : 3 / 3 PASS
+F7 Truthfulness & Safety Contract                  : 72 / 72 PASS
+Headless WinForms UI Smoke                         : 31 / 31 PASS
+----------------------------------------------------------------------------------------
+TOTAL SUITES TESTED: 16
+TOTAL INVARIANTS TESTED & VERIFIED: 289 / 289 (100% Passing)
+```
+
+Details and telemetry schemas are recorded in [`walkthrough.md`](file:///C:/Users/JoelT/.gemini/antigravity/brain/d23b16db-84cd-4213-bad4-65a0e40e0fab/walkthrough.md).

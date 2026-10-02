@@ -1,0 +1,303 @@
+CODE-0042G1B — EXECUTE BATCH-1 EVENT CLOSURE
+
+Continue from the current Architect Toolkit source. This is an implementation pass, not another audit-only pass.
+
+Current target files:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json
+
+Use the reconstructed full-package workspace for tests:
+C:\Users\JoelT\AppData\Local\Temp\architect-code0042-35e945431cb14cfeb86ba1de87e42726\architect_toolkit
+
+Overlay the current runtime/registry into that full workspace before testing.
+
+==================================================
+NON-NEGOTIABLE SCOPE
+==================================================
+
+Finish G1 only:
+- stable event identity/lifecycle architecture;
+- F7 shell event classification;
+- Home (`Render-DashboardPage`);
+- Player (`Render-PlayerVitalsPage` plus its already-bound dynamic badges);
+- Mobility & Navigation (`Render-MobilityTravelPage`).
+
+Do NOT begin G2/G3 page migration.
+Do NOT begin broad responsive-layout conversion.
+Do NOT add gameplay functionality.
+Do NOT re-enable unsupported actions.
+Do NOT change F8 behavior.
+Do NOT add new native hooks/patches/pointers/signatures.
+
+The current source already has enough audit scaffolding. Do not spend this pass adding more metrics unless required to make the existing metrics truthful.
+
+==================================================
+CURRENT MEASURED BATCH-1 RAW SITES
+==================================================
+
+The current source contains exactly 23 raw registrations in the three Batch-1 renderer functions under the existing `Register-SafeUiEvent|.Add_Click(` audit pattern:
+
+Render-DashboardPage: 6
+- dynamic quick-preset button `$bBtn.Add_Click(...)`
+- Customize Presets `$btnManage.Add_Click(...)`
+- Quick Heal `$btnQHeal.Add_Click(...)`
+- Quick Stamina `$btnQStam.Add_Click(...)`
+- Quick Mana `$btnQMana.Add_Click(...)`
+- Emergency Restore Vanilla `$btnRevert.Add_Click(...)`
+
+Render-PlayerVitalsPage: 5
+- Enable All Survival
+- Disable All Survival
+- Fill Health
+- Fill Stamina
+- Fill Mana
+
+Render-MobilityTravelPage: 12
+- Movement Speed
+- Jump Height
+- Auto Run
+- Zero-G / Gravity
+- Glider Stamina
+- category filter change
+- search text change
+- location selection change
+- Warp Selected
+- Custom Warp
+- Read Current Position
+- Safe Spawn Warp
+
+This is the concrete migration checklist. Do not report G1 complete while any of these remain raw.
+
+Also classify/migrate F7 shell events that are outside those renderer functions, including at minimum:
+- AOB Scanner toggle button;
+- admin content SizeChanged;
+- window bounds save timer Tick;
+- F7 form ResizeEnd;
+- F7 form LocationChanged;
+- F7 form FormClosing;
+- any F7 navigation button events created in the shell.
+
+Pure WinForms/global exception infrastructure may remain outside the gameplay ACTION registry, but it must be deliberately treated as UI/lifecycle infrastructure rather than accidentally counted as an unclassified gameplay control.
+
+==================================================
+1. STABLE EVENT-DEFINITION MODEL
+==================================================
+
+Replace the current inventory-as-live-control-list model with two layers.
+
+A. Stable event definitions — metadata only, keyed by mandatory EventId.
+Do not store a strong WinForms Control reference here.
+Minimum fields:
+- EventId
+- Page
+- Classification: ACTION or UI_ONLY
+- ActionId for ACTION, null for UI_ONLY
+- EventName
+- Operation
+- Source/renderer if useful
+
+Use a dictionary/hashtable keyed by EventId, not an append-only ArrayList that accumulates rerenders.
+
+Registration rules:
+- first registration of an EventId records the definition;
+- rerendering the same EventId with identical metadata is allowed and must not create another definition;
+- same EventId with conflicting metadata is an audit error;
+- EventId cannot be empty;
+- display text and Control.Name are NOT identity.
+
+B. Active render bindings — current WinForms objects only.
+Key by EventId and store:
+- current Control/component reference;
+- page;
+- render generation if useful;
+- ActionId/classification.
+
+When a page is cleared/re-rendered, remove/replace active bindings from that render/page so disposed controls are not retained.
+
+`staleOrDisposedActiveBindings` must be computed, not hard-coded.
+
+==================================================
+2. REGISTRATION HELPERS MUST REQUIRE EVENT ID
+==================================================
+
+Update:
+- `Register-AdminActionEvent`
+- `Register-F7UiEvent`
+
+to require `-EventId`.
+
+ACTION path:
+EventId -> stable ACTION definition -> canonical ActionId lookup -> Bind-AdminActionControl -> safe handler registration -> current active binding.
+
+UI_ONLY path:
+EventId -> stable UI_ONLY definition -> safe handler registration -> current active binding.
+
+`Bind-AdminActionControl` may remain the ActionId/control binder, but its active control collections must not become the denominator for complete coverage and must not retain stale/disposed controls indefinitely.
+
+==================================================
+3. BATCH-1 CLASSIFICATION
+==================================================
+
+Use explicit stable EventIds. Suggested namespace pattern:
+
+f7.shell.*
+f7.home.*
+f7.player.*
+f7.mobility.*
+
+Do not use button text as EventId.
+
+Classify based on intent:
+
+ACTION = gameplay/admin/backend operation or an orchestrated preset capable of dispatching admin actions.
+UI_ONLY = navigation, filtering, selection, local display refresh, window persistence, layout resize, etc.
+
+Specific guidance:
+
+HOME
+- Quick preset Apply buttons: ACTION because `Invoke-ArchitectPreset` may dispatch admin actions. Use one canonical preset ActionId with parameters/metadata rather than one ActionId per preset. If the registry lacks a truthful preset-apply identity, add one WITHOUT enabling any new child capability. Preserve per-child action gating/readback; do not report a preset as successful merely because the button was clicked.
+- Customize Presets: UI_ONLY navigation.
+- Heal/Stamina/Mana: ACTION; bind to existing `player.health.fill`, `player.stamina.fill`, `player.mana.fill`.
+- Emergency Restore Vanilla: ACTION; bind to existing canonical reset/survival-disable identity. Do not introduce direct mutation fallback.
+
+PLAYER
+- survival enable/disable: ACTION; existing canonical IDs.
+- fill health/stamina/mana: ACTION; existing canonical IDs.
+- already migrated dynamic cheat badge path remains ACTION and must keep stable EventIds per semantic control. If its existing EventIds are not stable/explicit, fix them in this pass.
+
+MOBILITY
+- speed/jump/autorun/gravity/glider stamina: ACTION using existing canonical IDs.
+- category filter, search, list selection: UI_ONLY.
+- warp selected/custom/safe-spawn: ACTION bound to disabled `movement.teleport`; teleport MUST remain fail-closed under ADM-TEST-0002.
+- Read Current Position: classify deliberately. It is a read-only backend/admin operation, so give it a canonical read-only ActionId if one already exists. If no canonical identity exists, add a truthful read-only identity only if the current implementation really has a supported read source; otherwise keep it visibly unavailable rather than inventing capability.
+
+SHELL
+- AOB Scanner toggle is a diagnostic/backend action, not mere presentation. Give it a canonical diagnostic ActionId if needed, based on the existing scanner behavior; do not treat it as a gameplay mutation and do not overstate evidence.
+- SizeChanged/window-bounds/timer/navigation events: UI_ONLY.
+
+Disabled placeholder controls with no handler should remain disabled and need no fake action solely for counting.
+
+==================================================
+4. NO RAW BATCH-1 EVENT REGISTRATIONS
+==================================================
+
+After migration, `Get-F7DirectEventAudit` must report:
+- Batch-1 raw direct registrations = 0.
+
+The static scan must cover the actual G1 surface, including shell registrations that the previous function-name-only scan missed. Expand the audit surface truthfully if necessary, but do not simply exclude remaining raw sites to get zero.
+
+For the G1 target surface:
+- no direct `Register-SafeUiEvent` outside the two registration helpers;
+- no direct `.Add_Click(...)`;
+- where other direct `Add_<Event>` registrations exist in the G1 shell, either migrate them to `Register-F7UiEvent` or explicitly scope them as non-control/global infrastructure with a documented reason.
+
+Do not alter G2/G3 raw handlers merely to reduce the full-F7 count.
+
+==================================================
+5. LIFECYCLE ACCEPTANCE
+==================================================
+
+Exercise this sequence in headless/UI tests:
+Home -> Player -> Mobility -> Home -> Mobility -> Player -> Home
+
+Then repeat at least once.
+
+Required:
+- stable event-definition count after first complete traversal;
+- repeated traversal does not increase definition count;
+- no duplicate EventIds;
+- no conflicting EventId definitions;
+- no disposed controls retained in active bindings;
+- active bindings reflect the currently rendered page/shell only as designed;
+- counts do not depend on navigation order.
+
+`Clear-AdminContent` or an adjacent page-render lifecycle helper must clean page-active binding references deterministically before controls are discarded.
+
+==================================================
+6. BINDING AUDIT ACCEPTANCE FOR G1
+==================================================
+
+For Batch-1 scope require:
+- unbound ACTION definitions = 0
+- missing registry IDs = 0
+- ambiguous bindings = 0 using EventId, not Control.Name
+- duplicate EventIds = 0
+- stale/disposed active bindings = 0
+- direct unclassified/raw Batch-1 registrations = 0
+
+Full-F7 direct count is expected to remain nonzero until G2/G3. Report it honestly.
+
+Do not claim full CODE-0042 closure from G1.
+
+==================================================
+7. SAFETY REGRESSION GATES
+==================================================
+
+Preserve all current restrictions:
+- no F7 `TogglePatch`
+- no F7 `EnableAllSurvival`
+- no F7 `DisableAllSurvival`
+- no F7 `WritePlayerCoordinates`
+- no live `ToggleAutoLoot`
+- no live `ToggleGliderFlight`
+- teleport remains ADM-TEST-0002 fail-closed
+- Auto Loot remains STARTUP_CANARY_ONLY
+- Glider Flight remains disabled/unqualified
+- glider-stamina semantic block remains
+- no guessed pointer/signature/offset/backend
+
+Do not enable registry entries merely because they now have a binding.
+
+==================================================
+8. PRESERVATION
+==================================================
+
+Preserve:
+- source_consolidation_catalog.json integration
+- cheat_table_1013216_catalog.json integration
+- CT catalog count exactly 224
+- Developer & Diagnostics catalog grids
+- 11 canonical page labels
+- F8 behavior
+- command/backend semantics
+
+==================================================
+9. TESTS
+==================================================
+
+Run in the reconstructed full workspace:
+- PowerShell parse
+- F7 truthfulness suite
+- UI smoke suite
+- UI error log check
+- CT catalog count
+- prohibited mutation-call static scan
+- new G1 event inventory/lifecycle test
+- Batch-1 direct event static scan
+
+Do not weaken existing assertions to make tests pass.
+
+Expected baseline before new tests:
+- F7 truthfulness: 53/53
+- UI smoke: 28/28
+- UI errors: 0
+- CT entries: 224
+
+==================================================
+DELIVERABLE
+==================================================
+
+Do the actual migration. Do not stop after describing the remaining 23 sites.
+
+Return:
+1. files changed;
+2. registry action count before/after;
+3. exact G1 EventId definitions by page/classification/action ID;
+4. Batch-1 raw count before/after;
+5. full-F7 raw count after (expected nonzero);
+6. action definitions / UI-only definitions counts;
+7. unbound/missing/ambiguous/duplicate/stale metrics;
+8. test results;
+9. any blocker with exact file/function/site.
+
+G1B is complete only when the Batch-1 zero-gap and lifecycle gates above are green. No runtime gameplay success is claimed from offline tests.

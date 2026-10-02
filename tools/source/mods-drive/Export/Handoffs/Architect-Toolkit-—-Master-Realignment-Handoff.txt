@@ -1,0 +1,1342 @@
+# 
+
+## Purpose
+
+This handoff captures the current realigned direction for **Architect Toolkit for Enshrouded**.
+
+It combines:
+
+* the current Architect development state;
+* the existing creative-feature vision;
+* the newest UX/layout decisions;
+* the newly available unpacked Enshrouded KFC resource evidence in Google Drive;
+* the decision to favor extending/composing vanilla Enshrouded systems over rebuilding equivalent systems from scratch;
+* the project’s evidence-first reverse-engineering and native-safety rules.
+
+This document is a **continuity and planning guide**, not proof that every feature described below exists.
+
+Current source code, logs, captures, tests, KFC evidence, and user-confirmed in-game behavior always override planning text.
+
+---
+
+# 1. PRIMARY OPERATING RULES
+
+For all Enshrouded work, consult and apply:
+
+**ENshrouded Mod Development GPT — Core Instructions**
+
+Treat it as the primary development guide.
+
+Always distinguish:
+
+**PROVEN**
+Supported by runtime evidence, tests, captures, or user-confirmed behavior.
+
+**INFERRED**
+Strongly suggested by evidence but not fully validated.
+
+**EXPERIMENTAL**
+Currently under active testing.
+
+**UNSOLVED**
+Mechanism is not yet known.
+
+**PLANNED**
+An intended feature or architecture.
+
+**SPECULATIVE**
+A worthwhile possibility that has not yet been established technically.
+
+Never promote a feature or mechanism to PROVEN merely because it compiles, appears plausible, exists in planning, or resembles another Enshrouded system.
+
+Use:
+
+**observe → capture → map → validate → minimally modify → verify**
+
+Do not invent Enshrouded APIs, fields, structures, offsets, resource semantics, calling conventions, or runtime behavior.
+
+---
+
+# 2. AUTHORITATIVE PROJECT EVIDENCE
+
+The other chat should use the following as primary sources:
+
+1. The **latest Architect Toolkit source/archive supplied by the user**.
+2. Current runtime logs, captures, manifests, reports, tests, and source contained within it.
+3. **ENshrouded Mod Development GPT — Core Instructions**.
+4. The Architect feature/planning documents.
+5. The **ENSHROUDED KFC FILES** folder available through Google Drive.
+6. User-confirmed in-game testing.
+
+The Google Drive KFC library contains many concrete vanilla Enshrouded resource families, including examples such as:
+
+* `VoxelBlueprintConfig`
+* `VoxelBlueprintItemRegistryResource`
+* `VoxelBlueprintMaterialPoolRegistryResource`
+* `VoxelModelResource`
+* `VoxelWorldResource`
+* `TerraformingEfficiencyRegistryResource`
+* `BuildingMaterialBlendingResource`
+* `BuildingMaterialParametersResource`
+* `GiVoxelBuildingMaterialResource`
+* `ItemInfo`
+* `ItemRegistryResource`
+* `DefaultInventoryResource`
+* `MapMarkerRegistryResource`
+* `UiMapResource`
+* `CameraStatesManager`
+* `CameraStatesOverrideConfig`
+* `DetailScatterResource`
+* water resources
+* world-material resources
+* scene resources
+* template resources
+* recipes
+* skills/perks
+* and many other systems.
+
+These files are valuable reverse-engineering evidence.
+
+Their existence does **not** automatically prove that Architect can modify or instantiate them dynamically at runtime.
+
+Inspect and validate each mechanism.
+
+---
+
+# 3. CURRENT DEVELOPMENT BASELINE
+
+The current project already has substantial infrastructure.
+
+Existing or previously established foundations include:
+
+* Architect's Wand;
+* F8 Architect Builder UI;
+* F7 Toolkit/Admin framework;
+* procedural geometry generation;
+* custom voxel placement data;
+* voxel ghost-model research;
+* UI → runtime bridge;
+* backend manifest system;
+* native runtime DLL;
+* BuildingPlaceEvent observation;
+* item/blueprint identity capture;
+* Structure Recorder;
+* Semantic Capture Analyzer;
+* Architect Data Index;
+* diagnostics and logging;
+* offline regression/testing infrastructure.
+
+The previous planning handoff identified Structure Recorder v0.29.1 stabilization as **OFFLINE PROVEN / RUNTIME UNCONFIRMED** at that point.
+
+Do not assume that status is still current without inspecting the newest source/archive.
+
+Always let newer source evidence override handoff version numbers.
+
+---
+
+# 4. KNOWN HIGH-RISK / DISPROVEN NATIVE DIRECTIONS
+
+Preserve the lessons from previous native research.
+
+Do **not** casually revive previously rejected global resolver/function-entry/selector hooks merely because a new feature needs placement control.
+
+A previous selector trampoline crashed because register state was corrupted when the trampoline used RAX as a resume address after copied instructions had established meaningful RAX state.
+
+The important lesson is broader than that one crash:
+
+**hook placement and complete machine-state preservation matter.**
+
+Previously rejected or dangerous interception sites must stay disabled until separately reviewed against current source/build evidence.
+
+Unsafe mutations must fail closed.
+
+Use:
+
+**build fingerprint → signature validation → sanity checks → install → validate → clean uninstall**
+
+For world-changing experiments, use a test world.
+
+---
+
+# 5. MAJOR PROJECT REALIGNMENT
+
+The central development philosophy has changed.
+
+Old tendency:
+
+**Architect reimplements the feature itself.**
+
+New preferred approach:
+
+**Architect finds the closest vanilla Enshrouded system and extends, composes, or orchestrates it.**
+
+The order of preference is now:
+
+**REUSE → EXTEND → COMPOSE → AUGMENT → REPLACE**
+
+Before building any significant feature from scratch, ask:
+
+> What existing Enshrouded system already performs the closest equivalent operation?
+
+If a vanilla mechanism already provides:
+
+* placement;
+* snapping;
+* preview;
+* transforms;
+* world mutation;
+* inventory semantics;
+* map display;
+* camera behavior;
+* terrain interaction;
+* entity placement;
+* multiplayer authority;
+* validation;
+* persistence;
+
+then Architect should attempt to use that mechanism rather than implementing a parallel substitute.
+
+Architect should provide the **better workflow and intelligence**.
+
+Enshrouded should remain the **host engine whenever practical**.
+
+---
+
+# 6. ARCHITECT'S CORE ROLE
+
+Architect Toolkit should become an orchestration and creative-tool layer over Enshrouded.
+
+Conceptually:
+
+ARCHITECT UI / IN-WORLD TOOLS
+↓
+INTENT
+↓
+SELECTION / PROJECT / GEOMETRY / ASSIST SYSTEMS
+↓
+OPERATION PLANNER
+↓
+PREVIEW + VALIDATION
+↓
+TRANSACTION / HISTORY
+↓
+VANILLA ADAPTER
+↓
+ENSHROUDED SYSTEM
+
+The feature UI should not care whether Building, Terrain, Map, Camera, Inventory, or Water ultimately require different native mechanisms.
+
+Those differences belong behind adapters.
+
+---
+
+# 7. VANILLA ADAPTER ARCHITECTURE
+
+Plan for common adapters such as:
+
+### Build Adapter
+
+Potential responsibilities:
+
+* vanilla blueprint selection;
+* blueprint geometry;
+* snapping;
+* preview;
+* orientation;
+* material selection;
+* placement validation;
+* final building commit.
+
+Research priority:
+
+Find the upstream vanilla state/object responsible for actual blueprint geometry, preview, candidate transform, snapping, and eventual commit.
+
+Do not assume the late BuildingPlaceEvent alone owns committed geometry.
+
+### Terrain Adapter
+
+Use Enshrouded's existing terraforming/world-voxel mechanisms where possible.
+
+Architect adds:
+
+* brush shapes;
+* radius;
+* falloff;
+* paths;
+* grading;
+* repetition;
+* preview;
+* transactions.
+
+### Entity / Decoration Adapter
+
+Use vanilla entity/template/scene placement semantics where they can be identified.
+
+This should eventually support:
+
+* furniture;
+* decoration;
+* foliage;
+* lighting;
+* repeated entities;
+* scatter systems.
+
+### Inventory Adapter
+
+Prefer semantic game-owned inventory operations over arbitrary memory editing.
+
+### Map Adapter
+
+Reuse vanilla map/marker/fast-travel display behavior where possible.
+
+### Camera Adapter
+
+Investigate existing camera states and overrides before implementing a separate camera controller.
+
+### Movement Adapter
+
+Investigate existing movement/airborne/glider/traversal systems before falling back to raw transform manipulation.
+
+### Water Adapter
+
+Water remains research-heavy.
+
+The KFC library contains multiple explicit water resource families, but programmatic creative water editing remains unproven until mapped.
+
+---
+
+# 8. CREATIVE PHILOSOPHY
+
+Architect Toolkit should **enable creativity rather than replace creativity**.
+
+Primary principle:
+
+> Give the player better tools to create what they imagine instead of making the creative decisions for them.
+
+Architect should generally:
+
+* suggest;
+* preview;
+* guide;
+* measure;
+* align;
+* organize;
+* simplify repetition;
+* expose useful options.
+
+Architect should generally **not** automatically decide what the player's building, garden, room, roof, lighting scheme, or design should be.
+
+A major rule:
+
+> If Architect would make a creative decision for the player, prefer suggestions and previews.
+
+> If Architect merely removes repetitive labor after the player has defined the rules, automation is appropriate.
+
+Examples:
+
+Smart Roof Solver → suggest/preview.
+
+Interior Designer → suggest/preview.
+
+Material Harmony → suggest.
+
+Lighting Designer → suggest/visualize.
+
+Landscape Designer → guide/assist.
+
+Decoration Scatter → automate inside player-defined rules.
+
+Arrays → automate.
+
+Pattern repetition → automate.
+
+---
+
+# 9. CREATIVE WORKFLOW
+
+Retain the high-level project workflow:
+
+**Sketch → Plan → Shape → Structure → Roof → Materials → Interior → Decor → Landscape → Lighting → Detail → Review → Share**
+
+This is a **creative workflow**, not the software's top-level module architecture.
+
+Do not make thirteen giant independent menu systems.
+
+Instead, eventually expose this as a **Project Phase Rail** or project-stage indicator.
+
+Changing the current phase should prioritize relevant tools but never prevent the user from moving freely between tools.
+
+---
+
+# 10. F8 — CREATIVE WORKSPACE
+
+F8 is the place where the player actively **creates or manipulates**.
+
+The preferred primary F8 workspace layout is:
+
+## BUILD
+
+Core precision construction.
+
+Examples:
+
+* Select
+* Line
+* Wall
+* Floor
+* Fill
+* Replace
+* Paint
+* stairs
+* roofs
+* snapping
+* alignment
+* axis locks
+* distribution
+* arrays
+* symmetry
+* measurement
+* Move
+* Rotate
+* Mirror
+* Copy
+* Paste
+* Duplicate
+* Magic Select
+
+## CREATE
+
+Original shapes and procedural/form creation.
+
+Examples:
+
+* circles
+* filled circles
+* cylinders
+* spheres
+* domes
+* arches
+* ramps
+* spiral stairs
+* tunnels
+* Shape Composer
+* procedural primitives
+* parametric architecture
+* boolean-style operations
+* sculpting
+* mosaics
+* pattern generators
+* text/symbol patterns
+* radial designs
+
+## DESIGN
+
+Finishing and architectural/artistic design.
+
+Examples:
+
+* material browser
+* eyedropper
+* palettes
+* favorites
+* recently used
+* Material Harmony
+* Interior Assistant
+* Facade Designer
+* trim
+* furniture planning
+* Decoration Scatter
+* lighting design
+* focal lighting
+* clearance guides
+* style assistance
+
+## ENVIRONMENT
+
+World and landscape creation.
+
+Examples:
+
+* terrain shaping
+* Landscape Designer
+* roads
+* paths
+* grading
+* slopes
+* terraces
+* Botanical Designer
+* Garden Designer
+* foliage scatter
+* Surface & Detail Painter
+* ivy / moss / vegetation
+* weathering / aging
+* water research/tools
+* outdoor lighting
+
+## PROJECT
+
+The active build/project itself.
+
+Examples:
+
+* project information
+* project boundaries
+* blueprint association
+* layers
+* project stages
+* history
+* undo/redo
+* versions/branches
+* collaborators
+* shared plans
+* project markers
+* material palette
+* saved structures
+
+## STUDY
+
+Observe and understand the world/build.
+
+Examples:
+
+* Surveyor
+* Inspect
+* measurement
+* Structure Recorder
+* Resource Lens
+* coordinates
+* orientation
+* material identification
+* Codex
+* object/resource lookup
+* structure analysis
+
+---
+
+# 11. F7 — TOOLKIT / MANAGEMENT
+
+F7 has a different job.
+
+Simple rule:
+
+**F8 = create/manipulate.**
+
+**F7 = manage/inspect/configure/administer/research.**
+
+Preferred F7 areas:
+
+### Project Manager
+
+Cross-project management and saved project metadata.
+
+### Blueprint Library
+
+Saved/studied/imported blueprints and structure records.
+
+### Codex / Search Everything
+
+Unified lookup for:
+
+* items;
+* materials;
+* recipes;
+* blueprints;
+* resources;
+* Architect tools;
+* settings;
+* documentation;
+* Wiki links.
+
+### Map / Wayfinder
+
+Projects, survey markers, locations, waypoints, build zones, and travel tools.
+
+### Settings / Profiles / Modules
+
+Feature enablement and player profile configuration.
+
+### Developer
+
+Research tools, Inspector, captures, evidence, layouts, IDs, native diagnostics.
+
+### Admin
+
+Optional player/world/server controls and cheat-style functionality.
+
+### Diagnostics
+
+Runtime compatibility, signatures, bridge state, native status, failures.
+
+Admin functionality must remain clearly separated from ordinary Creative With Progression gameplay.
+
+---
+
+# 12. THEMATIC IN-WORLD TOOLS
+
+Keep the thematic concepts.
+
+Examples:
+
+* Architect's Wand
+* Surveyor's Lens
+* Builder's Compass
+* Blueprint Tome
+* Terrain Shaper
+* Wayfinder
+* Resource Lens
+* Flight Rune
+
+But do **not** build eight unrelated backend systems.
+
+These should be contextual entrances into the same shared Architect Core.
+
+Example:
+
+Surveyor's Lens
+→ STUDY
+→ target resolver
+→ inspect / measure / identify / Codex.
+
+Terrain Shaper
+→ ENVIRONMENT
+→ terrain adapter
+→ sculpt / grade / paint.
+
+Architect's Wand
+→ BUILD / CREATE
+→ construction adapter.
+
+They are different player-facing tools backed by shared infrastructure.
+
+---
+
+# 13. CONTEXT SYSTEM
+
+Build a reusable **Target Resolver / Context Model**.
+
+When the player looks at something, Architect should determine what it is and expose useful actions.
+
+Example wall:
+
+* Inspect
+* Measure
+* Sample Material
+* Replace Material
+* Copy
+* Select Connected
+* Codex
+* Wiki
+
+Example plant:
+
+* Inspect
+* Identify
+* Scatter Similar
+* Growth options
+* Codex
+
+Example terrain:
+
+* Sample
+* Measure
+* Sculpt
+* Flatten
+* Material identification
+
+This single context system should eventually feed:
+
+* Architect's Wand;
+* Surveyor's Lens;
+* Resource Lens;
+* Material Eyedropper;
+* Inspector;
+* Magic Select;
+* Copy/Paste;
+* Codex;
+* landscaping tools.
+
+Do not independently solve target identification for every feature.
+
+---
+
+# 14. PROJECT MODEL
+
+The concept of an **Architect Project** should become central.
+
+A project may eventually contain:
+
+* name;
+* world/server identity;
+* project boundary;
+* construction phase;
+* layers;
+* material palette;
+* blueprint associations;
+* structures;
+* survey points;
+* sketches;
+* guides;
+* notes;
+* transaction history;
+* collaborators;
+* permissions;
+* camera viewpoints;
+* map markers;
+* saved designs;
+* branches/versions.
+
+Possible layers:
+
+* foundation
+* structure
+* roof
+* interior
+* furniture
+* decoration
+* landscape
+* lighting
+
+Project data should connect many systems that otherwise look unrelated.
+
+---
+
+# 15. PROJECT SPATIAL REGISTRY
+
+Do not create unrelated coordinate databases for every feature.
+
+Create one project/world spatial registry that can store things such as:
+
+* project boundaries;
+* survey points;
+* waypoints;
+* road plans;
+* blueprint anchors;
+* structure records;
+* work zones;
+* shared markers;
+* notes;
+* camera points.
+
+Then present those through:
+
+* Architect UI;
+* map integration;
+* project tools;
+* multiplayer collaboration.
+
+Architect owns the project semantics.
+
+Where possible, Enshrouded owns the actual map/world presentation mechanism.
+
+---
+
+# 16. COLLABORATION IS CROSS-CUTTING
+
+Do not make collaboration an isolated menu containing copies of other tools.
+
+Collaboration should apply across Architect.
+
+Examples:
+
+BUILD
+→ shared endpoints / live proposed placement.
+
+DESIGN
+→ shared material palette.
+
+ENVIRONMENT
+→ shared landscape plan.
+
+PROJECT
+→ collaborators, permissions, work zones, history.
+
+STUDY
+→ shared markers and measurements.
+
+Long-term collaboration ideas include:
+
+* shared build plans;
+* shared ghosts;
+* collaborative selection;
+* project roles;
+* shared markers;
+* shared palette;
+* shared blueprint library;
+* live design preview;
+* cooperative two-point construction;
+* Co-op Sketch Mode;
+* multiplayer undo/history;
+* approval for large operations.
+
+These remain PLANNED/SPECULATIVE until the network-authority path is mapped.
+
+---
+
+# 17. ASSIST ENGINE
+
+Do not build Smart Roof Solver, Interior Designer, Lighting Designer, Material Harmony, Restoration Assistant, and Build Critique as unrelated architectures.
+
+They should consume common data.
+
+Conceptually:
+
+Selection / Project / Structure / Materials / Dimensions
+↓
+Architect Assist Engine
+↓
+Suggestions / Guides / Alternatives / Ghosts
+
+The Assist Engine does not directly mutate the world.
+
+The player approves or modifies its suggestions.
+
+---
+
+# 18. PROCEDURAL GEOMETRY
+
+Keep the existing procedural shape work.
+
+It remains valuable.
+
+However, do not assume arbitrary raw voxel injection is always the preferred runtime destination.
+
+Whenever possible:
+
+**procedural geometry should become a planner for legitimate vanilla-compatible construction operations.**
+
+Examples:
+
+Wall A→B
+→ planner computes placements
+→ vanilla wall/foundation operations execute them.
+
+Circle
+→ planner computes positions
+→ vanilla building operations place them.
+
+Structure
+→ semantic placement sequence
+→ vanilla placement path.
+
+Raw world/voxel mutation remains an advanced fallback for features that genuinely require it.
+
+---
+
+# 19. STRUCTURE RECORDER → BLUEPRINT / PROJECT SYSTEM
+
+Structure Recorder should evolve beyond a developer diagnostic.
+
+Potential player-facing flow:
+
+**Study Structure → Structure Record → Blueprint Tome / Project**
+
+Possible stored information:
+
+* dimensions;
+* transforms;
+* placement identities;
+* materials;
+* local coordinates;
+* provenance;
+* validation state;
+* construction sequence.
+
+Prefer semantic construction records when possible.
+
+Large raw voxel snapshots can remain a future advanced mode.
+
+---
+
+# 20. COPY / PASTE
+
+Preferred long-term architecture:
+
+record legitimate construction operations
+→ normalize them into project-local coordinates
+→ transform/rotate/mirror/material-remap
+→ preview
+→ re-submit through validated vanilla construction mechanisms.
+
+Do not jump immediately to arbitrary raw chunk rewriting unless necessary.
+
+---
+
+# 21. UNDO / REDO
+
+Undo/redo is a high-priority shared system.
+
+Prefer semantic inverse operations where safe and available.
+
+Examples:
+
+place → remove
+remove → restore
+replace A→B → inverse replacement of affected cells
+multi-placement → reverse ordered operations.
+
+For complex terrain or voxel edits, bounded before/after diffs may still be required.
+
+Large destructive operations should not become mature features without a credible history/undo strategy.
+
+---
+
+# 22. MATERIAL SYSTEM
+
+Architect materials should refer to **real Enshrouded material identities**, not an isolated Architect material system.
+
+Potential tools:
+
+* browser;
+* favorites;
+* recent;
+* eyedropper;
+* palettes;
+* replace;
+* paint;
+* harmony;
+* controlled variation.
+
+Use KFC building-material and world-material data to map vanilla semantics.
+
+---
+
+# 23. ENVIRONMENT SYSTEM
+
+Environment should eventually combine:
+
+* terrain;
+* landscaping;
+* botanical design;
+* surface growth;
+* weathering;
+* water;
+* outdoor lighting.
+
+Use existing Enshrouded systems first.
+
+Relevant KFC families include terrain efficiency, world materials, detail scatter, water resources, etc.
+
+Do not assume any of them are writable until validated.
+
+---
+
+# 24. CAMERA / PHOTO / PRESENTATION
+
+Before building a raw freecam system, investigate vanilla camera-state machinery.
+
+Long-term possible features:
+
+* freecam;
+* photo mode;
+* camera bookmarks;
+* composition guides;
+* HUD hiding;
+* camera paths;
+* saved viewpoints;
+* Tour Mode.
+
+Prefer a vanilla camera-state extension if technically viable.
+
+---
+
+# 25. CREATIVE MOBILITY
+
+Flight, teleport, traversal, and Wayfinder remain desirable.
+
+Preferred approach:
+
+find vanilla movement, airborne, glider, travel, and fast-travel systems first.
+
+Only use raw player-transform manipulation as a fallback after safer semantic mechanisms have been ruled out.
+
+---
+
+# 26. CODEX
+
+Architect Codex should contain Architect's own mapped information, provenance, and compatibility knowledge.
+
+Potential content:
+
+* items;
+* resources;
+* materials;
+* recipes;
+* blueprints;
+* structures;
+* custom content;
+* game data;
+* Architect documentation;
+* compatibility notes.
+
+Support:
+
+**Player View**
+
+Readable names, materials, recipes, usage, Wiki links.
+
+**Developer View**
+
+IDs, GUIDs, hashes, resource types, evidence, captures, compatibility.
+
+The Codex should become a major shared data service, not merely a static help page.
+
+---
+
+# 27. CUSTOM CONTENT
+
+Long-term goal remains possible original user content:
+
+* artwork;
+* furniture;
+* textures;
+* materials;
+* meshes;
+* decoration;
+* building pieces.
+
+But this remains research-dependent.
+
+Use a progression such as:
+
+1. inspect simple vanilla decoration;
+2. understand its resources;
+3. reuse vanilla visual asset;
+4. replace a texture;
+5. validate external/custom texture;
+6. test trivial mesh;
+7. validate rendering;
+8. solve collision;
+9. solve placement;
+10. build conversion/package tooling.
+
+Do not claim arbitrary Blender/GLTF/FBX asset import is supported until actually proven.
+
+---
+
+# 28. UI / PRODUCT STRUCTURE IS NOT BACKEND STRUCTURE
+
+Do not make backend modules mirror F8 tabs one-to-one.
+
+Preferred common backend:
+
+ARCHITECT CORE
+
+* compatibility/build profiles
+* bridge
+* logging/diagnostics
+* target resolver
+* selection
+* coordinate system
+* project model
+* spatial registry
+* data/Codex
+* geometry/planners
+* assist engine
+* operation planner
+* preview/validation
+* transactions/history
+* multiplayer/project permissions
+
+↓
+
+VANILLA ADAPTERS
+
+* Build
+* Terrain
+* Entity
+* Inventory
+* Map
+* Camera
+* Movement
+* Water
+* others as discovered
+
+↓
+
+ENSHROUDED
+
+This prevents every feature from reverse-engineering the game independently.
+
+---
+
+# 29. USER EXPERIENCE GOAL
+
+Architect Toolkit should eventually feel like a natural extension of Enshrouded rather than an external Windows utility.
+
+Target feeling:
+
+> “I'm using an Architect tool.”
+
+not:
+
+> “I'm operating a debugging program beside the game.”
+
+That implies long-term interest in:
+
+* native-feeling icons;
+* contextual tools;
+* in-world thematic items;
+* project workflows;
+* holographic/ghost previews;
+* game-like interaction;
+* minimal external utility feel.
+
+The existing external UI/runtime remains useful development infrastructure and does not need to disappear immediately.
+
+---
+
+# 30. PROGRESSION
+
+Default philosophy remains:
+
+**Creative With Progression**
+
+Preserve by default:
+
+* quests;
+* exploration;
+* NPC discovery;
+* Flame progression;
+* bosses;
+* skills;
+* equipment;
+* barriers;
+* protected areas.
+
+Architect may make building, decoration, furniture, materials, and landscaping more convenient.
+
+Cheat/admin powers remain separate optional functions.
+
+---
+
+# 31. FEATURE MODULES
+
+Long-term user-visible capabilities may include:
+
+* Build
+* Blueprints
+* Landscape
+* Botanical
+* Surface & Weathering
+* Waterworks
+* Interiors
+* Decoration
+* Lighting
+* Custom Content
+* Creative Mobility
+* Multiplayer Projects
+* Codex
+* Developer/Inspector
+* Admin
+
+They do not need separate DLLs.
+
+Prefer one shared runtime with independently enable-able modules unless technical evidence supports a better split.
+
+---
+
+# 32. SAFETY / PREVIEW RULE
+
+Large world-changing actions should preferably support:
+
+* preview;
+* dry run;
+* affected-area visualization;
+* validation;
+* compatibility checking;
+* history/undo;
+* clear error state;
+* fail-closed behavior.
+
+Examples include:
+
+* terrain edits;
+* large replace;
+* blueprint paste;
+* scatter;
+* bulk construction.
+
+World mutation should never proceed based on an unvalidated pointer/layout merely because the UI requested it.
+
+---
+
+# 33. DEVELOPMENT PRIORITY AFTER REALIGNMENT
+
+Do not immediately implement every planned feature.
+
+The immediate engineering objective should be to build a **Vanilla Capability Map**.
+
+For each desired Architect feature, determine:
+
+1. What does the player want to accomplish?
+2. Which vanilla Enshrouded system already comes closest?
+3. Which KFC resources describe that system?
+4. What runtime state/functions own it?
+5. What parts are already PROVEN?
+6. What remains unknown?
+7. Can Architect reuse it directly?
+8. Can it be extended?
+9. Can several vanilla operations be composed?
+10. What truly requires original native machinery?
+
+For building specifically, high-value research is upstream of the final placement event:
+
+* selected blueprint state;
+* blueprint/cache object;
+* decoded geometry;
+* placement candidate;
+* vanilla ghost;
+* snap candidate/result;
+* transform;
+* material;
+* validation;
+* commit path.
+
+Map that pipeline before creating another independent placement architecture.
+
+---
+
+# 34. PLANNING DELIVERABLES TO CREATE NEXT
+
+The next planning work should produce four clearly separated documents/models:
+
+### A. Architect Product / UX Vision
+
+Player workflow, F8/F7 layout, creative philosophy, feature ideas.
+
+### B. Architect Engineering State
+
+Only current technical evidence:
+
+* PROVEN;
+* INFERRED;
+* EXPERIMENTAL;
+* UNSOLVED;
+* disproven attempts;
+* compatibility/build state.
+
+### C. Vanilla Capability Map
+
+Feature-by-feature map of vanilla Enshrouded mechanisms and KFC evidence Architect can potentially reuse.
+
+### D. Feature Roadmap / Dependency Graph
+
+Implementation order based on shared prerequisites instead of which feature sounds exciting first.
+
+Do not allow product vision and engineering evidence to become mixed together again.
+
+---
+
+# 35. CURRENT F8/F7 DESIGN TO CONTINUE REFINING
+
+Current agreed conceptual layout:
+
+F8 — CREATIVE WORKSPACE
+
+* BUILD
+* CREATE
+* DESIGN
+* ENVIRONMENT
+* PROJECT
+* STUDY
+
+with:
+
+* contextual actions;
+* project phase rail;
+* universal search;
+* preview/status controls.
+
+F7 — TOOLKIT
+
+* Project Manager
+* Blueprint Library
+* Codex / Search
+* Map / Wayfinder
+* Settings / Profiles / Modules
+* Developer
+* Admin
+* Diagnostics
+
+This is the starting point for the next detailed UX pass.
+
+The next useful planning exercise is to define the **second-level navigation beneath these headings** and identify which actions belong to shared systems instead of individual tabs.
+
+---
+
+# 36. LONG-TERM IDENTITY
+
+Architect Toolkit is not intended to be:
+
+* only a geometry mod;
+* only an admin menu;
+* a “press one button and build everything” generator;
+* a collection of unrelated cheats.
+
+The long-term identity is:
+
+**an integrated creative ecosystem for Enshrouded that helps players sketch, plan, shape, construct, decorate, landscape, light, analyze, collaborate, document, and share their own creations while keeping the player as the designer.**
+
+The game supplies as many validated primitives as possible.
+
+Architect supplies:
+
+* workflow;
+* precision;
+* intelligence;
+* procedural planning;
+* context;
+* creative assistance;
+* project management;
+* collaboration;
+* safety;
+* extensibility.
+
+---
+
+# 37. INSTRUCTION TO THE NEXT CHAT
+
+Continue from this architecture.
+
+Do not restart solved infrastructure.
+
+Do not immediately write a major new native feature merely because it is on the feature list.
+
+First inspect the latest source and current evidence.
+
+Then continue **planning/development from the Vanilla Systems Integration / Architect Adapter Architecture direction**.
+
+For every significant feature, explicitly identify:
+
+**VANILLA HOST SYSTEM**
+What Enshrouded already provides.
+
+**ARCHITECT VALUE-ADD**
+What our mod contributes.
+
+**KNOWN EVIDENCE**
+What current source/KFC/runtime data proves.
+
+**UNKNOWN**
+What still requires research.
+
+**IMPLEMENTATION LAYERS**
+UI → Architect Core → adapter → vanilla mechanism.
+
+**RISK**
+Read-only / reversible / world mutation / save-sensitive / multiplayer-sensitive.
+
+**PROOF MILESTONE**
+The smallest useful test that answers the next major technical question.
+
+Maintain the project statuses:
+
+**PROVEN / INFERRED / EXPERIMENTAL / UNSOLVED / PLANNED / SPECULATIVE.**
+
+Preserve working systems.
+
+Prefer integrated progress over disconnected experiments.
+
+And whenever a vanilla mechanism can safely do the job:
+
+**build on Enshrouded instead of rebuilding Enshrouded.**

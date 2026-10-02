@@ -1,0 +1,15 @@
+CODE-LEGACY-0005
+
+Archived from legacy Architect Toolkit chat during retention pass on 2026-09-16.
+Original thread activity: 2026-09-11 through 2026-09-12.
+Game build context: Enshrouded 0.9.1.2 / revision 1076226 / Hotfix #42 unless otherwise stated.
+
+Purpose: In-process canary v0.5.0
+Artifact: ArchitectToolkit_v0.5.0_InProcessCanary.zip
+SHA-256: fb28c113f55179eae5a2594f76fb671667325c0997a7d0bd15394e6d7d26a256
+Lifecycle/status: User green-light; original Architect native code executed inside enshrouded.exe; historical.
+
+Retention handoff:
+https://docs.google.com/document/d/1JShRRt60yTcWU_c33JP46gaRCqJxKvmMLR2Sh1jbT3c/edit
+
+Important: This archive is historical append-only evidence. It does not designate or replace Architect_Mod/Current. Current Project Control and Current Engineering State override historical hypotheses when they conflict.

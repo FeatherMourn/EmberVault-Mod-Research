@@ -1,0 +1,397 @@
+    0x234000: 48 85 DB                 test rbx, rbx
+    0x234003: 74 5F                    je 0x234064
+    0x234005: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x234009: 74 59                    je 0x234064
+    0x23400B: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x234012: 48 8D 8D 58 03 00 00     lea rcx, [rbp + 0x358]
+    0x234019: BA AC D7 E8 DE           mov edx, 0xdee8d7ac
+    0x23401E: E8 BD 1F DB 00           call 0xfe5fe0
+    0x234023: 0F B6 85 58 03 00 00     movzx eax, byte ptr [rbp + 0x358]
+    0x23402A: 88 85 70 05 00 00        mov byte ptr [rbp + 0x570], al
+    0x234030: 84 C0                    test al, al
+    0x234032: 75 37                    jne 0x23406b
+    0x234034: 48 8B 8D 60 03 00 00     mov rcx, qword ptr [rbp + 0x360]
+    0x23403B: 8B 03                    mov eax, dword ptr [rbx]
+    0x23403D: 39 01                    cmp dword ptr [rcx], eax
+    0x23403F: 74 09                    je 0x23404a
+    0x234041: C6 85 70 05 00 00 2C     mov byte ptr [rbp + 0x570], 0x2c
+    0x234048: EB 21                    jmp 0x23406b
+    0x23404A: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x23404E: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x234051: 48 03 CB                 add rcx, rbx
+    0x234054: C6 85 70 05 00 00 00     mov byte ptr [rbp + 0x570], 0
+    0x23405B: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x23405E: 89 44 24 34              mov dword ptr [rsp + 0x34], eax
+    0x234062: EB 0B                    jmp 0x23406f
+    0x234064: C6 85 70 05 00 00 16     mov byte ptr [rbp + 0x570], 0x16
+    0x23406B: 89 7C 24 34              mov dword ptr [rsp + 0x34], edi
+    0x23406F: 48 8B 5D 08              mov rbx, qword ptr [rbp + 8]
+    0x234073: 48 85 DB                 test rbx, rbx
+    0x234076: 74 5F                    je 0x2340d7
+    0x234078: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x23407C: 74 59                    je 0x2340d7
+    0x23407E: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x234085: 48 8D 8D 68 03 00 00     lea rcx, [rbp + 0x368]
+    0x23408C: BA 21 4F DA 95           mov edx, 0x95da4f21
+    0x234091: E8 4A 1F DB 00           call 0xfe5fe0
+    0x234096: 0F B6 8D 68 03 00 00     movzx ecx, byte ptr [rbp + 0x368]
+    0x23409D: 88 8D 78 05 00 00        mov byte ptr [rbp + 0x578], cl
+    0x2340A3: 84 C9                    test cl, cl
+    0x2340A5: 75 37                    jne 0x2340de
+    0x2340A7: 48 8B 8D 70 03 00 00     mov rcx, qword ptr [rbp + 0x370]
+    0x2340AE: 8B 03                    mov eax, dword ptr [rbx]
+    0x2340B0: 39 01                    cmp dword ptr [rcx], eax
+    0x2340B2: 74 09                    je 0x2340bd
+    0x2340B4: C6 85 78 05 00 00 2C     mov byte ptr [rbp + 0x578], 0x2c
+    0x2340BB: EB 21                    jmp 0x2340de
+    0x2340BD: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x2340C1: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x2340C4: 48 03 CB                 add rcx, rbx
+    0x2340C7: C6 85 78 05 00 00 00     mov byte ptr [rbp + 0x578], 0
+    0x2340CE: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x2340D1: 89 44 24 38              mov dword ptr [rsp + 0x38], eax
+    0x2340D5: EB 0B                    jmp 0x2340e2
+    0x2340D7: C6 85 78 05 00 00 16     mov byte ptr [rbp + 0x578], 0x16
+    0x2340DE: 89 7C 24 38              mov dword ptr [rsp + 0x38], edi
+    0x2340E2: 48 8B 5D 20              mov rbx, qword ptr [rbp + 0x20]
+    0x2340E6: 48 85 DB                 test rbx, rbx
+    0x2340E9: 74 59                    je 0x234144
+    0x2340EB: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x2340EF: 74 53                    je 0x234144
+    0x2340F1: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x2340F8: 48 8D 8D 78 03 00 00     lea rcx, [rbp + 0x378]
+    0x2340FF: BA 68 F5 4B 72           mov edx, 0x724bf568
+    0x234104: E8 D7 1E DB 00           call 0xfe5fe0
+    0x234109: 0F B6 85 78 03 00 00     movzx eax, byte ptr [rbp + 0x378]
+    0x234110: 88 44 24 2B              mov byte ptr [rsp + 0x2b], al
+    0x234114: 84 C0                    test al, al
+    0x234116: 75 31                    jne 0x234149
+    0x234118: 48 8B 8D 80 03 00 00     mov rcx, qword ptr [rbp + 0x380]
+    0x23411F: 8B 03                    mov eax, dword ptr [rbx]
+    0x234121: 39 01                    cmp dword ptr [rcx], eax
+    0x234123: 74 07                    je 0x23412c
+    0x234125: C6 44 24 2B 2C           mov byte ptr [rsp + 0x2b], 0x2c
+    0x23412A: EB 1D                    jmp 0x234149
+    0x23412C: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x234130: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x234133: 48 03 CB                 add rcx, rbx
+    0x234136: C6 44 24 2B 00           mov byte ptr [rsp + 0x2b], 0
+    0x23413B: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x23413E: 89 44 24 50              mov dword ptr [rsp + 0x50], eax
+    0x234142: EB 09                    jmp 0x23414d
+    0x234144: C6 44 24 2B 16           mov byte ptr [rsp + 0x2b], 0x16
+    0x234149: 89 7C 24 50              mov dword ptr [rsp + 0x50], edi
+    0x23414D: 48 8B 5D E8              mov rbx, qword ptr [rbp - 0x18]
+    0x234151: 48 85 DB                 test rbx, rbx
+    0x234154: 74 47                    je 0x23419d
+    0x234156: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x23415A: 74 41                    je 0x23419d
+    0x23415C: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x234163: 48 8D 8D 88 03 00 00     lea rcx, [rbp + 0x388]
+    0x23416A: BA F4 DA CD 8D           mov edx, 0x8dcddaf4
+    0x23416F: E8 6C 1E DB 00           call 0xfe5fe0
+    0x234174: 80 BD 88 03 00 00 00     cmp byte ptr [rbp + 0x388], 0
+    0x23417B: 75 20                    jne 0x23419d
+    0x23417D: 48 8B 8D 90 03 00 00     mov rcx, qword ptr [rbp + 0x390]
+    0x234184: 8B 03                    mov eax, dword ptr [rbx]
+    0x234186: 39 01                    cmp dword ptr [rcx], eax
+    0x234188: 75 13                    jne 0x23419d
+    0x23418A: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x23418E: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x234191: 48 03 CB                 add rcx, rbx
+    0x234194: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x234197: 89 44 24 54              mov dword ptr [rsp + 0x54], eax
+    0x23419B: EB 04                    jmp 0x2341a1
+    0x23419D: 89 7C 24 54              mov dword ptr [rsp + 0x54], edi
+    0x2341A1: 48 8B 5D E8              mov rbx, qword ptr [rbp - 0x18]
+    0x2341A5: 48 85 DB                 test rbx, rbx
+    0x2341A8: 74 47                    je 0x2341f1
+    0x2341AA: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x2341AE: 74 41                    je 0x2341f1
+    0x2341B0: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x2341B7: 48 8D 8D 98 03 00 00     lea rcx, [rbp + 0x398]
+    0x2341BE: BA 62 3F 72 04           mov edx, 0x4723f62
+    0x2341C3: E8 18 1E DB 00           call 0xfe5fe0
+    0x2341C8: 80 BD 98 03 00 00 00     cmp byte ptr [rbp + 0x398], 0
+    0x2341CF: 75 20                    jne 0x2341f1
+    0x2341D1: 48 8B 8D A0 03 00 00     mov rcx, qword ptr [rbp + 0x3a0]
+    0x2341D8: 8B 03                    mov eax, dword ptr [rbx]
+    0x2341DA: 39 01                    cmp dword ptr [rcx], eax
+    0x2341DC: 75 13                    jne 0x2341f1
+    0x2341DE: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x2341E2: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x2341E5: 48 03 CB                 add rcx, rbx
+    0x2341E8: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x2341EB: 89 44 24 58              mov dword ptr [rsp + 0x58], eax
+    0x2341EF: EB 04                    jmp 0x2341f5
+    0x2341F1: 89 7C 24 58              mov dword ptr [rsp + 0x58], edi
+    0x2341F5: 48 8B 5D 78              mov rbx, qword ptr [rbp + 0x78]
+    0x2341F9: 48 85 DB                 test rbx, rbx
+    0x2341FC: 74 59                    je 0x234257
+    0x2341FE: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x234202: 74 53                    je 0x234257
+    0x234204: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x23420B: 48 8D 8D A8 03 00 00     lea rcx, [rbp + 0x3a8]
+    0x234212: BA 8B AA B6 04           mov edx, 0x4b6aa8b
+    0x234217: E8 C4 1D DB 00           call 0xfe5fe0
+    0x23421C: 0F B6 8D A8 03 00 00     movzx ecx, byte ptr [rbp + 0x3a8]
+    0x234223: 88 4C 24 20              mov byte ptr [rsp + 0x20], cl
+    0x234227: 84 C9                    test cl, cl
+    0x234229: 75 31                    jne 0x23425c
+    0x23422B: 48 8B 8D B0 03 00 00     mov rcx, qword ptr [rbp + 0x3b0]
+    0x234232: 8B 03                    mov eax, dword ptr [rbx]
+    0x234234: 39 01                    cmp dword ptr [rcx], eax
+    0x234236: 74 07                    je 0x23423f
+    0x234238: C6 44 24 20 2C           mov byte ptr [rsp + 0x20], 0x2c
+    0x23423D: EB 1D                    jmp 0x23425c
+>>> 0x23423F: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x234243: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x234246: 48 03 CB                 add rcx, rbx
+    0x234249: C6 44 24 20 00           mov byte ptr [rsp + 0x20], 0
+    0x23424E: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x234251: 89 44 24 40              mov dword ptr [rsp + 0x40], eax
+    0x234255: EB 09                    jmp 0x234260
+    0x234257: C6 44 24 20 16           mov byte ptr [rsp + 0x20], 0x16
+    0x23425C: 89 7C 24 40              mov dword ptr [rsp + 0x40], edi
+    0x234260: 48 8B 5D 78              mov rbx, qword ptr [rbp + 0x78]
+    0x234264: 48 85 DB                 test rbx, rbx
+    0x234267: 74 59                    je 0x2342c2
+    0x234269: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x23426D: 74 53                    je 0x2342c2
+    0x23426F: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x234276: 48 8D 8D B8 03 00 00     lea rcx, [rbp + 0x3b8]
+    0x23427D: BA 10 C4 43 F4           mov edx, 0xf443c410
+    0x234282: E8 59 1D DB 00           call 0xfe5fe0
+    0x234287: 0F B6 8D B8 03 00 00     movzx ecx, byte ptr [rbp + 0x3b8]
+    0x23428E: 88 4C 24 21              mov byte ptr [rsp + 0x21], cl
+    0x234292: 84 C9                    test cl, cl
+    0x234294: 75 31                    jne 0x2342c7
+    0x234296: 48 8B 8D C0 03 00 00     mov rcx, qword ptr [rbp + 0x3c0]
+    0x23429D: 8B 03                    mov eax, dword ptr [rbx]
+    0x23429F: 39 01                    cmp dword ptr [rcx], eax
+    0x2342A1: 74 07                    je 0x2342aa
+    0x2342A3: C6 44 24 21 2C           mov byte ptr [rsp + 0x21], 0x2c
+    0x2342A8: EB 1D                    jmp 0x2342c7
+    0x2342AA: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x2342AE: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x2342B1: 48 03 CB                 add rcx, rbx
+    0x2342B4: C6 44 24 21 00           mov byte ptr [rsp + 0x21], 0
+    0x2342B9: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x2342BC: 89 44 24 3C              mov dword ptr [rsp + 0x3c], eax
+    0x2342C0: EB 09                    jmp 0x2342cb
+    0x2342C2: C6 44 24 21 16           mov byte ptr [rsp + 0x21], 0x16
+    0x2342C7: 89 7C 24 3C              mov dword ptr [rsp + 0x3c], edi
+    0x2342CB: 48 8B 5D 78              mov rbx, qword ptr [rbp + 0x78]
+    0x2342CF: 48 85 DB                 test rbx, rbx
+    0x2342D2: 74 59                    je 0x23432d
+    0x2342D4: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x2342D8: 74 53                    je 0x23432d
+    0x2342DA: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x2342E1: 48 8D 8D C8 03 00 00     lea rcx, [rbp + 0x3c8]
+    0x2342E8: BA F0 A4 6C B0           mov edx, 0xb06ca4f0
+    0x2342ED: E8 EE 1C DB 00           call 0xfe5fe0
+    0x2342F2: 0F B6 85 C8 03 00 00     movzx eax, byte ptr [rbp + 0x3c8]
+    0x2342F9: 88 44 24 22              mov byte ptr [rsp + 0x22], al
+    0x2342FD: 84 C0                    test al, al
+    0x2342FF: 75 31                    jne 0x234332
+    0x234301: 48 8B 8D D0 03 00 00     mov rcx, qword ptr [rbp + 0x3d0]
+    0x234308: 8B 03                    mov eax, dword ptr [rbx]
+    0x23430A: 39 01                    cmp dword ptr [rcx], eax
+    0x23430C: 74 07                    je 0x234315
+    0x23430E: C6 44 24 22 2C           mov byte ptr [rsp + 0x22], 0x2c
+    0x234313: EB 1D                    jmp 0x234332
+    0x234315: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x234319: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x23431C: 48 03 CB                 add rcx, rbx
+    0x23431F: C6 44 24 22 00           mov byte ptr [rsp + 0x22], 0
+    0x234324: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x234327: 89 44 24 44              mov dword ptr [rsp + 0x44], eax
+    0x23432B: EB 09                    jmp 0x234336
+    0x23432D: C6 44 24 22 16           mov byte ptr [rsp + 0x22], 0x16
+    0x234332: 89 7C 24 44              mov dword ptr [rsp + 0x44], edi
+    0x234336: 48 8B 5D 78              mov rbx, qword ptr [rbp + 0x78]
+    0x23433A: 48 85 DB                 test rbx, rbx
+    0x23433D: 74 59                    je 0x234398
+    0x23433F: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x234343: 74 53                    je 0x234398
+    0x234345: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x23434C: 48 8D 8D D8 03 00 00     lea rcx, [rbp + 0x3d8]
+    0x234353: BA 4C 85 7E 23           mov edx, 0x237e854c
+    0x234358: E8 83 1C DB 00           call 0xfe5fe0
+    0x23435D: 0F B6 8D D8 03 00 00     movzx ecx, byte ptr [rbp + 0x3d8]
+    0x234364: 88 4C 24 23              mov byte ptr [rsp + 0x23], cl
+    0x234368: 84 C9                    test cl, cl
+    0x23436A: 75 31                    jne 0x23439d
+    0x23436C: 48 8B 8D E0 03 00 00     mov rcx, qword ptr [rbp + 0x3e0]
+    0x234373: 8B 03                    mov eax, dword ptr [rbx]
+    0x234375: 39 01                    cmp dword ptr [rcx], eax
+    0x234377: 74 07                    je 0x234380
+    0x234379: C6 44 24 23 2C           mov byte ptr [rsp + 0x23], 0x2c
+    0x23437E: EB 1D                    jmp 0x23439d
+    0x234380: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x234384: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x234387: 48 03 CB                 add rcx, rbx
+    0x23438A: C6 44 24 23 00           mov byte ptr [rsp + 0x23], 0
+    0x23438F: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x234392: 89 44 24 48              mov dword ptr [rsp + 0x48], eax
+    0x234396: EB 09                    jmp 0x2343a1
+    0x234398: C6 44 24 23 16           mov byte ptr [rsp + 0x23], 0x16
+    0x23439D: 89 7C 24 48              mov dword ptr [rsp + 0x48], edi
+    0x2343A1: 48 8B 5D 30              mov rbx, qword ptr [rbp + 0x30]
+    0x2343A5: 48 85 DB                 test rbx, rbx
+    0x2343A8: 74 56                    je 0x234400
+    0x2343AA: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x2343AE: 74 50                    je 0x234400
+    0x2343B0: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x2343B7: 48 8D 8D E8 03 00 00     lea rcx, [rbp + 0x3e8]
+    0x2343BE: BA 4E 57 A2 6A           mov edx, 0x6aa2574e
+    0x2343C3: E8 18 1C DB 00           call 0xfe5fe0
+    0x2343C8: 0F B6 85 E8 03 00 00     movzx eax, byte ptr [rbp + 0x3e8]
+    0x2343CF: 88 44 24 24              mov byte ptr [rsp + 0x24], al
+    0x2343D3: 84 C0                    test al, al
+    0x2343D5: 75 2E                    jne 0x234405
+    0x2343D7: 48 8B 8D F0 03 00 00     mov rcx, qword ptr [rbp + 0x3f0]
+    0x2343DE: 8B 03                    mov eax, dword ptr [rbx]
+    0x2343E0: 39 01                    cmp dword ptr [rcx], eax
+    0x2343E2: 74 07                    je 0x2343eb
+    0x2343E4: C6 44 24 24 2C           mov byte ptr [rsp + 0x24], 0x2c
+    0x2343E9: EB 1A                    jmp 0x234405
+    0x2343EB: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x2343EF: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x2343F2: 48 03 CB                 add rcx, rbx
+    0x2343F5: C6 44 24 24 00           mov byte ptr [rsp + 0x24], 0
+    0x2343FA: 44 8B 2C 91              mov r13d, dword ptr [rcx + rdx*4]
+    0x2343FE: EB 08                    jmp 0x234408
+    0x234400: C6 44 24 24 16           mov byte ptr [rsp + 0x24], 0x16
+    0x234405: 44 8B EF                 mov r13d, edi
+    0x234408: 48 8B 5D 30              mov rbx, qword ptr [rbp + 0x30]
+    0x23440C: 48 85 DB                 test rbx, rbx
+    0x23440F: 74 56                    je 0x234467
+    0x234411: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x234415: 74 50                    je 0x234467
+    0x234417: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x23441E: 48 8D 8D F8 03 00 00     lea rcx, [rbp + 0x3f8]
+    0x234425: BA 77 67 53 17           mov edx, 0x17536777
+    0x23442A: E8 B1 1B DB 00           call 0xfe5fe0
+    0x23442F: 0F B6 85 F8 03 00 00     movzx eax, byte ptr [rbp + 0x3f8]
+    0x234436: 88 44 24 25              mov byte ptr [rsp + 0x25], al
+    0x23443A: 84 C0                    test al, al
+    0x23443C: 75 2E                    jne 0x23446c
+    0x23443E: 48 8B 8D 00 04 00 00     mov rcx, qword ptr [rbp + 0x400]
+    0x234445: 8B 03                    mov eax, dword ptr [rbx]
+    0x234447: 39 01                    cmp dword ptr [rcx], eax
+    0x234449: 74 07                    je 0x234452
+    0x23444B: C6 44 24 25 2C           mov byte ptr [rsp + 0x25], 0x2c
+    0x234450: EB 1A                    jmp 0x23446c
+    0x234452: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x234456: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x234459: 48 03 CB                 add rcx, rbx
+    0x23445C: C6 44 24 25 00           mov byte ptr [rsp + 0x25], 0
+    0x234461: 44 8B 24 91              mov r12d, dword ptr [rcx + rdx*4]
+    0x234465: EB 08                    jmp 0x23446f
+    0x234467: C6 44 24 25 16           mov byte ptr [rsp + 0x25], 0x16
+    0x23446C: 44 8B E7                 mov r12d, edi
+    0x23446F: 48 8B 5D 30              mov rbx, qword ptr [rbp + 0x30]
+    0x234473: 48 85 DB                 test rbx, rbx
+    0x234476: 74 59                    je 0x2344d1
+    0x234478: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x23447C: 74 53                    je 0x2344d1
+    0x23447E: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x234485: 48 8D 8D 08 04 00 00     lea rcx, [rbp + 0x408]
+    0x23448C: BA AF 60 2F E1           mov edx, 0xe12f60af
+    0x234491: E8 4A 1B DB 00           call 0xfe5fe0
+    0x234496: 0F B6 85 08 04 00 00     movzx eax, byte ptr [rbp + 0x408]
+    0x23449D: 88 44 24 26              mov byte ptr [rsp + 0x26], al
+    0x2344A1: 84 C0                    test al, al
+    0x2344A3: 75 31                    jne 0x2344d6
+    0x2344A5: 48 8B 8D 10 04 00 00     mov rcx, qword ptr [rbp + 0x410]
+    0x2344AC: 8B 03                    mov eax, dword ptr [rbx]
+    0x2344AE: 39 01                    cmp dword ptr [rcx], eax
+    0x2344B0: 74 07                    je 0x2344b9
+    0x2344B2: C6 44 24 26 2C           mov byte ptr [rsp + 0x26], 0x2c
+    0x2344B7: EB 1D                    jmp 0x2344d6
+    0x2344B9: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x2344BD: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x2344C0: 48 03 CB                 add rcx, rbx
+    0x2344C3: C6 44 24 26 00           mov byte ptr [rsp + 0x26], 0
+    0x2344C8: 8B 04 91                 mov eax, dword ptr [rcx + rdx*4]
+    0x2344CB: 89 44 24 4C              mov dword ptr [rsp + 0x4c], eax
+    0x2344CF: EB 09                    jmp 0x2344da
+    0x2344D1: C6 44 24 26 16           mov byte ptr [rsp + 0x26], 0x16
+    0x2344D6: 89 7C 24 4C              mov dword ptr [rsp + 0x4c], edi
+    0x2344DA: 48 8B 5D 30              mov rbx, qword ptr [rbp + 0x30]
+    0x2344DE: 48 85 DB                 test rbx, rbx
+    0x2344E1: 74 56                    je 0x234539
+    0x2344E3: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x2344E7: 74 50                    je 0x234539
+    0x2344E9: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x2344F0: 48 8D 8D 18 04 00 00     lea rcx, [rbp + 0x418]
+    0x2344F7: BA D5 50 A8 B0           mov edx, 0xb0a850d5
+    0x2344FC: E8 DF 1A DB 00           call 0xfe5fe0
+    0x234501: 0F B6 85 18 04 00 00     movzx eax, byte ptr [rbp + 0x418]
+    0x234508: 88 44 24 27              mov byte ptr [rsp + 0x27], al
+    0x23450C: 84 C0                    test al, al
+    0x23450E: 75 2E                    jne 0x23453e
+    0x234510: 48 8B 8D 20 04 00 00     mov rcx, qword ptr [rbp + 0x420]
+    0x234517: 8B 03                    mov eax, dword ptr [rbx]
+    0x234519: 39 01                    cmp dword ptr [rcx], eax
+    0x23451B: 74 07                    je 0x234524
+    0x23451D: C6 44 24 27 2C           mov byte ptr [rsp + 0x27], 0x2c
+    0x234522: EB 1A                    jmp 0x23453e
+    0x234524: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x234528: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x23452B: 48 03 CB                 add rcx, rbx
+    0x23452E: C6 44 24 27 00           mov byte ptr [rsp + 0x27], 0
+    0x234533: 44 8B 3C 91              mov r15d, dword ptr [rcx + rdx*4]
+    0x234537: EB 08                    jmp 0x234541
+    0x234539: C6 44 24 27 16           mov byte ptr [rsp + 0x27], 0x16
+    0x23453E: 44 8B FF                 mov r15d, edi
+    0x234541: 48 8B 5C 24 78           mov rbx, qword ptr [rsp + 0x78]
+    0x234546: 48 85 DB                 test rbx, rbx
+    0x234549: 74 56                    je 0x2345a1
+    0x23454B: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x23454F: 74 50                    je 0x2345a1
+    0x234551: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x234558: 48 8D 8D 28 04 00 00     lea rcx, [rbp + 0x428]
+    0x23455F: BA 1D AF AE C7           mov edx, 0xc7aeaf1d
+    0x234564: E8 77 1A DB 00           call 0xfe5fe0
+    0x234569: 0F B6 85 28 04 00 00     movzx eax, byte ptr [rbp + 0x428]
+    0x234570: 88 44 24 28              mov byte ptr [rsp + 0x28], al
+    0x234574: 84 C0                    test al, al
+    0x234576: 75 2E                    jne 0x2345a6
+    0x234578: 48 8B 8D 30 04 00 00     mov rcx, qword ptr [rbp + 0x430]
+    0x23457F: 8B 03                    mov eax, dword ptr [rbx]
+    0x234581: 39 01                    cmp dword ptr [rcx], eax
+    0x234583: 74 07                    je 0x23458c
+    0x234585: C6 44 24 28 2C           mov byte ptr [rsp + 0x28], 0x2c
+    0x23458A: EB 1A                    jmp 0x2345a6
+    0x23458C: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x234590: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x234593: 48 03 CB                 add rcx, rbx
+    0x234596: C6 44 24 28 00           mov byte ptr [rsp + 0x28], 0
+    0x23459B: 44 8B 34 91              mov r14d, dword ptr [rcx + rdx*4]
+    0x23459F: EB 08                    jmp 0x2345a9
+    0x2345A1: C6 44 24 28 16           mov byte ptr [rsp + 0x28], 0x16
+    0x2345A6: 44 8B F7                 mov r14d, edi
+    0x2345A9: 48 8B 5C 24 78           mov rbx, qword ptr [rsp + 0x78]
+    0x2345AE: 48 85 DB                 test rbx, rbx
+    0x2345B1: 74 55                    je 0x234608
+    0x2345B3: F6 43 10 01              test byte ptr [rbx + 0x10], 1
+    0x2345B7: 74 4F                    je 0x234608
+    0x2345B9: 4C 8B 85 B8 00 00 00     mov r8, qword ptr [rbp + 0xb8]
+    0x2345C0: 48 8D 8D 38 04 00 00     lea rcx, [rbp + 0x438]
+    0x2345C7: BA B6 C3 3E 78           mov edx, 0x783ec3b6
+    0x2345CC: E8 0F 1A DB 00           call 0xfe5fe0
+    0x2345D1: 0F B6 85 38 04 00 00     movzx eax, byte ptr [rbp + 0x438]
+    0x2345D8: 88 44 24 29              mov byte ptr [rsp + 0x29], al
+    0x2345DC: 84 C0                    test al, al
+    0x2345DE: 75 2D                    jne 0x23460d
+    0x2345E0: 48 8B 8D 40 04 00 00     mov rcx, qword ptr [rbp + 0x440]
+    0x2345E7: 8B 03                    mov eax, dword ptr [rbx]
+    0x2345E9: 39 01                    cmp dword ptr [rcx], eax
+    0x2345EB: 74 07                    je 0x2345f4
+    0x2345ED: C6 44 24 29 2C           mov byte ptr [rsp + 0x29], 0x2c
+    0x2345F2: EB 19                    jmp 0x23460d
+    0x2345F4: 0F B7 51 0C              movzx edx, word ptr [rcx + 0xc]
+    0x2345F8: 8B 4B 08                 mov ecx, dword ptr [rbx + 8]
+    0x2345FB: 48 03 CB                 add rcx, rbx

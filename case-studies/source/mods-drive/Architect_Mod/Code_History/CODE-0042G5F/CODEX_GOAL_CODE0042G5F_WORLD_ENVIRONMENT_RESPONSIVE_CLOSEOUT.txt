@@ -1,0 +1,786 @@
+CODE-0042G5F — AUTONOMOUS GOAL: WORLD & ENVIRONMENT RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Fully migrate F7 `Render-WorldCameraPage` from its fixed-pixel layout to the established responsive F7 framework, preserve every current semantic/safety contract, and close G5F with one final verification report.
+
+IMPORTANT SHARED-RENDERER NOTE
+
+The current F7 dispatcher routes BOTH:
+
+- `World & Environment`
+- `Camera & Presentation`
+
+to:
+
+`Render-WorldCameraPage`
+
+The wrapper:
+
+`Render-WorldBuildingPage`
+
+also delegates to:
+
+`Render-WorldCameraPage`
+
+Therefore this is a single-renderer responsive migration that affects the presentation used by both World & Environment and Camera & Presentation. Preserve all three routing/delegation relationships exactly.
+
+Work autonomously toward the goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded fixture paths, stale fixed-pixel source assertions, fixture-version mismatches, missing TEMP support artifacts, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5F satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting SHA-256:
+
+`06FA6C846F5E2B5CD3DDA838AB7F1A8C2875FFBE3DB87C773BB7F5F36BCD23D2`
+
+Required starting length:
+
+`434597` bytes
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry SHA-256:
+
+`7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+
+Required registry state:
+
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- modify backend/dispatch logic
+- start gameplay/runtime reverse-engineering
+- start G5G/Building & World Editing or later pages
+- start F8 work
+- enable any currently disabled World/Camera action
+- invent ActionIds/EventIds for unsupported placeholders
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a UI/responsive migration, not a world-mutation or camera-feature implementation.
+
+Preserve working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+CURRENT ENGINEERING BOUNDARY
+
+World administration remains evidence-limited.
+
+Canonical project state does NOT prove:
+- a safe world-time mutation backend,
+- a qualified world-time pause backend,
+- a qualified plant-growth mutation backend,
+- resource-yield mutation,
+- loot-drop mutation,
+- freecam/flycam,
+- HUD control,
+- FOV mutation,
+- timescale mutation.
+
+Do not cross those evidence boundaries during G5F.
+
+SCOPE BOUNDARY
+
+Expected product-source edit:
+
+- `Render-WorldCameraPage`
+
+Do not alter:
+
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-BuildingEntitiesPage`
+- `Render-MultiplayerQuestsPage`
+- page dispatch
+- `Render-WorldBuildingPage`
+- responsive helper functions
+- `Send-CheatCommand`
+- registry
+- native runtime
+- Lua/EML
+- F8
+
+If a shared helper, dispatch, registry, capability model, or backend change appears necessary:
+
+STOP and report why before making it.
+
+PRE/POST HASH GUARDS
+
+Before editing, record exact hashes for at least:
+
+- full `ArchitectRuntime.ps1`
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+- `Render-BuildingEntitiesPage`
+- `Render-MultiplayerQuestsPage`
+
+After editing:
+
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- Combat hash unchanged
+- Building/Entities hash unchanged
+- Multiplayer/Quests hash unchanged
+- World/Camera hash should change
+- unrelated function hashes remain source-identical
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use existing proven helpers:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Respect helper contracts:
+
+- percentage columns for `New-F7ResponsiveTable`
+- numeric row heights are absolute heights
+- only `{Type='Percent';Value=...}` is the special percent-row form
+- never introduce `{Type='Absolute';Value=...}` row-height hashtables
+
+Prefer:
+
+- Dock / Anchor
+- percentage-column tables
+- responsive button groups
+- bounded minimum sizes
+- AutoEllipsis for compressible labels
+- FlowLayoutPanel-compatible vertical cards
+
+Avoid recreating the page as fixed X/Y positioning.
+
+Do not redesign styling beyond what is necessary for responsive layout.
+
+CURRENT WORLD & CAMERA SEMANTIC CONTRACT — PRESERVE EXACTLY
+
+============================================================
+A. ROUTING / SHARED PAGE CONTRACT
+============================================================
+
+Preserve dispatcher routes:
+
+`"World & Environment" { Render-WorldCameraPage }`
+
+`"Camera & Presentation" { Render-WorldCameraPage }`
+
+Preserve:
+
+`function Render-WorldBuildingPage { Render-WorldCameraPage }`
+
+Do not split the renderer in G5F.
+Do not change nav labels.
+Do not redirect either page to another function.
+
+============================================================
+B. WORLD PAGE HEADER / CAPABILITIES
+============================================================
+
+Preserve header meaning:
+
+`WORLD SETTINGS, TIME & CAMERA PRESENTATION`
+
+Preserve world-card heading meaning:
+
+`WORLD CLOCK & SIMULATION ENVIRONMENT`
+
+Preserve:
+
+`$caps = Get-AdminCapabilities`
+
+Preserve time readiness presentation from:
+
+`$caps["timeOfDay"].canExecute`
+
+Preserve plant-growth readiness presentation from:
+
+`$caps["plantGrowth"].canExecute`
+
+Capability readiness is presentation context only; canonical registry state remains authoritative.
+
+============================================================
+C. TIME-OF-DAY PRESETS
+============================================================
+
+Preserve exactly four presets:
+
+- `DAWN (06:00)` -> 6.0
+- `NOON (12:00)` -> 12.0
+- `DUSK (18:00)` -> 18.0
+- `NIGHT (00:00)` -> 0.0
+
+Preserve each preset's existing semantic color identity unless responsive construction makes exact local source syntax differ.
+
+ActionId:
+
+`world.time_of_day`
+
+Dynamic EventId construction must remain semantically equivalent to invariant integer formatting:
+
+`f7.world.time.set.<hour integer>.click`
+
+Required runtime EventIds:
+
+- `f7.world.time.set.6.click`
+- `f7.world.time.set.12.click`
+- `f7.world.time.set.18.click`
+- `f7.world.time.set.0.click`
+
+Preserve:
+
+- each button Tag = numeric hour
+- capability-based disabled presentation/tooltips
+- Page metadata = `World & Camera`
+- operation meaning `Set World Time <hour>`
+- handler reads the sender/button Tag
+- handler dispatches `Send-CheatCommand "world.time_of_day" @{ hour = [double]... }`
+- existing status-message meaning
+
+Do NOT enable this action.
+
+Canonical registry truth:
+
+`world.time_of_day`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = LIVE
+- authority = unknown
+- risk = mutation
+
+IMPORTANT:
+`runtimeMode = LIVE` is not proof of a qualified backend. Registry `enabled=false`, backend `NONE`, and the explicit fail-closed dispatcher remain authoritative.
+
+============================================================
+D. PLANT GROWTH
+============================================================
+
+Preserve visible control meaning:
+
+`INSTANT PLANT GROWTH: TOGGLE`
+
+ActionId:
+
+`cheat.world.plant_growth`
+
+EventId:
+
+`f7.world.plantGrowth.toggle.click`
+
+Preserve:
+
+- capability-based disabled presentation
+- tooltip reason
+- Page = `World & Camera`
+- operation meaning `Toggle Plant Growth`
+- handler routes only through `Send-CheatCommand "cheat.world.plant_growth"`
+
+Do NOT enable it.
+
+Registry truth:
+
+`cheat.world.plant_growth`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- authority = unknown
+- risk = mutation
+
+============================================================
+E. PAUSE WORLD TIME
+============================================================
+
+Preserve initial text:
+
+`PAUSE WORLD TIME: OFF`
+
+ActionId:
+
+`world.time_pause`
+
+EventId:
+
+`f7.world.time.pause.click`
+
+Preserve current safety semantics:
+
+1. compute `$nextPaused` first;
+2. call `Send-CheatCommand "world.time_pause" @{ paused = ... }`;
+3. if result is not successful:
+   - report the returned error;
+   - return;
+   - DO NOT change `$script:timePaused`;
+   - DO NOT change button text/color;
+4. only after success:
+   - update `$script:timePaused`;
+   - update button text ON/OFF;
+   - update button color;
+   - report `World time Paused/Resumed`.
+
+Preserve capability-based disabled presentation/tooltips.
+
+Do NOT enable this action.
+
+Registry truth:
+
+`world.time_pause`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = LIVE
+- authority = unknown
+- risk = mutation
+
+============================================================
+F. DIRECT DISPATCH FAIL-CLOSED CONTRACT
+============================================================
+
+Do not modify `Send-CheatCommand`.
+
+Preserve explicit pre-publication rejection for:
+
+`world.time_of_day`
+
+and alias:
+
+`cheat.time.set`
+
+with:
+
+`WORLD_TIME_UNSOLVED`
+
+Preserve rejection for:
+
+`world.time_pause`
+
+with:
+
+`WORLD_TIME_PAUSE_UNSOLVED`
+
+Preserve rejection for:
+
+`cheat.world.plant_growth`
+
+with:
+
+`PLANT_GROWTH_UNSOLVED`
+
+These must remain before native publication.
+
+No UI refactor may bypass them.
+
+============================================================
+G. RESOURCE YIELD / LOOT DROP — UNSUPPORTED
+============================================================
+
+Preserve Resource Yield preset values exactly:
+
+- 1.0
+- 2.0
+- 5.0
+- 10.0
+
+Preserve Loot Drop preset values exactly:
+
+- 1.0
+- 2.0
+- 5.0
+- 10.0
+
+Visible formatting remains equivalent to:
+
+- 1x
+- 2x
+- 5x
+- 10x
+
+All controls remain:
+
+- disabled
+- unbound
+- presentation-only
+
+Do not attach handlers.
+Do not assign ActionIds/EventIds.
+Do not create resource/loot mutation backends.
+
+============================================================
+H. CAMERA PRESENTATION PLACEHOLDERS — UNSUPPORTED
+============================================================
+
+Preserve heading meaning:
+
+`CAMERA MODES & PHOTO PRESENTATION (UNSUPPORTED)`
+
+Preserve as disabled + unbound:
+
+- `FREECAM / FLYCAM (UNSUPPORTED)`
+- `HIDE HUD (UNSUPPORTED)`
+
+Do not attach handlers.
+Do not invent action identities.
+
+============================================================
+I. FOV PLACEHOLDERS — UNSUPPORTED
+============================================================
+
+Preserve values exactly:
+
+- 70
+- 85
+- 100
+- 115
+
+Visible labels remain semantically equivalent to:
+
+- `70 deg`
+- `85 deg`
+- `100 deg`
+- `115 deg`
+
+All controls remain disabled + unbound.
+
+Preserve Tag/value pairing if Tags remain in the responsive construction.
+
+Do not create a camera/FOV backend.
+
+============================================================
+J. TIMESCALE PLACEHOLDERS — UNSUPPORTED
+============================================================
+
+Preserve exact label/value pairs:
+
+- `0.1x (Matrix)` -> 0.1
+- `0.5x (Slow-Mo)` -> 0.5
+- `1.0x (Normal)` -> 1.0
+- `2.0x (Fast)` -> 2.0
+
+All controls remain disabled + unbound.
+
+Preserve Tag/value pairing if Tags remain in the responsive construction.
+
+Do not create a timescale backend.
+
+============================================================
+K. EVENT LIFECYCLE / ZERO-GAP
+============================================================
+
+Historical G2D closure established:
+
+- raw direct World/Camera events = 0
+- exactly 3 canonical `Register-AdminActionEvent` source sites:
+  1. time preset loop
+  2. plant growth
+  3. pause time
+
+Preserve that source-level model.
+
+The time loop produces four runtime action-event definitions.
+
+Do not introduce:
+
+- `.add_Click`
+- `.add_SelectedIndexChanged`
+- `.add_TextChanged`
+- `.add_ValueChanged`
+- `Register-SafeUiEvent` directly inside this renderer
+- `[scriptblock]::Create`
+
+Use canonical F7 event infrastructure only.
+
+The six unsupported placeholder families must remain handler-free:
+
+1. Resource Yield
+2. Loot Drop
+3. Freecam/Flycam
+4. Hide HUD
+5. FOV
+6. Timescale
+
+RESPONSIVE DESIGN TARGET
+
+Rebuild `Render-WorldCameraPage` using responsive cards/tables while preserving the conceptual hierarchy:
+
+1. World/Camera page header
+2. World Clock & Simulation Environment card
+3. Camera Modes & Photo Presentation card
+
+The exact table decomposition is yours to design.
+
+At minimum:
+
+- major cards stretch with content width
+- four time presets distribute across available width
+- Plant Growth / Pause World Time share responsive space cleanly
+- Resource Yield and Loot Drop groups do not collide
+- labels and value rows are separated where necessary to prevent WinForms overlap
+- Freecam / Hide HUD controls stretch cleanly
+- FOV controls distribute responsively
+- Timescale controls distribute responsively
+- long unsupported labels do not overlap neighboring controls
+- vertical order remains correct in the F7 FlowLayoutPanel
+- the layout remains suitable when invoked from either World & Environment or Camera & Presentation
+
+Do not claim exact geometry is proven unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- make bounded product edits inside `Render-WorldCameraPage`
+- create TEMP staging roots
+- create a TEMP-only G5F World/Camera parity fixture
+- adapt TEMP copies of test fixtures for toolkit-root/path issues
+- update TEMP-only stale fixed-pixel/source-pattern assertions only when semantic invariants are independently proven preserved
+- rerun tests as many times as needed
+- fix parse/layout-construction issues introduced by your migration
+- fix renderer-local responsive overlap issues discovered by UI smoke
+- iterate on responsive table/card decomposition
+- inspect Current source/registry/archived G2D evidence
+
+Do not ask the user for intermediate approval for those recoverable issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- authoritative Current hash differs before first edit
+- a required World/Camera behavior cannot be preserved without changing backend/gameplay semantics
+- current evidence contradicts canonical registry/safety state
+- a change outside `Render-WorldCameraPage` is genuinely required
+- a shared responsive helper must change
+- page dispatch or `Render-WorldBuildingPage` must change
+- `Send-CheatCommand` or registry must change
+- completing the task requires recreating H:
+- completing the task requires enabling a disabled action
+- completing the task requires inventing an API, address, signature, pointer, layout, calling convention, world authority mechanism, camera mechanism, or runtime behavior
+- a safety-sensitive ambiguity cannot be resolved from existing evidence/tests
+
+Do NOT stop merely because a TEMP test fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified lineage from G5B–G5E:
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native sources to the older archive generation.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+If prior TEMP G5B/G5C/G5D/G5E parity fixtures are unavailable, recreate equivalent TEMP checks from their closed invariants rather than stopping.
+
+G5F PARITY FIXTURE
+
+Create a TEMP-only World & Environment / Camera parity fixture.
+
+Verify at least these independent groups:
+
+1. `World & Environment` still routes to `Render-WorldCameraPage`
+2. `Camera & Presentation` still routes to `Render-WorldCameraPage`
+3. `Render-WorldBuildingPage` still delegates to `Render-WorldCameraPage`
+4. time preset names/values remain Dawn=6, Noon=12, Dusk=18, Night=0
+5. time ActionId remains `world.time_of_day`
+6. time runtime EventIds remain 6/12/18/0 exact
+7. time EventId construction remains invariant integer formatting
+8. time buttons preserve numeric Tag values
+9. time capability disabled/tool-tip presentation semantics preserved
+10. time handler still dispatches numeric `hour` through `world.time_of_day`
+11. plant growth ActionId remains `cheat.world.plant_growth`
+12. plant growth EventId remains `f7.world.plantGrowth.toggle.click`
+13. plant growth capability/tool-tip presentation semantics preserved
+14. plant growth handler routes only through `Send-CheatCommand`
+15. pause ActionId remains `world.time_pause`
+16. pause EventId remains `f7.world.time.pause.click`
+17. pause handler computes requested state before dispatch
+18. pause rejection leaves `$script:timePaused` unchanged
+19. pause rejection leaves UI text/color unchanged
+20. pause success path updates state/text/color/status
+21. registry still disables `world.time_of_day`
+22. registry still disables `world.time_pause`
+23. registry still disables `cheat.world.plant_growth`
+24. world-time registry backend remains NONE / UNSOLVED
+25. plant-growth registry backend remains NONE / UNSOLVED / UNAVAILABLE
+26. `WORLD_TIME_UNSOLVED` rejection preserved
+27. `WORLD_TIME_PAUSE_UNSOLVED` rejection preserved
+28. `PLANT_GROWTH_UNSOLVED` rejection preserved
+29. Resource Yield values remain 1/2/5/10
+30. Resource Yield controls remain disabled/unbound
+31. Loot Drop values remain 1/2/5/10
+32. Loot Drop controls remain disabled/unbound
+33. Freecam remains disabled/unbound
+34. Hide HUD remains disabled/unbound
+35. FOV values remain 70/85/100/115
+36. FOV controls remain disabled/unbound
+37. Timescale label/value pairs remain exact
+38. Timescale controls remain disabled/unbound
+39. unsupported placeholder handler families remain zero
+40. canonical `Register-AdminActionEvent` source sites remain exactly three
+41. raw direct F7 event registrations inside World/Camera remain zero
+42. no fake ActionIds/EventIds added to unsupported controls
+43. Home hash unchanged
+44. Player hash unchanged
+45. Mobility hash unchanged
+46. Inventory hash unchanged
+47. Crafting/Progression hash unchanged
+48. Combat hash unchanged
+49. Building/Entities hash unchanged
+50. Multiplayer/Quests hash unchanged
+51. renderer now uses responsive card/table infrastructure
+52. no invalid Absolute row-height hashtable introduced
+53. no backend/dispatch/registry/native/Lua changes occurred
+
+You may split or strengthen checks.
+Do not reduce coverage merely to get green.
+
+REGRESSION / SUCCESS CRITERIA
+
+G5F is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only intended World/Camera layout source changed
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- Combat hash unchanged
+- Building/Entities hash unchanged
+- Multiplayer/Quests hash unchanged
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- G5F World/Camera parity fixture fully PASS
+- G5B Player parity remains 18/18 PASS
+- G5C Mobility parity remains fully PASS
+- G5D Items/Progression parity remains fully PASS
+- G5E Combat parity remains fully PASS
+- truthfulness fully PASS after only justified TEMP semantic refreshes
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new direct F7 event sites
+- final Current runtime SHA recorded
+- H: remains absent
+- no gameplay/runtime mechanism changed or promoted to PROVEN
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA
+- ending SHA
+- Home hash before/after
+- Player hash before/after
+- Mobility hash before/after
+- Inventory hash before/after
+- Crafting/Progression hash before/after
+- Combat hash before/after
+- World/Camera hash before/after
+- Building/Entities hash before/after
+- Multiplayer/Quests hash before/after
+- concise responsive layout architecture
+- product-source files changed
+- TEMP-only test files changed
+- full G5F parity result
+- Player parity result
+- Mobility parity result
+- Items/Progression parity result
+- Combat parity result
+- truthfulness result
+- UI smoke result
+- UI error count
+- catalog count
+- lifecycle result
+- schema/source-consolidation result
+- prohibited-mutation result
+- G4A result
+- stable-definition refs
+- registry counts
+- geometry status
+- any justified TEMP assertion refreshes and evidence
+- confirmation H: was not recreated
+- confirmation G5G/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5F World & Environment responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay behavior PROVEN from these tests.

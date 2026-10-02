@@ -1,0 +1,588 @@
+CODE-0043G6A — AUTONOMOUS GOAL: FIRST LIVE F7 CAPABILITY PROOF
+Starting from CODE-0033 Movement + Stamina Correlation
+
+Build scope:
+Enshrouded revision 1076226
+Executable SHA-256:
+AF2F5A1227911D8AA06B3908D6BD0211838211CAE14EA91099CB57D0DF990781
+PE timestamp:
+0x6A4236C8
+Image size:
+0x02DA7000
+
+PRIMARY GOAL
+
+Turn the existing CODE-0033 observe-only movement/stamina correlation work into a safely qualified, F7-operable runtime-test candidate, then stop at the user-runtime gate with one exact candidate package and one exact capture procedure.
+
+Do NOT claim a live capability before runtime evidence exists.
+
+G6A has two gates:
+
+GATE A — OFFLINE QUALIFICATION / RUNTIME-TEST CANDIDATE
+Repair the existing CODE-0033 contract mismatches, expose the complete bounded research controls in F7, compile/package an exact observe-only runtime-test candidate, run all applicable offline/static tests, archive the exact candidate, and return one runtime runbook.
+
+GATE B — LIVE CORRELATION / FIRST MUTATION DECISION
+This occurs only after the user runs the candidate in Enshrouded and returns the requested capture artifacts. Analyze those artifacts. Only if at least one family satisfies the explicit CONVERGED criteria may a later reversible mutation task be authorized.
+
+Do NOT combine Gate B mutation work into Gate A merely because compilation/tests are green.
+
+CORE METHOD
+
+observe → capture → map → validate → minimally modify → verify
+
+This project exists to prove runtime ownership/correlation, not to force a cheat to work.
+
+CURRENT AUTHORITATIVE PRODUCT BASELINES
+
+Authoritative loose F7 runtime:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required start:
+- 449783 bytes
+- SHA-256:
+  `9EF34615CD233BFBA2AFB885C7EA84D71343E019F4FA1647B93C004AC42585E9`
+
+Registry:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required:
+- 60272 bytes
+- SHA-256:
+  `7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+- 55 total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+Current package skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Required:
+- 61956660 bytes
+- SHA-256:
+  `A1AB3AEEE18987C0F4F27CC0B49A371C89F3F82BE5EC8342BD9536B86516835A`
+
+The package build identity currently reports:
+- version `0.40.0`
+- buildId `architect-v040-hybrid-admin-code0034-20260918`
+- mode `hybrid_observer_and_admin_mutation`
+
+Top-level loose `ArchitectNativeRuntime.c` is NOT interchangeable with the packaged source tree.
+
+Top-level file:
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\ArchitectNativeRuntime.c`
+
+Known SHA-256:
+`67F99038D4801F8A098E06C62601E7DED72BF7E2E58BE4413F9816BF70645951`
+
+Do NOT overwrite or treat that file as the CODE-0033 packaged native source.
+
+PACKAGED CODE-0033 SOURCE BASELINE
+
+Inside `architect_toolkit.zip`:
+
+`runtime/native/source/CheatCorrelationHarness.c`
+- SHA-256:
+  `9CCFC2B8360543805787B62354D38C07124C42A6EC1A38BA428507BB40C4C1EC`
+
+`runtime/native/source/CheatCorrelationHarness.h`
+- SHA-256:
+  `0647D729A5D1A662043BF17DA1FB5D0A3E98602DF141389A31E42B6360773D40`
+
+`runtime/native/source/ArchitectNativeRuntime.c`
+- SHA-256:
+  `0DA0B3EFFC6C6F2B564C1E519A1610A87754602EF479E233D5AB828E75252349`
+
+`runtime/native/source/ArchitectCheatCorrelationEntry.asm`
+- SHA-256:
+  `4047E0328B8F823EA849BAF8E8F312F1534520AFA6AC3F7363D25ED1A3FE5E45`
+
+`runtime/native/ArchitectNativeRuntime.dll`
+- SHA-256:
+  `BA1C4AAE3B90A1383E37C7002BA183116E9845A1BD72C93B77CBB986BC6EDA7F`
+
+`tools/CheatCorrelation/analyze_capture.py`
+- SHA-256:
+  `AA91F915137F7C3260726CDA5134464A1292FBF05723AAA5572C9929E2AE4BCD`
+
+`tools/CheatCorrelation/tests/test_native_harness.py`
+- SHA-256:
+  `BB8145060BB47E1AF33A0FC5D51D2749A4B5DB983C70AC6DBB59D6E061172BC6`
+
+`tools/CheatCorrelation/tests/test_analyzer.py`
+- SHA-256:
+  `8455FEED09F63CEFE9FB98E20D7FD200D8299AF8BB474838CE5FD86B214D2B3F`
+
+CODE-0033 PROVEN/QUALIFIED INTENT
+
+The existing CODE-0033 design is observe-only.
+
+Movement probe:
+- RVA `0x23AE34`
+- 16-byte whole-instruction replay span
+- records integration context, original accumulator/operand, `xmm3` input bits, thread, caller, phase
+- must not write velocity
+
+Stamina probe:
+- RVA `0x23423F`
+- 22-byte whole-instruction replay span
+- records naturally computed base, selector, addressed cell/current int32 value, thread, caller, phase
+- must not read unknown adjacent fields
+- must not write stamina
+
+Harness:
+- dormant until explicit begin
+- exact build fingerprint required
+- exact signature match at expected RVA required
+- exact displaced bytes required
+- fixed 512-record in-memory ring
+- bounded JSONL output capped at 1 MiB
+- hook hot path performs no file I/O
+- end restores exact original bytes and flushes instruction cache
+- one failed probe must not automatically invalidate the other
+
+CANONICAL CODE-0033 COMMANDS
+
+Registry currently exposes four enabled read-only research actions:
+
+1. `cheatcorrelation.begin`
+2. `cheatcorrelation.mark`
+3. `cheatcorrelation.status`
+4. `cheatcorrelation.end`
+
+All four are:
+- evidenceStatus `PROVEN_BUILD_1076226`
+- adapter `DiagnosticsAdapter`
+- runtimeMode `LIVE`
+- authority `local`
+- risk `read_only`
+- backend `NONE`
+
+Begin/end:
+- persistence `capture_only`
+- clean hook uninstall semantics
+
+Mark:
+- persistence `capture_only`
+
+Status:
+- persistence `none`
+
+Do not change registry IDs or enable/disable state during G6A unless an independent safety blocker requires disabling a command. If that happens, STOP and report.
+
+PRE-RUNTIME BLOCKERS FOUND BY INDEPENDENT AUDIT
+
+CODE-0033 must NOT be deployed as-is. Repair these first.
+
+============================================================
+BLOCKER 1 — NATIVE PHASE ALLOWLIST DISAGREES WITH ANALYZER/UI CONTRACT
+============================================================
+
+PowerShell and analyzer define these eight research phases:
+
+- `BASELINE_IDLE`
+- `WALK`
+- `SPRINT_ACTIVE`
+- `SPRINT_RECOVERY`
+- `JUMP`
+- `POST_JUMP_RECOVERY`
+- `COMBAT_IDLE`
+- `MENU`
+
+But packaged `CheatCorrelationHarness.c` currently accepts only:
+
+- `BASELINE_IDLE`
+- `ACTIVE`
+- `MENU`
+
+That means documented marks such as WALK, SPRINT_ACTIVE, SPRINT_RECOVERY, JUMP, POST_JUMP_RECOVERY and COMBAT_IDLE can fail even though the analyzer requires them.
+
+Repair requirement:
+
+Make the native externally accepted mark allowlist agree exactly with the eight documented/analyzer/PowerShell phases above.
+
+Do not add arbitrary labels.
+Do not infer new phase semantics.
+
+The harness may retain any internal non-user phase state needed for implementation, but externally accepted `cheatcorrelation.mark` values must match the canonical eight-value research contract.
+
+Update native harness tests so they assert all eight exact labels and reject at least one invalid label.
+
+============================================================
+BLOCKER 2 — COMMAND ENVELOPE TRUTHFULNESS IS WRONG FOR CORRELATION ACTIONS
+============================================================
+
+Current `Publish-CheatCorrelationCommand` initializes envelopes with:
+
+- `readOnly = false`
+- `mutationRequested = true`
+
+This is incorrect for `cheatcorrelation.*`.
+
+Repair requirement:
+
+For `cheatcorrelation.*` actions only:
+- `readOnly = true`
+- `mutationRequested = false`
+
+Do NOT globally change mutation commands that legitimately use the same publication transport.
+
+Add source/static tests proving:
+- correlation envelopes are read-only/non-mutating
+- ordinary mutation cheat actions do not inherit those flags
+
+============================================================
+BLOCKER 3 — CURRENT F7 DIAGNOSTICS UI DOES NOT EXPOSE COMPLETE CODE-0033 CONTROL SURFACE
+============================================================
+
+Current `Render-DiagnosticsPage` exposes:
+- Begin
+- Status
+
+It does not expose:
+- Mark
+- End
+
+G6A is explicitly the first live F7 capability-proof workflow, so the full bounded research procedure must be operable from F7.
+
+Add to `Render-DiagnosticsPage`:
+
+A phase selector containing exactly:
+- BASELINE_IDLE
+- WALK
+- SPRINT_ACTIVE
+- SPRINT_RECOVERY
+- JUMP
+- POST_JUMP_RECOVERY
+- COMBAT_IDLE
+- MENU
+
+A canonical MARK control:
+- ActionId: `cheatcorrelation.mark`
+- EventId: `f7.developer.correlation.mark.click`
+- Page: `Developer & Diagnostics`
+- Operation: `Mark correlation phase`
+- LifetimeScope: `PAGE`
+- Registration: `Register-AdminActionEvent`
+- Parameters: `{ phase = <selected exact phase> }`
+
+An END CAPTURE control:
+- ActionId: `cheatcorrelation.end`
+- EventId: `f7.developer.correlation.end.click`
+- Page: `Developer & Diagnostics`
+- Operation: `End native observation`
+- LifetimeScope: `PAGE`
+- Registration: `Register-AdminActionEvent`
+
+Preserve existing:
+- `f7.developer.correlation.begin.click`
+- `f7.developer.correlation.status.click`
+
+Do not add raw WinForms event handlers.
+Do not use `AllowDisabled`.
+Do not bypass registry gating.
+
+The phase ComboBox itself should not publish a native command merely because selection changes.
+
+Responsive layout must remain compatible with the closed G5J diagnostics design.
+
+============================================================
+BLOCKER 4 — STALE BUNDLED BRIDGE OUTPUT MUST NOT BE TREATED AS G6A EVIDENCE
+============================================================
+
+The current package contains old bridge status/report files, including a correlation report with:
+- movement `NO_SAMPLES`
+- stamina `AMBIGUOUS_MULTI_ENTITY`
+- 512 stamina samples
+- no drain/recovery observed
+
+These bundled files are historical/staging residue, not a fresh G6A runtime capture.
+
+Runtime-test candidate must:
+- start from a clean disposable bridge capture state for CODE-0033 output
+- not treat bundled `cheat_correlation_report.json` as current evidence
+- preserve unrelated required bridge/config files
+- document exactly which correlation output files are cleared/reset before test
+
+Do not silently delete canonical evidence from Drive.
+Only clean TEMP/runtime-test candidate output state.
+
+STAGING / CURRENT BOUNDARY
+
+The local/game-drive Architect installation is intentionally absent.
+
+DO NOT:
+- recreate H:
+- deploy into the game directory
+- compare against a stale H: install
+- modify H:
+- claim runtime proof from offline tests
+
+For Gate A:
+
+1. Extract the Current package into a TEMP working tree.
+2. Overlay authoritative loose Current files so the candidate does not regress G5A-G5K work:
+   - current `runtime/ArchitectRuntime.ps1`
+   - current `runtime/admin_action_registry.json`
+   - current `runtime/NativeMemoryEngine.cs`
+   - current `src/mod.lua`
+   - any other loose Current file whose canonical newer identity is independently established
+3. Apply G6A changes only in that candidate working tree unless a loose authoritative file is explicitly part of the change.
+4. Do NOT replace `Current/architect_toolkit.zip`.
+5. Do NOT designate the candidate as Current.
+6. Archive the exact candidate and source diff under:
+   `Architect_Mod/Code_History/CODE-0043G6A/`
+7. Return one runtime-test package + manifest + runbook.
+
+If exact loose/current identity cannot be established for an overlay file, do not guess.
+
+PRODUCT/SOURCE CHANGE BOUNDARY
+
+Expected source changes may include only the minimum needed for CODE-0033 qualification:
+
+- staged/current `runtime/ArchitectRuntime.ps1`
+  - correlation command envelope truthfulness
+  - `Render-DiagnosticsPage` Mark/End research controls
+
+- candidate package:
+  - `runtime/native/source/CheatCorrelationHarness.c`
+  - `tools/CheatCorrelation/tests/test_native_harness.py`
+  - tests for PowerShell/F7 correlation contract
+  - build identity/package metadata only if required to truthfully identify the candidate
+  - generated DLL/object/package outputs from rebuilding
+
+Do not change:
+- registry semantics/IDs
+- movement/stamina hook RVAs
+- displaced instruction spans
+- hook ASM unless compilation proves a necessary nonsemantic build fix
+- analyzer convergence criteria
+- gameplay cheat code
+- direct patches
+- inventory/building/entity systems
+- F8
+- preset behavior
+- G5A-G5K responsive semantics outside the bounded diagnostics control additions
+
+If the native phase fix requires changing hook semantics rather than marker validation, STOP.
+
+OFFLINE QUALIFICATION
+
+At minimum run and record:
+
+1. PowerShell parse
+2. native compilation/build
+3. exact CODE-0033 native harness tests
+4. analyzer tests
+5. new cross-layer phase-contract test:
+   PowerShell list == native accepted list == analyzer PHASES == F7 selector values
+6. command-envelope truthfulness test
+7. F7 diagnostics event-lifecycle test:
+   - canonical Begin/Mark/Status/End action sites
+   - no raw direct events
+   - exact EventIds
+8. build/signature safety tests:
+   - unsupported build fails closed
+   - zero signature match fails closed
+   - multiple signature matches fail closed
+   - displaced-byte mismatch fails closed
+9. clean uninstall/revert path test
+10. no file I/O in hot hooks
+11. capture bound/ring limit tests
+12. analyzer synthetic movement CONVERGED test
+13. analyzer synthetic stamina CONVERGED test
+14. malformed capture behavior
+15. Current registry remains 55/17/38/55
+16. full G5B-G5K F7 source/static regression suite
+17. truthfulness suite
+18. UI smoke
+19. lifecycle/static
+20. source consolidation/schema
+21. CT catalog = 224
+22. prohibited mutation scan
+
+Do not weaken tests to pass.
+
+CURRENT F7 BASELINE PRESERVATION
+
+All closed G5A-G5K responsive pages remain protected.
+
+Only the bounded `Render-DiagnosticsPage` correlation control additions may differ from G5J/G5K responsive source.
+
+Do not redesign Developer & Diagnostics again.
+
+RUNTIME-TEST CANDIDATE IDENTITY
+
+Produce a unique candidate identity derived from the current v0.40 line.
+
+Do not reuse stale v0.39 CODE-0033 injector expectations.
+
+At minimum verify consistency across:
+- `runtime/build_identity.json`
+- native build-identity header/source
+- compiled DLL embedded strings
+- injector/launcher expected identity if present
+- runtime package manifest
+- SHA manifest
+
+The candidate must not reproduce the historical injector/native identity mismatch.
+
+Do not call the candidate Current.
+
+GATE A EXIT CONDITIONS
+
+Gate A is complete only when:
+
+- all four pre-runtime blockers are repaired
+- offline qualification is green
+- exact runtime-test ZIP/package is produced
+- exact DLL SHA and package SHA recorded
+- candidate build identity recorded
+- exact source diff is archived
+- G5A-G5K source/static baselines remain green
+- registry unchanged
+- no deployment occurred
+- H remains absent
+- one concise runtime runbook is produced
+
+Gate A final state must be:
+
+`G6A CODE-0033 runtime-test candidate is OFFLINE_QUALIFIED / RUNTIME_TEST_REQUIRED.`
+
+Do NOT state:
+- movement proven
+- stamina proven
+- local player owner proven
+- first live F7 capability proven
+
+until Gate B evidence exists.
+
+GATE B — USER RUNTIME PROCEDURE
+
+When the user explicitly deploys the qualified candidate, use a disposable/test world or safe noncritical character/session.
+
+Before capture:
+- full Enshrouded process restart
+- verify candidate DLL/package SHA
+- verify native status version/buildId/mode
+- verify revision 1076226
+- verify build fingerprint supported
+- verify correlation active = false
+- verify stoppedCleanly = true
+- verify stale correlation output was cleared in the runtime-test candidate
+
+Then perform ONE session:
+
+1. F7 → Developer & Diagnostics
+2. Begin capture
+3. Mark `BASELINE_IDLE`; stand still 5 seconds
+4. Mark `WALK`; walk normally 5 seconds
+5. Mark `SPRINT_ACTIVE`; sprint long enough for visible stamina drain
+6. Mark `SPRINT_RECOVERY`; stop until visible recovery
+7. Mark `JUMP`; perform several ordinary jumps
+8. Mark `POST_JUMP_RECOVERY`; remain idle/recover
+9. Optional discriminator if needed:
+   - `COMBAT_IDLE`
+   - `MENU`
+10. End capture
+11. Refresh status
+12. Exit normally after confirming stoppedCleanly / hooks uninstalled
+
+Do not enable unrelated cheats during the capture.
+
+Do not perform mutation testing in this same session.
+
+RETURN ARTIFACTS
+
+Require exact fresh artifacts from the same session:
+
+- `bridge/cheat_correlation_status.json`
+- `bridge/cheat_correlation_capture.jsonl`
+- `bridge/cheat_correlation_report.json`
+- `bridge/native_status.json`
+- `bridge/native_runtime.log`
+
+Also record:
+- candidate package SHA
+- candidate DLL SHA
+- game revision/build identity
+- whether each phase was visibly performed
+- whether any crash/freeze/UI failure occurred
+
+ANALYZER / CONVERGENCE GATE
+
+Run the existing analyzer without weakening criteria.
+
+Movement CONVERGED requires:
+- one dominant context/thread across baseline and multiple active phases
+- `BASELINE_IDLE`
+- at least two of:
+  - WALK
+  - SPRINT_ACTIVE
+  - JUMP
+- no material multi-entity contamination under current analyzer contract
+
+Stamina CONVERGED requires:
+- one stable context/selector under current analyzer contract
+- value decreases during `SPRINT_ACTIVE`
+- value increases during `SPRINT_RECOVERY`
+
+If neither converges:
+- record PARTIAL / AMBIGUOUS / NO_CORRELATION truthfully
+- identify the first discriminating next observation
+- do not mutate
+
+If stamina converges:
+- prefer a future scalar/object/value-path mutation over instruction patching
+- design one reversible session-local mutation with original-value capture, readback and restore
+- that is a NEW gated task, not automatically performed by G6A Gate A
+
+If movement converges:
+- first map the stable scalar/object model and original-value semantics
+- do not immediately patch integration code without proving reversible state ownership
+
+SAFETY STOP CONDITIONS
+
+Stop and report if:
+- build fingerprint differs
+- exact signature count != 1
+- displaced bytes differ
+- hook install/readback is ambiguous
+- mark contract still differs cross-layer
+- native identity mismatch reappears
+- capture does not end cleanly
+- original bytes are not independently verified restored
+- runtime crashes/freezes
+- evidence suggests multiple entities/players and cannot be discriminated
+- completing the task would require unknown pointer/layout/API guessing
+- a mutation would be required before correlation proof
+- H deployment is required before the user explicitly approves redeployment
+
+FINAL GATE A REPORT
+
+Return one report containing:
+- starting baselines and hashes
+- exact files changed
+- exact phase-contract repair
+- exact F7 controls/EventIds added
+- command-envelope truthfulness repair
+- native/DLL/package hashes
+- build identity consistency result
+- offline test matrix
+- G5B-G5K regression results
+- registry result
+- H absent
+- candidate archive location
+- exact user runtime runbook
+- explicit evidence boundary
+
+End with:
+
+`G6A CODE-0033 runtime-test candidate is OFFLINE_QUALIFIED / RUNTIME_TEST_REQUIRED.`
+
+Only after later Gate B runtime evidence may the project state become:
+
+`G6A first live F7 capability proof: <specific capability and evidence scope>.`

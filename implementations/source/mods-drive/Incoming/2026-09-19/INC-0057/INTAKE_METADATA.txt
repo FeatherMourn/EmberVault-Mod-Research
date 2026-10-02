@@ -1,0 +1,26 @@
+INTAKE RECORD
+=============
+Intake_ID: INC-0057
+Received: 2026-09-19
+Filename: Shroudtopia Glider Flight 1.0.0 118 1 2026-07-09T08-31Z 4I1wNTCyW.zip
+Type: EXTERNAL_MOD_ARCHIVE (Thunderstore mod package format)
+SHA256: FDA35A26FA7ED49B96BE9241C79E720BF27202911CA59DCFBF329E978DE47532
+Size_Bytes: 10901
+Source: User-provided attachment from F:\Cheat Engine Tables\Enshrouded\
+
+CLASSIFICATION
+==============
+UNTRUSTED_STAGING / EXTERNAL_ARTIFACT_EVIDENCE
+Topic: Glider flight mechanics mod. Mod package date 2026-07-09; version 1.0.0;
+target build/revision 118.
+
+PROMOTION STATUS
+================
+Promoted_To: None (research/correlation only)
+Related: F7 Mobility page (Flight/Glider section), Brain CAP-MOV-0001.
+
+HANDLING NOTES
+==============
+- Original preserved byte-exact; hash verified after copy on 2026-09-19.
+- Will inspect manifest/contents to identify the gameplay modification surface
+  and any AOB/signature work; not used as runtime code.

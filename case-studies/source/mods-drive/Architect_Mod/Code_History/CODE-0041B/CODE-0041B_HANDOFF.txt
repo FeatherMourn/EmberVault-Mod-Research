@@ -1,0 +1,10 @@
+CODE-0041B HANDOFF
+
+Static safety cleanup is verified in Current/runtime/ArchitectRuntime.ps1.
+No direct F7 calls remain to TogglePatch, EnableAllSurvival, DisableAllSurvival, WritePlayerCoordinates, ToggleAutoLoot, or ToggleGliderFlight.
+
+No runtime claim.
+
+Next recommended task: CODE-0042 — canonical registry expansion + real ActionId bindings + actual responsive page-internal migration + Source Map/CT catalog restoration + complete-workspace tests.
+
+Use INC-0062 as full-package baseline only for a temporary test workspace; overlay current cleaned runtime files. Do not replace Current wholesale.

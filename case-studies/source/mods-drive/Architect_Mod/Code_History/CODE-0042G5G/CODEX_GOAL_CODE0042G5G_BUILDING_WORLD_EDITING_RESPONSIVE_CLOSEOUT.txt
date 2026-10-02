@@ -1,0 +1,783 @@
+CODE-0042G5G — AUTONOMOUS GOAL: BUILDING & WORLD EDITING RESPONSIVE MIGRATION
+
+Build scope:
+Enshrouded 1076226
+
+PRIMARY GOAL
+
+Fully migrate F7 `Render-BuildingEntitiesPage` from its fixed-pixel layout to the established responsive F7 framework, preserve every current semantic/safety contract, and close G5G with one final verification report.
+
+The F7 dispatcher must continue to route:
+
+`Building & World Editing`
+
+to:
+
+`Render-BuildingEntitiesPage`
+
+This milestone is UI/responsive work only. It does NOT authorize new building/world-editing, terrain, prop, entity, or multiplayer mutation mechanisms.
+
+Work autonomously toward the goal.
+
+Do NOT stop for recoverable TEMP staging issues, hardcoded fixture paths, stale fixed-pixel source assertions, fixture-version mismatches, missing TEMP support artifacts, formatting differences, or assertions that can be proven to represent obsolete UI implementation details rather than product behavior.
+
+Diagnose those issues, repair TEMP-only verification infrastructure when justified, rerun affected tests, and continue.
+
+Return to the user only when:
+
+1. G5G satisfies the success criteria below; OR
+2. a genuine product-level blocker is found that cannot be resolved without changing behavior/safety/architecture outside the allowed scope.
+
+AUTHORITATIVE PRODUCT SOURCE
+
+Edit only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1`
+
+Required starting SHA-256:
+
+`C56F388AC295A0998BB53E00E7910F40D45EE69DD878263A8B4B02D3299EF64E`
+
+Required starting length:
+
+`442662` bytes
+
+If the authoritative I: runtime hash differs before work begins:
+
+STOP and report the actual hash.
+Do not edit.
+
+Registry is read-only:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json`
+
+Required registry SHA-256:
+
+`7F2F5C38B75AF24B45728D5D6B6FBD5A9420BE51BF52888DD008AE77B0E21AA8`
+
+Required registry state:
+
+- 55 actions total
+- 17 enabled
+- 38 disabled
+- 55 unique command IDs
+
+The local H: Architect installation is intentionally absent.
+
+DO NOT:
+
+- recreate H:
+- deploy to the game directory
+- modify the registry
+- modify native code
+- modify Lua/EML source
+- modify backend/dispatch logic
+- modify `Get-EntityInspectorState`
+- modify `Publish-EntityInspectorCommand`
+- start gameplay/runtime reverse-engineering
+- start G5H/Entities & Authority or later pages
+- start F8 work
+- enable any currently disabled Building action
+- add mutation handlers to terrain/prop/entity placeholders
+- invent ActionIds/EventIds for unsupported placeholders
+- infer gameplay/runtime proof from source/static tests
+
+CORE METHOD
+
+Follow:
+
+observe → capture → map → validate → minimally modify → verify
+
+This is a UI/responsive migration, not a building-authority, terrain-mutation, prop-editing, or entity-control implementation.
+
+Preserve working infrastructure.
+Do not redesign unrelated systems because one test fails.
+
+CURRENT ENGINEERING BOUNDARY
+
+The project currently separates a PROVEN vanilla/resource-backed building product path from UNSOLVED admin mutation authority.
+
+Preserve that distinction.
+
+PROVEN/HISTORICAL PRODUCT PATH:
+- Architect can register custom building shapes through the normal Construction Hammer / resource path.
+- That does NOT prove the F7 admin override controls in this page.
+
+UNSOLVED / PLANNED ADMIN PATHS:
+- altar/build-area override authority
+- altar-distance override authority
+- build-range override authority
+- terrain mutation authority
+- prop lifecycle and mutation safety
+- destructive entity mutation
+- save/persistence safety for world edits
+
+Do not use the proven building-resource path as justification to enable these F7 admin controls.
+
+SCOPE BOUNDARY
+
+Expected product-source edit:
+
+- `Render-BuildingEntitiesPage`
+
+Do not alter:
+
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+- `Render-MultiplayerQuestsPage`
+- page dispatch
+- responsive helper functions
+- `Get-EntityInspectorState`
+- `Publish-EntityInspectorCommand`
+- `Send-CheatCommand`
+- registry
+- native runtime
+- Lua/EML
+- F8
+
+If a shared helper, dispatch, registry, capability model, inspector backend, or mutation backend change appears necessary:
+
+STOP and report why before making it.
+
+PRE/POST HASH GUARDS
+
+Before editing, record exact hashes for at least:
+
+- full `ArchitectRuntime.ps1`
+- `Render-DashboardPage`
+- `Render-PlayerVitalsPage`
+- `Render-MobilityTravelPage`
+- `Render-InventoryItemsPage`
+- `Render-CraftingProgressionPage`
+- `Render-CombatAIPage`
+- `Render-WorldCameraPage`
+- `Render-BuildingEntitiesPage`
+- `Render-MultiplayerQuestsPage`
+- `Get-EntityInspectorState`
+- `Publish-EntityInspectorCommand`
+
+After editing:
+
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- Combat hash unchanged
+- World/Camera hash unchanged
+- Multiplayer/Quests hash unchanged
+- Entity Inspector helper hashes unchanged
+- Building/Entities renderer hash should change
+- unrelated function hashes remain source-identical
+
+RESPONSIVE FRAMEWORK TO REUSE
+
+Use existing proven helpers:
+
+- `New-F7ResponsiveCard`
+- `New-F7ResponsiveTable`
+- `Resize-AdminPageChildren`
+
+Respect helper contracts:
+
+- percentage columns for `New-F7ResponsiveTable`
+- numeric row heights are absolute heights
+- only `{Type='Percent';Value=...}` is the special percent-row form
+- never introduce `{Type='Absolute';Value=...}` row-height hashtables
+
+Prefer:
+
+- Dock / Anchor
+- percentage-column tables
+- responsive button groups
+- bounded minimum sizes
+- AutoEllipsis for compressible labels
+- FlowLayoutPanel-compatible vertical cards
+
+Avoid recreating the page as fixed X/Y positioning.
+
+Do not redesign styling beyond what is necessary for responsive layout.
+
+CURRENT BUILDING & WORLD EDITING SEMANTIC CONTRACT — PRESERVE EXACTLY
+
+============================================================
+A. PAGE / ROUTING CONTRACT
+============================================================
+
+Preserve F7 dispatcher routing:
+
+`"Building & World Editing" { Render-BuildingEntitiesPage }`
+
+Do not rename or reroute the nav page.
+
+Current action metadata inside the renderer uses Page:
+
+`Building & Entities`
+
+for the three canonical building action events.
+
+Preserve that existing action Page metadata during G5G.
+Do NOT opportunistically normalize it to the nav label in this responsive-only milestone.
+
+============================================================
+B. PAGE HEADER / CAPABILITY SOURCE
+============================================================
+
+Preserve header meaning:
+
+`BUILDING AUTHORITY, TERRAIN & ENTITIES`
+
+Preserve first card heading:
+
+`BUILDING AUTHORITY & RESTRICTION OVERRIDES`
+
+Preserve:
+
+`$caps = Get-AdminCapabilities`
+
+Preserve presentation gating from:
+
+- `$caps["altarArea"].canExecute`
+- `$caps["altarFar"].canExecute`
+- `$caps["buildRange"].canExecute`
+
+Capability readiness is presentation context only.
+Canonical registry `enabled=false` remains authoritative.
+
+============================================================
+C. ALTAR BUILD AREA
+============================================================
+
+Visible control meaning:
+
+`NO FLAME ALTAR BUILD LIMIT: TOGGLE`
+
+ActionId:
+
+`cheat.world.altar_area`
+
+EventId:
+
+`f7.building.altarArea.toggle.click`
+
+Page metadata:
+
+`Building & Entities`
+
+Operation:
+
+`Toggle Altar Build Area`
+
+Preserve:
+
+- capability-based disabled styling
+- tooltip reason from `$caps["altarArea"].reason`
+- handler routes only through `Send-CheatCommand "cheat.world.altar_area"`
+
+Do NOT enable the action.
+
+Canonical registry truth:
+
+`cheat.world.altar_area`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- authority = unknown
+- risk = mutation
+- failureReason = patch readiness is not sufficient proof of current UI action support
+
+============================================================
+D. ALTAR DISTANCE / PLACE ANYWHERE
+============================================================
+
+Visible control meaning:
+
+`PLACE FLAME ALTAR ANYWHERE: TOGGLE`
+
+ActionId:
+
+`cheat.world.altar_far`
+
+EventId:
+
+`f7.building.altarFar.toggle.click`
+
+Page metadata:
+
+`Building & Entities`
+
+Operation:
+
+`Toggle Altar Far`
+
+Preserve:
+
+- capability-based disabled styling
+- tooltip reason from `$caps["altarFar"].reason`
+- handler routes only through `Send-CheatCommand "cheat.world.altar_far"`
+
+Do NOT enable the action.
+
+Canonical registry truth:
+
+`cheat.world.altar_far`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- authority = unknown
+- risk = mutation
+- failureReason = authoritative action path is not currently qualified
+
+============================================================
+E. EXTENDED BUILD REACH
+============================================================
+
+Visible control meaning:
+
+`EXTENDED BUILD REACH (32m): TOGGLE`
+
+ActionId:
+
+`cheat.world.build_range`
+
+EventId:
+
+`f7.building.buildRange.toggle.click`
+
+Page metadata:
+
+`Building & Entities`
+
+Operation:
+
+`Toggle Extended Build Reach`
+
+Preserve:
+
+- capability-based disabled styling
+- tooltip reason from `$caps["buildRange"].reason`
+- handler routes only through `Send-CheatCommand "cheat.world.build_range"`
+
+Do NOT enable the action.
+
+Canonical registry truth:
+
+`cheat.world.build_range`
+- enabled = false
+- evidenceStatus = UNSOLVED
+- backend = NONE
+- runtimeMode = UNAVAILABLE
+- authority = unknown
+- risk = mutation
+- failureReason = authoritative action path is not currently qualified
+
+============================================================
+F. DIRECT DISPATCH FAIL-CLOSED CONTRACT
+============================================================
+
+Do not modify `Send-CheatCommand`.
+
+Preserve explicit pre-publication rejection for:
+
+- `build.altar_area`
+- `cheat.world.altar_area`
+
+with:
+
+`ALTAR_AREA_UNSOLVED`
+
+Preserve rejection for:
+
+- `build.altar_far`
+- `cheat.world.altar_far`
+
+with:
+
+`ALTAR_FAR_UNSOLVED`
+
+Preserve rejection for:
+
+`cheat.world.build_range`
+
+with:
+
+`BUILD_RANGE_UNSOLVED`
+
+These must remain before native publication.
+
+No responsive UI refactor may bypass them.
+Do not use `AllowDisabled`.
+
+============================================================
+G. INSTANT DISMANTLE — UNSUPPORTED
+============================================================
+
+Preserve:
+
+`INSTANT DISMANTLE (UNSUPPORTED)`
+
+as:
+
+- disabled
+- unbound
+- handler-free
+- presentation-only
+
+Do not assign an ActionId/EventId.
+Do not add a dismantle backend.
+
+============================================================
+H. TERRAIN / PROP ADMIN — UNSUPPORTED
+============================================================
+
+Preserve heading:
+
+`VOXEL TERRAIN SCULPTING & PROP ADMIN (UNSUPPORTED)`
+
+Preserve all controls as disabled + unbound:
+
+- `FLATTEN (UNSUPPORTED)`
+- `EXCAVATE (UNSUPPORTED)`
+- `ROTATE (UNSUPPORTED)`
+- `CLONE (UNSUPPORTED)`
+
+No handlers.
+No ActionIds/EventIds.
+No terrain writes.
+No prop transform writes.
+No clone/delete implementation.
+No save-affecting world mutation.
+
+============================================================
+I. ENTITY INSPECTOR PRESENTATION
+============================================================
+
+Preserve heading:
+
+`TARGET ENTITY INSPECTOR & CONTROLS`
+
+Preserve the current renderer call:
+
+`Get-EntityInspectorState`
+
+Do not change the inspector helper or command publisher.
+
+Preserve the current user-facing fallback meaning:
+
+`Aim crosshair at any creature, NPC, or prop to inspect`
+
+Preserve the label prefix:
+
+`Target:`
+
+IMPORTANT:
+This milestone is NOT authorized to "fix", reinterpret, remap, or redesign the data contract between `Get-EntityInspectorState` and the renderer.
+
+If you discover that the current renderer's `$entState.data` consumption does not match the helper's returned schema, treat that as a separate product-level semantic issue:
+STOP and report it before changing inspector semantics.
+
+Responsive layout may change the label/container structure only.
+
+============================================================
+J. ENTITY MUTATION PLACEHOLDERS — UNSUPPORTED
+============================================================
+
+Preserve all three as disabled + unbound:
+
+- `TELEPORT (UNSUPPORTED)`
+- `KILL ENTITY (UNSUPPORTED)`
+- `DESPAWN ENTITY (UNSUPPORTED)`
+
+No handlers.
+No ActionIds/EventIds.
+No entity mutation.
+No authority inference.
+
+`Publish-EntityInspectorCommand` remains outside this renderer's responsive scope and must remain unchanged.
+
+============================================================
+K. EVENT LIFECYCLE / ZERO-GAP
+============================================================
+
+Historical G2E closure established:
+
+- raw `Register-SafeUiEvent` in `Render-BuildingEntitiesPage` = 0
+- raw `.Add_Click(...)` in `Render-BuildingEntitiesPage` = 0
+- exactly 3 canonical `Register-AdminActionEvent` source sites
+
+Canonical EventIds:
+
+- `f7.building.altarArea.toggle.click`
+- `f7.building.altarFar.toggle.click`
+- `f7.building.buildRange.toggle.click`
+
+Preserve that source-level model.
+
+Do not introduce:
+
+- `.add_Click`
+- `.add_SelectedIndexChanged`
+- `.add_TextChanged`
+- `.add_ValueChanged`
+- direct `Register-SafeUiEvent`
+- `[scriptblock]::Create`
+
+Unsupported dismantle/terrain/prop/entity controls remain handler-free.
+
+RESPONSIVE DESIGN TARGET
+
+Rebuild `Render-BuildingEntitiesPage` using responsive cards/tables while preserving the conceptual hierarchy:
+
+1. Building & World Editing page header
+2. Building Authority & Restriction Overrides card
+3. Voxel Terrain Sculpting & Prop Admin card
+4. Target Entity Inspector & Controls card
+
+The exact table decomposition is yours to design.
+
+At minimum:
+
+- major cards stretch with content width
+- altar-area and altar-far controls share responsive width cleanly
+- build-range and instant-dismantle controls share responsive width cleanly
+- long unsupported labels do not overlap neighboring controls
+- terrain/prop actions distribute across available width
+- entity target text stretches horizontally and remains readable
+- entity action placeholders distribute responsively
+- labels/value rows are separated where needed to prevent WinForms overlap
+- vertical order remains correct in the F7 FlowLayoutPanel
+
+Do not claim exact geometry is proven unless a real WinForms layout harness exists.
+
+AUTONOMOUS ITERATION PERMISSION
+
+You may autonomously:
+
+- make bounded product edits inside `Render-BuildingEntitiesPage`
+- create TEMP staging roots
+- create a TEMP-only G5G Building parity fixture
+- adapt TEMP copies of test fixtures for toolkit-root/path issues
+- update TEMP-only stale fixed-pixel/source-pattern assertions only when semantic invariants are independently proven preserved
+- rerun tests as many times as needed
+- fix parse/layout-construction issues introduced by your migration
+- fix renderer-local responsive overlap issues discovered by UI smoke
+- iterate on responsive table/card decomposition
+- inspect Current source/registry/archived G2E evidence
+
+Do not ask the user for intermediate approval for those recoverable issues.
+
+STOP AND RETURN TO USER ONLY IF
+
+- authoritative Current hash differs before first edit
+- a required Building/World Editing behavior cannot be preserved without changing backend/gameplay semantics
+- current evidence contradicts canonical registry/safety state
+- a change outside `Render-BuildingEntitiesPage` is genuinely required
+- a shared responsive helper must change
+- page dispatch must change
+- `Get-EntityInspectorState` or `Publish-EntityInspectorCommand` must change
+- `Send-CheatCommand` or registry must change
+- completing the task requires recreating H:
+- completing the task requires enabling a disabled action
+- completing the task requires inventing an API, address, signature, pointer, layout, calling convention, build authority model, terrain/prop authority, entity authority, or runtime behavior
+- an inspector schema mismatch would need semantic repair
+- a safety-sensitive ambiguity cannot be resolved from existing evidence/tests
+
+Do NOT stop merely because a TEMP test fixture is stale or hardcodes H:.
+
+TEMP VERIFICATION LINEAGE
+
+Use the qualified lineage from G5B–G5F:
+
+Primary staging skeleton:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Current\architect_toolkit.zip`
+
+Use preserved CODE-0042 input only for missing support artifacts such as CT catalog:
+
+`I:\My Drive\Enshrouded Mods\Architect_Mod\Code_History\CODE-0042_INPUT\architect_toolkit_INC-0062_v0.42.0.zip`
+
+Preserved archive SHA-256:
+
+`768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC`
+
+Do not downgrade Current tests/native sources to the older archive generation.
+
+Overlay authoritative loose Current files into TEMP as needed.
+
+If prior TEMP G5B/G5C/G5D/G5E/G5F parity fixtures are unavailable, recreate equivalent TEMP checks from their closed invariants rather than stopping.
+
+G5G PARITY FIXTURE
+
+Create a TEMP-only Building & World Editing parity fixture.
+
+Verify at least these independent groups:
+
+1. `Building & World Editing` still routes to `Render-BuildingEntitiesPage`
+2. page header meaning preserved
+3. building authority heading meaning preserved
+4. `Get-AdminCapabilities` remains capability source
+5. altar-area capability key remains `altarArea`
+6. altar-area visible control meaning preserved
+7. altar-area ActionId remains `cheat.world.altar_area`
+8. altar-area EventId remains `f7.building.altarArea.toggle.click`
+9. altar-area Page metadata remains `Building & Entities`
+10. altar-area handler still routes only through `Send-CheatCommand`
+11. registry still disables `cheat.world.altar_area`
+12. altar-area registry remains UNSOLVED/backend NONE/runtime UNAVAILABLE
+13. `ALTAR_AREA_UNSOLVED` rejection for alias/canonical path preserved
+14. altar-far capability key remains `altarFar`
+15. altar-far visible control meaning preserved
+16. altar-far ActionId remains `cheat.world.altar_far`
+17. altar-far EventId remains `f7.building.altarFar.toggle.click`
+18. altar-far Page metadata remains `Building & Entities`
+19. altar-far handler routes only through `Send-CheatCommand`
+20. registry still disables `cheat.world.altar_far`
+21. altar-far registry remains UNSOLVED/backend NONE/runtime UNAVAILABLE
+22. `ALTAR_FAR_UNSOLVED` rejection preserved
+23. build-range capability key remains `buildRange`
+24. build-range visible control meaning preserves 32m
+25. build-range ActionId remains `cheat.world.build_range`
+26. build-range EventId remains `f7.building.buildRange.toggle.click`
+27. build-range Page metadata remains `Building & Entities`
+28. build-range handler routes only through `Send-CheatCommand`
+29. registry still disables `cheat.world.build_range`
+30. build-range registry remains UNSOLVED/backend NONE/runtime UNAVAILABLE
+31. `BUILD_RANGE_UNSOLVED` rejection preserved
+32. Instant Dismantle remains disabled/unbound
+33. terrain/prop heading remains explicitly unsupported
+34. Flatten remains disabled/unbound
+35. Excavate remains disabled/unbound
+36. Rotate remains disabled/unbound
+37. Clone remains disabled/unbound
+38. renderer still calls `Get-EntityInspectorState`
+39. Entity Inspector helper source hash unchanged
+40. Entity Inspector command-publisher source hash unchanged
+41. inspector fallback hint meaning preserved
+42. Target label prefix preserved
+43. entity Teleport remains disabled/unbound
+44. Kill Entity remains disabled/unbound
+45. Despawn Entity remains disabled/unbound
+46. unsupported placeholder handlers remain zero
+47. canonical `Register-AdminActionEvent` source sites remain exactly three
+48. raw direct F7 event registrations inside Building remain zero
+49. no fake ActionIds/EventIds added to unsupported controls
+50. Home hash unchanged
+51. Player hash unchanged
+52. Mobility hash unchanged
+53. Inventory hash unchanged
+54. Crafting/Progression hash unchanged
+55. Combat hash unchanged
+56. World/Camera hash unchanged
+57. Multiplayer/Quests hash unchanged
+58. renderer now uses responsive card/table infrastructure
+59. no invalid Absolute row-height hashtable introduced
+60. no backend/dispatch/registry/native/Lua changes occurred
+
+You may split or strengthen checks.
+Do not reduce coverage merely to get green.
+
+REGRESSION / SUCCESS CRITERIA
+
+G5G is closed only when all applicable source/static evidence is green:
+
+- starting runtime SHA verified
+- PowerShell parse PASS
+- only intended Building renderer layout source changed
+- Home hash unchanged
+- Player hash unchanged
+- Mobility hash unchanged
+- Inventory hash unchanged
+- Crafting/Progression hash unchanged
+- Combat hash unchanged
+- World/Camera hash unchanged
+- Multiplayer/Quests hash unchanged
+- `Get-EntityInspectorState` hash unchanged
+- `Publish-EntityInspectorCommand` hash unchanged
+- registry unchanged at 55 / 17 / 38 / 55 unique
+- G5G Building parity fixture fully PASS
+- G5B Player parity remains 18/18 PASS
+- G5C Mobility parity remains fully PASS
+- G5D Items/Progression parity remains fully PASS
+- G5E Combat parity remains fully PASS
+- G5F World/Camera parity remains fully PASS
+- truthfulness fully PASS after only justified TEMP semantic refreshes
+- UI smoke fully PASS
+- UI errors = 0
+- CT catalog = 224
+- lifecycle/static PASS
+- source consolidation/schema PASS
+- prohibited mutation scan PASS
+- corrected G4A zero-gap/lifecycle PASS
+- stable-definition Control refs = 0
+- stable-definition Handler refs = 0
+- no new direct F7 event sites
+- final Current runtime SHA recorded
+- H: remains absent
+- no gameplay/runtime mechanism changed or promoted to PROVEN
+
+GEOMETRY
+
+If no real WinForms layout harness exists, report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+UI smoke is not geometry proof.
+
+FINAL REPORT
+
+Return one final report, not a stream of intermediate handoffs.
+
+Include:
+
+- authoritative source path
+- starting SHA
+- ending SHA
+- Home hash before/after
+- Player hash before/after
+- Mobility hash before/after
+- Inventory hash before/after
+- Crafting/Progression hash before/after
+- Combat hash before/after
+- World/Camera hash before/after
+- Building hash before/after
+- Multiplayer/Quests hash before/after
+- `Get-EntityInspectorState` hash before/after
+- `Publish-EntityInspectorCommand` hash before/after
+- concise responsive layout architecture
+- product-source files changed
+- TEMP-only test files changed
+- full G5G parity result
+- Player parity result
+- Mobility parity result
+- Items/Progression parity result
+- Combat parity result
+- World/Camera parity result
+- truthfulness result
+- UI smoke result
+- UI error count
+- catalog count
+- lifecycle result
+- schema/source-consolidation result
+- prohibited-mutation result
+- G4A result
+- stable-definition refs
+- registry counts
+- geometry status
+- any justified TEMP assertion refreshes and evidence
+- any inspector-schema concern discovered, without modifying it
+- confirmation H: was not recreated
+- confirmation G5H/F8 was not started
+- confirmation no gameplay/runtime mechanism was changed or proven
+
+If successful, explicitly state:
+
+`G5G Building & World Editing responsive/parity verification is closed at source/static level.`
+
+Do not call gameplay behavior PROVEN from these tests.

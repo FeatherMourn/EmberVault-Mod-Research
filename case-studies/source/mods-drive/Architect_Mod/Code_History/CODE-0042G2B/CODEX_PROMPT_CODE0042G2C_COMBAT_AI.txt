@@ -1,0 +1,268 @@
+CODE-0042G2C — COMBAT & AI EVENT MIGRATION ONLY
+
+Scope: Architect Toolkit F7 `Render-CombatAIPage`
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change `admin_action_registry.json`.
+- Registry must remain 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate World/Camera, Building/Entities, Settings, Codex, Map, Blueprint Browser, or other pages;
+- begin responsive layout work;
+- add combat/AI mutation backends;
+- add registry action IDs;
+- enable `cheat.parry.toggle`;
+- invent damage/crit/AI/boss mutation behavior.
+
+GOAL
+
+Remove all 12 raw `.Add_Click(...)` registrations inside `Render-CombatAIPage`.
+
+After this pass:
+- `Render-CombatAIPage` raw `.Add_Click(...)` count = 0
+- raw `Register-SafeUiEvent` count = 0
+- G1, G2A, and G2B zero-gap state remains unchanged
+
+CURRENT 12 RAW SOURCE SITES
+
+Only ONE is a real action:
+
+- Easy Parry -> `cheat.parry.toggle`
+
+The other ELEVEN source sites are disabled unsupported placeholders whose handlers only call `Set-AdminStatus`.
+
+A. EASY PARRY
+
+Current raw handler:
+
+`$btnParry.Add_Click({ [void](Send-CheatCommand "cheat.parry.toggle") })`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.parry.toggle`
+
+EventId:
+`f7.combat.parry.toggle.click`
+
+Page:
+`Combat & AI`
+
+Operation:
+`Toggle Easy Parry`
+
+Lifetime:
+PAGE
+
+Replace with:
+`Register-AdminActionEvent`
+
+Canonical registry truth is authoritative.
+
+`cheat.parry.toggle` currently is:
+- enabled=false
+- evidenceStatus=`UNSOLVED`
+- backend=`NONE`
+- runtimeMode=`UNAVAILABLE`
+- authority=`unknown`
+- risk=`mutation`
+
+Therefore:
+- the parry button must be disabled by canonical binding;
+- do NOT use `AllowDisabled`;
+- do NOT let local `easyParry` capability state re-enable it;
+- do NOT add a direct patch/native fallback.
+
+If the existing tooltip infrastructure can surface the canonical failure reason, preserve/use it.
+
+B. DEFENSE-IN-DEPTH DISPATCH REJECTION
+
+Current `Send-CheatCommand` still maps:
+
+- `combat.parry`
+- `cheat.parry.toggle`
+
+to native `cheat.parry.toggle` publication.
+
+Add an explicit fail-closed branch BEFORE native command publication:
+
+```powershell
+elseif ($Action -in @("combat.parry", "cheat.parry.toggle")) {
+    return @{
+        success = $false
+        state = "UNSUPPORTED"
+        error = "PARRY_UNSOLVED: canonical parry mutation backend is unavailable."
+    }
+}
+```
+
+Equivalent truthful wording is acceptable.
+
+Requirements:
+- branch occurs before `Publish-CheatCorrelationCommand`;
+- no pending native command is created;
+- no direct patch fallback;
+- no capability-map optimism can bypass it.
+
+This is safety hardening only.
+
+C. REMOVE THE ELEVEN UNSUPPORTED PLACEHOLDER HANDLERS
+
+Do NOT canonicalize these placeholders.
+
+Remove their raw click handlers entirely and leave the controls disabled/presentation-only.
+
+1. Player Damage multiplier loop
+   - remove the loop's `.Add_Click(...)`
+   - no EventId
+   - no ActionId
+
+2. Enemy Damage multiplier loop
+   - remove handler
+   - no EventId / ActionId
+
+3. Critical Chance loop
+   - remove handler
+   - no EventId / ActionId
+
+4. Attack Speed button
+   - remove handler
+   - keep disabled
+
+5. Super Knockback button
+   - remove handler
+   - keep disabled
+
+6. Freeze All Enemy AI button
+   - remove handler
+   - keep disabled
+
+7. Disable Enemy Aggro button
+   - remove handler
+   - keep disabled
+
+8. Kill All Enemies in Radius button
+   - remove handler
+   - keep disabled
+
+9. Despawn Enemies in Radius button
+   - remove handler
+   - keep disabled
+
+10. Boss Health multiplier loop
+    - remove loop handler
+    - no EventId / ActionId
+
+11. Boss Damage multiplier loop
+    - remove loop handler
+    - no EventId / ActionId
+
+Do NOT classify these as UI_ONLY merely to satisfy the audit.
+Do NOT add fake registry actions.
+Do NOT add tooltip-click handlers.
+
+Disabled placeholder controls may retain their existing labels, colors, Tags, and diagnostic text labels; they simply must not own handlers.
+
+D. LIFECYCLE
+
+Only one new canonical Combat definition is expected:
+
+`f7.combat.parry.toggle.click`
+
+It must be:
+- Classification = ACTION
+- ActionId = `cheat.parry.toggle`
+- LifetimeScope = PAGE
+- Page = `Combat & AI`
+
+Repeated Combat render must be idempotent:
+- no duplicate/ambiguous EventIds
+- no stale active binding after page clear
+
+No event definitions should exist for the 11 unsupported placeholder families.
+
+E. STATIC ACCEPTANCE
+
+After migration:
+
+- Combat raw `.Add_Click(...)` = 0
+- Combat raw `Register-SafeUiEvent` = 0
+- exactly one canonical Combat action EventId is added:
+  `f7.combat.parry.toggle.click`
+- it resolves to `cheat.parry.toggle`
+- `cheat.parry.toggle` remains disabled
+- all 11 unsupported placeholder handler sites are gone
+- no new Combat registry IDs
+- `Send-CheatCommand` rejects parry aliases before publication
+- registry remains 55 / 17 enabled / 38 disabled
+- Inventory raw = 0
+- Crafting raw = 0
+- G1 Home/Player/Mobility/shell raw = 0
+
+F. PRESERVE
+
+Keep unchanged:
+
+- scanner action disabled/fail-closed
+- `movement.position.read` disabled/fail-closed
+- `Get-CurrentPlayerPosition` returns `$null`
+- skill set/reset fail-closed
+- Inventory reroll disabled/unqualified
+- teleport fail-closed / ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch
+- CT catalog = 224
+- source-consolidation catalog
+- schema/adaptor validity
+
+TESTS
+
+Run:
+
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. Combat raw count: 12 -> 0
+11. Inventory raw remains 0
+12. Crafting raw remains 0
+13. G1 raw counts remain 0
+14. `f7.combat.parry.toggle.click` exact mapping assertion
+15. `cheat.parry.toggle` remains disabled
+16. parry direct-dispatch rejection:
+    - no pending command
+    - no publication
+17. unsupported-placeholder no-handler assertions for all 11 source sites
+18. prohibited mutation scan
+
+REPORT
+
+Return:
+
+- files changed
+- Combat raw count before/after
+- exact parry EventId / ActionId mapping
+- exact fail-closed parry dispatch behavior
+- 11 unsupported placeholder handlers removed
+- registry counts unchanged
+- lifecycle/truthfulness/UI-smoke results
+- remaining G2 raw counts:
+  - World/Camera 9
+  - Building/Entities 3
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G2D in this pass.

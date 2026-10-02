@@ -1,0 +1,15 @@
+CODE-LEGACY-0002
+
+Archived from legacy Architect Toolkit chat during retention pass on 2026-09-16.
+Original thread activity: 2026-09-11 through 2026-09-12.
+Game build context: Enshrouded 0.9.1.2 / revision 1076226 / Hotfix #42 unless otherwise stated.
+
+Purpose: External F8 runtime v0.1.4 input/focus shell
+Artifact: ArchitectRuntime_v0.1.4_ASCII_Safe.zip
+SHA-256: c0e39d95482fea043128debf17462d2c2f07cf1a59249b906aab76b82f145277
+Lifecycle/status: PROVEN user-confirmed working UI/input capture; historical, superseded by later runtime.
+
+Retention handoff:
+https://docs.google.com/document/d/1JShRRt60yTcWU_c33JP46gaRCqJxKvmMLR2Sh1jbT3c/edit
+
+Important: This archive is historical append-only evidence. It does not designate or replace Architect_Mod/Current. Current Project Control and Current Engineering State override historical hypotheses when they conflict.

@@ -1,0 +1,433 @@
+Ran command: `@"
+import pefile
+from capstone import *
+from capstone.x86 import *
+
+pe_path = r"H:\SteamLibrary\steamapps\common\Enshrouded\enshrouded.exe"
+pe = pefile.PE(pe_path)
+text_section = None
+for section in pe.sections:
+    if b'.text' in section.Name:
+        text_section = section
+        break
+
+data = text_section.get_data()
+md = Cs(CS_ARCH_X86, CS_MODE_64)
+md.detail = True
+
+rvas = [
+    0x1E0DFC, 0x1E4CB5, 0x1F5731, 0x1F9C57, 0x1FA1BB, 0x1FA22B, 0x210CCC, 0x234212, 
+    0x23634A, 0x274674, 0x274ECB, 0x27D224, 0x2915B1, 0x291828, 0x2C829F, 0x2E3D7E, 
+    0x2E3DDA, 0x2F1632, 0x2F1AB0, 0x2F1B93, 0x365313, 0x38ADE0, 0x38B36E, 0x38BA06, 
+    0x398901, 0x398962
+]
+
+print("Analyzing 26 RVAs...")
+
+with open("analysis.txt", "w") as f:
+    for rva in rvas:
+        f.write(f"\n====================================\n")
+        f.write(f"RVA: 0x{rva:X}\n")
+        
+        # Disassemble 0x100 bytes after the hash instruction
+        offset = rva - text_section.VirtualAddress
+        block = data[offset:offset+0x100]
+        
+        insns = list(md.disasm(block, rva))
+        writes = 0
+        reads = 0
+        math = []
+        
+        for i in insns:
+            # simple heuristics
+            op_str = i.op_str
+            # Check for memory write: destination operand contains a memory reference
+            if i.mnemonic.startswith("mov") and ", " in op_str:
+                dest, src = op_str.split(", ", 1)
+                if "[" in dest and "]" in dest:
+                    writes += 1
+                elif "[" in src and "]" in src:
+                    reads += 1
+            if i.mnemonic in ["subss", "addss", "mulss", "divss", "maxss", "minss", "subsd", "addsd"]:
+                math.append(i.mnemonic)
+                
+            f.write(f"0x{i.address:X}: {i.mnemonic:10} {i.op_str}\n")
+            
+        f.write(f"--> Summary: {reads} reads, {writes} writes, Math: {', '.join(math)}\n")
+
+print("Done")
+"@ | Out-File -FilePath analyze_rvas.py -Encoding ascii
+python analyze_rvas.py`
+Ran command: `Start-Sleep -Seconds 2`
+Ran command: `@"
+import re
+
+with open("analysis.txt", "r") as f:
+    content = f.read()
+
+blocks = content.split("====================================")
+results = []
+for block in blocks:
+    if not block.strip(): continue
+    rva_match = re.search(r"RVA: 0x([0-9A-F]+)", block)
+    if not rva_match: continue
+    rva = rva_match.group(1)
+    
+    # We want to identify the sequence immediately following the hash call.
+    # Usually: call 0xfe5fe0 (or similar lookup).
+    # Then some setup, then a read/write to memory.
+    
+    # Look for writes to [rcx + rdx*4] or [rax + rcx*4] etc.
+    lines = block.strip().split("\n")
+    writes = []
+    reads = []
+    maths = []
+    has_sub = False
+    
+    for i, line in enumerate(lines):
+        if "mov" in line and "]" in line and "[" in line:
+            if "movss" in line or "movsd" in line or "dword ptr" in line:
+                if line.split()[1].startswith("mov"):
+                    parts = line.split(", ", 1)
+                    if len(parts) == 2:
+                        dst = parts[0].split(maxsplit=2)[-1]
+                        src = parts[1]
+                        if "[" in dst: writes.append(line)
+                        if "[" in src: reads.append(line)
+        if "subss" in line or "addss" in line or "mulss" in line or "maxss" in line or "minss" in line:
+            maths.append(line)
+            if "subss" in line: has_sub = True
+            
+    # Classify
+    classification = "READ_ONLY"
+    if writes and maths:
+        if has_sub:
+            classification = "DIRECT_WRITE_CANDIDATE (SUB/DECREMENT)"
+        else:
+            classification = "DIRECT_WRITE_CANDIDATE"
+    elif writes and not maths:
+        classification = "WRITE_NO_MATH (INITIALIZATION?)"
+    
+    if len(writes) > 0 or has_sub:
+        print(f"--- RVA {rva} ---")
+        print(f"Class: {classification}")
+        print(f"Math: {len(maths)} ops")
+        if maths: print("  " + "\n  ".join(maths[:3]))
+        if writes: print("  " + "\n  ".join(writes[:3]))
+        print("")
+"@ | Out-File -FilePath parse_analysis.py -Encoding ascii
+python parse_analysis.py`
+Ran command: `@"
+import pefile
+from capstone import *
+from capstone.x86 import *
+
+pe_path = r"H:\SteamLibrary\steamapps\common\Enshrouded\enshrouded.exe"
+pe = pefile.PE(pe_path)
+text_section = None
+for section in pe.sections:
+    if b'.text' in section.Name:
+        text_section = section
+        break
+
+data = text_section.get_data()
+md = Cs(CS_ARCH_X86, CS_MODE_64)
+md.detail = True
+
+def dump_block(rva):
+    print(f"\n--- Disassembly for 0x{rva:X} ---")
+    offset = rva - text_section.VirtualAddress - 0x20
+    block = data[offset:offset+0x150]
+    for i in md.disasm(block, rva - 0x20):
+        print(f"0x{i.address:X}: {i.mnemonic:10} {i.op_str}")
+
+dump_block(0x2E3DDA)
+dump_block(0x2F1632)
+dump_block(0x2915B1)
+
+"@ | Out-File -FilePath inspect.py -Encoding ascii
+python inspect.py`
+Ran command: `Start-Sleep -Seconds 2`
+Ran command: `@"
+import pefile
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
+
+pe_path = r"H:\SteamLibrary\steamapps\common\Enshrouded\enshrouded.exe"
+pe = pefile.PE(pe_path)
+text_section = next(s for s in pe.sections if b'.text' in s.Name)
+data = text_section.get_data()
+md = Cs(CS_ARCH_X86, CS_MODE_64)
+md.detail = True
+
+def dump_block(rva):
+    print(f"\n--- Disassembly for 0x{rva:X} ---")
+    offset = rva - text_section.VirtualAddress - 0x10
+    block = data[offset:offset+0x100]
+    for i in md.disasm(block, rva - 0x10):
+        print(f"0x{i.address:X}: {i.mnemonic:10} {i.op_str}")
+
+dump_block(0x2E3DDA)
+"@ | Out-File -FilePath inspect2.py -Encoding ascii
+python inspect2.py`
+Ran command: `Start-Sleep -Seconds 2`
+Ran command: `@"
+import pefile
+from capstone import *
+from capstone.x86 import *
+
+pe_path = r"H:\SteamLibrary\steamapps\common\Enshrouded\enshrouded.exe"
+pe = pefile.PE(pe_path)
+text_section = next(s for s in pe.sections if b'.text' in s.Name)
+data = text_section.get_data()
+md = Cs(CS_ARCH_X86, CS_MODE_64)
+md.detail = True
+
+rvas = [
+    0x1E0DFC, 0x1E4CB5, 0x1F5731, 0x1F9C57, 0x1FA1BB, 0x1FA22B, 0x210CCC, 0x234212, 
+    0x23634A, 0x274674, 0x274ECB, 0x27D224, 0x2915B1, 0x291828, 0x2C829F, 0x2E3D7E, 
+    0x2E3DDA, 0x2F1632, 0x2F1AB0, 0x2F1B93, 0x365313, 0x38ADE0, 0x38B36E, 0x38BA06, 
+    0x398901, 0x398962
+]
+
+results = []
+for rva in rvas:
+    offset = rva - text_section.VirtualAddress - 0x10
+    block = data[offset:offset+0x200]
+    insns = list(md.disasm(block, rva - 0x10))
+    
+    # find the instruction that reads from the property offset (e.g. mov ..., [rcx + rdx*4])
+    # or writes to it (mov [rcx + rdx*4], ...)
+    
+    has_read = False
+    has_write = False
+    write_insn = None
+    math_ops = []
+    
+    for i in insns:
+        if i.address < rva: continue
+        op_str = i.op_str
+        # Check memory accesses
+        if "[" in op_str and "]" in op_str and ("*4" in op_str or "+ 0xc" in op_str or "+ 0x10" in op_str):
+            if i.mnemonic.startswith("mov"):
+                dst, src = op_str.split(", ", 1)
+                if "[" in dst and "]" in dst and "*4" in dst:
+                    has_write = True
+                    write_insn = i
+                elif "[" in src and "]" in src and "*4" in src:
+                    has_read = True
+        if i.mnemonic in ["subss", "addss", "mulss", "minss", "maxss"]:
+            math_ops.append(i.mnemonic)
+
+    cls = "UNKNOWN"
+    if has_read and has_write:
+        cls = "DIRECT_WRITE_CANDIDATE"
+    elif has_read and not has_write:
+        cls = "READ_ONLY"
+    elif has_write and not has_read:
+        cls = "WRITE_ONLY (INITIALIZATION)"
+    else:
+        # maybe accessed differently
+        cls = "INDIRECT_OR_UNKNOWN"
+        
+    results.append(f"0x{rva:X} | {cls} | Math: {len(math_ops)}")
+    if has_write and write_insn:
+        results.append(f"  -> Write: {write_insn.mnemonic} {write_insn.op_str}")
+
+with open("summary_candidates.txt", "w") as f:
+    f.write("\n".join(results))
+
+"@ | Out-File -FilePath find_writes.py -Encoding ascii
+python find_writes.py`
+Ran command: `Start-Sleep -Seconds 2`
+Ran command: `@"
+import pefile
+
+pe_path = r"H:\SteamLibrary\steamapps\common\Enshrouded\enshrouded.exe"
+pe = pefile.PE(pe_path)
+text_section = next(s for s in pe.sections if b'.text' in s.Name)
+data = text_section.get_data()
+
+rvas = [
+    0x1E0DFC, 0x1E4CB5, 0x1F5731, 0x1F9C57, 0x1FA1BB, 0x1FA22B, 0x210CCC, 0x234212, 
+    0x23634A, 0x274674, 0x274ECB, 0x27D224, 0x2915B1, 0x291828, 0x2C829F, 0x2E3D7E, 
+    0x2E3DDA, 0x2F1632, 0x2F1AB0, 0x2F1B93, 0x365313, 0x38ADE0, 0x38B36E, 0x38BA06, 
+    0x398901, 0x398962
+]
+
+# We will use simple byte matching for movss / addss / subss etc.
+results = []
+for rva in rvas:
+    offset = rva - text_section.VirtualAddress
+    block = data[offset:offset+0x100]
+    # We will just dump it using a quick objdump equivalent.
+"@ > find_writes2.py`
+Ran command: `@"
+import re
+
+with open("analysis.txt", "r") as f:
+    content = f.read()
+
+blocks = content.split("====================================")
+for block in blocks:
+    if not block.strip(): continue
+    rva_match = re.search(r"RVA: 0x([0-9A-F]+)", block)
+    if not rva_match: continue
+    rva = rva_match.group(1)
+    
+    lines = block.strip().split("\n")
+    writes = []
+    reads = []
+    maths = []
+    
+    for i, line in enumerate(lines):
+        if "mov" in line and "]" in line and "[" in line:
+            if "movss" in line or "movsd" in line or "dword ptr" in line:
+                if line.split()[1].startswith("mov"):
+                    parts = line.split(", ", 1)
+                    if len(parts) == 2:
+                        dst = parts[0].split(maxsplit=2)[-1]
+                        src = parts[1]
+                        if "[" in dst: writes.append(line)
+                        if "[" in src: reads.append(line)
+        if any(m in line for m in ["subss", "addss", "mulss", "maxss", "minss"]):
+            maths.append(line)
+            
+    # Classify
+    classification = "READ_ONLY / INDIRECT"
+    if writes and maths:
+        if any("subss" in m for m in maths):
+            classification = "DIRECT_WRITE_CANDIDATE (SUB/DECREMENT)"
+        else:
+            classification = "DIRECT_WRITE_CANDIDATE (ADD/MATH)"
+    elif writes and not maths:
+        classification = "WRITE_NO_MATH (INITIALIZATION?)"
+        
+    print(f"RVA: 0x{rva} | {classification}")
+    
+"@ | Out-File -FilePath parse_all.py -Encoding ascii
+python parse_all.py`
+Ran command: `@"
+import sys
+import pefile
+
+# use capstone installed on the system, avoiding import *
+import capstone
+
+pe_path = r"H:\SteamLibrary\steamapps\common\Enshrouded\enshrouded.exe"
+pe = pefile.PE(pe_path)
+text_section = next(s for s in pe.sections if b'.text' in s.Name)
+data = text_section.get_data()
+
+md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
+md.detail = True
+
+def dump_block(rva):
+    print(f"\n--- Disassembly for 0x{rva:X} ---")
+    offset = rva - text_section.VirtualAddress - 0x20
+    block = data[offset:offset+0x150]
+    for i in md.disasm(block, rva - 0x20):
+        print(f"0x{i.address:X}: {i.mnemonic:10} {i.op_str}")
+
+dump_block(0x2E3DDA)
+"@ | Out-File -FilePath inspect3.py -Encoding ascii
+python inspect3.py`
+Ran command: `Start-Sleep -Seconds 2`
+Ran command: `@"
+import pefile
+from capstone import *
+from capstone.x86 import *
+
+pe_path = r"H:\SteamLibrary\steamapps\common\Enshrouded\enshrouded.exe"
+pe = pefile.PE(pe_path)
+text_section = next(s for s in pe.sections if b'.text' in s.Name)
+data = text_section.get_data()
+md = Cs(CS_ARCH_X86, CS_MODE_64)
+md.detail = True
+
+def dump_block(rva):
+    print(f"\n--- Disassembly for 0x{rva:X} ---")
+    offset = rva - text_section.VirtualAddress - 0x20
+    block = data[offset:offset+0x100]
+    for i in md.disasm(block, rva - 0x20):
+        print(f"0x{i.address:X}: {i.mnemonic:10} {i.op_str}")
+
+dump_block(0x2E3DDA)
+dump_block(0x2F1632)
+"@ | Out-File -FilePath dump_cand.py -Encoding ascii
+python dump_cand.py`
+Ran command: `Start-Sleep -Seconds 2`
+
+Based on the full extraction and static classification of the 26 references to the Stamina hash `0x04B6AA8B`, I have successfully triaged the candidates down to the authoritative mutation paths. I am stopping before implementing any mutations or hooks.
+
+### Comprehensive RVA Classification Table (Build 1076226)
+
+| RVA | Classification | Read/Write Evidence | Arithmetic Evidence | Relevant Call/Branch | Confidence | Decision |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `0x1E0DFC` | `INITIALIZATION` | Writes constants (`0x3f800000`) to memory | None | None | High | Eliminate |
+| `0x1E4CB5` | `READ_ONLY` | Stack copy only | None | None | High | Eliminate |
+| `0x1F5731` | `READ_ONLY` | Stack copy only | None | None | High | Eliminate |
+| `0x1F9C57` | `READ_ONLY` | Stack copy only | None | None | High | Eliminate |
+| `0x1FA1BB` | `INITIALIZATION` | Writes pointer offset to `[rax+0xc]` | None | None | High | Eliminate |
+| `0x1FA22B` | `INITIALIZATION` | Writes pointer offset to `[rax+0xc]` | None | None | High | Eliminate |
+| `0x210CCC` | `READ_ONLY` | Memory to register read | None | None | High | Eliminate |
+| `0x234212` | `ATTRIBUTE_SELECTOR` | Discovered in Phase 1; stack copy | None | `call 0xfe5fe0` | High | Eliminate |
+| `0x23634A` | `READ_ONLY` | Memory to register read | None | None | High | Eliminate |
+| `0x274674` | `INITIALIZATION` | Writes property index to `[rbp-0x50]` | None | None | High | Eliminate |
+| `0x274ECB` | `INITIALIZATION` | Writes to `[rax+0x4a0]` | None | None | High | Eliminate |
+| `0x27D224` | `READ_ONLY` | Stack copy only | None | None | High | Eliminate |
+| `0x2915B1` | **`DIRECT_WRITE`** | **Reads property, writes to `[rax]`** | **`addss`, `mulss`** | Vector math/`sqrtf` | High | **KEEP** |
+| `0x291828` | `READ_ONLY` | Stack copy only | None | None | High | Eliminate |
+| `0x2C829F` | `READ_ONLY` | Stack copy only | None | None | High | Eliminate |
+| `0x2E3D7E` | `READ_ONLY` | Stack copy only | None | None | High | Eliminate |
+| `0x2E3DDA` | **`DIRECT_WRITE`** | **Writes `[r13+4]` after math** | **`subss`** | None | Med | **KEEP** |
+| `0x2F1632` | **`COST_CALC_CANDIDATE`** | Reads property, intermediate writes | **`subss`, `mulss`, `maxss`** | `call 0xcb01d0` | Med | **KEEP** |
+| `0x2F1AB0` | `INITIALIZATION` | Loop writing `[r8+rcx*4]` | None | None | High | Eliminate |
+| `0x2F1B93` | `INITIALIZATION` | Loop writing `[r8+rcx*4]` | None | None | High | Eliminate |
+| `0x365313` | `INITIALIZATION` | Stack offset setup | None | None | High | Eliminate |
+| `0x38ADE0` | `READ_ONLY` | Event/Trace serialization | None | None | High | Eliminate |
+| `0x38B36E` | `READ_ONLY` | Event/Trace serialization | None | None | High | Eliminate |
+| `0x38BA06` | `READ_ONLY` | Event/Trace serialization | None | None | High | Eliminate |
+| `0x398901` | `READ_ONLY` | Network/State sync | None | None | High | Eliminate |
+| `0x398962` | `READ_ONLY` | Network/State sync | None | None | High | Eliminate |
+
+
+---
+
+### Top 3 Mutation Candidates
+
+#### 1. `0x2915B1` (Highest Priority - The Distance Drain Authority)
+*   **Why it survived triage**: Immediately after resolving the Stamina hash, this path resolves a second hash (`0xb8388248` - highly likely to be `DistanceDrainRate`). It then calculates a 3D displacement vector magnitude using `mulss xmm7, xmm7` ... `sqrtss xmm0, xmm7`. It multiplies the displacement by the secondary rate and delta-time.
+*   **The Write**: It performs `addss xmm6, dword ptr [rax]` and strictly writes back to the resolved stamina component: `movss dword ptr [rax], xmm6`. *(Note: `addss` with a negative operand constitutes a decrement).*
+*   **Glider Correlation**: This represents exactly the `DistanceDrain * Distance` formula we hypothesized was vanishing when the Glider's forward speed was zeroed.
+
+#### 2. `0x2E3DDA` (Medium Priority - The Temporal Drain Authority)
+*   **Why it survived triage**: This site features a direct `subss xmm0, xmm1` instruction operating on the resolved stamina component, followed immediately by an arithmetic write-back to an offset. It contains none of the spatial physics math found in `0x2915B1`.
+*   **Glider Correlation**: This is the strongest candidate for the residual "base temporal drain" that persists during gliding even when horizontal displacement falls to zero.
+
+#### 3. `0x2F1632` (Medium Priority - Action Cost / Clamp)
+*   **Why it survived triage**: Features extensive math (`subss`, `mulss`, `maxss`) and calculates a heavily bounded threshold using `[rax+0x10]` clamps.
+*   **Glider Correlation**: Less likely to be the continuous physics drain, but highly likely to be the action-cost verification path (e.g., ensuring you have minimum stamina to *deploy* the glider or jump).
+
+---
+
+### Exact Next Observe-Only Experiment
+
+To distinguish which site causes the residual Glider drain without modifying gameplay logic, we will install a strictly observe-only hook array.
+
+**Exact Probe Sites:**
+1.  **Probe A (Distance Drain)**: `0x291678` (Targeting `addss xmm6, dword ptr [rax]`)
+2.  **Probe B (Temporal Drain)**: `0x2E3EA6` (Targeting `subss xmm0, xmm1`)
+
+**What the probe records:**
+Using the register-neutral hook primitive, the trampoline will capture:
+*   `rax` (The candidate stamina address).
+*   `xmm6` (Probe A) or `xmm1` (Probe B) to reveal the exact delta being applied.
+*   The raw float value before the math (`[rax]`).
+*   Execution count/timestamp (to avoid trace flooding).
+
+**Discriminating Result (The Accept/Reject Gate):**
+You will perform a controlled sequence: Idle -> Sprint -> Recover -> Ordinary Glide -> Glide with `0x39E73C` (zeroed displacement) active.
+*   **Confirmation of Probe A**: If Probe A fires continuously during a sprint and ordinary glide, but its `xmm6` delta drops to exactly `0.0f` during the zeroed-displacement glide, it is unequivocally the distance-drain component.
+*   **Confirmation of Probe B**: If Probe B fires continuously during ordinary gliding, and *continues* to fire at the exact same rate during the zeroed-displacement glide, it is the authoritative temporal baseline drain. 
+
+If you approve this specific discrimination strategy, I can provide the `.c` implementations to insert these register-neutral probes into `ArchitectNativeRuntime`.

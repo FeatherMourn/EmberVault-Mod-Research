@@ -1,0 +1,255 @@
+CODE-0042G2A — INVENTORY & ITEMS EVENT MIGRATION ONLY
+
+Scope: Architect Toolkit F7 `Render-InventoryItemsPage`
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- Do NOT change admin_action_registry.json.
+- Registry must remain 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate Crafting/Progression, Combat, World/Camera, Building/Entities, Settings, Codex, Map, Blueprint Browser, or other pages;
+- begin responsive layout work;
+- add item mutation backends;
+- add registry action IDs;
+- enable `cheat.item.reroll`;
+- invent item duplication/repair/sort/spawn behavior.
+
+GOAL
+
+Migrate or remove all 7 raw `Register-SafeUiEvent` registrations inside `Render-InventoryItemsPage`.
+
+After this pass:
+- `Render-InventoryItemsPage` raw `Register-SafeUiEvent` count = 0
+- raw `.Add_Click(...)` count = 0
+- G1 Home/Player/Mobility/shell zero-gap state remains unchanged
+
+CURRENT 7 RAW SITES
+
+1. REROLL ACTIVE ITEM
+
+Current action:
+`Send-CheatCommand "cheat.item.reroll"`
+
+Classification:
+ACTION
+
+Canonical ActionId:
+`cheat.item.reroll`
+
+EventId:
+`f7.items.reroll.click`
+
+Use:
+`Register-AdminActionEvent`
+
+Lifetime:
+PAGE (default)
+
+IMPORTANT:
+The canonical registry entry is disabled / UNSOLVED / backend NONE.
+
+`Get-AdminCapabilities` may report an active-item pointer and `canExecute=true`, but that local pointer observation does NOT override canonical registry truthfulness.
+
+Canonical action state wins:
+- the control must remain disabled when `cheat.item.reroll` is disabled;
+- do not use `AllowDisabled`;
+- do not allow a local capability check to re-enable it;
+- do not add a direct native/item-pointer fallback.
+
+Preserve useful pointer/capability text only as diagnostic context.
+
+2. DUPLICATE ITEM (UNSUPPORTED)
+
+Current control is disabled and its raw click handler only calls:
+`Set-AdminStatus "Duplicate active item is unsupported in this build."`
+
+This is a disabled placeholder, not an implemented action.
+
+Remove the click handler entirely.
+
+Do NOT:
+- create a fake ActionId;
+- classify it UI_ONLY just to satisfy the event audit;
+- enable the button.
+
+Keep the button visibly disabled/unsupported.
+
+3. REPAIR ITEM (UNSUPPORTED)
+
+Same rule:
+- remove raw click handler;
+- no EventId;
+- no ActionId;
+- keep disabled.
+
+4. REPAIR ALL (UNSUPPORTED)
+
+Same rule:
+- remove raw click handler;
+- no EventId;
+- no ActionId;
+- keep disabled.
+
+5. AUTO-SORT (UNSUPPORTED)
+
+Same rule:
+- remove raw click handler;
+- no EventId;
+- no ActionId;
+- keep disabled.
+
+6. SPAWN CATEGORY FILTER
+
+Current:
+`SelectedIndexChanged` -> `Update-InventorySpawnList`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.items.spawn.category.changed`
+
+Use:
+`Register-F7UiEvent`
+
+Page:
+`Items & Progression`
+
+Operation:
+`Filter Item Spawn Category`
+
+Lifetime:
+PAGE
+
+Preserve current closure semantics and references to:
+- `$cbSpawnCat`
+- `$txtItemSearch`
+- `$lstItems`
+- `$allItems`
+
+Do not break `.GetNewClosure()` behavior.
+
+7. ITEM SEARCH TEXT
+
+Current:
+`TextChanged` -> `Update-InventorySpawnList`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.items.spawn.search.changed`
+
+Use:
+`Register-F7UiEvent`
+
+Page:
+`Items & Progression`
+
+Operation:
+`Filter Item Spawn Search`
+
+Lifetime:
+PAGE
+
+Preserve closure semantics.
+
+UNCHANGED PLACEHOLDERS
+
+These controls currently have no event handler and must remain that way:
+
+- AUTO-LOOT AURA (UNSUPPORTED)
+- CLEAR BACKPACK (UNSUPPORTED)
+- SPAWN ITEM (UNSUPPORTED - NO NATIVE BACKEND)
+
+Do not add event definitions for disabled placeholders.
+
+REGISTRY / SAFETY
+
+Registry stays 55.
+
+Existing `cheat.item.reroll` must remain:
+- enabled=false
+- UNSOLVED
+- backend NONE
+- mutation risk
+- failure reason: selected item write path not independently qualified
+
+Do not change:
+- Auto Loot fail-closed/startup-canary policy
+- movement.position.read fail-closed
+- scanner fail-closed
+- teleport ADM-TEST-0002
+- glider stamina semantic block
+- Glider Flight disabled/unqualified
+
+LIFECYCLE
+
+Use existing event architecture:
+- stable definitions keyed by EventId
+- active PAGE/SHELL bindings
+- Inventory events use PAGE lifetime
+- disabled placeholders have no active binding because they have no handler
+
+Repeated Inventory render must not create duplicate/ambiguous EventIds.
+
+STATIC ACCEPTANCE
+
+After migration:
+
+- Inventory raw `Register-SafeUiEvent` = 0
+- Inventory raw `.Add_Click(...)` = 0
+- `f7.items.reroll.click` exists exactly once as ACTION -> `cheat.item.reroll`
+- `f7.items.spawn.category.changed` exists exactly once as UI_ONLY
+- `f7.items.spawn.search.changed` exists exactly once as UI_ONLY
+- no event definitions exist for duplicate/repair-all/repair-active/auto-sort placeholders
+- no event handlers exist on those four disabled placeholders
+- registry = 55
+- enabled = 17
+- disabled = 38
+- Home/Player/Mobility/shell raw counts remain 0
+- no direct item mutation fallback is added
+
+TESTS
+
+Run:
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. Inventory raw count: 7 -> 0
+11. G1 Home/Player/Mobility/shell raw counts remain 0
+12. canonical Item EventId assertions
+13. disabled-placeholder no-handler assertions
+14. prohibited mutation scan
+
+REPORT
+
+Return:
+- files changed
+- Inventory raw count before/after
+- exact 3 EventIds added
+- four unsupported placeholder handlers removed
+- registry counts unchanged
+- whether canonical binding changed the reroll button's enabled presentation
+- lifecycle/static test results
+- remaining G2 raw counts:
+  - Crafting/Progression 3
+  - Combat/AI 12
+  - World/Camera 9
+  - Building/Entities 3
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G2B in this pass.

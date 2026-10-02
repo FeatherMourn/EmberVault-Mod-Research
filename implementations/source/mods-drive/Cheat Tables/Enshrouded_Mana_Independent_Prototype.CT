@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"[01] MANA — DIAGNOSTIC POINTER CAPTURE (OFFLINE)"</Description>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"Capture confirmed Mana field pointer (diagnostic only)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+// Independent current-build candidate; diagnostic only.
+aobscanmodule(manaRoutine,enshrouded.exe,40 56 48 83 EC 50 4C 8B C2 48 8B F1 8B 11 48 8D 4C 24 20 E8 B8 30 DF 00)
+assert(manaRoutine+0BA,8B 4E 08 8B 44 24 64 48 03 CE 89 04 99 48 83 EF 10)
+alloc(manaCapture,$1000,manaRoutine)
+alloc(manaPtr,8)
+label(original)
+label(return)
+registersymbol(manaRoutine)
+registersymbol(manaPtr)
+manaPtr:
+  dq 0
+manaCapture:
+  cmp rbx,0
+  jne short original
+  mov [manaPtr],rcx
+original:
+  mov [rcx+rbx*4],eax
+  sub rdi,10
+  jmp return
+manaRoutine+0C4:
+  jmp manaCapture
+  nop 2
+return:
+[DISABLE]
+manaRoutine+0C4:
+  db 89 04 99 48 83 EF 10
+unregistersymbol(manaPtr)
+unregistersymbol(manaRoutine)
+dealloc(manaPtr)
+dealloc(manaCapture)</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>3</ID>
+          <Description>"Mana field pointer (read-only observation)"</Description>
+          <VariableType>8 Bytes</VariableType>
+          <Address>manaPtr</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <LuaScript>-- Independent Mana diagnostic prototype. No value override.</LuaScript>
+</CheatTable>

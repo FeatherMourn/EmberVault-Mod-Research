@@ -1,0 +1,202 @@
+Continue CODE-0042 from the reconstructed full workspace. This pass is CODE-0042E and is ONLY for finishing the F7 event inventory and canonical action binding closure. Do not perform the broad responsive page rewrite yet and do not add gameplay functionality.
+
+Use the latest files from:
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\ArchitectRuntime.ps1
+I:\My Drive\Enshrouded Mods\Architect_Mod\Current\runtime\admin_action_registry.json
+
+Overlay them into the reconstructed INC-0062 / 0.42.0 full workspace before editing.
+
+Current verified baseline:
+- registry: 51 unique actions
+- enabled: 17
+- disabled/planned: 34
+- F7 truthfulness: 53/53
+- UI smoke: 28/28
+- UI errors: 0
+- CT catalog: 224 entries
+- prohibited direct mutation calls absent
+- teleport fail-closed
+- live Auto Loot disabled/startup-only
+- Glider Flight disabled/unqualified
+- glider-stamina semantic mismatch block preserved
+
+PRIMARY GOAL
+Create a real independent denominator for every F7 event-bearing control and finish explicit ActionId binding for every gameplay/admin action control.
+
+IMPORTANT DEFECT TO FIX
+Get-F7ActionBindingAudit currently enumerates only $script:adminActionControls. That collection is populated by Bind-AdminActionControl, so it can only see controls that are already bound. It cannot prove zero-gap coverage.
+
+IMPLEMENT AN INDEPENDENT EVENT INVENTORY
+Create one central inventory such as:
+$script:f7EventInventory
+
+Every F7 event-bearing control must be registered through one of two explicit paths:
+
+1. ACTION
+A control whose user intent dispatches or requests gameplay/admin/backend behavior.
+It must have exactly one canonical ActionId.
+It must resolve to exactly one entry in admin_action_registry.json.
+
+2. UI_ONLY
+Navigation, search/filter, list selection, grid sorting, view switching, open/close dialog, clipboard, external link, local presentation interaction, etc.
+It must still be entered into the event inventory so the denominator is independent, but it must NOT be forced into the gameplay action registry.
+
+Add a helper such as Register-F7UiEvent for UI_ONLY handlers.
+Register-AdminActionEvent should also write an ACTION row into the independent inventory before/while binding the canonical ActionId.
+
+Do not leave raw event registrations in the F7 page-rendering surface once migrated.
+In particular, eliminate unclassified direct:
+- Register-SafeUiEvent
+- .Add_Click
+- direct equivalent event registrations
+inside F7 renderers, except inside the central helper implementations themselves.
+
+If a disabled unsupported placeholder only has a click handler that says “unsupported,” prefer removing that handler and retaining the disabled state + tooltip/reason rather than manufacturing a meaningless registry entry.
+
+ACTION SCOPE
+Treat a control as ACTION when it directly or indirectly:
+- calls Send-CheatCommand
+- calls Dispatch-AdminCommand
+- calls Invoke-PlayerTeleport
+- invokes another function that can dispatch canonical gameplay/admin actions, such as Invoke-ArchitectPreset
+- requests a backend/gameplay operation through another command publisher
+
+Treat pure presentation/navigation/filter/selection/open/close/copy/external-link controls as UI_ONLY.
+
+KNOWN ACTION-PRODUCING SITES TO MIGRATE
+At minimum audit and convert these current sites:
+
+Player Vitals
+- Enable All Overrides -> cheat.survival.enable_all
+- Disable All -> cheat.survival.disable_all
+- Fill Health -> player.health.fill
+- Fill Stamina -> player.stamina.fill
+- Fill Mana -> player.mana.fill
+- dynamic survival badges are already using Register-AdminActionEvent; preserve them
+
+Mobility & Navigation
+- movement.speed
+- movement.jump_height
+- movement.autorun
+- movement.gravity
+- cheat.world.glider_stamina
+- selected-location Warp
+- custom-coordinate Warp
+- Safe Spawn Warp
+
+For all teleport controls, add/use ONE canonical disabled action identity, preferably `movement.teleport`, with backend NONE, enabled=false, evidence/failure reason explicitly tied to ADM-TEST-0002 local-player transform ownership unresolved. Do NOT enable teleport and do NOT restore coordinate writes.
+
+The Read Current Position button is read-only. Classify it deliberately; if not routed through the canonical admin backend, record it as UI_ONLY diagnostic/read interaction with an explicit classification reason rather than pretending it is a mutation action.
+
+Items & Progression
+- cheat.item.reroll
+- cheat.skills.set (including preset buttons)
+- cheat.skills.reset
+
+Combat & AI
+- cheat.parry.toggle
+
+World & Environment
+- world.time_of_day
+- cheat.world.plant_growth
+- world.time_pause
+
+Building & World Editing
+- cheat.world.altar_area
+- cheat.world.altar_far
+- cheat.world.build_range
+
+Home
+- player.health.fill
+- player.stamina.fill
+- player.mana.fill
+- cheat.survival.disable_all
+- preset Apply controls that can invoke Invoke-ArchitectPreset must be classified as ACTION, not ignored
+
+Settings / Mods
+- panic/revert-all -> cheat.survival.disable_all
+- other purely local navigation/config UI can be UI_ONLY unless it dispatches gameplay/admin commands
+
+Developer/Codex command execution
+- player-view dynamic command Execute button using Send-CheatCommand $cid
+- developer-view dynamic backend Dispatch button using Dispatch-AdminCommand
+At render time, resolve the dynamic ActionId against the registry. If it is missing, disable the control and expose the reason. Never dispatch an unknown ID.
+
+PRESET ACTIONS
+Invoke-ArchitectPreset may dispatch multiple canonical actions. Do not hide that behind UI_ONLY classification.
+Create a truthful canonical user-facing preset action identity if necessary (for example an admin preset apply action) without claiming the contained actions are verified. The preset action must fail closed if any required action is unavailable according to existing policy; do not add backend mutations or loosen capability gates.
+
+AUDIT OUTPUT
+Rewrite Get-F7ActionBindingAudit so it derives from the independent event inventory and returns both row data and/or a summary containing:
+- totalEventControls
+- actionControls
+- uiOnlyControls
+- boundActionControls
+- unboundActionControls
+- missingRegistryIds
+- duplicateRegistryIds
+- ambiguousBindings
+- directUnclassifiedEventRegistrations
+
+The audit must distinguish one control with multiple UI events from ambiguous multiple ActionIds. Stable control/event identity is required.
+
+ZERO-GAP ACCEPTANCE
+CODE-0042E is complete only when all are true:
+- unboundActionControls = 0
+- missingRegistryIds = 0
+- ambiguousBindings = 0
+- directUnclassifiedEventRegistrations = 0 within the F7 renderer surface
+- every ACTION control has exactly one ActionId
+- every ActionId resolves to exactly one registry action
+- UI_ONLY controls are inventoried but do not pollute the gameplay action registry
+- no action is enabled merely to satisfy coverage
+
+SAFETY REGRESSION GUARDS
+Do not reintroduce direct F7 calls to:
+- TogglePatch
+- EnableAllSurvival
+- DisableAllSurvival
+- WritePlayerCoordinates
+- ToggleAutoLoot
+- ToggleGliderFlight
+
+Preserve:
+- ADM-TEST-0002 teleport fail-closed behavior
+- Auto Loot STARTUP_CANARY_ONLY restriction
+- Glider Flight disabled/unqualified state
+- glider stamina semantic mismatch block
+- CODE-0022B crash guard
+- source-consolidation catalog
+- exact 224-entry CT catalog
+- native-runtime mutation ownership
+
+TESTING
+Run from the reconstructed full package:
+- PowerShell parse
+- test_f7_truthfulness.ps1
+- test_ui_smoke.ps1
+- UI error log check
+- CT catalog count == 224
+- prohibited mutation-call static search
+
+Add/strengthen tests for the new denominator. Tests must fail if a new F7 event-bearing action control is added using raw Add_Click/Register-SafeUiEvent without ACTION/UI_ONLY classification.
+
+Do not weaken existing assertions to make the suite pass.
+
+DELIVERABLE
+Return:
+1. files changed
+2. registry count before/after
+3. totalEventControls
+4. actionControls
+5. uiOnlyControls
+6. boundActionControls
+7. unboundActionControls
+8. missingRegistryIds
+9. ambiguousBindings
+10. directUnclassifiedEventRegistrations
+11. any newly added registry IDs and why
+12. test results
+13. anything intentionally deferred
+
+Do not claim runtime success. Do not start the 11-page responsive-layout migration in this pass.

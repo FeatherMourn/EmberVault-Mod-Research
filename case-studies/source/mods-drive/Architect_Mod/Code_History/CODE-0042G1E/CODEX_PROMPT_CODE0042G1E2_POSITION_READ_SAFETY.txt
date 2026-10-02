@@ -1,0 +1,174 @@
+CODE-0042G1E2 — POSITION-READ SAFETY CORRECTION + TEST FIXTURE UPDATE
+
+Scope: Architect Toolkit F7 Admin
+Build: Enshrouded 1076226
+
+Files:
+- Architect_Mod/Current/runtime/admin_action_registry.json
+- local reconstructed-workspace test file:
+  C:\Users\JoelT\AppData\Local\Temp\architect-code0042-35e945431cb14cfeb86ba1de87e42726\architect_toolkit\tests\test_f7_event_lifecycle.ps1
+- modify ArchitectRuntime.ps1 only if strictly necessary for truthful disabled presentation; no new behavior.
+
+DO NOT migrate the F7 shell yet.
+DO NOT begin responsive layout work.
+DO NOT add gameplay capabilities, hooks, signatures, offsets, or memory behavior.
+
+GOAL
+
+Correct the canonical truthfulness of `movement.position.read` and update the lifecycle test fixture for the intentional 54-action registry.
+
+WHY THIS IS REQUIRED
+
+The current registry marks `movement.position.read` as an enabled `read_only` LIVE action using:
+- backendAdapter = `PositionObserverAdapter`
+- backend = `READ_ONLY_OBSERVER`
+- evidenceStatus = `READ_PATH_CANDIDATE`
+
+Those backend identifiers are not established runtime adapters/backends.
+
+More importantly, the current handler calls `Get-CurrentPlayerPosition`.
+
+`Get-CurrentPlayerPosition` first calls:
+`[NativeMemoryEngine]::ReadPlayerCoordinates([IntPtr]::Zero, ...)`
+
+`ReadPlayerCoordinates` calls:
+`EnsurePositionHook()`
+
+`EnsurePositionHook()` performs executable-patch work:
+- signature scan;
+- VirtualAllocEx executable memory;
+- WriteProcessMemory for cave code;
+- WriteProcessMemory detour patch;
+- VirtualProtectEx / FlushInstructionCache.
+
+Therefore the current implementation is NOT a pure read-only observer path, even though its user intent is "read current position."
+
+The legacy handler existed before the Mobility migration; do not claim G1E introduced it. The bug is that the new registry identity currently classifies/enables it too optimistically.
+
+REGISTRY CORRECTION
+
+Keep the same commandId:
+
+`movement.position.read`
+
+Keep registry count at 54.
+
+Change that action to fail closed with existing schema vocabulary:
+
+- `enabled`: false
+- `controlType`: `read_only`
+- `evidenceStatus`: `UNSOLVED`
+- `backendAdapter`: `None`
+- `backend`: `NONE`
+- `runtimeMode`: `UNAVAILABLE`
+- `authority`: `unresolved`
+- `persistence`: `none`
+- `risk`: `mutation`
+- `readbackVerification`: `none`
+- `revertSupport`: `not_applicable`
+
+Description/failureReason must truthfully state:
+- current legacy position-read path can invoke `EnsurePositionHook`;
+- that path installs an executable detour / writes process memory;
+- safe read-only local-player position ownership/source is not yet proven;
+- action remains disabled until a non-mutating qualified source is mapped.
+
+Do not use:
+- `PositionObserverAdapter`
+- `READ_ONLY_OBSERVER`
+- `READ_PATH_CANDIDATE`
+
+Do not add another action ID.
+
+MOBILITY CONTROL
+
+Keep:
+`f7.mobility.position.read.click` -> `movement.position.read`
+
+Canonical binding must now disable the button.
+
+Do NOT use `AllowDisabled`.
+
+Do not remove the handler in this pass. The disabled canonical control makes the legacy path unreachable through normal F7 interaction.
+
+If the UI helper has a tooltip/failure-reason mechanism for disabled canonical actions, ensure the corrected failure reason is surfaced without adding a custom bypass.
+
+TEST FIXTURE UPDATE
+
+Update:
+`tests/test_f7_event_lifecycle.ps1`
+
+The current fixture expects 53 actions.
+
+Update it for the intentional 54-action registry, but do more than a blind numeric replacement.
+
+Add/assert:
+1. registry count = 54;
+2. `movement.position.read` exists exactly once;
+3. `movement.position.read.enabled` = false;
+4. backend = `NONE`;
+5. backendAdapter = `None`;
+6. evidenceStatus = `UNSOLVED`;
+7. runtimeMode = `UNAVAILABLE`;
+8. risk = `mutation`;
+9. `movement.teleport` remains disabled;
+10. Home, Player, Mobility raw-event counts remain 0.
+
+If the test currently hard-codes a full action list, add `movement.position.read` explicitly.
+
+Do not weaken any existing lifecycle assertions.
+
+STATIC SAFETY ASSERTION
+
+Add a narrow source assertion documenting why `movement.position.read` is disabled:
+- `Get-CurrentPlayerPosition` references `ReadPlayerCoordinates`;
+- `ReadPlayerCoordinates` references `EnsurePositionHook`;
+- `EnsurePositionHook` contains native patch/write behavior.
+
+This is evidence for the fail-closed registry state, not permission to alter/install the hook.
+
+PRESERVE
+
+- Registry total = 54.
+- No other action enabled/disabled changes.
+- Home raw direct events = 0.
+- Player raw direct events = 0.
+- Mobility raw direct events = 0.
+- teleport fail-closed / ADM-TEST-0002.
+- Auto Loot STARTUP_CANARY_ONLY.
+- Glider Flight disabled/unqualified.
+- glider-stamina semantic block.
+- no direct F7 calls to TogglePatch, EnableAllSurvival, DisableAllSurvival, WritePlayerCoordinates, ToggleAutoLoot, ToggleGliderFlight.
+- source-consolidation catalog.
+- CT catalog = 224.
+- stable EventIds/lifecycle architecture.
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. F7 truthfulness.
+3. UI smoke.
+4. `test_f7_event_lifecycle.ps1`.
+5. UI errors = 0.
+6. CT catalog = 224.
+7. registry unique-ID check = 54.
+8. Home raw count = 0.
+9. Player raw count = 0.
+10. Mobility raw count = 0.
+11. prohibited mutation-call scan.
+12. new position-read fail-closed metadata assertions.
+
+REPORT
+
+Return:
+- files changed;
+- `movement.position.read` metadata before/after;
+- registry count before/after;
+- confirmation Mobility button is now canonically disabled;
+- lifecycle fixture changes;
+- all test results;
+- remaining F7 shell raw-event sites/count;
+- explicit statement that no runtime/gameplay proof is claimed.
+
+Do not start shell migration in this pass.

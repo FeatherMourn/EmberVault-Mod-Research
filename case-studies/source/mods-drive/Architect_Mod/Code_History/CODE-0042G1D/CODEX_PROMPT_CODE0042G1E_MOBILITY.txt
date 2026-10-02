@@ -1,0 +1,316 @@
+CODE-0042G1E — MOBILITY EVENT MIGRATION ONLY
+
+Scope: Architect Toolkit F7 Admin
+Build: Enshrouded 1076226
+Source: current Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+DO NOT migrate the F7 shell in this pass.
+DO NOT migrate Items, Combat, World, Building, Settings, Codex, Map, Blueprint Browser, or other pages.
+DO NOT begin responsive layout work.
+DO NOT add mutation backends, hooks, offsets, signatures, memory writes, or new gameplay capabilities.
+
+GOAL
+
+Complete the raw-event migration for `Render-MobilityTravelPage` only.
+
+CURRENT RAW COUNT
+
+`Render-MobilityTravelPage` contains exactly:
+- 12 raw `Register-SafeUiEvent` source-level registrations
+- 0 direct `.Add_Click(...)` registrations
+
+After this pass, both counts inside `Render-MobilityTravelPage` must be zero.
+
+Use the repaired lifecycle:
+- stable definitions: `$script:f7EventDefinitions`, keyed by EventId
+- active bindings: `$script:f7ActiveBindings`, keyed by EventId
+- no legacy strong-reference event inventory
+
+CLASSIFY AND MIGRATE ALL 12 SITES
+
+1. Movement speed loop
+Current:
+`Send-CheatCommand "movement.speed" @{ value = [double]$v }`
+
+Classification:
+ACTION
+
+ActionId:
+`movement.speed`
+
+EventId:
+Use a deterministic value-specific ID, for example:
+`f7.mobility.speed.<stableValue>.click`
+
+Use invariant/stable formatting for the multiplier. Do not derive identity from the live Control object or localized display text.
+
+2. Jump height loop
+Current:
+`Send-CheatCommand "movement.jump_height" @{ value = [double]$v }`
+
+Classification:
+ACTION
+
+ActionId:
+`movement.jump_height`
+
+EventId:
+`f7.mobility.jumpHeight.<stableValue>.click`
+
+Use deterministic invariant formatting.
+
+3. MMO Autorun
+Current:
+toggles local `$script:autorunActive`, then sends `movement.autorun`
+
+Classification:
+ACTION
+
+ActionId:
+`movement.autorun`
+
+EventId:
+`f7.mobility.autorun.click`
+
+Important:
+The canonical registry entry is currently disabled/unqualified. Do not use `AllowDisabled` to keep this control live. Canonical registry truthfulness wins over the old local toggle affordance.
+
+4. Zero-G / Gravity
+Current:
+`Send-CheatCommand "movement.gravity"`
+
+Classification:
+ACTION
+
+ActionId:
+`movement.gravity`
+
+EventId:
+`f7.mobility.gravity.click`
+
+Keep the existing fail-closed/no-direct-patch policy. Do not call `TogglePatch`.
+
+5. Glider Stamina
+Current:
+`Send-CheatCommand "cheat.world.glider_stamina"`
+
+Classification:
+ACTION
+
+ActionId:
+`cheat.world.glider_stamina`
+
+EventId:
+`f7.mobility.gliderStamina.click`
+
+Preserve the semantic block. The control must remain disabled/unqualified according to canonical registry state.
+
+6. Location category filter
+Current:
+updates the visible location list only
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.mobility.locations.category.changed`
+
+7. Location search text
+Current:
+updates the visible location list only
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.mobility.locations.search.changed`
+
+8. Location selection
+Current:
+copies selected location coordinates into local X/Y/Z text boxes
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.mobility.locations.selection.changed`
+
+9. Warp to selected location
+Current:
+calls `Invoke-PlayerTeleport`
+
+Classification:
+ACTION
+
+ActionId:
+`movement.teleport`
+
+EventId:
+`f7.mobility.teleport.selected.click`
+
+`movement.teleport` is disabled under ADM-TEST-0002. Binding must preserve that disabled state. Do not re-enable teleport.
+
+10. Custom-coordinate Warp
+Current:
+calls `Invoke-PlayerTeleport`
+
+Classification:
+ACTION
+
+ActionId:
+`movement.teleport`
+
+EventId:
+`f7.mobility.teleport.custom.click`
+
+Preserve fail-closed teleport semantics.
+
+11. Read Current Position
+Current:
+calls `Get-CurrentPlayerPosition`, then fills local X/Y/Z text boxes
+
+Classification:
+ACTION, because this invokes a game/runtime read operation rather than presentation-only UI.
+
+No exact canonical registry identity currently exists.
+
+Add ONE truthful read-only registry identity, recommended:
+`movement.position.read`
+
+Requirements for the new entry:
+- model it after existing read-only/inspection registry entries and use the existing schema vocabulary;
+- read-only risk/authority semantics only;
+- no mutation backend;
+- description must state that it reads through existing validated/candidate observer/read paths and returns unavailable when no source is qualified;
+- do not claim runtime proof;
+- do not enable a mutation path;
+- do not create aliases unless required by an existing schema convention.
+
+Choose enabled/disabled truthfully from the current source/evidence model:
+- if existing read-only inspection actions are allowed to execute because the handler fails closed when data is unavailable, this action may follow that established pattern;
+- otherwise keep it disabled with an explicit reason.
+Do not invent a backend merely to make the button enabled.
+
+EventId:
+`f7.mobility.position.read.click`
+
+The handler may remain `Get-CurrentPlayerPosition`; canonical binding provides identity/truthfulness. Do not rewrite it into `Send-CheatCommand` unless an existing proven dispatch path actually exists.
+
+12. Warp Safe Spawn
+Current:
+calls `Invoke-PlayerTeleport`
+
+Classification:
+ACTION
+
+ActionId:
+`movement.teleport`
+
+EventId:
+`f7.mobility.teleport.safeSpawn.click`
+
+Preserve fail-closed teleport semantics.
+
+REGISTRY EXPECTATION
+
+Before: 53 actions.
+
+Expected after:
+- 54 only if `movement.position.read` is required and added as above.
+- No other new action IDs.
+
+Do not enable any existing mutation action.
+
+Existing relevant canonical entries:
+- `movement.speed` — disabled/unqualified
+- `movement.jump_height` — disabled/unqualified
+- `movement.autorun` — disabled/unqualified
+- `movement.gravity` — disabled/unqualified
+- `cheat.world.glider_stamina` — disabled/semantic mismatch
+- `movement.teleport` — disabled / ADM-TEST-0002
+
+CANONICAL GATING
+
+Do not preserve a locally-enabled appearance when the canonical registry says an ACTION is disabled.
+
+Do not use `AllowDisabled` for the above mutation controls.
+
+It is acceptable and expected that canonical binding may make previously clickable legacy controls disabled. That is a truthfulness correction, not a gameplay regression.
+
+UI_ONLY CONTROLS
+
+The three filter/selection handlers must use `Register-F7UiEvent`, not the action registry.
+
+They must remain functional local UI interactions.
+
+CLOSURE SAFETY
+
+Some current handlers use `.GetNewClosure()`.
+
+Preserve closure correctness when migrating to the registration helpers. Do not accidentally capture loop variables by reference in a way that makes all dynamic speed/jump buttons share the final value.
+
+For speed/jump EventIds and handlers:
+- verify each runtime button keeps its own numeric value;
+- verify each EventId is unique and deterministic.
+
+STATIC ACCEPTANCE
+
+After migration:
+- `Render-MobilityTravelPage` raw `Register-SafeUiEvent` count = 0
+- raw `.Add_Click(...)` count = 0
+- Home raw count remains 0
+- Player raw count remains 0
+- all ACTION EventIds resolve to exactly one canonical registry entry
+- UI_ONLY EventIds do not require registry entries
+- no duplicate/ambiguous Mobility EventIds
+- no missing Mobility registry IDs
+- no prohibited direct mutation fallback reappears
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. F7 truthfulness: preserve 53/53 baseline or strengthen without weakening assertions.
+3. UI smoke: preserve 28/28 baseline or strengthen without weakening assertions.
+4. Existing lifecycle static test.
+5. UI errors = 0.
+6. CT catalog = 224.
+7. Home raw count = 0.
+8. Player raw count = 0.
+9. Mobility raw count: 12 -> 0.
+10. Registry unique-ID check.
+11. Add/extend static lifecycle assertions for:
+    - all Mobility EventIds;
+    - stable speed/jump dynamic EventIds;
+    - UI_ONLY classification for filter/search/selection;
+    - movement.teleport remains disabled;
+    - glider stamina remains semantically blocked.
+12. Prohibited mutation-call scan.
+
+SAFETY PRESERVATION
+
+Keep unchanged:
+- teleport fail-closed / ADM-TEST-0002
+- Auto Loot STARTUP_CANARY_ONLY
+- Glider Flight disabled/unqualified
+- glider-stamina semantic block
+- no direct F7 calls to TogglePatch, EnableAllSurvival, DisableAllSurvival, WritePlayerCoordinates, ToggleAutoLoot, ToggleGliderFlight
+- source-consolidation catalog
+- full 224-entry CT catalog
+
+REPORT
+
+Return:
+- files changed
+- Mobility raw count before/after
+- exact EventIds installed
+- ACTION vs UI_ONLY classification
+- registry count before/after
+- exact `movement.position.read` registry metadata if added
+- which Mobility controls became disabled because canonical registry state is authoritative
+- duplicate/ambiguous/missing/stale Mobility metrics
+- test results
+- remaining F7 shell raw-event count / shell sites
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not stop after analysis. Implement this Mobility-only migration completely unless there is a concrete source-level blocker.

@@ -1,0 +1,1 @@
+"""Player discovery analyzer tests."""

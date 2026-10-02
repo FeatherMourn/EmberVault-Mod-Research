@@ -1,0 +1,209 @@
+CODE-0042G3D0 — GLOBAL CANONICAL ACTION ENABLED GATE
+
+Scope:
+- `Send-CheatCommand`
+- `Dispatch-AdminCommand`
+- command-boundary tests only
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- DO NOT change `admin_action_registry.json`.
+- Must remain 55 actions / 17 enabled / 38 disabled.
+
+DO NOT:
+- migrate Codex UI events yet;
+- change any action's `enabled` state;
+- add a backend;
+- remove existing action-specific fail-closed provenance;
+- begin responsive work.
+
+GOAL
+
+Make canonical registry `enabled` state authoritative at both execution boundaries.
+
+A disabled canonical AdminAction must not execute merely because:
+- a local capability reports ready;
+- a direct helper is called;
+- Codex developer view calls the dispatcher;
+- a command file contains a registered disabled action;
+- an action matches a broad `cheat.*` prefix route.
+
+A. `Send-CheatCommand` GENERIC CANONICAL GATE
+
+Preserve all existing action-specific hard rejection branches first so their detailed error provenance remains intact:
+- teleport / ADM-TEST-0002
+- preset apply
+- scanner
+- altar/build-range
+- world time/pause/plant
+- parry
+- skill set/reset
+- glider flight
+- gravity
+- auto-loot startup canary
+- survival bulk enable/disable
+- any other current explicit branch
+
+Then preserve the current Action -> `$nativeAction` mapping.
+
+AFTER `$nativeAction` is resolved and BEFORE:
+- capability-model execution approval,
+- pending command creation,
+- `Publish-CheatCorrelationCommand`,
+
+resolve the canonical definition:
+
+1. try `Get-AdminCommandDefinition $Action`
+2. if none and `$nativeAction` differs, try `Get-AdminCommandDefinition $nativeAction`
+
+If a canonical definition exists and `enabled -ne $true`, reject.
+
+Required semantics:
+
+```powershell
+return @{
+    success = $false
+    state = "UNSUPPORTED"
+    error = "CANONICAL_ACTION_DISABLED: <commandId>: <failureReason>"
+}
+```
+
+Equivalent truthful wording is acceptable.
+
+Also:
+- set truthful Admin status;
+- create NO pending command;
+- publish NOTHING.
+
+This must catch disabled canonical IDs and aliases that map to a disabled canonical native ID.
+
+If no canonical definition exists, preserve existing behavior in this slice; do not redesign alias policy.
+
+B. `Dispatch-AdminCommand` CANONICAL-ONLY GATE
+
+Keep the existing teleport fail-closed branch first so ADM-TEST-0002 provenance is preserved.
+
+Immediately after that, before any action-specific/prefix/backend route:
+
+1. If `$definition` is missing:
+   - reject as unsupported;
+   - do NOT enter `cheat.*` / `cheatcorrelation.*` prefix publication;
+   - write a truthful ACK;
+   - return `accepted = false`.
+
+2. If `$definition.enabled -ne $true`:
+   - reject as unsupported;
+   - message:
+     `CANONICAL_ACTION_DISABLED: <commandId>: <failureReason>`
+     or equivalent;
+   - write a truthful ACK;
+   - return `accepted = false`.
+
+The rejection must occur before:
+- `Publish-CheatCorrelationCommand`
+- `Publish-PlayerDiscoveryCommand`
+- `Publish-GameSettingsObserverCommand`
+- `Publish-EntityInspectorCommand`
+- `Get-LiveItemSelection`
+- `Invoke-AdminBackendAdapter`
+
+Enabled canonical actions continue through existing routing unchanged.
+
+C. `Process-ArchitectCommand`
+
+Do not redesign it.
+
+Its existing registry-membership check may remain.
+
+Add/adjust tests proving that a registered-but-disabled action forwarded through this path is stopped by `Dispatch-AdminCommand`.
+
+No disabled command reaches a downstream backend/publisher.
+
+D. PRESERVE ENABLED READ-ONLY ACTIONS
+
+The 17 currently enabled registry actions must remain enabled and routable:
+
+- Player Inspector/discovery family
+- GameSettings observe/capture family
+- Entity Inspector/capture family
+- Cheat-correlation observe family
+- backend.capabilities
+
+Do not convert these to disabled.
+
+Do not claim runtime proof.
+
+E. TESTS
+
+Run existing:
+1. real registry import -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema/adaptor validation
+9. prohibited mutation scan
+10. G1/G2/G3A/G3B/G3C raw closure remains intact
+
+Add command-boundary tests:
+
+11. Iterate all 38 canonical disabled ActionIds through `Send-CheatCommand`.
+    - every result fails;
+    - no pending command count increase;
+    - no publish call.
+
+12. Test aliases that map to disabled canonical IDs, including representative:
+    - `survival.shroud` -> `cheat.shroud.toggle`
+    - `item.durability` -> `cheat.durability.toggle`
+    - `survival.oxygen` -> `cheat.oxygen.toggle`
+    - `survival.warmth` -> `cheat.cold.toggle`
+    - `crafting.free` -> `cheat.freecraft.toggle`
+    All must fail because mapped canonical definition is disabled.
+
+13. Iterate all 38 disabled canonical ActionIds through `Dispatch-AdminCommand`.
+    - `accepted=false`;
+    - no publisher/backend called;
+    - truthful ACK/result.
+
+14. Direct unknown prefix test:
+    - `Dispatch-AdminCommand` with unknown `cheat.this_is_not_registered`
+    - must fail before `Publish-CheatCorrelationCommand`.
+
+15. `Process-ArchitectCommand` registered-disabled test:
+    - registry membership may admit it into dispatcher;
+    - dispatcher rejects it;
+    - downstream publish/backend count = 0.
+
+16. Enabled-action non-regression:
+    - assert the generic gate itself does not reject all 17 `enabled=true` definitions.
+    - Use mocks/stubs where necessary to avoid performing runtime/native work.
+    - Existing action-specific behavior remains unchanged.
+
+17. Preserve detailed special errors:
+    - teleport still returns ADM-TEST-0002
+    - scanner still AOB_SCANNER_UNSOLVED
+    - preset still PRESET_APPLY_UNAVAILABLE
+    - other existing hard-rejection messages remain intact
+
+REPORT
+
+Return:
+- file changed
+- exact placement/logic of both generic canonical gates
+- disabled registry count tested
+- alias tests
+- unknown `cheat.*` test
+- Process-ArchitectCommand downstream-zero result
+- enabled-action non-regression result
+- existing suite results
+- registry unchanged 55 / 17 / 38
+- explicit statement that Codex UI migration was NOT started
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G3D UI migration in this pass.

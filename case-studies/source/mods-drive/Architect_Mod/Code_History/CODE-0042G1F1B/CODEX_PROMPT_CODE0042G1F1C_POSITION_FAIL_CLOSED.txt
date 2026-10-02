@@ -1,0 +1,230 @@
+CODE-0042G1F1C — DISARM UNSAFE CURRENT-POSITION HELPER
+
+Scope: Architect Toolkit shared position helper + F7 Home truthfulness
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Read-only evidence file:
+- runtime/NativeMemoryEngine.cs
+
+Registry:
+- Do NOT change admin_action_registry.json.
+- Registry must remain 54 actions.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- canonicalize the AOB Scanner yet;
+- add a new position backend;
+- add offsets/signatures/hooks;
+- use native memory writes;
+- enable `movement.position.read`;
+- begin responsive migration;
+- redesign F8.
+
+GOAL
+
+Make `Get-CurrentPlayerPosition` a genuinely fail-closed, non-mutating shared helper.
+
+This is required because F7 Home currently calls it automatically during render, and the current implementation can install an executable position hook.
+
+SOURCE FACT
+
+Current `Get-CurrentPlayerPosition` calls:
+
+`[NativeMemoryEngine]::ReadPlayerCoordinates(...)`
+
+Current `ReadPlayerCoordinates(...)` in `NativeMemoryEngine.cs` unconditionally calls:
+
+`EnsurePositionHook();`
+
+`EnsurePositionHook()` performs executable native mutation including:
+- remote allocation;
+- `WriteProcessMemory`;
+- executable detour patching;
+- protection changes / instruction-cache flush.
+
+Therefore simply rendering Home can currently reach a mutation path.
+
+A. REWRITE `Get-CurrentPlayerPosition` AS FAIL-CLOSED
+
+Remove both calls to:
+
+`[NativeMemoryEngine]::ReadPlayerCoordinates(...)`
+
+from `Get-CurrentPlayerPosition`.
+
+Do not call:
+- `EnsurePositionHook`
+- `ReadCapturedPlayerTransform`
+- `WritePlayerCoordinates`
+- any other native hook/patch helper
+
+from this PowerShell helper.
+
+Do not invent:
+- pointer layouts;
+- coordinate offsets;
+- ownership assumptions;
+- replacement native APIs.
+
+Use only an already-qualified non-mutating observer/state source if current source and evidence actually provide coordinate values.
+
+IMPORTANT:
+The current `Get-PlayerObserverState` schema does not appear to expose proven X/Y/Z coordinates. Do not manufacture fields from it.
+
+If no qualified non-mutating coordinate source exists:
+- return `$null`.
+
+That is the expected safe result.
+
+Add a comment explaining:
+- local-player position ownership/source is UNSOLVED for build 1076226;
+- native hook-backed reads are intentionally disarmed;
+- callers must tolerate `$null`.
+
+B. HOME TELEMETRY MUST HANDLE UNAVAILABLE POSITION
+
+`Render-DashboardPage` currently does:
+
+`$pos = Get-CurrentPlayerPosition`
+
+and immediately formats `$pos.X/$pos.Y/$pos.Z`.
+
+Change the telemetry banner so it handles no position safely.
+
+Expected pattern:
+
+- call `Get-CurrentPlayerPosition`;
+- if non-null, format coordinates normally;
+- if null, display something explicit such as:
+  `Coordinates: UNAVAILABLE (safe source unresolved)`
+
+Do not display zeroes as if they were real coordinates.
+
+C. REMOVE FALSE SCANNER CLAIM FROM HOME
+
+Current Home telemetry says:
+
+`Engine: ONLINE (AOB Scanner Verified)`
+
+That is not truthful while the scanner toggle remains raw and its native lifecycle is mutation-coupled.
+
+Replace it with a neutral statement that does not claim scanner verification, for example:
+
+`Engine: ONLINE / diagnostics gated`
+
+or:
+
+`Engine: ONLINE`
+
+Do not claim the AOB Scanner is verified, safe, or read-only.
+
+D. MOBILITY DEFENSE IN DEPTH
+
+Keep:
+
+`f7.mobility.position.read.click -> movement.position.read`
+
+unchanged.
+
+The registry action remains:
+- enabled=false
+- UNSOLVED
+- backend NONE
+- runtime UNAVAILABLE
+- risk mutation
+
+Its existing handler may continue to call `Get-CurrentPlayerPosition`, because after this pass that helper itself will be safe/fail-closed.
+
+Do not use `AllowDisabled`.
+
+E. F8
+
+Do not redesign F8 in this pass.
+
+The shared helper becoming fail-closed automatically protects F8 callers from installing the hook.
+
+If an existing F8 caller already tolerates `$null`, leave it unchanged.
+If an existing automated test proves a null dereference/crash, add only the smallest null guard needed; do not alter F8 product behavior or layout.
+
+F. STATIC SAFETY GATE
+
+Add/extend a test that proves:
+
+1. `Get-CurrentPlayerPosition` contains zero references to:
+   - `ReadPlayerCoordinates`
+   - `EnsurePositionHook`
+   - `WritePlayerCoordinates`
+   - `ToggleScanner`
+   - `EnableScanner`
+   - `DisableScanner`
+
+2. `Render-DashboardPage` does not directly call:
+   - `ReadPlayerCoordinates`
+   - `EnsurePositionHook`
+   - `WritePlayerCoordinates`
+
+3. Home telemetry has an explicit unavailable-position path.
+
+4. `movement.position.read` remains disabled in the registry.
+
+5. `NativeMemoryEngine.ReadPlayerCoordinates` may remain present in C# as historical/native infrastructure; this pass only makes F7/F8 shared UI helper unable to reach it.
+
+Do not delete or rewrite NativeMemoryEngine hook code in this slice.
+
+G. PRESERVE G1 STATE
+
+Keep unchanged:
+- registry = 54 unique actions;
+- enabled = 17, disabled = 37;
+- schema violations = 0;
+- adapter mismatches = 0;
+- Home raw events = 0;
+- Player raw events = 0;
+- Mobility raw events = 0;
+- shell UI-only raw events = 0;
+- shell raw ACTION events = 1, AOB Scanner only;
+- `movement.position.read` fail-closed metadata;
+- teleport ADM-TEST-0002;
+- Auto Loot STARTUP_CANARY_ONLY prose/state;
+- Glider Flight disabled/unqualified;
+- glider-stamina semantic mismatch;
+- CT catalog = 224;
+- source-consolidation catalog.
+
+TESTS
+
+Run:
+1. real `Import-AdminActionRegistry` -> 54 actions;
+2. PowerShell parse;
+3. lifecycle fixture;
+4. F7 truthfulness;
+5. UI smoke;
+6. UI errors;
+7. CT catalog count = 224;
+8. schema violation counts = 0;
+9. Home/Player/Mobility raw counts = 0;
+10. shell UI-only raw = 0;
+11. shell ACTION raw = 1 scanner only;
+12. new unsafe-position-helper static assertions;
+13. prohibited mutation scan.
+
+REPORT
+
+Return:
+- files changed;
+- `Get-CurrentPlayerPosition` before/after behavior;
+- exact native calls removed from the helper;
+- Home telemetry behavior when position unavailable;
+- confirmation `movement.position.read` remains disabled;
+- registry/import counts;
+- all tests;
+- shell raw metrics;
+- explicit statement that AOB Scanner remains intentionally raw;
+- explicit statement that no runtime/gameplay proof is claimed.
+
+Do not start scanner canonicalization in this pass.

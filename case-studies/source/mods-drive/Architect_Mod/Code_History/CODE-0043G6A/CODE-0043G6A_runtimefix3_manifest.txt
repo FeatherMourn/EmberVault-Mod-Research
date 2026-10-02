@@ -1,0 +1,47 @@
+CODE-0043G6A RUNTIMEFIX3 OFFLINE QUALIFICATION MANIFEST
+Date: 2026-09-21
+
+Purpose
+Remove unrelated Skills/health/mana/jump/daytime prerequisites from the bounded G6A movement+stamina correlation begin path and make REFRESH STATUS read back the matching native status acknowledgement.
+
+Baseline
+INC-0062 architect_toolkit.zip SHA-256 768AC907E33038D8A5EFE4535AE1D3745ABE4308DE06A7D7694060068538B5EC
+Prior runtimefix2 candidate SHA-256 628B0310905C2DCACF4778ECAE0B0A79F85C48C3272DEC0F622758924A37295D
+
+runtimefix3 artifacts
+Candidate: architect_toolkit_CODE-0043G6A_runtimefix3_candidate_20260921.zip
+Candidate size: 66,245,170 bytes
+Candidate SHA-256: 1B9A1A7CFDAF0A69D31CA0DBEB1B046A83C0984ED0F3E990D5D4A0B908488ADD
+Game-folder test ZIP: architect_toolkit_CODE-0043G6A_runtimefix3_GAME_FOLDER_TEST_20260921.zip
+Game-folder test ZIP size: 66,476,749 bytes
+Game-folder test ZIP SHA-256: 8076B77B2299E227B76CFE171DB83B87DED73D28D2E178DDC0F69DCB9086E044
+Build ID: architect-v040-hybrid-admin-code0043g6a-runtimefix3-20260921
+Native DLL SHA-256: A99FBEAD05575F6CB8F0E91EFC69D726100BC418F0D2B2124DBDB0C9714DC82C
+
+Changed runtime files
+runtime/ArchitectRuntime.ps1
+  REFRESH STATUS queues cheatcorrelation.status, waits for a matching lastCommandId readback, then displays the refreshed status.
+runtime/native/source/CheatCorrelationHarness.c
+  G6A begin installs only movement RVA 0x23AE34 and stamina RVA 0x23423F; hooksInstalledCount is 2. Unrelated probes are not installed or prerequisites.
+runtime/native/source/ArchitectBuildIdentity.h
+runtime/build_identity.json
+runtime/native/ArchitectNativeRuntime.dll
+tests/test_g6a_runtimefix3_contract.ps1
+
+Preserved
+Registry: 55 total, 17 enabled, 38 disabled, 55 unique.
+CT Catalog: 224 entries.
+PREPARE_G6A_RUNTIME_TEST.bat and START_ARCHITECT_G6A_TEST.bat preserved in the game-folder test package.
+
+Offline qualification
+PowerShell parse/structure: PASS
+G6A contract: PASS
+G6A runtimefix3 contract: PASS
+F7 truthfulness G6A: 72/72 PASS
+UI smoke: 28/28 PASS
+G6A runtime UI regressions: PASS
+G6A runtime UI layout at 900x590, 1280x720, 1600x900: PASS
+Source consolidation: 12/12 PASS
+Registry and CT counts: PASS
+Live/gameplay proof: NOT CLAIMED; runtime test remains required.
+G5J Developer/Diagnostics parity: PASS

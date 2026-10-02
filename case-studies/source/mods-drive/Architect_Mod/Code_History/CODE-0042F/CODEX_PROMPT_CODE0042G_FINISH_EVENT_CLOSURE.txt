@@ -1,0 +1,291 @@
+Continue CODE-0042 event/binding closure from the current reconstructed full-package workspace and current cleaned overlays.
+
+This pass is deliberately narrow: FINISH THE EVENT INVENTORY / ACTION BINDING CLOSURE COMPLETELY. Do not begin the broad responsive-layout migration and do not add gameplay functionality.
+
+Read first:
+- Enshrouded Mod Development — Core Method
+- current CODE-0042E/CODE-0042F audit notes
+- current runtime/ArchitectRuntime.ps1
+- current runtime/admin_action_registry.json
+- existing tests/test_f7_truthfulness.ps1
+- existing tests/test_ui_smoke.ps1
+
+Preserve observe -> capture -> map -> validate -> minimally modify -> verify.
+
+==================================================
+IMPORTANT CORRECTION TO CURRENT AUDIT
+==================================================
+
+The current `directUnclassifiedEventRegistrations` implementation is not sufficient.
+
+It counts only inventory rows with no Classification:
+  $script:f7EventInventory | ? {-not $_.Classification}
+
+Raw `Register-SafeUiEvent` and `.Add_Click(...)` registrations bypass the inventory entirely and therefore cannot be seen by that metric.
+
+Do not claim zero-gap based on the current formula.
+
+Current static source has approximately:
+- 48 direct Register-SafeUiEvent calls
+- 58 .Add_Click registrations
+- 106 total file-wide registrations
+
+After excluding the two intended wrapper-internal Register-SafeUiEvent calls and F8-only handlers, roughly 96 direct F7 event registrations remain to classify/migrate.
+
+Process the complete F7 surface in this task. Do not return after converting only one page unless a real blocking ambiguity cannot be resolved from source.
+
+==================================================
+DEFINE THE F7 AUDIT SURFACE
+==================================================
+
+Include:
+- F7 form/header/navigation events
+- all 11 canonical F7 Admin page renderers
+- Home/Dashboard renderer
+- Player
+- Mobility & Navigation
+- Items & Progression
+- Combat & AI
+- World & Environment
+- Building & World Editing
+- Entities & Authority / Multiplayer & Quests
+- Camera & Presentation where currently shared
+- Mods & Configuration / Settings
+- Developer & Diagnostics
+- Codex detail/update UI
+- Map/Wayfinder UI
+- Role Presets
+- Blueprint browser/dialogs launched from F7
+- waypoint dialogs/details launched from F7
+- other F7-only subviews reachable from the F7 form
+
+Exclude:
+- F8-only renderers and F8-only controls
+- non-UI engine/runtime callbacks that are not WinForms event registrations
+
+Document the exact included function/surface list in the handoff and in a test/helper so the boundary is deterministic.
+
+==================================================
+REQUIRED EVENT MODEL
+==================================================
+
+Every F7 event-bearing control inside that surface must use exactly one explicit registration path:
+
+ACTION:
+  Register-AdminActionEvent
+
+UI_ONLY:
+  Register-F7UiEvent
+
+No direct Register-SafeUiEvent calls may remain inside the F7 surface.
+No direct .Add_Click(...) registrations may remain inside the F7 surface.
+
+The only allowed direct Register-SafeUiEvent calls should be the internal calls made by Register-AdminActionEvent and Register-F7UiEvent themselves.
+
+Do not mechanically classify everything as ACTION.
+
+ACTION means user intent that can dispatch/request/alter gameplay, admin, runtime, project/config state, presets that can indirectly dispatch actions, scanner/backend state, or another authoritative operation.
+
+UI_ONLY includes navigation, page/subview switching, filters, search boxes, selection changes, dialog cancel/close, clipboard, local view changes, external-link/open-folder behavior, and presentation-only interactions unless they change Architect/game state that needs canonical action identity.
+
+Unsupported controls whose only behavior is "unsupported" should normally be disabled with tooltip/status and have no executable event instead of receiving a meaningless action ID.
+
+==================================================
+STABLE EVENT IDENTITY
+==================================================
+
+Add a mandatory stable `EventId` (or `ControlKey`) to both event registration helpers.
+
+Do not use Control.Name, display text, or object identity as the canonical event identity.
+
+EventId examples should be deterministic and semantic, such as:
+- player.health.fill.click
+- mobility.speed.apply.click
+- mobility.destination.filter.changed
+- developer.ctcatalog.selection.changed
+
+Do not use random GUIDs.
+
+Every event definition must have exactly one EventId.
+Duplicate EventIds are test failures.
+
+==================================================
+LIFECYCLE-SAFE INVENTORY
+==================================================
+
+The current inventory stores strong WinForms Control references and accumulates across page renders. Fix this.
+
+Preferred architecture:
+
+A) Stable definition inventory, keyed by EventId, metadata only:
+- EventId
+- Page
+- Classification
+- ActionId (ACTION only)
+- EventName
+- Operation
+- optional renderer/source context
+- no strong Control reference
+
+B) Active render/binding map:
+- EventId -> current live Control and render generation/page
+- replace on re-render
+- clear/remove when page/subview is destroyed
+
+The full denominator must come from the stable definition inventory, never from the set of currently live controls.
+
+Also make `$script:adminActionControls` lifecycle-safe so page re-renders do not retain stale/disposed controls indefinitely. Preserve any genuinely persistent header/shell control bindings deliberately.
+
+Repeated visits to a page must not increase the stable definition count.
+
+==================================================
+DIRECT-UNCLASSIFIED METRIC
+==================================================
+
+`directUnclassifiedEventRegistrations` must be computed independently of the inventory.
+
+Implement a deterministic static/source audit for the defined F7 surface. It may live in tests or in a developer audit helper, but `Get-F7ActionBindingAudit` must expose the computed result when available.
+
+The scanner/assertion must detect:
+- direct `Register-SafeUiEvent` in the F7 surface outside the two approved wrappers
+- direct `.Add_Click(...)` in the F7 surface
+
+Prefer PowerShell AST/source-aware inspection over a fragile global string count when practical.
+
+It must exclude:
+- the internal helper calls themselves
+- F8-only functions
+
+Acceptance value: 0.
+
+==================================================
+MIGRATION INVENTORY
+==================================================
+
+Current high-volume raw-event areas include approximately:
+- Render-MobilityTravelPage: 12
+- Render-CombatAIPage: 12
+- Render-WorldCameraPage: 9
+- Render-MapWayfinderPage: 9
+- Render-InventoryItemsPage: 7
+- Show-BlueprintBrowser: 7
+- Render-DashboardPage: 6
+- Render-PlayerVitalsPage: 5
+- Render-SettingsDevPage: 5
+- Render-CodexWikiPage: 5
+- Render-MultiplayerQuestsPage: 4
+- Update-CodexDetails: 4
+- Render-CraftingProgressionPage: 3
+- Render-BuildingEntitiesPage: 3
+- Render-RolePresetsPage: 2
+- Update-WaypointDetails: 1
+- F7 shell/navigation/header: additional events
+
+Audit every one. Some are ACTION, some UI_ONLY.
+
+Do not omit dynamic closures, loop-created buttons, preset application, Codex execution, teleport controls, dialog buttons, or header/scanner controls.
+
+Teleport remains fail-closed and should bind to disabled `movement.teleport` where an executable-looking teleport action remains visible.
+
+Do not enable an action to make binding pass.
+
+==================================================
+REGISTRY RULES
+==================================================
+
+For every ACTION EventId:
+- exactly one ActionId
+- exactly one canonical registry entry
+
+If a real action control lacks a registry identity, add one truthfully.
+Keep unsupported/unqualified actions disabled with explicit evidence/failure reason.
+
+Do not add registry actions for UI_ONLY events.
+Do not add placeholder action IDs merely to satisfy counts.
+
+Preserve:
+- teleport ADM-TEST-0002 fail-closed
+- Auto Loot STARTUP_CANARY_ONLY/no live toggle
+- Glider Flight disabled/unqualified
+- glider-stamina semantic block
+- CODE-0022B crash guard
+- no PowerShell/C# direct mutation fallback
+- source-consolidation catalog
+- 224-entry CT catalog
+
+==================================================
+AUDIT OUTPUT
+==================================================
+
+Get-F7ActionBindingAudit must report at least:
+- totalEventControls / totalEventDefinitions
+- actionControls
+- uiOnlyControls
+- boundActionControls
+- unboundActionControls
+- missingRegistryIds
+- duplicateRegistryIds
+- duplicateEventIds
+- ambiguousBindings
+- directUnclassifiedEventRegistrations
+- activeBindingCount
+- staleOrDisposedActiveBindings
+- per-page counts
+- detailed rows keyed by EventId
+
+Zero-gap acceptance:
+- unboundActionControls = 0
+- missingRegistryIds = 0
+- duplicateRegistryIds = 0
+- duplicateEventIds = 0
+- ambiguousBindings = 0
+- directUnclassifiedEventRegistrations = 0
+- staleOrDisposedActiveBindings = 0 after page transitions
+
+==================================================
+TESTS
+==================================================
+
+Keep existing baselines green:
+- PowerShell parse
+- F7 truthfulness 53/53 or stronger
+- UI smoke 28/28 or stronger
+- UI errors 0
+- CT catalog exactly 224
+
+Add/strengthen event tests that:
+1. render/traverse all 11 canonical pages;
+2. collect audit;
+3. traverse them again in reverse order;
+4. revisit several pages repeatedly;
+5. confirm stable definition counts and no stale/disposed active bindings;
+6. confirm all ACTION definitions resolve to exactly one registry action;
+7. confirm UI_ONLY definitions have no gameplay ActionId;
+8. confirm no raw event registration remains in the defined F7 surface;
+9. confirm prohibited direct mutation calls remain absent.
+
+Do not weaken an existing assertion simply to obtain green tests.
+
+==================================================
+DELIVERABLE
+==================================================
+
+Complete the entire F7 event-classification/binding closure in this pass.
+
+At completion report:
+- exact defined F7 audit surface
+- raw registrations before/after
+- total EventIds
+- ACTION count
+- UI_ONLY count
+- registry count before/after
+- actions added and why
+- all zero-gap metrics
+- lifecycle/re-render test results
+- truthfulness/UI smoke results
+- CT count
+- files changed
+- anything that remains genuinely blocked
+
+Do not start the broad responsive page layout migration in this task.
+Do not claim runtime gameplay success.

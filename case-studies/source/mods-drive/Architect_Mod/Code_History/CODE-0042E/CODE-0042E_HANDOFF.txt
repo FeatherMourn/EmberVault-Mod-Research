@@ -1,0 +1,17 @@
+CODE-0042E handoff
+
+Status: partial event-inventory foundation; do not start broad responsive migration yet.
+
+Current registry: 52 actions, 17 enabled, 35 disabled/planned.
+New canonical identity: movement.teleport, disabled under ADM-TEST-0002.
+
+Source-audited findings:
+- independent f7EventInventory exists;
+- Register-F7UiEvent exists but has no call sites yet;
+- Register-AdminActionEvent has only the dynamic Player Vitals path plus two diagnostics call sites;
+- raw Register-SafeUiEvent/.Add_Click handlers remain throughout F7;
+- audit does not yet report directUnclassifiedEventRegistrations;
+- inventory currently retains Control references and is not reset/deduped across page rerenders;
+- ambiguousBindings uses Control.Name, which is not a stable unique identity.
+
+Next: CODE-0042F complete event classification/binding closure. Zero-gap before responsive migration.

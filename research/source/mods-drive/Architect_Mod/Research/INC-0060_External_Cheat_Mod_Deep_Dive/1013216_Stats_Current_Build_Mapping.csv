@@ -1,0 +1,28 @@
+ct_label,hash_hex,current_build_attribute_debug_name,same_id_present_1076226
+Wand Damage,0x6E97C666,WeaponCategoryDamageMod_Wand,YES
+Staff Damage,0xF466C8FE,WeaponCategoryDamageMod_Staff,YES
+Two Handed Damage,0xAAAD4C37,WeaponCategoryDamageMod_TwoHand,YES
+One Handed Damage,0x4A603222,WeaponCategoryDamageMod_Single,YES
+Bow Damage,0x22B78F34,WeaponCategoryDamageMod_Bow,YES
+Dagger Damage,0xB1EE1CFD,WeaponCategoryDamageMod_Dagger,YES
+Critical Chance Magic,0x18F5E41F,CritChance_Adder_Magic,YES
+Critical Chance Melee,0xACA624C1,CritChance_Adder_Melee,YES
+Critical Chance Range,0xF07290D0,CritChance_Adder_Ranged,YES
+Main Attributes Ranged Damage,0x2170D42F,RangedDamageMod,YES
+Main Attributes Melee Damage,0x6910F358,MeleeDamageMod,YES
+Main Attributes Magic Damage,0x222B02E3,MagicDamageMod,YES
+Str,0x8C554BC4,Strength_Base,YES
+Const,0x10CE8E11,Constitution_Base,YES
+Dex,0xA8E368D5,Dexterity_Base,YES
+Endurance,0xF0B152E2,Endurance_Base,YES
+Int,0x500B391F,Intelligence_Base,YES
+Spirit+,0xFE934A26,Spirit_Base,YES
+Stamina,0x4114B3E5,Stamina_Max_Adder,YES
+Stamina Reg,0xB06CA4F0,Stamina_Recharge,YES
+Stamina Reg Delay,0x237E854C,Stamina_RechargeTimeout,YES
+Mana+,0x17253019,Mana_Max_Adder,YES
+Mana Reg,0xE12F60AF,Mana_Recharge,YES
+Mana Reg Delay,0xB0A850D5,Mana_RechargeTimeout,YES
+Health+,0x8BC688F7,Health_Max_Adder,YES
+Health Reg,0xDEE8D7AC,Health_Recharge,YES
+Health Reg Delay,0x95DA4F21,Health_RechargeTimeout,YES

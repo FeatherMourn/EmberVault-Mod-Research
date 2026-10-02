@@ -1,0 +1,11 @@
+Intake ID: INC-0062
+Received: 2026-09-20
+Artifact: architect_toolkit.zip
+Classification: LATEST_USER_SOURCE_CANDIDATE / UNTRUSTED_STAGING / DO_NOT_DESIGNATE_CURRENT_WITHOUT_EXPLICIT_APPROVAL
+User statement: This is the latest version of Architect Toolkit and should be used to determine the current implementation state before regenerating Codex instructions.
+SHA-256: 768ac907e33038d8a5efe4535ae1d3745abe4308de06a7d7694060068538b5ec
+Bytes: 66748786
+Detected runtime/build identity: version 0.42.0; buildId architect-v042-hotbar-0022b-crash-guard-20260920; mode hybrid_observer_and_admin_mutation
+Target game build observed in project/source: Enshrouded revision 1076226 / 0.9.1.2 Hotfix #42
+Current designation: NOT CHANGED. This intake is staged only pending explicit user approval to designate/replace Architect_Mod/Current.
+Notes: Archive contains source, runtime, tests, bridge data, external-source consolidation catalogs, build/test snapshots, and a nested historical/test build zip under Export/Test_Builds. Source tree inspected in ChatGPT deep-dive; original upload preserved byte-for-byte.

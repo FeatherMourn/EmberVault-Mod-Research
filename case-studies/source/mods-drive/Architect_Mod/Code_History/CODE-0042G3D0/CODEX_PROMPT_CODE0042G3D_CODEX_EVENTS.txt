@@ -1,0 +1,526 @@
+CODE-0042G3D — CODEX EVENT MIGRATION + DETAIL LIFECYCLE CLOSURE
+
+Scope:
+- `Update-CodexDetails`
+- `Render-CodexWikiPage`
+- narrowly scoped Codex detail-binding cleanup
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Registry:
+- DO NOT change `admin_action_registry.json`.
+- Must remain 55 actions / 17 enabled / 38 disabled.
+
+Tests:
+- reconstructed workspace lifecycle/truthfulness/UI tests
+
+DO NOT:
+- migrate Map/Wayfinder, Blueprint Browser, or later G3 pages;
+- begin responsive layout work;
+- enable disabled canonical actions;
+- add gameplay/native backends;
+- bypass the G3D0 canonical enabled gates;
+- invent ActionIds for non-command wiki/clipboard operations.
+
+GOAL
+
+Migrate all 9 remaining raw Codex event-registration sites:
+
+`Update-CodexDetails`
+- 4 `.Add_Click(...)` -> 0
+
+`Render-CodexWikiPage`
+- 5 `Register-SafeUiEvent` -> 0
+
+and close the stale active-binding problem caused by repeated detail-panel rebuilds.
+
+A. CODEX DETAIL BINDING LIFETIME
+
+`Update-CodexDetails` repeatedly executes:
+
+`$pnlDetail.Controls.Clear()`
+
+without clearing the whole F7 PAGE.
+
+Dynamic detail action EventIds differ by selected command, so old active bindings can otherwise remain in `$script:f7ActiveBindings`.
+
+Before `$pnlDetail.Controls.Clear()`, remove active bindings that belong specifically to:
+
+- Page = `Codex & Commands`
+- LifetimeScope = `DETAIL`
+
+Use a narrow fail-safe loop over a snapshot of the keys.
+
+Example shape:
+
+```powershell
+foreach ($eventId in @($script:f7ActiveBindings.Keys)) {
+    $binding = $script:f7ActiveBindings[$eventId]
+    if ($binding.Page -eq "Codex & Commands" -and $binding.LifetimeScope -eq "DETAIL") {
+        $script:f7ActiveBindings.Remove($eventId)
+    }
+}
+```
+
+Equivalent implementation is acceptable.
+
+Do NOT remove SHELL bindings.
+Do NOT remove unrelated PAGE bindings.
+Do NOT delete stable event definitions; only clear active DETAIL bindings.
+
+Then clear/rebuild the detail panel.
+
+All controls created inside `Update-CodexDetails` must use:
+- Page = `Codex & Commands`
+- LifetimeScope = `DETAIL`
+
+B. PLAYER-VIEW CANONICAL COMMAND BUTTON
+
+Current raw button:
+`>> EXECUTE COMMAND <<`
+
+Current handler incorrectly routes arbitrary AdminAction IDs through `Send-CheatCommand`.
+
+Change to canonical Admin dispatcher behavior.
+
+For a command item:
+
+1. Resolve:
+   `$cid = [string]$item.playerView.commandId`
+2. Resolve canonical registry definition:
+   `Get-AdminCommandDefinition $cid`
+
+If `$cid` is blank OR canonical definition is missing:
+- do NOT invent an ActionId/EventId;
+- do NOT attach a handler;
+- disable the button;
+- neutral disabled styling;
+- truthful tooltip/accessibility text:
+  `Codex action unavailable: canonical ActionId is missing or unregistered.`
+
+If canonical definition exists:
+
+EventId:
+`f7.codex.player.action.<ActionId>.click`
+
+Classification:
+ACTION
+
+ActionId:
+the exact canonical `$cid`
+
+Page:
+`Codex & Commands`
+
+Operation:
+`Dispatch Player Codex Action <ActionId>`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-AdminActionEvent`
+
+Handler:
+- get ActionId from the control's canonical binding/Tag safely;
+- call `Dispatch-AdminCommand`, NOT `Send-CheatCommand`;
+- pass a command object with the exact canonical action id and a unique command id;
+- report returned `state/message` truthfully;
+- never unconditionally say "Dispatched" or "Executed".
+
+Suggested status:
+`Codex action '<id>' -> <state>: <message>`
+
+Canonical enabled state controls button availability.
+
+For canonical definitions with `enabled=false`:
+- button remains disabled;
+- change visual presentation to neutral disabled styling;
+- button text such as `ACTION UNAVAILABLE`;
+- tooltip should surface `failureReason` when available.
+
+For enabled canonical definitions:
+- button remains enabled;
+- text may be `EXECUTE CANONICAL ACTION` or equivalent.
+
+G3D0 remains the execution safety backstop.
+
+C. PLAYER-VIEW WIKI BUTTON
+
+Current raw:
+`$btnWiki.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.codex.detail.wiki.click`
+
+Page:
+`Codex & Commands`
+
+Operation:
+`Open Official Wiki Page`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-F7UiEvent`
+
+Preserve:
+- URL-safe item name
+- `Start-Process`
+- official `enshrouded.wiki.gg` URL
+
+Use a closure-safe handler for the current item.
+
+No registry ActionId.
+
+D. DEVELOPER-VIEW CANONICAL COMMAND BUTTON
+
+Current raw button:
+`DISPATCH TO BACKEND ADAPTER`
+
+The current label can imply a live backend even for backend `NONE`.
+
+For a developer command item:
+
+1. Resolve:
+   `$cid = [string]$item.developerView.internalId`
+2. Resolve canonical definition.
+
+If blank/unregistered:
+- no event registration;
+- disable;
+- neutral presentation;
+- truthful reason;
+- no fallback EventId.
+
+If canonical definition exists:
+
+EventId:
+`f7.codex.developer.action.<ActionId>.click`
+
+Classification:
+ACTION
+
+ActionId:
+exact `$cid`
+
+Page:
+`Codex & Commands`
+
+Operation:
+`Dispatch Developer Codex Action <ActionId>`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-AdminActionEvent`
+
+Handler:
+- call `Dispatch-AdminCommand`;
+- exact canonical ActionId;
+- unique command id;
+- status reports returned state/message truthfully.
+
+Do NOT call a backend adapter directly.
+
+Presentation:
+- enabled canonical action: `DISPATCH CANONICAL ACTION`
+- disabled canonical action: `ACTION UNAVAILABLE`
+- disabled styling + failureReason tooltip
+
+This is a Codex UI over the canonical dispatcher, not a backend bypass.
+
+E. DEVELOPER-VIEW COPY BUTTON
+
+Current raw:
+`$btnCopy.Add_Click(...)`
+
+Classification:
+UI_ONLY
+
+EventId:
+`f7.codex.detail.copyCommand.click`
+
+Page:
+`Codex & Commands`
+
+Operation:
+`Copy Codex Command`
+
+LifetimeScope:
+DETAIL
+
+Use:
+`Register-F7UiEvent`
+
+Preserve clipboard behavior and truthful copied-command status.
+
+Use a closure-safe handler for the current item.
+
+No ActionId.
+
+F. MAIN CODEX PAGE — FIVE UI_ONLY EVENTS
+
+Replace all five raw `Register-SafeUiEvent` sites in `Render-CodexWikiPage` with `Register-F7UiEvent`.
+
+1. Results selection
+
+EventId:
+`f7.codex.results.selection.changed`
+
+EventName:
+`SelectedIndexChanged`
+
+Page:
+`Codex & Commands`
+
+Operation:
+`Select Codex Item`
+
+LifetimeScope:
+PAGE
+
+Preserve current selected-item -> `Update-CodexDetails` behavior.
+
+2. Search text
+
+EventId:
+`f7.codex.search.text.changed`
+
+EventName:
+`TextChanged`
+
+Operation:
+`Search Codex`
+
+PAGE lifetime.
+
+Preserve:
+- `$script:codexSearchQuery`
+- `Update-CodexFilter`
+
+3. Category combo
+
+EventId:
+`f7.codex.category.changed`
+
+EventName:
+`SelectedIndexChanged`
+
+Operation:
+`Filter Codex Category`
+
+PAGE lifetime.
+
+Preserve:
+- `$script:codexFilterCat`
+- `Update-CodexFilter`
+
+4. Player view
+
+EventId:
+`f7.codex.view.player.click`
+
+EventName:
+`Click`
+
+Operation:
+`Switch To Player Codex View`
+
+PAGE lifetime.
+
+Preserve:
+- `$script:codexViewMode = "PLAYER"`
+- button colors
+- current-detail refresh
+
+5. Developer view
+
+EventId:
+`f7.codex.view.developer.click`
+
+EventName:
+`Click`
+
+Operation:
+`Switch To Developer Codex View`
+
+PAGE lifetime.
+
+Preserve:
+- `$script:codexViewMode = "DEV"`
+- button colors
+- current-detail refresh
+
+Use closure-safe handlers for local page controls.
+
+G. UPDATE STALE INTERNAL COMMENT
+
+Current source comment says:
+`Index all 174 admin commands into the searchable catalog`
+
+That count is stale.
+
+Change comment only to:
+`Index canonical admin actions into the searchable catalog`
+
+or equivalent count-free wording.
+
+Do not hard-code 55 into the comment.
+
+H. EVENT ID / LIFECYCLE RULES
+
+PAGE definitions:
+- `f7.codex.results.selection.changed`
+- `f7.codex.search.text.changed`
+- `f7.codex.category.changed`
+- `f7.codex.view.player.click`
+- `f7.codex.view.developer.click`
+
+DETAIL UI definitions:
+- `f7.codex.detail.wiki.click`
+- `f7.codex.detail.copyCommand.click`
+
+DETAIL ACTION definitions, dynamically by canonical ActionId:
+- `f7.codex.player.action.<ActionId>.click`
+- `f7.codex.developer.action.<ActionId>.click`
+
+Requirements:
+- same ActionId -> same stable EventId;
+- no Control.Name-derived identity;
+- no display-text-derived identity;
+- missing/unregistered ActionId -> disabled control, no event;
+- DETAIL active bindings are removed before detail rebuild;
+- stable event definitions may remain for audit history;
+- repeated selection/view switching leaves zero stale active DETAIL bindings.
+
+I. TRUTHFULNESS / SAFETY
+
+The Codex is not allowed to override canonical registry truth.
+
+For all 55 current canonical actions:
+- 17 enabled actions may be interactable;
+- 38 disabled actions must render unavailable in both Player and Developer command views.
+
+Do not use `AllowDisabled`.
+
+Direct/manual invocation of a disabled button handler must still be blocked by G3D0 dispatcher gating.
+
+No command button may claim success based only on invocation.
+
+Use returned dispatcher state/message.
+
+J. PRESERVE
+
+Keep unchanged:
+
+- registry 55 / enabled 17 / disabled 38
+- G3D0 canonical gates
+- all detailed existing fail-closed routes
+- G1/G2 closure
+- G3A/G3B/G3C closure
+- local quest-tracker semantics
+- scanner fail-closed
+- position read fail-closed
+- preset/skills/parry/world/building fail-closed
+- teleport ADM-TEST-0002
+- Auto Loot startup-canary policy
+- Glider Flight disabled/unqualified
+- CT catalog = 224
+- schema/adaptor validity
+
+K. TESTS
+
+Run existing:
+1. real `Import-AdminActionRegistry` -> 55 unique
+2. PowerShell parse
+3. lifecycle fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema violations = 0
+9. adapter mismatches = 0
+10. prohibited mutation scan
+11. G1/G2/G3A/G3B/G3C raw closure remains zero
+
+Codex-specific:
+
+12. `Update-CodexDetails`
+- raw `.Add_Click`: 4 -> 0
+- raw `Register-SafeUiEvent`: 0
+
+13. `Render-CodexWikiPage`
+- raw `Register-SafeUiEvent`: 5 -> 0
+- raw `.Add_Click`: 0
+
+14. exact five PAGE EventIds/assertions
+
+15. DETAIL fixed UI EventIds:
+- wiki
+- copy command
+
+16. canonical command controls:
+- iterate all 55 canonical ActionIds in Player view
+- iterate all 55 in Developer view
+- EventId maps to exact ActionId
+- 17 enabled controls enabled
+- 38 disabled controls disabled/unavailable
+
+17. malformed/unregistered command item:
+- control disabled
+- no handler
+- no generated/fallback EventId
+- no missing-registry action definition created
+
+18. dispatcher routing:
+- Player command button uses `Dispatch-AdminCommand`
+- Developer command button uses `Dispatch-AdminCommand`
+- no Codex arbitrary-command use of `Send-CheatCommand`
+- no direct backend-adapter invocation from Codex
+
+19. truthful result presentation:
+- rejected command status includes returned state/message
+- no unconditional "Dispatched command" success text
+- no unconditional backend-success text
+
+20. DETAIL lifecycle stress:
+- select command A
+- select non-command item
+- select command B
+- switch PLAYER -> DEV -> PLAYER repeatedly
+- active DETAIL bindings correspond only to currently rendered detail controls
+- stale/disposed active binding count = 0
+- no ambiguous EventIds
+
+21. page rerender:
+- PAGE bindings idempotent
+- no duplicate definitions
+- no stale active bindings
+
+REPORT
+
+Return:
+- files changed
+- Codex raw counts before/after
+- exact five PAGE EventIds
+- fixed DETAIL UI EventIds
+- dynamic ACTION EventId patterns
+- 17/38 enabled-vs-disabled control result
+- malformed ActionId behavior
+- dispatcher normalization result
+- DETAIL lifecycle stress result
+- registry counts unchanged
+- existing suite results
+- remaining G3 raw counts
+- explicit statement that no runtime/gameplay proof is claimed
+
+Do not start G3E or responsive migration in this pass.

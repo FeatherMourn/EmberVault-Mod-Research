@@ -1,0 +1,26 @@
+CODE-0044B combined offline qualification (2026-09-21)
+
+Baseline ZIP SHA-256: 899D954412CE6B68EFE3D1F29B6CC5D34548A21C84CC69F5E43B9CBEFB93352D
+PowerShell parse (runtime, workspace, geometry module): PASS, 0 errors.
+CODE-0044A catalog/state contract: PASS.
+CODE-0044A selection/config/one-carrier test: PASS.
+CODE-0044A F8 static contract: PASS.
+CODE-0044A F8 UI contract: PASS.
+ArchitectVoxel golden geometry parity: PASS, 10/10 cases.
+Catalog matching: PASS, 6 exact; changed design/function/dimensions rejected.
+Preset CRUD/overwrite/duplicate/corruption/atomic failure: PASS.
+BUILD safety: PASS, CT 224, registry unchanged from CODE-0044A (20/17), one carrier, no unsupported backend operation.
+F7 truthfulness semantic refresh: PASS, 74/74; CODE-0044A legacy text-pattern suite was 61/72 before test-only refresh.
+F7 Home lifecycle: PASS, Home definitions stable at 9, stale bindings 0, page-direct events 0;
+  one unchanged top-level WinForms ThreadException hook remains outside F7 page events.
+F7 UI smoke: PASS, 30/30, zero UI errors.
+F8 UI/layout/delayed events: PASS at 900x590, 1280x720, 1600x900, 1920x1080.
+F8 maximum bounded preview: PASS, volume 65,536, 767 ms.
+Source consolidation: PASS, 12/12 against the restored INC-0062 catalogs.
+F7 source prefix before the F8 boundary: byte-identical to CODE-0044A.
+Native source comparison: 31 files checked; only identity header differs.
+Native DLL rebuild: PASS; embedded CODE-0044B build ID present, CODE-0044A ID absent.
+
+Runtime/gameplay test: DEFERRED. No live carrier switching, arbitrary procedural
+placement, game ghost, resource refresh, native mutation, or placement authority
+is claimed. Architect_Mod/Current and CODE-0043G6A were not modified.

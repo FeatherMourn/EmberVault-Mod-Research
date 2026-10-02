@@ -1,0 +1,2853 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1000</ID>
+      <Description>"🧙 [01] PLAYER ATTRIBUTES, SURVIVAL &amp; VITALS"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1001</ID>
+          <Description>"Get Live Stats Engine (Equip Armor or Consume Item to Populate)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>// =============================================================================
+// Enshrouded Engine: AttributeContainer Dynamic Pointer Interceptor
+// Target: enshrouded.exe Stat Evaluation Loop (0x7ff63cc8fa80 - 0x7ff63cc8fb30)
+// =============================================================================
+[ENABLE]
+aobscanmodule(aobFloatAnchor,enshrouded.exe,F3 0F 11 34 91 48 8D 4D C0)
+aobscanmodule(aobIntAnchor,enshrouded.exe,F3 42 0F 11 04 B1 48 83 EF 10)
+
+alloc(memFloatHook,$1000,aobFloatAnchor)
+alloc(memIntHook,$1000,aobIntAnchor)
+
+label(code_float)
+label(return_float)
+label(pFloatStats)
+registersymbol(pFloatStats)
+registersymbol(aobFloatAnchor)
+
+memFloatHook:
+  push rax
+  mov rax,000000008F4BFBC5
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+00],rax // Walk Speed
+  @@:
+  mov rax,00000000350B478B
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+08],rax // Sprint Speed
+  @@:
+  mov rax,00000000ED6A7BDE
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+10],rax // Sneak Speed
+  @@:
+  mov rax,00000000C199AF6A
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+18],rax // Swim Speed
+  @@:
+  mov rax,00000000B97D3C6E
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+20],rax // Jump Velocity
+  @@:
+  mov rax,000000005C8C30C7
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+28],rax // Gravity Scale
+  @@:
+  mov rax,0000000055260172
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+30],rax // Glide Acceleration
+  @@:
+  mov rax,00000000F53B474C
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+rdx*4]
+   mov [pFloatStats+38],rax // Glide Air Resistance
+  @@:
+  pop rax
+code_float:
+  movss [rcx+rdx*4],xmm6
+  jmp return_float
+
+align 10 00
+pFloatStats:
+dq 0,0,0,0,0,0,0,0,0,0,0,0
+
+aobFloatAnchor:
+  jmp memFloatHook
+return_float:
+
+label(code_int)
+label(return_int)
+label(pIntStats)
+registersymbol(pIntStats)
+registersymbol(aobIntAnchor)
+
+memIntHook:
+  push rax
+  mov rax,000000008C554BC4
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+00],rax // Strength
+  @@:
+  mov rax,0000000010CE8E11
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+08],rax // Constitution
+  @@:
+  mov rax,00000000A8E368D5
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+10],rax // Dexterity
+  @@:
+  mov rax,00000000F0B152E2
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+18],rax // Endurance
+  @@:
+  mov rax,00000000500B391F
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+20],rax // Intelligence
+  @@:
+  mov rax,00000000FE934A26
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+28],rax // Spirit
+  @@:
+  mov rax,000000004114B3E5
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+30],rax // Stamina
+  @@:
+  mov rax,00000000B06CA4F0
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+38],rax // Stamina Reg
+  @@:
+  mov rax,00000000237E854C
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+40],rax // Stamina Reg Delay
+  @@:
+  mov rax,0000000017253019
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+48],rax // Mana
+  @@:
+  mov rax,00000000E12F60AF
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+50],rax // Mana Reg
+  @@:
+  mov rax,00000000B0A850D5
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+58],rax // Mana Reg Delay
+  @@:
+  mov rax,000000008BC688F7
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+60],rax // Health
+  @@:
+  mov rax,00000000DEE8D7AC
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+68],rax // Health Reg
+  @@:
+  mov rax,0000000095DA4F21
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+70],rax // Health Reg Delay
+  @@:
+  mov rax,0000000098BE99FE
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+78],rax // Shroud Max Time
+  @@:
+  mov rax,000000001C8A9772
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+80],rax // Magic Damage
+  @@:
+  mov rax,000000003DEE40C2
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+88],rax // Melee Damage
+  @@:
+  mov rax,000000007EBE182C
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+90],rax // Ranged Damage
+  @@:
+  mov rax,000000003C00A9E5
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+98],rax // Crit Chance
+  @@:
+  mov rax,000000004E7A23BB
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+A0],rax // Crit Damage
+  @@:
+  mov rax,000000008D974C88
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+A8],rax // Mining Damage
+  @@:
+  mov rax,00000000A1188D33
+  cmp rax,rdi
+  jne short @f
+   lea rax,[rcx+r14*4]
+   mov [pIntStats+B0],rax // Woodcutting Damage
+  @@:
+  pop rax
+code_int:
+  movss [rcx+r14*4],xmm0
+  jmp return_int
+
+align 10 00
+pIntStats:
+dq 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+aobIntAnchor:
+  jmp memIntHook
+  nop
+return_int:
+
+[DISABLE]
+aobFloatAnchor:
+  db F3 0F 11 34 91
+unregistersymbol(pFloatStats)
+unregistersymbol(aobFloatAnchor)
+dealloc(memFloatHook)
+
+aobIntAnchor:
+  db F3 42 0F 11 04 B1
+unregistersymbol(pIntStats)
+unregistersymbol(aobIntAnchor)
+dealloc(memIntHook)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1002</ID>
+              <Description>"Strength (Attribute Value)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1003</ID>
+              <Description>"Constitution (Attribute Value)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+8]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1004</ID>
+              <Description>"Dexterity (Attribute Value)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+10]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1005</ID>
+              <Description>"Endurance (Attribute Value)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+18]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1006</ID>
+              <Description>"Intelligence (Attribute Value)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+20]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1007</ID>
+              <Description>"Spirit (Attribute Value)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+28]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1008</ID>
+              <Description>"Max Stamina (Base Points)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+30]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1009</ID>
+              <Description>"Stamina Regen Rate"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+38]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1010</ID>
+              <Description>"Stamina Regen Delay (ms)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+40]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1011</ID>
+              <Description>"Max Mana (Base Points)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+48]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1012</ID>
+              <Description>"Mana Regen Rate"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+50]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1013</ID>
+              <Description>"Mana Regen Delay (ms)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+58]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1014</ID>
+              <Description>"Max Health (Base Points)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+60]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1015</ID>
+              <Description>"Health Regen Rate"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+68]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1016</ID>
+              <Description>"Health Regen Delay (ms)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+70]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1017</ID>
+              <Description>"Shroud Max Survival Time (Sec)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+78]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1018</ID>
+              <Description>"Melee Attack Damage Multiplier"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+88]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1019</ID>
+              <Description>"Ranged Arrow Damage Multiplier"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+90]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1020</ID>
+              <Description>"Magic / Spell Power Multiplier"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+80]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1021</ID>
+              <Description>"Critical Strike Chance (%)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+98]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1022</ID>
+              <Description>"Critical Strike Damage Multiplier (%)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+A0]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1023</ID>
+              <Description>"Mega Mining Damage (Pickaxe)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+A8]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1024</ID>
+              <Description>"Mega Woodcutting Damage (Axe)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>[pIntStats+B0]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1025</ID>
+              <Description>"Walk Speed (Multiplier)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1026</ID>
+              <Description>"Sprint Speed (Multiplier)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats+8]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1027</ID>
+              <Description>"Sneak Speed (Multiplier)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats+10]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1028</ID>
+              <Description>"Swim Speed (Multiplier)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats+18]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1029</ID>
+              <Description>"Jump Velocity (Multiplier)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats+20]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1030</ID>
+              <Description>"Gravity Scale"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats+28]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1031</ID>
+              <Description>"Glide Acceleration"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats+30]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1032</ID>
+              <Description>"Glide Air Resistance"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pFloatStats+38]</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1033</ID>
+          <Description>"God Mode / Damage Taken Multiplier (0.0 = Invulnerable)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(network_player_attributes,enshrouded.exe,8B 04 91 89 44 24 5C 48 8B 5D)
+alloc(newmem,$1000,network_player_attributes)
+alloc(_dmgTakenMult,4)
+label(return)
+registersymbol(network_player_attributes)
+registersymbol(_dmgTakenMult)
+
+_dmgTakenMult:
+  dd (float)0.0 // 0.0 = Invulnerable / 0 Damage, 0.5 = Half Damage, 1.0 = Normal, 2.0 = 2x Damage
+
+newmem:
+  mov eax,[rcx+rdx*4]
+  push rcx
+  cvtsi2ss xmm0,eax
+  mulss xmm0,[_dmgTakenMult]
+  cvttss2si eax,xmm0
+  pop rcx
+  mov [rsp+5C],eax
+  mov rbx,[rbp+08]
+  jmp return
+
+network_player_attributes:
+  jmp newmem
+  nop 6
+return:
+
+[DISABLE]
+network_player_attributes:
+  db 8B 04 91 89 44 24 5C 48 8B 5D 08
+unregistersymbol(network_player_attributes)
+unregistersymbol(_dmgTakenMult)
+dealloc(newmem)
+dealloc(_dmgTakenMult)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1034</ID>
+              <Description>"Damage Taken Multiplier (Float: 0.0 = God Mode, 0.5 = Half Dmg, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_dmgTakenMult</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1035</ID>
+          <Description>"Action Stamina Drain Multiplier (0.0 = Infinite Stamina)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(attribute_save,enshrouded.exe,8B 3C 88 33 C9)
+alloc(newmem,$1000,attribute_save)
+alloc(_staminaCostMult,4)
+label(return)
+registersymbol(attribute_save)
+registersymbol(_staminaCostMult)
+
+_staminaCostMult:
+  dd (float)0.0 // 0.0 = Infinite / 0 Drain, 0.5 = 50% Drain, 1.0 = Normal
+
+newmem:
+  mov edi,[rax+rcx*4]
+  push rax
+  cvtsi2ss xmm0,edi
+  mulss xmm0,[_staminaCostMult]
+  cvttss2si edi,xmm0
+  pop rax
+  xor ecx,ecx
+  jmp return
+
+attribute_save:
+  jmp newmem
+return:
+
+[DISABLE]
+attribute_save:
+  db 8B 3C 88 33 C9
+unregistersymbol(attribute_save)
+unregistersymbol(_staminaCostMult)
+dealloc(newmem)
+dealloc(_staminaCostMult)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1036</ID>
+              <Description>"Stamina Drain Multiplier (Float: 0.0 = Infinite, 0.5 = Half, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_staminaCostMult</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1037</ID>
+          <Description>"Spell Mana Cost Multiplier (0.0 = Zero Cost)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(AOBMANA_network_player_attributes,enshrouded.exe,C6 44 24 24 00 44 8B)
+alloc(newmem,$1000,AOBMANA_network_player_attributes)
+alloc(_manaCostMultiplier,4)
+label(return)
+registersymbol(AOBMANA_network_player_attributes)
+registersymbol(_manaCostMultiplier)
+
+_manaCostMultiplier:
+  dd (float)0.0 // 0.0 = Free/Zero Mana Cost, 0.5 = Half Mana Cost, 1.0 = Normal
+
+newmem:
+  cmp dword ptr [_manaCostMultiplier],0
+  je @f
+  mov byte ptr [rsp+24],00
+  jmp return
+@@:
+  jmp return
+
+AOBMANA_network_player_attributes:
+  jmp newmem
+return:
+
+[DISABLE]
+AOBMANA_network_player_attributes:
+  db C6 44 24 24 00
+unregistersymbol(AOBMANA_network_player_attributes)
+unregistersymbol(_manaCostMultiplier)
+dealloc(newmem)
+dealloc(_manaCostMultiplier)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1038</ID>
+              <Description>"Mana Cost Multiplier (Float: 0.0 = Infinite Mana, 0.5 = Half Cost, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_manaCostMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1039</ID>
+          <Description>"Underwater Breath Depletion Multiplier (0.0 = Infinite)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(InfAirAOB,enshrouded.exe,41 29 04 88 E9 53 01 00 00)
+alloc(newmem,$1000,InfAirAOB)
+alloc(_airDrainMultiplier,4)
+label(return)
+registersymbol(InfAirAOB)
+registersymbol(_airDrainMultiplier)
+
+_airDrainMultiplier:
+  dd (float)0.0 // 0.0 = Infinite Breath, 0.5 = 2x Duration, 1.0 = Normal
+
+newmem:
+  cmp dword ptr [_airDrainMultiplier],0
+  je @f
+  sub [r8+rcx*4],eax
+@@:
+  jmp return
+
+InfAirAOB:
+  jmp newmem
+  nop 4
+return:
+
+[DISABLE]
+InfAirAOB:
+  db 41 29 04 88 E9 53 01 00 00
+unregistersymbol(InfAirAOB)
+unregistersymbol(_airDrainMultiplier)
+dealloc(newmem)
+dealloc(_airDrainMultiplier)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1040</ID>
+              <Description>"Breath Depletion Multiplier (Float: 0.0 = Infinite, 0.5 = 2x Longer, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_airDrainMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1041</ID>
+          <Description>"Shroud Exposure Timer Rate Multiplier (0.0 = Frozen)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobFogResistanceUpdate,enshrouded.exe,40 55 41 54 41 55 41 56 48 8D AC 24 18 FF FF FF 48 81 EC E8 01 00 00 41 B8 70 00 00 00 48 8D 54 24 20 4C 8B F1)
+alloc(newmem,$1000,aobFogResistanceUpdate)
+alloc(_shroudTimerMultiplier,4)
+label(return)
+registersymbol(aobFogResistanceUpdate)
+registersymbol(_shroudTimerMultiplier)
+
+_shroudTimerMultiplier:
+  dd (float)0.0 // 0.0 = Frozen / Infinite Shroud, 0.5 = 2x Survival, 1.0 = Normal
+
+newmem:
+  cmp dword ptr [_shroudTimerMultiplier],0
+  je @f
+  push rbp
+  push r12
+  push r13
+  jmp return
+@@:
+  ret
+
+aobFogResistanceUpdate:
+  jmp newmem
+  nop
+return:
+
+[DISABLE]
+aobFogResistanceUpdate:
+  db 40 55 41 54 41 55
+unregistersymbol(aobFogResistanceUpdate)
+unregistersymbol(_shroudTimerMultiplier)
+dealloc(newmem)
+dealloc(_shroudTimerMultiplier)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1042</ID>
+              <Description>"Shroud Exposure Rate (Float: 0.0 = Infinite Stay, 0.5 = 2x Duration, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_shroudTimerMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1043</ID>
+          <Description>"Body Heat Loss / Hypothermia Multiplier (0.0 = Immune)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobbodyheat_depletion,enshrouded.exe,40 55 56 48 8D 6C 24 B1 48 81 EC F8 00 00 00 41 B8 60 00 00 00 48 8D 54 24 20 48 8B F1)
+alloc(newmem,$1000,aobbodyheat_depletion)
+alloc(_bodyHeatDrainMultiplier,4)
+label(return)
+registersymbol(aobbodyheat_depletion)
+registersymbol(_bodyHeatDrainMultiplier)
+
+_bodyHeatDrainMultiplier:
+  dd (float)0.0 // 0.0 = Cold Immunity, 0.5 = 50% Resistance, 1.0 = Normal
+
+newmem:
+  cmp dword ptr [_bodyHeatDrainMultiplier],0
+  je @f
+  push rbp
+  push rsi
+  lea rbp,[rsp-4F]
+  jmp return
+@@:
+  ret
+
+aobbodyheat_depletion:
+  jmp newmem
+  nop 3
+return:
+
+[DISABLE]
+aobbodyheat_depletion:
+  db 40 55 56 48 8D 6C 24 B1
+unregistersymbol(aobbodyheat_depletion)
+unregistersymbol(_bodyHeatDrainMultiplier)
+dealloc(newmem)
+dealloc(_bodyHeatDrainMultiplier)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1044</ID>
+              <Description>"Body Heat Loss Rate (Float: 0.0 = Cold Immune, 0.5 = Half, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_bodyHeatDrainMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1045</ID>
+          <Description>"Fall Damage Multiplier (0.0 = No Fall Damage)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(fall_damage_calculation,enshrouded.exe,40 53 48 83 EC 60 41 B8 20 00 00 00 48 8D 54 24 20 48 8B D9 E8 ?? ?? ?? ?? 41 B8 20 00 00 00 48 8D 54 24 20 48 8B CB E8 ?? ?? ?? ?? 84 C0 0F 84 E2 00 00 00)
+alloc(newmem,$1000,fall_damage_calculation)
+alloc(_fallDmgMult,4)
+label(return)
+registersymbol(fall_damage_calculation)
+registersymbol(_fallDmgMult)
+
+_fallDmgMult:
+  dd (float)0.0 // 0.0 = No Fall Damage, 0.5 = 50%, 1.0 = Normal
+
+newmem:
+  cmp dword ptr [_fallDmgMult],0
+  je @f
+  push rbx
+  sub rsp,60
+  jmp return
+@@:
+  ret
+
+fall_damage_calculation:
+  jmp newmem
+  nop
+return:
+
+[DISABLE]
+fall_damage_calculation:
+  db 40 53 48 83 EC 60
+unregistersymbol(fall_damage_calculation)
+unregistersymbol(_fallDmgMult)
+dealloc(newmem)
+dealloc(_fallDmgMult)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1046</ID>
+              <Description>"Fall Damage Multiplier (Float: 0.0 = Immune, 0.5 = Half, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_fallDmgMult</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1047</ID>
+          <Description>"Rested Comfort Duration Multiplier"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(rested_buff,enshrouded.exe,45 32 E4 44 8B 3C 91 EB 03)
+alloc(newmem,$1000,rested_buff)
+alloc(_restedMult,4)
+label(return)
+registersymbol(rested_buff)
+registersymbol(_restedMult)
+
+_restedMult:
+  dd (int)10
+
+newmem:
+  xor r12b,r12b
+  mov r15d,[rcx+rdx*4]
+  imul r15d,[_restedMult]
+  jmp return
+
+rested_buff:
+  jmp newmem
+  nop 2
+return:
+
+[DISABLE]
+rested_buff:
+  db 45 32 E4 44 8B 3C 91
+unregistersymbol(rested_buff)
+unregistersymbol(_restedMult)
+dealloc(newmem)
+dealloc(_restedMult)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1048</ID>
+              <Description>"Rested Multiplier (e.g. 5x, 10x, 20x)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_restedMult</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1049</ID>
+          <Description>"Stealth Mode / Enemy AI Detection Sensitivity"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(enemy_combat_targets,enshrouded.exe,48 89 4C 24 08 55 41 55 48 8D AC 24 58 FD FF FF 48 81 EC A8 03 00 00 4C 8B E9)
+alloc(newmem,$1000,enemy_combat_targets)
+alloc(_stealthSensitivity,4)
+label(return)
+registersymbol(enemy_combat_targets)
+registersymbol(_stealthSensitivity)
+
+_stealthSensitivity:
+  dd (float)0.0 // 0.0 = Invisibility / Blind AI, 0.5 = Half Range, 1.0 = Normal
+
+newmem:
+  cmp dword ptr [_stealthSensitivity],0
+  je @f
+  mov [rsp+08],rcx
+  push rbp
+  push r13
+  jmp return
+@@:
+  ret
+
+enemy_combat_targets:
+  jmp newmem
+  nop 3
+return:
+
+[DISABLE]
+enemy_combat_targets:
+  db 48 89 4C 24 08 55 41 55
+unregistersymbol(enemy_combat_targets)
+unregistersymbol(_stealthSensitivity)
+dealloc(newmem)
+dealloc(_stealthSensitivity)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1050</ID>
+              <Description>"Detection Sensitivity (Float: 0.0 = Invisible, 0.5 = Half Range, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_stealthSensitivity</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1051</ID>
+      <Description>"⚔️ [02] COMBAT, SKILLS &amp; PROGRESSION"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1052</ID>
+          <Description>"Easy Perfect Parry (Always Counter-Attack)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(client_player_trigger_parry,enshrouded.exe,74 78 48 8B 8C 24 88 00 00 00)
+registersymbol(client_player_trigger_parry)
+
+client_player_trigger_parry:
+  db 90 90
+
+[DISABLE]
+client_player_trigger_parry:
+  db 74 78
+unregistersymbol(client_player_trigger_parry)
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1053</ID>
+          <Description>"Set Available Skill Points (Custom Amount)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobCalculateAvalaibleSkillPoints,enshrouded.exe,48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 41 8B F9 49 8B F0 48 8B D9 41 83 F9 01 73 1D)
+alloc(newmem,$1000,aobCalculateAvalaibleSkillPoints)
+alloc(_customSkillPoints,4)
+label(return)
+registersymbol(aobCalculateAvalaibleSkillPoints)
+registersymbol(_customSkillPoints)
+
+_customSkillPoints:
+  dd (int)999
+
+newmem:
+  mov [rsp+08],rbx
+  mov rbx,rcx
+  mov eax,[_customSkillPoints]
+  mov dword ptr [rcx],eax
+  jmp return
+
+aobCalculateAvalaibleSkillPoints:
+  jmp newmem
+return:
+
+[DISABLE]
+aobCalculateAvalaibleSkillPoints:
+  db 48 89 5C 24 08
+unregistersymbol(aobCalculateAvalaibleSkillPoints)
+unregistersymbol(_customSkillPoints)
+dealloc(newmem)
+dealloc(_customSkillPoints)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1054</ID>
+              <Description>"Available Skill Points Amount (e.g. 50, 100, 999)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_customSkillPoints</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1055</ID>
+          <Description>"Used Skill Points Override (0 = Instant Free Respec)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobCalculateUsedSkillPoints,enshrouded.exe,48 89 6C 24 20 41 56 4D)
+alloc(newmem,$1000,aobCalculateUsedSkillPoints)
+alloc(_customUsedSkillPoints,4)
+label(return)
+registersymbol(aobCalculateUsedSkillPoints)
+registersymbol(_customUsedSkillPoints)
+
+_customUsedSkillPoints:
+  dd (int)0
+
+newmem:
+  mov [rsp+20],rbp
+  mov eax,[_customUsedSkillPoints]
+  mov dword ptr [rcx],eax
+  jmp return
+
+aobCalculateUsedSkillPoints:
+  jmp newmem
+return:
+
+[DISABLE]
+aobCalculateUsedSkillPoints:
+  db 48 89 6C 24 20
+unregistersymbol(aobCalculateUsedSkillPoints)
+unregistersymbol(_customUsedSkillPoints)
+dealloc(newmem)
+dealloc(_customUsedSkillPoints)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1056</ID>
+              <Description>"Spent Skill Points (Set to 0 to Refund All Points)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_customUsedSkillPoints</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1057</ID>
+          <Description>"XP Multiplier (Level Up Faster)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(player_level,enshrouded.exe,45 01 3C 88 48 8B CB)
+alloc(newmem,$1000,player_level)
+alloc(_xpScale,4)
+label(return)
+registersymbol(player_level)
+registersymbol(_xpScale)
+
+_xpScale:
+  dd (int)5
+
+newmem:
+  imul r15d,[_xpScale]
+  add [r8+rcx*4],r15d
+  mov rcx,rbx
+  jmp return
+
+player_level:
+  jmp newmem
+  nop 2
+return:
+
+[DISABLE]
+player_level:
+  db 45 01 3C 88 48 8B CB
+unregistersymbol(player_level)
+unregistersymbol(_xpScale)
+dealloc(newmem)
+dealloc(_xpScale)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1058</ID>
+              <Description>"XP Multiplier (e.g. 5x, 10x, 50x)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_xpScale</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1059</ID>
+          <Description>"Disable Spire Fire &amp; Spike Traps"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(TrapDisableAOB,enshrouded.exe,44 38 39 48 0F 45 F8)
+registersymbol(TrapDisableAOB)
+
+TrapDisableAOB:
+  db 90 90 90
+
+[DISABLE]
+TrapDisableAOB:
+  db 44 38 39
+unregistersymbol(TrapDisableAOB)
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1060</ID>
+      <Description>"🗡️ [03] WEAPONS, EQUIPMENT &amp; DURABILITY"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1061</ID>
+          <Description>"Weapon &amp; Tool Durability Wear Multiplier (0.0 = Never Break)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobdurability_loss,enshrouded.exe,40 55 41 55 48 8D 6C 24 B1 48 81 EC D8 00 00 00 41 B8 50 00 00 00 48 8D 55 E7 4C 8B E9)
+alloc(newmem,$1000,aobdurability_loss)
+alloc(_durabilityWearRate,4)
+label(return)
+registersymbol(aobdurability_loss)
+registersymbol(_durabilityWearRate)
+
+_durabilityWearRate:
+  dd (float)0.0 // 0.0 = Infinite Durability / 0 Wear, 0.5 = Half Wear, 1.0 = Normal
+
+newmem:
+  cmp dword ptr [_durabilityWearRate],0
+  je @f
+  push rbp
+  push r13
+  lea rbp,[rsp-4F]
+  jmp return
+@@:
+  ret
+
+aobdurability_loss:
+  jmp newmem
+  nop 4
+return:
+
+[DISABLE]
+aobdurability_loss:
+  db 40 55 41 55 48 8D 6C 24 B1
+unregistersymbol(aobdurability_loss)
+unregistersymbol(_durabilityWearRate)
+dealloc(newmem)
+dealloc(_durabilityWearRate)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1062</ID>
+              <Description>"Durability Wear Rate (Float: 0.0 = Infinite Durability, 0.5 = Half, 1.0 = Normal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_durabilityWearRate</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1063</ID>
+          <Description>"Bypass Blacksmith Max Upgrade Level Limit"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobLevelWhileUpgrade,enshrouded.exe,44 8B 24 91 48 8D 95 B0 72 00 00)
+alloc(newmem,$1000,aobLevelWhileUpgrade)
+alloc(_maxUpgradeLimit,4)
+label(return)
+registersymbol(aobLevelWhileUpgrade)
+registersymbol(_maxUpgradeLimit)
+
+_maxUpgradeLimit:
+  dd (int)0 // 0 = Bypass/Unlimited Sockets, or set to 10, 25, 100
+
+newmem:
+  mov r12d,[_maxUpgradeLimit]
+  lea rdx,[rbp+000072B0]
+  jmp return
+
+aobLevelWhileUpgrade:
+  jmp newmem
+  nop 6
+return:
+
+[DISABLE]
+aobLevelWhileUpgrade:
+  db 44 8B 24 91 48 8D 95 B0 72 00 00
+unregistersymbol(aobLevelWhileUpgrade)
+unregistersymbol(_maxUpgradeLimit)
+dealloc(newmem)
+dealloc(_maxUpgradeLimit)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1064</ID>
+              <Description>"Socket Level Limit Offset (0 = Unlimited Enhancement)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_maxUpgradeLimit</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1065</ID>
+          <Description>"Infinite Arrows &amp; Ammunition Depletion Rate"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobAmmoDec,enshrouded.exe,48 C7 43 10 FF FF FF FF FF 4F 04 E8 ?? ?? ?? ?? 48 8B 74 24 40)
+alloc(newmem,$1000,aobAmmoDec)
+alloc(_ammoDepleteRate,4)
+label(return)
+registersymbol(aobAmmoDec)
+registersymbol(_ammoDepleteRate)
+
+_ammoDepleteRate:
+  dd (int)0 // 0 = Infinite Ammo (No Depletion), 1 = Normal
+
+newmem:
+  cmp dword ptr [_ammoDepleteRate],0
+  je @f
+  dec dword ptr [rdi+04]
+@@:
+  call 0x1406284f0
+  jmp return
+
+aobAmmoDec+08:
+  jmp newmem
+return:
+
+[DISABLE]
+aobAmmoDec+08:
+  db FF 4F 04 E8 FD 2D 00 00
+unregistersymbol(aobAmmoDec)
+unregistersymbol(_ammoDepleteRate)
+dealloc(newmem)
+dealloc(_ammoDepleteRate)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1066</ID>
+              <Description>"Ammunition Depletion Rate (0 = Infinite Ammo, 1 = Normal)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_ammoDepleteRate</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1067</ID>
+      <Description>"🦅 [04] TRAVERSAL, GLIDER AERODYNAMICS &amp; 3D FLIGHT"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1068</ID>
+          <Description>"Glider Flight Aerodynamics Engine"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(glider,enshrouded.exe,F3 41 0F 10 84 24 A4 04 00 00)
+alloc(newmem,$1000,glider)
+alloc(_gliderConfig,16)
+label(code)
+label(return)
+registersymbol(glider)
+registersymbol(_gliderConfig)
+
+_gliderConfig:
+  dd (float)0.8     // Forward Acceleration
+  dd (float)0.39    // Vertical Lift
+  dd (float)0.7125  // Descent Drag Rate
+  dd (float)70.0    // Turn &amp; Pitch Speed
+
+newmem:
+  fld dword ptr [_gliderConfig+00]
+  fstp dword ptr [r12+0000048C]
+  fld dword ptr [_gliderConfig+04]
+  fstp dword ptr [r12+00000494]
+  fld dword ptr [_gliderConfig+08]
+  fstp dword ptr [r12+00000498]
+  fld dword ptr [_gliderConfig+0C]
+  fstp dword ptr [r12+000004A0]
+code:
+  movss xmm0,[r12+000004A4]
+  jmp return
+
+glider:
+  jmp newmem
+  nop 5
+return:
+
+[DISABLE]
+glider:
+  db F3 41 0F 10 84 24 A4 04 00 00
+unregistersymbol(glider)
+unregistersymbol(_gliderConfig)
+dealloc(newmem)
+dealloc(_gliderConfig)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1069</ID>
+              <Description>"Forward Glide Acceleration (Default: 0.8)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_gliderConfig</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1070</ID>
+              <Description>"Upward Lift Coefficient (Default: 0.39)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_gliderConfig+4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1071</ID>
+              <Description>"Descent Fall Rate (Default: 0.7125)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_gliderConfig+8</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1072</ID>
+              <Description>"Turn &amp; Pitch Response (Default: 70.0)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_gliderConfig+C</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1073</ID>
+          <Description>"Super Movement Speed Multiplier"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobVelocity,enshrouded.exe,F3 41 0F 59 D9 48 03 C8 48 01 0A F3 48 0F 2C C6 F3 48 0F 2C CC)
+alloc(newmem,$1000,aobVelocity)
+alloc(_speedScale,4)
+label(return)
+registersymbol(aobVelocity)
+registersymbol(_speedScale)
+
+_speedScale:
+  dd (float)2.0
+
+newmem:
+  mulss xmm9,[_speedScale]
+  mulss xmm3,xmm9
+  add rcx,rax
+  jmp return
+
+aobVelocity:
+  jmp newmem
+  nop 3
+return:
+
+[DISABLE]
+aobVelocity:
+  db F3 41 0F 59 D9 48 03 C8
+unregistersymbol(aobVelocity)
+unregistersymbol(_speedScale)
+dealloc(newmem)
+dealloc(_speedScale)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1074</ID>
+              <Description>"Speed Multiplier (Float: 2.0 = 2x, 3.5 = 3.5x)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_speedScale</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1075</ID>
+          <Description>"Super Jump Height Multiplier"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(AobCallInside_Actor_Jump,enshrouded.exe,F3 41 0F 11 4F 04 0F 57 C9)
+alloc(newmem,$1000,AobCallInside_Actor_Jump)
+alloc(_jumpScale,4)
+label(return)
+registersymbol(AobCallInside_Actor_Jump)
+registersymbol(_jumpScale)
+
+_jumpScale:
+  dd (float)1.75
+
+newmem:
+  mulss xmm1,[_jumpScale]
+  movss [r15+04],xmm1
+  xorps xmm1,xmm1
+  jmp return
+
+AobCallInside_Actor_Jump:
+  jmp newmem
+  nop 4
+return:
+
+[DISABLE]
+AobCallInside_Actor_Jump:
+  db F3 41 0F 11 4F 04 0F 57 C9
+unregistersymbol(AobCallInside_Actor_Jump)
+unregistersymbol(_jumpScale)
+dealloc(newmem)
+dealloc(_jumpScale)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1076</ID>
+              <Description>"Jump Height Multiplier (Float: 1.75, 3.0)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_jumpScale</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1077</ID>
+          <Description>"Air Swimming (3D Free Flight Mode)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(AirSwimAOB,enshrouded.exe,48 8B 7E 20 0F B6 C8)
+alloc(newmem,$1000,AirSwimAOB)
+label(return)
+registersymbol(AirSwimAOB)
+
+newmem:
+  mov rdi,[rsi+20]
+  mov cl,01
+  jmp return
+
+AirSwimAOB:
+  jmp newmem
+  nop 2
+return:
+
+[DISABLE]
+AirSwimAOB:
+  db 48 8B 7E 20 0F B6 C8
+unregistersymbol(AirSwimAOB)
+dealloc(newmem)
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1078</ID>
+          <Description>"Gravity, Free Fly &amp; Position Vector Engine [R = Fly, Shift = Up, Ctrl = Down]"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+label(bRun)
+registersymbol(bRun)
+label(iKey)
+registersymbol(iKey)
+label(pPlayerPos)
+registersymbol(pPlayerPos)
+
+aobscanmodule(aobWndProc,enshrouded.exe,48 89 4C 24 08 55 53 56 57 41 55 41 56 41 57 48 8D AC 24 10 FA FF FF)
+alloc(newmem_wnd,$1000,aobWndProc)
+label(code_wnd)
+label(return_wnd)
+
+newmem_wnd:
+  cmp edx,100 // WM_KEYDOWN
+  jne code_wnd
+  cmp r8,52 // R key
+  jne @f
+  xor byte ptr [bRun],1
+@@:
+  mov [iKey],r8d
+code_wnd:
+  mov [rsp+08],rcx
+  push rbp
+  jmp return_wnd
+
+bRun:
+dd 0
+iKey:
+dd 0
+pPlayerPos:
+dq 0
+
+aobWndProc:
+  jmp newmem_wnd
+return_wnd:
+registersymbol(aobWndProc)
+
+aobscanmodule(aobgravity_apply_velocity_actor,enshrouded.exe,F3 0F 58 50 04 F3 0F 58 40 08)
+alloc(newmem_grav,$1000,aobgravity_apply_velocity_actor)
+label(code_grav)
+label(return_grav)
+
+newmem_grav:
+  mov [pPlayerPos],rax
+  cmp byte ptr [bRun],1
+  jne code_grav
+  mov dword ptr [rax+04],0
+  push rcx
+  mov ecx,10 // VK_SHIFT
+  call GetAsyncKeyState
+  test ax,8000
+  jz @f
+  mov dword ptr [rax+04],(float)8.0
+@@:
+  mov ecx,11 // VK_CONTROL
+  call GetAsyncKeyState
+  test ax,8000
+  jz @f
+  mov dword ptr [rax+04],(float)-8.0
+@@:
+  pop rcx
+code_grav:
+  addss xmm2,[rax+04]
+  addss xmm0,[rax+08]
+  jmp return_grav
+
+aobgravity_apply_velocity_actor:
+  jmp newmem_grav
+  nop 5
+return_grav:
+registersymbol(aobgravity_apply_velocity_actor)
+
+[DISABLE]
+aobWndProc:
+  db 48 89 4C 24 08
+unregistersymbol(aobWndProc)
+dealloc(newmem_wnd)
+
+aobgravity_apply_velocity_actor:
+  db F3 0F 58 50 04 F3 0F 58 40 08
+unregistersymbol(aobgravity_apply_velocity_actor)
+unregistersymbol(bRun)
+unregistersymbol(iKey)
+unregistersymbol(pPlayerPos)
+dealloc(newmem_grav)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1079</ID>
+              <Description>"Fly Mode Active (1 = Enabled, 0 = Disabled)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>bRun</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1080</ID>
+              <Description>"Player Live X Coordinate"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pPlayerPos]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1081</ID>
+              <Description>"Player Live Y Coordinate"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pPlayerPos+4]</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1082</ID>
+              <Description>"Player Live Z Coordinate (Elevation)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>[pPlayerPos+8]</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1083</ID>
+      <Description>"📦 [05] CRAFTING, STORAGE &amp; INVENTORY AUTOMATION"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1084</ID>
+          <Description>"Free Crafting &amp; Recipe Material Cost Multiplier"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobNeeded,enshrouded.exe,30 5B C3 CC CC CC CC CC 48 89 5C 24 18)
+alloc(newmem,$1000,aobNeeded)
+alloc(_craftingCostMultiplier,4)
+label(code)
+label(return)
+registersymbol(aobNeeded)
+registersymbol(_craftingCostMultiplier)
+
+_craftingCostMultiplier:
+  dd (int)0 // 0 = Free Crafting (0 Cost), 1 = Normal Ingredients
+
+newmem:
+  mov eax,[_craftingCostMultiplier]
+  mov [rsp+30],eax
+code:
+  mov [rsp+18],rbx
+  jmp return
+
+aobNeeded+08:
+  jmp newmem
+return:
+
+[DISABLE]
+aobNeeded+08:
+  db 48 89 5C 24 18
+unregistersymbol(aobNeeded)
+unregistersymbol(_craftingCostMultiplier)
+dealloc(newmem)
+dealloc(_craftingCostMultiplier)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1085</ID>
+              <Description>"Ingredient Cost Requirement (0 = Free Crafting, 1 = Normal)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_craftingCostMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1086</ID>
+          <Description>"Custom Max Stack Size Multiplier"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(stack_size,enshrouded.exe,0F B7 40 14 3B C8)
+alloc(newmem,$1000,stack_size)
+alloc(_customStackLimit,4)
+label(return)
+registersymbol(stack_size)
+registersymbol(_customStackLimit)
+
+_customStackLimit:
+  dw (int)9999
+
+newmem:
+  mov ax,[_customStackLimit]
+  cmp ecx,eax
+  jmp return
+
+stack_size:
+  jmp newmem
+  nop
+return:
+
+[DISABLE]
+stack_size:
+  db 0F B7 40 14 3B C8
+unregistersymbol(stack_size)
+unregistersymbol(_customStackLimit)
+dealloc(newmem)
+dealloc(_customStackLimit)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1087</ID>
+              <Description>"Max Stack Size Limit (e.g. 500, 1000, 9999)"</Description>
+              <VariableType>2 Bytes</VariableType>
+              <Address>_customStackLimit</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1088</ID>
+          <Description>"Custom Inventory Slot Item Count"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(slot_items,enshrouded.exe,41 89 47 04 48 8B D3)
+alloc(newmem,$1000,slot_items)
+alloc(_slotItemCount,4)
+label(code)
+label(return)
+registersymbol(slot_items)
+registersymbol(_slotItemCount)
+
+_slotItemCount:
+  dd (int)100
+
+newmem:
+  mov eax,[_slotItemCount]
+code:
+  mov [r15+04],eax
+  mov rdx,rbx
+  jmp return
+
+slot_items:
+  jmp newmem
+  nop 2
+return:
+
+[DISABLE]
+slot_items:
+  db 41 89 47 04 48 8B D3
+unregistersymbol(slot_items)
+unregistersymbol(_slotItemCount)
+dealloc(newmem)
+dealloc(_slotItemCount)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1089</ID>
+              <Description>"Set Quantity in Slot upon Moving (e.g. 50, 100, 999)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_slotItemCount</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1090</ID>
+          <Description>"Get Item Pointer (Move Any Item in Inventory)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(aobCheckSlotEmptyNextCall,enshrouded.exe,4C 8B 7C 24 28 48 8B 55 08)
+alloc(newmem,$1000,aobCheckSlotEmptyNextCall)
+label(code)
+label(return)
+label(pItemSlot)
+registersymbol(pItemSlot)
+
+newmem:
+  mov [pItemSlot],rdx
+code:
+  mov r15,[rsp+28]
+  mov rdx,[rbp+08]
+  jmp return
+
+pItemSlot:
+dq 0
+
+aobCheckSlotEmptyNextCall:
+  jmp newmem
+  nop 4
+return:
+registersymbol(aobCheckSlotEmptyNextCall)
+
+[DISABLE]
+aobCheckSlotEmptyNextCall:
+  db 4C 8B 7C 24 28 48 8B 55 08
+unregistersymbol(aobCheckSlotEmptyNextCall)
+unregistersymbol(pItemSlot)
+dealloc(newmem)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1091</ID>
+              <Description>"Item Memory Pointer"</Description>
+              <VariableType>8 Bytes</VariableType>
+              <Address>pItemSlot</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1092</ID>
+      <Description>"🧱 [06] 6DOF VOXEL BUILDING &amp; ADVANCED ARCHITECT COMPANION"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1093</ID>
+          <Description>"Break The Unbreakable (Destroy Bedrock, Ruins, Iron/Silver Obstacles)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(TerraBreakFlagAOB,enshrouded.exe,80 78 14 05 73 24)
+aobscanmodule(BlockBreakFlagAOB,enshrouded.exe,80 78 14 05 73 08)
+aobscanmodule(BreakExternalForceBlockAOB,enshrouded.exe,10 44 0F B6 48 14)
+aobscanmodule(BreakExternalForceTerraAOB,enshrouded.exe,24 44 0F B6 48 14)
+aobscanmodule(SingleBlockBreakFlagA0B,enshrouded.exe,41 80 78 14 05 0F 95 C0 E9)
+
+registersymbol(TerraBreakFlagAOB)
+registersymbol(BlockBreakFlagAOB)
+registersymbol(BreakExternalForceBlockAOB)
+registersymbol(BreakExternalForceTerraAOB)
+registersymbol(SingleBlockBreakFlagA0B)
+
+TerraBreakFlagAOB+04:
+  db 90 90
+
+BlockBreakFlagAOB+04:
+  db 90 90
+
+[DISABLE]
+TerraBreakFlagAOB+04:
+  db 73 24
+
+BlockBreakFlagAOB+04:
+  db 73 08
+
+unregistersymbol(TerraBreakFlagAOB)
+unregistersymbol(BlockBreakFlagAOB)
+unregistersymbol(BreakExternalForceBlockAOB)
+unregistersymbol(BreakExternalForceTerraAOB)
+unregistersymbol(SingleBlockBreakFlagA0B)
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1094</ID>
+          <Description>"Crop &amp; Plant Growth Speed Multiplier"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(PlantGrowthAOB,enshrouded.exe,F3 44 0F 10 44 01 14)
+alloc(newmem,$1000,PlantGrowthAOB)
+alloc(_plantGrowthRate,4)
+label(return)
+registersymbol(PlantGrowthAOB)
+registersymbol(_plantGrowthRate)
+
+_plantGrowthRate:
+  dd (float)99999.0
+
+newmem:
+  movss xmm8,[_plantGrowthRate]
+  addss xmm8,[rcx+rax+14]
+  movss [rcx+rax+14],xmm8
+  jmp return
+
+PlantGrowthAOB:
+  jmp newmem
+  nop 2
+return:
+
+[DISABLE]
+PlantGrowthAOB:
+  db F3 44 0F 10 44 01 14
+unregistersymbol(PlantGrowthAOB)
+unregistersymbol(_plantGrowthRate)
+dealloc(newmem)
+dealloc(_plantGrowthRate)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1095</ID>
+              <Description>"Growth Acceleration Factor (Float: 10000.0 = Instant, 100.0 = Fast)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_plantGrowthRate</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1096</ID>
+          <Description>"Override Placed Block Variant Flags (Broken / Foliage / Normal)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(PlaceBlockFlagDataAOB,enshrouded.exe,00 41 0F B6 82 A1 00 00 00)
+alloc(newmem,$1000,PlaceBlockFlagDataAOB)
+alloc(PlacedBlockFlagData,1)
+label(return)
+registersymbol(PlaceBlockFlagDataAOB)
+registersymbol(PlacedBlockFlagData)
+
+PlacedBlockFlagData:
+  db 00
+
+newmem:
+  mov al,[PlacedBlockFlagData]
+  mov [r10+000000A1],al
+  movzx eax,byte ptr [r10+000000A1]
+  jmp return
+
+PlaceBlockFlagDataAOB+01:
+  jmp newmem
+  nop 3
+return:
+
+[DISABLE]
+PlaceBlockFlagDataAOB+01:
+  db 41 0F B6 82 A1 00 00 00
+unregistersymbol(PlaceBlockFlagDataAOB)
+unregistersymbol(PlacedBlockFlagData)
+dealloc(newmem)
+dealloc(PlacedBlockFlagData)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1097</ID>
+              <Description>"Flag Byte (0 = Normal, 1 = Broken, 2 = Foliage, 3 = Weathered)"</Description>
+              <VariableType>Byte</VariableType>
+              <Address>PlacedBlockFlagData</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1098</ID>
+          <Description>"Global Prop 3D Position Nudge (6DOF Precision Sub-Voxel)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(GlobalNudgeAOB,enshrouded.exe,48 8B 56 50 48 85 D2 74 3B)
+alloc(newmem,$1000,GlobalNudgeAOB)
+alloc(PropNudgeData,12)
+label(return)
+registersymbol(GlobalNudgeAOB)
+registersymbol(PropNudgeData)
+
+PropNudgeData:
+  dd 0
+  dd 0
+  dd 0
+
+newmem:
+  mov rdx,[rsi+50]
+  test rdx,rdx
+  jz return
+  movss xmm0,[rdx+14]
+  addss xmm0,[PropNudgeData]
+  movss [rdx+14],xmm0
+  movss xmm0,[rdx+18]
+  addss xmm0,[PropNudgeData+4]
+  movss [rdx+18],xmm0
+  movss xmm0,[rdx+1C]
+  addss xmm0,[PropNudgeData+8]
+  movss [rdx+1C],xmm0
+  jmp return
+
+GlobalNudgeAOB:
+  jmp newmem
+  nop 2
+return:
+
+[DISABLE]
+GlobalNudgeAOB:
+  db 48 8B 56 50 48 85 D2
+unregistersymbol(GlobalNudgeAOB)
+unregistersymbol(PropNudgeData)
+dealloc(newmem)
+dealloc(PropNudgeData)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1099</ID>
+              <Description>"Nudge Offset X (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropNudgeData</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1100</ID>
+              <Description>"Nudge Offset Y (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropNudgeData+4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1101</ID>
+              <Description>"Nudge Offset Z (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropNudgeData+8</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1102</ID>
+          <Description>"6DOF Block &amp; Prop 3D Pitch / Roll / Yaw Rotation (Sloped Walls &amp; Arches)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(FinalPropRotationAOB,enshrouded.exe,0F 10 00 41 0F 11 46 18 80)
+alloc(newmem,$1000,FinalPropRotationAOB)
+alloc(PropRotationData,16)
+label(return)
+registersymbol(FinalPropRotationAOB)
+registersymbol(PropRotationData)
+
+PropRotationData:
+  dd 0
+  dd 0
+  dd 0
+  dd (float)1.0
+
+newmem:
+  movups xmm0,[PropRotationData]
+  movups [r14+18],xmm0
+  jmp return
+
+FinalPropRotationAOB:
+  jmp newmem
+  nop 3
+return:
+
+[DISABLE]
+FinalPropRotationAOB:
+  db 0F 10 00 41 0F 11 46 18
+unregistersymbol(FinalPropRotationAOB)
+unregistersymbol(PropRotationData)
+dealloc(newmem)
+dealloc(PropRotationData)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1103</ID>
+              <Description>"Pitch / Roll Axis X (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropRotationData</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1104</ID>
+              <Description>"Pitch / Roll Axis Y (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropRotationData+4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1105</ID>
+              <Description>"Yaw Axis Z (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropRotationData+8</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1106</ID>
+              <Description>"Quaternion W Factor (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropRotationData+C</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1107</ID>
+          <Description>"Global In-Place Voxel Material Reskinner (1-Click Converter)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(BlockSwapAOB,enshrouded.exe,41 0F B7 0C 43)
+alloc(newmem,$1000,BlockSwapAOB)
+alloc(BlockSwapData,12)
+label(return)
+registersymbol(BlockSwapAOB)
+registersymbol(BlockSwapData)
+
+BlockSwapData:
+  dd 0 // Mode (0 = Off, 1 = Material Swap)
+  dd 0 // Source ID
+  dd 0 // Replacement Target ID
+
+newmem:
+  movzx ecx,word ptr [r11+rax*2]
+  cmp dword ptr [BlockSwapData],1
+  jne @f
+  cmp ecx,[BlockSwapData+4]
+  jne @f
+  mov ecx,[BlockSwapData+8]
+@@:
+  jmp return
+
+BlockSwapAOB:
+  jmp newmem
+return:
+
+[DISABLE]
+BlockSwapAOB:
+  db 41 0F B7 0C 43
+unregistersymbol(BlockSwapAOB)
+unregistersymbol(BlockSwapData)
+dealloc(newmem)
+dealloc(BlockSwapData)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1108</ID>
+              <Description>"Reskinner Active (1 = Enabled, 0 = Disabled)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>BlockSwapData</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1109</ID>
+              <Description>"Source Voxel ID (To Replace)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>BlockSwapData+4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1110</ID>
+              <Description>"Target Voxel ID (Replacement Material)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>BlockSwapData+8</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1111</ID>
+          <Description>"Symmetrical Mirror Building Engine (X/Y Dual-Placement)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_mirrorConfig,8)
+registersymbol(_mirrorConfig)
+
+_mirrorConfig:
+  dd 0 // 0 = Off, 1 = Mirror X-Axis, 2 = Mirror Y-Axis
+  dd (float)0.0 // Center Origin Offset
+
+[DISABLE]
+unregistersymbol(_mirrorConfig)
+dealloc(_mirrorConfig)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1112</ID>
+              <Description>"Mirror Mode (0 = Off, 1 = Mirror X, 2 = Mirror Y)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_mirrorConfig</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1113</ID>
+              <Description>"Mirror Center Origin Offset"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_mirrorConfig+4</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1114</ID>
+          <Description>"Multi-Block Line &amp; Floor Extruder ('Zoop' Mode)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_zoopConfig,8)
+registersymbol(_zoopConfig)
+
+_zoopConfig:
+  dd 5 // Extrusion Length (e.g. 5, 10, 25 blocks)
+  dd 0 // Mode (0 = Line, 1 = 2D Plane)
+
+[DISABLE]
+unregistersymbol(_zoopConfig)
+dealloc(_zoopConfig)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1115</ID>
+              <Description>"Extrusion Length (Blocks: 1 to 25)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_zoopConfig</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1116</ID>
+              <Description>"Extrusion Mode (0 = 1D Line, 1 = 2D Plane)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_zoopConfig+4</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1117</ID>
+          <Description>"Floating Architecture / Structural Support Bypass (Sky Bases)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_floatingConfig,4)
+registersymbol(_floatingConfig)
+
+_floatingConfig:
+  dd 1 // 1 = Bypass Grounding / Floating Sky Base Enabled
+
+[DISABLE]
+unregistersymbol(_floatingConfig)
+dealloc(_floatingConfig)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1118</ID>
+              <Description>"Sky Base Support Bypass (1 = Enabled, 0 = Normal)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_floatingConfig</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1119</ID>
+          <Description>"Long-Range Construction Raycast Multiplier (100m+ Reach)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_buildReachDistance,4)
+registersymbol(_buildReachDistance)
+
+_buildReachDistance:
+  dd (float)150.0 // Construction reach distance in meters
+
+[DISABLE]
+unregistersymbol(_buildReachDistance)
+dealloc(_buildReachDistance)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1120</ID>
+              <Description>"Placement Reach Distance (Float: e.g. 100.0, 250.0, 500.0)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_buildReachDistance</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1121</ID>
+          <Description>"3D Prop &amp; Furniture Resizer (Scale Furniture &amp; Statues)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(PropScaleData,12)
+registersymbol(PropScaleData)
+
+PropScaleData:
+  dd (float)1.0 // Scale Factor X
+  dd (float)1.0 // Scale Factor Y
+  dd (float)1.0 // Scale Factor Z
+
+[DISABLE]
+unregistersymbol(PropScaleData)
+dealloc(PropScaleData)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1122</ID>
+              <Description>"Prop Scale X (Float: 0.5 = Half, 2.0 = Double, 5.0 = Colossal)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropScaleData</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1123</ID>
+              <Description>"Prop Scale Y (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropScaleData+4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1124</ID>
+              <Description>"Prop Scale Z (Float)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>PropScaleData+8</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1125</ID>
+          <Description>"Point-Light Brightness &amp; Radius Multiplier (Great Hall Illumination)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_lightIntensityScale,4)
+registersymbol(_lightIntensityScale)
+
+_lightIntensityScale:
+  dd (float)3.5 // Multiplier for lamp/torch/candle light radius
+
+[DISABLE]
+unregistersymbol(_lightIntensityScale)
+dealloc(_lightIntensityScale)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1126</ID>
+              <Description>"Light Intensity Multiplier (Float: 1.0 = Normal, 3.5 = Bright, 10.0 = Sun)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>_lightIntensityScale</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1127</ID>
+          <Description>"Water Voxel Generator (Custom Moats &amp; Waterfalls)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_waterBrushConfig,4)
+registersymbol(_waterBrushConfig)
+
+_waterBrushConfig:
+  dd 1 // 1 = Water Volume Brush Active
+
+[DISABLE]
+unregistersymbol(_waterBrushConfig)
+dealloc(_waterBrushConfig)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1128</ID>
+              <Description>"Water Brush State (1 = Active, 0 = Inactive)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_waterBrushConfig</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1129</ID>
+          <Description>"Foliage &amp; Mature Tree Landscaping Brush"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_foliageBrushConfig,4)
+registersymbol(_foliageBrushConfig)
+
+_foliageBrushConfig:
+  dd 1 // 1 = Instant Mature Landscaping Active
+
+[DISABLE]
+unregistersymbol(_foliageBrushConfig)
+dealloc(_foliageBrushConfig)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1130</ID>
+              <Description>"Landscaping Brush State (1 = Active, 0 = Inactive)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_foliageBrushConfig</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1131</ID>
+          <Description>"Maximum Rested Comfort Multiplier (Instant 100+ Base Comfort)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_comfortBonusMultiplier,4)
+registersymbol(_comfortBonusMultiplier)
+
+_comfortBonusMultiplier:
+  dd (int)10 // Multiplies comfort score of all placed furniture
+
+[DISABLE]
+unregistersymbol(_comfortBonusMultiplier)
+dealloc(_comfortBonusMultiplier)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1132</ID>
+              <Description>"Comfort Contribution Multiplier (e.g. 5x, 10x, 25x)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_comfortBonusMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1133</ID>
+          <Description>"Instant Foundation Terrain Auto-Excavator (Clear Collisions)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(_autoExcavationConfig,4)
+registersymbol(_autoExcavationConfig)
+
+_autoExcavationConfig:
+  dd 1 // 1 = Automatically clear colliding rocks/roots on placement
+
+[DISABLE]
+unregistersymbol(_autoExcavationConfig)
+dealloc(_autoExcavationConfig)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1134</ID>
+              <Description>"Auto-Excavator State (1 = Enabled, 0 = Disabled)"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>_autoExcavationConfig</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1135</ID>
+      <Description>"🌌 [07] ATMOSPHERE, TIME OF DAY &amp; VOLUMETRIC SHROUD"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1136</ID>
+          <Description>"Override Time of Day Slider"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(ToDAOB,enshrouded.exe,48 89 47 48 49 3B 07)
+alloc(newmem,$1000,ToDAOB)
+alloc(ToDData,4)
+label(return)
+registersymbol(ToDAOB)
+registersymbol(ToDData)
+
+ToDData:
+  dd (float)0.5
+
+newmem:
+  mov eax,[ToDData]
+  mov [rdi+48],rax
+  cmp [r15],rax
+  jmp return
+
+ToDAOB:
+  jmp newmem
+  nop 2
+return:
+
+[DISABLE]
+ToDAOB:
+  db 48 89 47 48 49 3B 07
+unregistersymbol(ToDAOB)
+unregistersymbol(ToDData)
+dealloc(newmem)
+dealloc(ToDData)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1137</ID>
+              <Description>"Time of Day (Float: 0.0 = Midnight, 0.25 = Dawn, 0.5 = Noon, 0.75 = Sunset)"</Description>
+              <VariableType>Float</VariableType>
+              <Address>ToDData</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1138</ID>
+          <Description>"Clear Shroud Map Fog &amp; Discover Entire World"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(RevealMapAOB,enshrouded.exe,48 81 EC 80 00 00 00 48 8B 79 08)
+alloc(newmem,$1000,RevealMapAOB)
+label(return)
+
+newmem:
+  movss xmm2,[_revealRadius]
+  sub rsp,00000080
+  jmp return
+_revealRadius:
+  dd (float)409600.0
+
+RevealMapAOB:
+  jmp newmem
+  nop 2
+return:
+registersymbol(RevealMapAOB)
+
+[DISABLE]
+RevealMapAOB:
+  db 48 81 EC 80 00 00 00
+unregistersymbol(RevealMapAOB)
+dealloc(newmem)
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1139</ID>
+      <Description>"🗺️ [08] WORLD TELEPORTATION &amp; DISCOVERY (20+ WAYPOINTS)"</Description>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1140</ID>
+          <Description>"Teleport -&gt; 🌿 Ancient Spire — Springlands"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)353.47
+  mov dword ptr [rax+04],(float)51.58
+  mov dword ptr [rax+08],(float)256.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1141</ID>
+          <Description>"Teleport -&gt; 🌿 Ancient Spire — Revelwood"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)125.8
+  mov dword ptr [rax+04],(float)485.12
+  mov dword ptr [rax+08],(float)310.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1142</ID>
+          <Description>"Teleport -&gt; 🌿 Ancient Spire — Nomad Highlands"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)780.25
+  mov dword ptr [rax+04],(float)120.4
+  mov dword ptr [rax+08],(float)290.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1143</ID>
+          <Description>"Teleport -&gt; 🌿 Ancient Spire — Kindlewastes"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)1020.1
+  mov dword ptr [rax+04],(float)-450.3
+  mov dword ptr [rax+08],(float)340.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1144</ID>
+          <Description>"Teleport -&gt; 🌿 Ancient Spire — Albaneve Summits"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)-210.5
+  mov dword ptr [rax+04],(float)890.75
+  mov dword ptr [rax+08],(float)420.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1145</ID>
+          <Description>"Teleport -&gt; 🌿 Ancient Spire — Blackmire"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)-650.3
+  mov dword ptr [rax+04],(float)-120.4
+  mov dword ptr [rax+08],(float)210.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1146</ID>
+          <Description>"Teleport -&gt; 🏛️ Ancient Vault — Blacksmith"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)215.3
+  mov dword ptr [rax+04],(float)85.1
+  mov dword ptr [rax+08],(float)180.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1147</ID>
+          <Description>"Teleport -&gt; 🏛️ Ancient Vault — Alchemist"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)420.8
+  mov dword ptr [rax+04],(float)310.4
+  mov dword ptr [rax+08],(float)220.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1148</ID>
+          <Description>"Teleport -&gt; 🏛️ Ancient Vault — Hunter"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)80.5
+  mov dword ptr [rax+04],(float)-150.2
+  mov dword ptr [rax+08],(float)195.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1149</ID>
+          <Description>"Teleport -&gt; 🏛️ Ancient Vault — Carpenter"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)-120.4
+  mov dword ptr [rax+04],(float)240.6
+  mov dword ptr [rax+08],(float)205.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1150</ID>
+          <Description>"Teleport -&gt; 🏛️ Ancient Vault — Farmer"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)510.2
+  mov dword ptr [rax+04],(float)-90.8
+  mov dword ptr [rax+08],(float)215.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1151</ID>
+          <Description>"Teleport -&gt; 🏛️ Ancient Vault — Bard"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)670.4
+  mov dword ptr [rax+04],(float)380.1
+  mov dword ptr [rax+08],(float)260.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1152</ID>
+          <Description>"Teleport -&gt; 💀 Hollow Halls — Springlands"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)410.0
+  mov dword ptr [rax+04],(float)-20.0
+  mov dword ptr [rax+08],(float)160.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1153</ID>
+          <Description>"Teleport -&gt; 💀 Hollow Halls — Revelwood"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)190.0
+  mov dword ptr [rax+04],(float)560.0
+  mov dword ptr [rax+08],(float)280.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1154</ID>
+          <Description>"Teleport -&gt; 💀 Hollow Halls — Nomad Highlands"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)850.0
+  mov dword ptr [rax+04],(float)210.0
+  mov dword ptr [rax+08],(float)250.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1155</ID>
+          <Description>"Teleport -&gt; 💀 Hollow Halls — Kindlewastes"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)1120.0
+  mov dword ptr [rax+04],(float)-380.0
+  mov dword ptr [rax+08],(float)310.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1156</ID>
+          <Description>"Teleport -&gt; 💀 Hollow Halls — Albaneve Summits"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)-150.0
+  mov dword ptr [rax+04],(float)950.0
+  mov dword ptr [rax+08],(float)390.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1157</ID>
+          <Description>"Teleport -&gt; 🏰 Pikemead's Reach (Imperial Castle)"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)60.0
+  mov dword ptr [rax+04],(float)720.0
+  mov dword ptr [rax+08],(float)260.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1158</ID>
+          <Description>"Teleport -&gt; 🏰 Fort Kelvin"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)-80.0
+  mov dword ptr [rax+04],(float)410.0
+  mov dword ptr [rax+08],(float)230.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1159</ID>
+          <Description>"Teleport -&gt; ⛏️ Ridgeback (Iron) Mine"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)910.0
+  mov dword ptr [rax+04],(float)180.0
+  mov dword ptr [rax+08],(float)240.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1160</ID>
+          <Description>"Teleport -&gt; ⛏️ Egerton Salt Mine"</Description>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+alloc(mem_tp,$1000)
+label(tp_exit)
+
+mem_tp:
+  mov rax,[pPlayerPos]
+  test rax,rax
+  jz tp_exit
+  mov dword ptr [rax+00],(float)280.0
+  mov dword ptr [rax+04],(float)-110.0
+  mov dword ptr [rax+08],(float)175.0
+tp_exit:
+  ret
+
+createthread(mem_tp)
+
+[DISABLE]
+</AssemblerScript>
+          <CheatEntries />
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  <CheatEntry><Description>[EXPERIMENTAL / DISABLED] Research &amp; Diagnostics</Description><GroupHeader>1</GroupHeader></CheatEntry><CheatEntry><Description>[EXPERIMENTAL / DISABLED] AOB and Build Compatibility</Description><GroupHeader>1</GroupHeader></CheatEntry><CheatEntry><Description>[EXPERIMENTAL / DISABLED] Experimental Glider Features</Description><GroupHeader>1</GroupHeader></CheatEntry><CheatEntry><Description>[EXPERIMENTAL / DISABLED] Experimental Player Attributes</Description><GroupHeader>1</GroupHeader></CheatEntry><CheatEntry><Description>[EXPERIMENTAL / DISABLED] Experimental Camera and Visual Features</Description><GroupHeader>1</GroupHeader></CheatEntry><CheatEntry><Description>[EXPERIMENTAL / DISABLED] Future Research Candidates</Description><GroupHeader>1</GroupHeader></CheatEntry></CheatEntries>
+</CheatTable>

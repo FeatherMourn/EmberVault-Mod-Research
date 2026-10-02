@@ -1,0 +1,196 @@
+CODE-0042G1C — HOME-ONLY EVENT MIGRATION
+
+Scope: Architect Toolkit F7 Admin
+Game build: Enshrouded 1076226
+Source: current Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+Task type: event-classification/binding closure only
+
+IMPORTANT:
+Do not attempt Player, Mobility, responsive layout, new gameplay functionality, or further audit-only expansion in this pass.
+This task is intentionally limited to Render-DashboardPage and only the helper changes strictly required to make that one renderer clean.
+
+GOAL
+
+Migrate every raw event registration inside Render-DashboardPage to the explicit F7 event system.
+
+At completion:
+- Render-DashboardPage contains ZERO direct .Add_Click(...) calls.
+- Render-DashboardPage contains ZERO direct Register-SafeUiEvent calls.
+- Every interactive event in Render-DashboardPage is registered through exactly one of:
+  - Register-AdminActionEvent for gameplay/admin/backend intent.
+  - Register-F7UiEvent for local UI-only interaction.
+- Every migrated registration has a stable EventId.
+- No current safety restrictions are weakened.
+- No responsive-layout migration is started.
+
+CURRENT DASHBOARD RAW EVENT SITES
+
+There are six source-level raw Click registration sites in Render-DashboardPage:
+
+1. Dynamic Quick Role Preset button loop
+   Current behavior:
+   - invokes Invoke-ArchitectPreset $t.Tag
+   Classification:
+   - ACTION, because preset application can indirectly dispatch gameplay/admin actions.
+
+2. CUSTOMIZE PRESETS >>
+   Current behavior:
+   - Clear-AdminContent
+   - Render-RolePresetsPage
+   Classification:
+   - UI_ONLY. This is navigation/view switching only.
+
+3. + HEAL FULL
+   Current behavior:
+   - Send-CheatCommand "player.health.fill"
+   Classification:
+   - ACTION
+   Canonical ActionId:
+   - player.health.fill
+
+4. + FILL STAMINA
+   Current behavior:
+   - Send-CheatCommand "player.stamina.fill"
+   Classification:
+   - ACTION
+   Canonical ActionId:
+   - player.stamina.fill
+
+5. + FILL MANA
+   Current behavior:
+   - Send-CheatCommand "player.mana.fill"
+   Classification:
+   - ACTION
+   Canonical ActionId:
+   - player.mana.fill
+
+6. EMERGENCY: RESTORE VANILLA
+   Current behavior:
+   - Send-CheatCommand "cheat.survival.disable_all"
+   Classification:
+   - ACTION
+   Canonical ActionId:
+   - cheat.survival.disable_all
+
+Do not modify disabled RETURN or RECOVER ITEMS controls; they have no click handlers.
+
+STABLE EVENT ID REQUIREMENT
+
+Register-AdminActionEvent and Register-F7UiEvent must support a mandatory stable EventId for migrated events.
+
+For this Home-only slice, use stable IDs similar to:
+
+- home.preset.apply.<stablePresetIdentity>
+- home.presets.manage.click
+- home.health.fill.click
+- home.stamina.fill.click
+- home.mana.fill.click
+- home.restoreVanilla.click
+
+For dynamic preset buttons:
+- Prefer an existing persistent preset `id` property if present.
+- If no preset id exists, use a deterministic identity associated with the saved preset record.
+- Do not use a transient Control reference as identity.
+- Do not rely on Control.Name as the sole identity.
+- If the current preset schema genuinely has no persistent identifier, document that fact and use the safest deterministic fallback for this pass without changing gameplay behavior.
+
+PRESET ACTION IDENTITY
+
+The quick preset button is an ACTION because Invoke-ArchitectPreset may dispatch multiple canonical actions.
+
+If there is already a canonical registry action representing preset application, use it.
+
+If no such action exists:
+- add ONE canonical action identity for applying an Architect preset, e.g. `admin.preset.apply`;
+- do not invent a new gameplay backend;
+- preserve current Invoke-ArchitectPreset behavior;
+- metadata must describe this as an orchestration action over child canonical actions, not a new mutation backend;
+- do not mark it PROVEN merely because the button works offline;
+- do not enable or disable unrelated actions to satisfy the audit.
+
+EVENT INVENTORY / LIFECYCLE
+
+For this pass, make the event inventory architecture capable of stable metadata-only definitions:
+
+Stable definition record:
+- EventId
+- Page
+- Classification
+- ActionId if ACTION
+- EventName
+- Operation
+- no strong Control reference required for denominator/audit identity
+
+Active binding state may retain the current live Control reference, but:
+- it must be separate from stable definition identity;
+- re-registering the same EventId on rerender must replace/update the active binding rather than append an ambiguous duplicate.
+
+Do not attempt to migrate all pages in this task.
+
+AUDIT EXPECTATIONS
+
+Update Get-F7ActionBindingAudit only as needed to correctly recognize the new EventId-backed Home registrations.
+
+For Render-DashboardPage specifically, acceptance requires:
+
+- dashboardRawDirectEvents = 0, or equivalent evidence from Get-F7DirectEventAudit
+- no duplicate EventIds for Home
+- no missing registry IDs for Home ACTION controls
+- no ambiguous Home bindings
+- no stale/disposed Home active binding after rendering Home twice
+- Home definition count is stable after repeated rerender
+
+Do not claim full-F7 zero-gap closure. Other pages are expected to remain nonzero after this pass.
+
+SAFETY / NO REGRESSIONS
+
+Preserve:
+- teleport fail-closed ADM-TEST-0002
+- Auto Loot STARTUP_CANARY_ONLY
+- Glider Flight disabled/unqualified
+- glider-stamina semantic block
+- no direct F7 calls to:
+  TogglePatch
+  EnableAllSurvival
+  DisableAllSurvival
+  WritePlayerCoordinates
+  ToggleAutoLoot
+  ToggleGliderFlight
+- source-consolidation catalog
+- 224-entry CT catalog
+- current canonical registry behavior
+
+Do not add:
+- offsets
+- signatures
+- hooks
+- memory writes
+- new gameplay capabilities
+- responsive page migration
+
+TESTS
+
+Run:
+1. PowerShell parse.
+2. Existing F7 truthfulness suite.
+3. Existing UI smoke suite.
+4. UI error check.
+5. CT catalog count remains 224.
+6. Static/dashboard event audit proving Render-DashboardPage has no raw .Add_Click or Register-SafeUiEvent registrations.
+7. Render Home twice and verify stable EventIds/definition count and no stale/disposed active Home binding.
+
+EXPECTED REPORT
+
+Return:
+- files changed
+- registry count before/after
+- exact Home EventIds added
+- ACTION vs UI_ONLY classification for all six migrated source-level sites
+- any new registry identity added and why
+- Dashboard raw direct-event count before/after
+- Home event-definition count
+- duplicate/missing/ambiguous/stale Home metrics
+- test results
+- remaining non-Home G1 work
+
+Do not stop after analysis. Implement this Home-only slice completely unless there is a concrete source-level blocker.

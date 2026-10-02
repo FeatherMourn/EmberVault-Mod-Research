@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"[00] DIAGNOSTICS &amp; INFRASTRUCTURE"</Description>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"Validate current module and table build"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+if syntaxcheck then return end
+local expectedName = 'enshrouded.exe'
+local expectedSha256 = 'AF2F5A1227911D8AA06B3908D6BD0211838211CAE14EA91099CB57D0DF990781'
+local p = getOpenedProcessID()
+local ok = p and p ~= 0 and process and process:lower() == expectedName
+if ok then
+  showMessage('Module name matches.\nBuild hash recorded for static analysis:\n' .. expectedSha256 .. '\n\nThis table does not claim live compatibility.')
+else
+  showMessage('Validation failed: attach to ' .. expectedName .. ' before testing.')
+end
+{$asm}
+[ENABLE]
+// Diagnostics only; no process bytes are changed.
+[DISABLE]
+// Complete cleanup: no allocations, symbols, or patched bytes.
+{$lua}
+if syntaxcheck then return end
+{$asm}</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"Emergency disable-all (best effort)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+if syntaxcheck then return end
+local list = getAddressList()
+local function deactivate(record)
+  for i=record.Count-1,0,-1 do deactivate(record[i]) end
+  local d = record.Description or ''
+  if not d:find('^%[00%]') and not d:find('Emergency disable%-all') then
+    if record.Active then record.Active = false end
+  end
+end
+for i=list.Count-1,0,-1 do deactivate(list[i]) end
+if Independent_Cleanup then Independent_Cleanup() end
+{$asm}
+[ENABLE]
+// Infrastructure-only control; feature hooks are not installed in Phase 1.
+[DISABLE]
+// Complete cleanup is intentionally idempotent.
+{$lua}
+if syntaxcheck then return end
+if Independent_Cleanup then Independent_Cleanup() end
+{$asm}</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"AOB policy: exactly one match required (helper documentation)"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+// Every future hook must use a fresh pattern and reject count ~= 1.
+// No scan is performed by this placeholder.
+[DISABLE]
+// No allocations or symbols were created.</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>10</ID>
+      <Description>"[01] SAFE FEATURES (NOT IMPLEMENTED)"</Description>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>11</ID>
+      <Description>"Health | Status: Not implemented | Live testing required"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+assert(0,This feature has no implementation in Phase 1.)
+[DISABLE]
+// No code or data changed.</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>20</ID>
+      <Description>"[02] CRAFTING &amp; PROGRESSION (SAVE-AFFECTING / DISABLED)"</Description>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>30</ID>
+      <Description>"[03] NAVIGATION &amp; WORLD (READ-ONLY DISCOVERY FIRST)"</Description>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>40</ID>
+      <Description>"[04] EXPERIMENTAL / HIGH RISK (DISABLED BY DEFAULT)"</Description>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry><Name>Independent_Phase1</Name><Address>0</Address></SymbolEntry>
+  </UserdefinedSymbols>
+  <LuaScript>-- Independent Enshrouded table, Phase 1.
+-- Reference tables were used only for feature vocabulary.
+-- Static status is authoritative; live gameplay validation remains user work.
+
+Independent_AOB_Allocations = Independent_AOB_Allocations or {}
+
+function Independent_AOB_Scan(moduleName, pattern)
+  if type(moduleName) ~= 'string' or type(pattern) ~= 'string' then
+    error('AOB scan requires a module name and pattern')
+  end
+  local hits = AOBScanModule(moduleName, pattern)
+  local count = hits and hits.Count or 0
+  if count ~= 1 then
+    if hits then hits.destroy() end
+    error(string.format('AOB rejected: expected exactly 1 match, found %d', count))
+  end
+  local address = tonumber(hits[0], 16)
+  hits.destroy()
+  return address
+end
+
+function Independent_RegisterAllocation(addressName)
+  if type(addressName) == 'string' then
+    Independent_AOB_Allocations[addressName] = true
+  end
+end
+
+function Independent_Cleanup()
+  for name in pairs(Independent_AOB_Allocations) do
+    if getAddressSafe(name) then unregisterSymbol(name) end
+    Independent_AOB_Allocations[name] = nil
+  end
+end</LuaScript>
+</CheatTable>

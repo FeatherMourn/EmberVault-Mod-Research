@@ -1,0 +1,421 @@
+CODE-0042G5B1 — PLAYER RESPONSIVE SEMANTIC PARITY REPAIR
+
+Scope:
+- `Render-PlayerVitalsPage`
+- responsive Player implementation only
+- no Mobility migration
+- no new gameplay/native behavior
+
+Build: Enshrouded 1076226
+
+Primary file:
+- Architect_Mod/Current/runtime/ArchitectRuntime.ps1
+
+Semantic baseline:
+- exact Player behavior/presentation from archived:
+  `Architect_Mod/Code_History/CODE-0042G5A1/ArchitectRuntime.ps1`
+
+Registry:
+- DO NOT change `admin_action_registry.json`
+- must remain 55 / 17 enabled / 38 disabled
+
+BACKGROUND
+
+G5B successfully replaced the fixed Player layout with responsive cards/tables, but source review against the archived G5A1 baseline found several layout-induced semantic/presentation regressions.
+
+This is a repair-only slice.
+
+DO NOT:
+- migrate Mobility or any other page;
+- change any EventId;
+- change any ActionId;
+- add a gameplay/native backend;
+- change command handlers/status strings;
+- change capability qualification;
+- redesign Player behavior;
+- touch Home;
+- touch F8;
+- introduce `[scriptblock]::Create`.
+
+A. RESTORE ENABLE-ALL CAPABILITY GATING
+
+After:
+
+- `$canHeal`
+- `$canStam`
+- `$canMana`
+
+are resolved, restore the exact pre-G5B mass-enable logic:
+
+```powershell
+$canEnableAll = ($canHeal -and $canStam -and $canMana)
+$enableAllBtn.Enabled = $canEnableAll
+
+if (-not $canEnableAll) {
+    $enableAllBtn.BackColor = [System.Drawing.Color]::FromArgb(45, 45, 52)
+    $enableAllBtn.ForeColor = [System.Drawing.Color]::FromArgb(140, 140, 150)
+
+    if ($script:adminToolTip) {
+        $script:adminToolTip.SetToolTip(
+            $enableAllBtn,
+            "Survival overrides cannot be mass-enabled: required native hooks not active."
+        )
+    }
+}
+```
+
+Preserve:
+- `f7.player.survival.enableAll.click`
+- ActionId `cheat.survival.enable_all`
+- current handler/status text
+
+Do not change Disable All.
+
+B. REBUILD THE RESPONSIVE RECOVERY ROW CORRECTLY
+
+Current G5B creates recovery NumericUpDown controls but never adds them to the layout.
+
+Replace that row with an explicit responsive structure.
+
+Recommended outer row:
+- 5 logical groups:
+  1. HP Recovery
+  2. Stamina Recovery
+  3. Mana Recovery
+  4. Zero Spell Cost
+  5. Recovery Unsupported button
+
+Use nested compact tables for the first three groups.
+
+Create and retain:
+
+```powershell
+$numHpRec
+$numStamRec
+$numManaRec
+```
+
+Preserve exact pre-G5B settings:
+
+HP:
+- DecimalPlaces = 1
+- Increment = 0.5
+- Minimum = 1.0
+- Maximum = 20.0
+- Value = `[decimal][NativeMemoryEngine]::HealthRecoveryMultiplier`
+
+Stamina:
+- same numeric settings
+- Value = `[decimal][NativeMemoryEngine]::StaminaRecoveryMultiplier`
+
+Mana:
+- same numeric settings
+- Value = `[decimal][NativeMemoryEngine]::ManaRecoveryMultiplier`
+
+Visible labels:
+- `HP Rec:`
+- `Stam Rec:`
+- `Mana Rec:`
+
+All controls:
+- Dock Fill
+- sensible Margin/Padding
+- no `.Location`
+
+Do not use `IndexOf` to determine semantic columns.
+
+C. RESTORE ZERO SPELL COST BASELINE PRESENTATION
+
+Restore exact G5A1 behavior:
+
+```powershell
+$chkZeroSpell = New-Object System.Windows.Forms.CheckBox
+$chkZeroSpell.Text = "Zero Spell Cost"
+$chkZeroSpell.Checked = [NativeMemoryEngine]::ZeroSpellCost
+$chkZeroSpell.ForeColor = [System.Drawing.Color]::FromArgb(200, 220, 240)
+$chkZeroSpell.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    7.5,
+    [System.Drawing.FontStyle]::Bold
+)
+```
+
+Then Dock it in the responsive layout.
+
+IMPORTANT:
+- do NOT force `.Enabled = $false`;
+- do NOT add a new handler;
+- do NOT make it write anything;
+- preserve baseline semantics exactly.
+
+The adjacent `RECOVERY (UNSUPPORTED)` button remains disabled/unbound and should restore its pre-G5B font/foreground styling.
+
+D. RESTORE PRIMARY-VITAL VISIBLE LABELS
+
+Keep the responsive Health/Stamina/Mana groups and exact fill handlers.
+
+Restore visible baseline labels:
+
+Health group:
+- `Max HP`
+
+Stamina group:
+- `Max Stam`
+
+Mana group:
+- do not invent a new `Mana refill` descriptor merely for symmetry.
+- if the responsive table needs a third cell, leave it empty or use layout span while preserving visible baseline text.
+
+Preserve:
+- all NumericUpDown min/max/value/enabled settings
+- capability-disabled styling/tooltips
+- exact fill EventIds/ActionIds/handlers/status strings
+
+E. RESTORE SURVIVAL ACTIVE-STATE LOGIC EXACTLY
+
+Inside each capability-qualified cheat row restore:
+
+```powershell
+$isActive = ($status -and [bool]$status.($c.Key))
+
+if (-not $isActive) {
+    try {
+        if ($c.Key -eq "autoLoot") {
+            $isActive = [NativeMemoryEngine]::IsAutoLootActive
+        } else {
+            $st = [NativeMemoryEngine]::GetPatchStatus($c.Key)
+            if ($st -eq "ON") {
+                $isActive = $true
+            }
+        }
+    } catch {}
+}
+```
+
+Then restore:
+
+```powershell
+$badgeText = if ($isActive) { "  ON" } else { "  OFF" }
+$badgeColor = if ($isActive) {
+    [System.Drawing.Color]::FromArgb(50, 180, 100)
+} else {
+    [System.Drawing.Color]::FromArgb(100, 110, 120)
+}
+```
+
+Do not replace this with a simplified `GetPatchStatus`-only check.
+
+F. RESTORE SURVIVAL BADGE PRESENTATION
+
+Unavailable badge must preserve:
+
+- text `  OFF`
+- foreground `(120,120,130)`
+- BackColor `(28,28,35)`
+- MiddleCenter
+- FixedSingle border
+- Default cursor
+- Enabled = false
+- existing tooltip reason
+
+Capability-qualified badge must preserve:
+
+- ON/OFF text/color
+- BackColor `(18,22,30)`
+- MiddleCenter
+- FixedSingle border
+- Hand cursor
+- `.Tag = $c`
+- canonical Action binding and handler
+
+Keep Dock Fill for responsive geometry.
+
+Preserve:
+
+- Page = `Player & Vitals`
+- Operation = `Toggle <name>`
+- EventId = `f7.player.survival.<Key>.click`
+- ActionId = `$c.Id`
+
+G. RESTORE ALTERNATING SURVIVAL ROW BACKGROUNDS
+
+Preserve the pre-G5B row colors:
+
+Even row:
+`[System.Drawing.Color]::FromArgb(28, 35, 46)`
+
+Odd row:
+`[System.Drawing.Color]::FromArgb(24, 30, 39)`
+
+Apply the color to the responsive per-cheat row container/table.
+
+Do not reintroduce fixed X/Y positions.
+
+H. FIX SURVIVAL ROW-HEIGHT INPUT
+
+Current shared `New-F7ResponsiveTable` supports:
+- hashtable `Type='Percent'`
+- numeric absolute row heights
+
+Do NOT pass `@{Type='Absolute';Value=...}`.
+
+Use numeric row heights:
+
+- first row `22`
+- each cheat row `20`
+
+Example shape:
+
+```powershell
+$rowHeights = @(22)
+for ($i = 0; $i -lt $cheats.Count; $i++) {
+    $rowHeights += 20
+}
+```
+
+Do not modify the shared helper in this repair unless required by a separate parse failure.
+
+I. RESTORE UNSUPPORTED CONTROL PRESENTATION
+
+Keep responsive layout, disabled state, and no handlers.
+
+Restore pre-G5B styling for:
+
+- `RECOVERY (UNSUPPORTED)`
+- `ATTR (UNSUPPORTED)`
+- `All 50`
+- `SCALING (UNSUPPORTED)`
+- `All 2x`
+
+At minimum preserve:
+- current pre-G5B font sizes/styles
+- foreground `(140,140,150)`
+- disabled state
+- no EventIds
+- no handlers
+
+Do not turn any of these into active controls.
+
+J. PRESERVE RESPONSIVE PLAYER STRUCTURE
+
+Keep the useful G5B layout work:
+
+- responsive header card/table
+- responsive vitals card
+- responsive survival rows
+- responsive attributes/scaling card
+- no `$listY`
+- no `$attrX`
+- no `.Location` in active Player renderer
+- no fixed page-card `New-Panel X Y ...` layout
+
+Do not revert to fixed layout.
+
+K. SEMANTIC PARITY TESTS — NEW REQUIRED ASSERTIONS
+
+The prior static suite missed regressions. Add Player-specific semantic assertions.
+
+Assert:
+
+1. enable-all gating exists:
+   - `$canEnableAll`
+   - `$enableAllBtn.Enabled = $canEnableAll`
+   - exact tooltip reason
+
+2. recovery controls exist and are actually inserted:
+   - `$numHpRec`
+   - `$numStamRec`
+   - `$numManaRec`
+   - each appears in `Controls.Add`
+
+3. recovery values use:
+   - HealthRecoveryMultiplier
+   - StaminaRecoveryMultiplier
+   - ManaRecoveryMultiplier
+
+4. no recovery `IndexOf`-based cell mapping
+
+5. Zero Spell:
+   - reads `[NativeMemoryEngine]::ZeroSpellCost`
+   - not force-disabled
+   - no event handler added
+
+6. visible labels:
+   - `Max HP`
+   - `Max Stam`
+   - no `Health refill`
+   - no `Stamina refill`
+   - no `Mana refill`
+
+7. survival state:
+   - uses `$status`
+   - contains Auto Loot `IsAutoLootActive`
+   - contains `GetPatchStatus`
+
+8. survival badge styling includes:
+   - BackColor
+   - TextAlign
+   - BorderStyle
+   - Hand cursor for qualified badges
+   - Default cursor for unavailable badges
+
+9. alternating row colors restored
+
+10. no `Type='Absolute'` hashtable rows passed to `New-F7ResponsiveTable`
+
+11. exact Player EventIds/ActionIds remain unchanged
+
+12. Home function byte/text block unchanged from G5A1/G5B input
+
+13. Mobility function byte/text block unchanged from G5A1/G5B input
+
+L. STANDARD TESTS
+
+Run:
+
+1. PowerShell parse
+2. real registry import -> 55 unique
+3. lifecycle/static fixture
+4. F7 truthfulness
+5. UI smoke
+6. UI errors
+7. CT catalog = 224
+8. schema/adaptor validation
+9. prohibited mutation scan
+10. corrected G4A zero-gap audit
+11. stable-definition Control/Handler refs = 0
+12. G5B1 semantic parity assertions
+13. Player static responsiveness assertions
+14. Player geometry test or exact skipped status
+
+If no WinForms layout harness:
+report exactly:
+
+`SKIPPED_NO_WINFORMS_LAYOUT_HARNESS`
+
+Do not claim horizontal-scroll or runtime geometry results.
+
+REPORT
+
+Return:
+
+- file changed
+- enable-all gating repair result
+- recovery row repair result
+- Zero Spell parity result
+- primary-vital label parity result
+- survival state-calculation parity result
+- survival badge styling result
+- row-height repair result
+- unsupported-control presentation result
+- exact Player EventId/ActionId preservation
+- Home unchanged
+- Mobility unchanged
+- G4A zero-gap result
+- registry unchanged
+- standard tests
+- exact geometry-harness status
+- explicit statement that G5C/Mobility was NOT started
+- explicit statement that no gameplay/runtime mechanism was changed or proven
+
+Do not start Mobility until G5B1 is clean.

@@ -1,0 +1,55 @@
+CODE-0043G6A RUNTIME UI FIX 2 MANIFEST
+
+Runtimefix1 source candidate:
+architect_toolkit_CODE-0043G6A_runtimefix1_candidate_20260921.zip
+Runtimefix1 SHA-256: 6E24C90E9F15D5AA8DFF3444EBB2EF01FD6557553B1553499CF5293E67DFDB2C
+
+Runtimefix2 candidate:
+architect_toolkit_CODE-0043G6A_runtimefix2_candidate_20260921.zip
+Candidate SHA-256: 628B0310905C2DCACF4778ECAE0B0A79F85C48C3272DEC0F622758924A37295D
+Candidate size: 66246479 bytes
+
+Install-ready ZIP:
+architect_toolkit_CODE-0043G6A_runtimefix2_GAME_FOLDER_TEST_20260921.zip
+Install ZIP SHA-256: 51550983F08BB7E212AF381935744750216E6ACEFACE562D1E2150B1562D23DF
+Install ZIP size: 66476163 bytes
+
+New build ID: architect-v040-hybrid-admin-code0043g6a-runtimefix2-20260921
+Version: 0.40.0
+Mode: hybrid_observer_and_admin_mutation
+New DLL SHA-256: 59F99087D47AC3106AA6472D9C8E8410F3187CB98EB386D0F48592817DBC885A
+
+Repair:
+- Replaced overlapping Diagnostics Panel children with a one-column, three-row TableLayoutPanel.
+- Added post-layout rectangle/non-overlap regression coverage at 900x590, 1280x720, and 1600x900.
+- Preserved all four canonical correlation ActionIds and EventIds.
+
+Files changed:
+- runtime\ArchitectRuntime.ps1
+- runtime\build_identity.json
+- runtime\native\source\ArchitectBuildIdentity.h
+- runtime\native\ArchitectNativeRuntime.dll and generated build outputs
+- tests\test_g6a_runtime_ui_layout.ps1
+- build_scripts\build_dll.py (temporary candidate build root)
+- README_G6A_RUNTIME_TEST.txt identity/title only
+
+Preserved:
+- PREPARE_G6A_RUNTIME_TEST.bat
+- START_ARCHITECT_G6A_TEST.bat
+- Player/Mobility runtimefix1 repairs
+- Registry: 55 total / 17 enabled / 38 disabled / 55 unique IDs
+- CT catalog: 224 entries
+- Native probe semantics, RVAs, spans, analyzer criteria, mutation authorization, G5B-G5K behavior
+
+Tests:
+- Diagnostics real-layout regression: PASS at three viewport sizes
+- Native/analyzer: 14/14 passed
+- F7 truthfulness: 72/72 passed
+- Source consolidation: 12/12 passed
+- UI smoke: 28/28 passed
+- Lifecycle/static: PASS
+- G5B-G5K parity: PASS
+- Prohibited mutation scan: clean
+
+Final state: OFFLINE_QUALIFIED / RUNTIME_TEST_REQUIRED
+No Gate-B correlation proof or mutation work performed.
