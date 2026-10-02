@@ -1,20 +1,23 @@
 # Enshrouded Mod Research
 
-This repository catalogs the research, probing, reverse engineering, implementation notes, and tooling produced while working on Enshrouded mods.
+Research and development records for understanding, probing, and building mods for Enshrouded.
 
-## Contents
+This repository is organized around questions and evidence: observation, experiments, runtime and static findings, and implementation.
 
-- `archive/mods-drive/` — authored material from `I:\My Drive\Enshrouded Mods`.
-- `archive/research-drive/` — authored material from `H:\enshroudedresearch`.
-- `inventory/` — a complete file inventory of the source drive, including files not copied into the archive.
+## Research map
 
-The archive intentionally prioritizes reproducible research: Markdown notes, text records, scripts, Lua, Cheat Engine tables, CSV, RST, and JSONL. Large binaries, third-party dependencies, caches, compiled output, and game installation files remain represented in the inventory but are not vendored into this repository.
+- `research/` — research notes, findings, hypotheses, and deep dives.
+- `experiments/` — probes, captures, test cases, and experiment records.
+- `tools/` — utilities used to inspect files, memory, runtime behavior, or extracted game data.
+- `implementations/` — working mod code and implementation patterns.
+- `case-studies/` — larger efforts such as Architect, Control Center, EmberVault, and Emberworks.
+- `reference/` — stable maps, manifests, schemas, terminology, and extracted reference material.
+- `inventory/` — complete inventory of the source drive.
 
-## Project areas found on the source drive
+## Scope
 
-The source tree includes the Architect Mod, Canonical Brain, Cheat Tables, Control Center variants, EmberVault, Emberworks, Enshrouded KFC files, the Mod Hub site, Export/Incoming staging areas, and shared tools. The inventory is the authoritative coverage record for the complete source tree.
+The source material covers static analysis, runtime probing, Cheat Engine tables, KFC/data inspection, Lua modding, native/runtime experiments, entity and player discovery, placement/building systems, inventory and item observation, game settings, multiplayer/admin behavior, UI and backend behavior, and supporting tools.
 
-## Review status
+## Evidence standard
 
-The initial catalog pass has copied 774 small, authored research files and recorded the full source-drive inventory. Future passes should add topic-level indexes and provenance links as individual areas are reviewed.
-Contents from Researching Enshrouded for Modding
+Research notes should distinguish observed behavior, static inference, working hypothesis, experiment setup, result, confidence, game/build version, and reproduction steps. Unverified findings should be labeled as such.
