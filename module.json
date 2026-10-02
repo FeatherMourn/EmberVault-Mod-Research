@@ -1,0 +1,15 @@
+{
+  "id": "embervault.research",
+  "name": "Research",
+  "version": "0.1.0",
+  "publisher": "EmberVault",
+  "minimum_core_version": "1.0.0",
+  "capabilities": ["research.record", "research.evidence", "research.reproducibility"],
+  "feature_state": "experimental",
+  "process_mode": "separate",
+  "executable": "src/research_worker.py",
+  "contract_version": 1,
+  "safety": {"read_only": true, "requires_backup": false, "allowed_profiles": ["research"]},
+  "recovery": {"rollback": "Terminate the research worker; records remain controlled by Control Center.", "verification": "Worker output is evidence only and cannot mutate game or save files."},
+  "operation_types": ["research-evidence", "research-reproducibility"]
+}

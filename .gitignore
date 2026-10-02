@@ -1,6 +1,2 @@
-# Local staging archive; categorized copies are committed under the research map.
-/archive/
-
-# Temporary extraction/verification trees copied from working directories.
-**/temp_*/
-**/__pycache__/
+__pycache__/
+*.pyc
