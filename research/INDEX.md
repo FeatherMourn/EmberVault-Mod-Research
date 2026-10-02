@@ -8,6 +8,7 @@ This is the entry point for the Enshrouded mod-development knowledge base.
 2. Follow the source paths attached to each finding into the categorized research and experiment material.
 3. Use [`RECORD_TEMPLATE.md`](RECORD_TEMPLATE.md) when promoting a new investigation into a durable research record.
 4. Check [`MODDING_SURFACE.md`](MODDING_SURFACE.md) for the current practical capability map.
+5. Use [`../reference/PROVENANCE.md`](../reference/PROVENANCE.md) before treating repeated files or version strings as independent evidence.
 
 ## Topic map
 
