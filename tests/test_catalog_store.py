@@ -68,6 +68,7 @@ class CatalogStoreTests(unittest.TestCase):
                 store.resolve_contradiction("contra-1", "resolved", "")
             store.resolve_contradiction("contra-1", "accepted-uncertainty", "Both claims remain build-scoped and unresolved.")
             self.assertEqual(store.unresolved_contradictions(), [])
+            self.assertEqual(len(store.all_contradictions()), 1)
             store.close()
 
     def test_catalog_backup_can_be_reopened(self):

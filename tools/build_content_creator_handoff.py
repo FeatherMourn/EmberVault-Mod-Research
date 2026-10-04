@@ -20,7 +20,7 @@ def main() -> int:
     args = parser.parse_args()
     store = CatalogStore(args.catalog)
     try:
-        handoff = content_creator_handoff(store.records(), contradictions=store.unresolved_contradictions())
+        handoff = content_creator_handoff(store.records(), contradictions=store.all_contradictions())
     finally:
         store.close()
     args.output.parent.mkdir(parents=True, exist_ok=True)

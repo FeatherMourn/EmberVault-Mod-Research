@@ -122,3 +122,8 @@ class CatalogStore:
     def unresolved_contradictions(self) -> list[dict[str, str]]:
         rows = self.connection.execute("SELECT * FROM contradictions WHERE status = 'open' ORDER BY id").fetchall()
         return [dict(row) for row in rows]
+
+    def all_contradictions(self) -> list[dict[str, str]]:
+        """Return contradiction history, including resolved scope distinctions."""
+        rows = self.connection.execute("SELECT * FROM contradictions ORDER BY id").fetchall()
+        return [dict(row) for row in rows]

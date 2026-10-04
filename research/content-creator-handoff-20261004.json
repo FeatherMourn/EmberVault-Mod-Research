@@ -387,7 +387,15 @@
         "1076226"
       ],
       "confidence": "bounded-runtime-session",
-      "contradictions": [],
+      "contradictions": [
+        {
+          "claim_a": "External publication and startup smoke evidence passed on the disposable copy.",
+          "claim_b": "Client rendering and placed-object appearance remain unverified.",
+          "id": "contra.rendermodel.route-vs-render.20261004",
+          "resolution": "The claims measure different outcomes: external publication and startup smoke were recorded as successful, while client rendering and placed-object appearance were explicitly not tested. Retain both bounds; do not promote this record to runtime visual capability.",
+          "status": "resolved"
+        }
+      ],
       "evidence": [
         "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
       ],
