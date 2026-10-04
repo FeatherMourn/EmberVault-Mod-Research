@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-04",
+  "records": [
+    {
+      "id": "candidate.item.2940001508",
+      "kind": "donor-item",
+      "identity": {"item_id": "2940001508"},
+      "build_scope": ["1076226"],
+      "state": "experimental",
+      "confidence": "bounded",
+      "supported_claims": [
+        "The recorded probe used this item as a donor for a furniture visual-reference experiment."
+      ],
+      "unsupported_claims": [
+        "This record does not establish universal donor suitability, recipe availability, or stable runtime behavior."
+      ],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+      ],
+      "open_questions": ["Which donor recipe and UI path are valid in the target build?"]
+    },
+    {
+      "id": "candidate.recipe.3531872774",
+      "kind": "donor-recipe",
+      "identity": {"recipe_id": "3531872774"},
+      "build_scope": ["1076226"],
+      "state": "blocked",
+      "confidence": "bounded",
+      "supported_claims": [
+        "The recipe ID was recorded as the intended donor recipe in the probe setup."
+      ],
+      "unsupported_claims": [
+        "The probe did not successfully resolve the donor recipe, so this is not evidence of a working recipe/UI route."
+      ],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+      ],
+      "open_questions": ["Can the donor recipe be resolved from the same-build catalog before UI registration?"]
+    },
+    {
+      "id": "candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "kind": "render-model",
+      "identity": {"guid": "1ac410c2-c85e-4172-95eb-19b5b593118d"},
+      "build_scope": ["1076226"],
+      "state": "experimental",
+      "confidence": "bounded",
+      "supported_claims": [
+        "The GUID was used as a replacement RenderModel reference in the recorded furniture probe."
+      ],
+      "unsupported_claims": [
+        "The record does not establish complete visual presentation, catalog preview behavior, placement, persistence, or multiplayer behavior."
+      ],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md",
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
+      ],
+      "open_questions": ["Which metadata fields and dependencies are required for a complete visual record?"]
+    },
+    {
+      "id": "candidate.kfc.bundle.1076226",
+      "kind": "offline-catalog",
+      "identity": {"build": "1076226"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "high-for-recorded-inputs",
+      "supported_claims": [
+        "The recorded rebuild normalized ItemInfo, ItemRegistry, recipe, blueprint, terrain, building, material, feedback, and snap-rule relationships for its named input bundle."
+      ],
+      "unsupported_claims": [
+        "The recorded counts are not universal game totals and do not prove runtime mutation or compatibility with later builds."
+      ],
+      "evidence": [
+        "research/promoted/2026-10-04/research__records__DATA_INGESTION_1076226.md"
+      ],
+      "open_questions": ["Can the normalized catalog be imported into the Research index with reproducible source hashes?"]
+    }
+  ]
+}

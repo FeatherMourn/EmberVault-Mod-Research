@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-04",
+  "source_archive": "I:\\My Drive\\Enshrouded Mods\\Enshrouded_Mod_Research",
+  "authority": "EmberVault-Mod-Research",
+  "records": [
+    {
+      "promoted_path": "research/promoted/2026-10-04/case-studies__source__mods-drive__EmberVault-Control-Center__docs__CAPABILITY_PROMOTION.md",
+      "source_path": "Enshrouded_Mod_Research/case-studies/source/mods-drive/EmberVault-Control-Center/docs/CAPABILITY_PROMOTION.md",
+      "sha256": "c412292b49c7d3e3982507e8c756333edbd6b1d39d0830b395ddba78fc1c488b",
+      "bytes": 847,
+      "category": "evidence-and-runtime-boundary",
+      "intake_state": "partially-verified"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/case-studies__source__mods-drive__EmberVault-Control-Center__docs__RUNTIME_EVIDENCE_WORKFLOW.md",
+      "source_path": "Enshrouded_Mod_Research/case-studies/source/mods-drive/EmberVault-Control-Center/docs/RUNTIME_EVIDENCE_WORKFLOW.md",
+      "sha256": "67173d051e7a351ac8dca5559750bf779919f6c575f443648058fadb6b180172",
+      "bytes": 2608,
+      "category": "evidence-and-runtime-boundary",
+      "intake_state": "partially-verified"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/reference__PROVENANCE.md",
+      "source_path": "Enshrouded_Mod_Research/reference/PROVENANCE.md",
+      "sha256": "f04e59a32aae8e264ad665d672ed1b1519d0292f33f94d050644f6d0c2844e1a",
+      "bytes": 1757,
+      "category": "provenance",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/reference__VERSION_MATRIX.csv",
+      "source_path": "Enshrouded_Mod_Research/reference/VERSION_MATRIX.csv",
+      "sha256": "f0ca4c4cfb078f492c032f255e79fe3ee7a9761deda2afcbac4387a5b12bb2b2",
+      "bytes": 70075,
+      "category": "provenance",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__records__BUILDING_PLACEMENT_1076226.md",
+      "source_path": "Enshrouded_Mod_Research/research/records/BUILDING_PLACEMENT_1076226.md",
+      "sha256": "ad02caea2085b30b37f0e7cdb66088eb17a08cbcad853f1a3cc7b3b69681138d",
+      "bytes": 2900,
+      "category": "canonical-research",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__records__DATA_INGESTION_1076226.md",
+      "source_path": "Enshrouded_Mod_Research/research/records/DATA_INGESTION_1076226.md",
+      "sha256": "7fc43603fac216a25236d6dd164102b1fb6c26126c9c191bd42484819ba9833c",
+      "bytes": 1875,
+      "category": "canonical-research",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__records__ENTITIES_OBSERVERS_1076226.md",
+      "source_path": "Enshrouded_Mod_Research/research/records/ENTITIES_OBSERVERS_1076226.md",
+      "sha256": "fc2ec6ab95c8b24f7f00a8e0cf194eecce8d9bea079303d7859acbbf6ba11926",
+      "bytes": 3359,
+      "category": "canonical-research",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__records__RUNTIME_PROBING_AND_HOOK_SAFETY_1076226.md",
+      "source_path": "Enshrouded_Mod_Research/research/records/RUNTIME_PROBING_AND_HOOK_SAFETY_1076226.md",
+      "sha256": "71339351a8847982ba2c89c74afcf12d8490f4e78090673a854612cf2ecaa8b5",
+      "bytes": 2913,
+      "category": "evidence-and-runtime-boundary",
+      "intake_state": "partially-verified"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__records__SETTINGS_ADMIN_MULTIPLAYER_1076226.md",
+      "source_path": "Enshrouded_Mod_Research/research/records/SETTINGS_ADMIN_MULTIPLAYER_1076226.md",
+      "sha256": "a7028dc2f02208cfe19499485af634185819531c7ae8ab07dac9dd19d5e926f2",
+      "bytes": 3126,
+      "category": "canonical-research",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__CAPABILITY_LIMITATIONS_REPORT_20260927.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/CAPABILITY_LIMITATIONS_REPORT_20260927.md",
+      "sha256": "81e87d654c8bd11041c24dae82e61ff2972d087822190df4a463f1d40b6ccc3e",
+      "bytes": 6565,
+      "category": "evidence-and-runtime-boundary",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__CONTENT_DONOR_PROBE_QUICKSTART.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/CONTENT_DONOR_PROBE_QUICKSTART.md",
+      "sha256": "1ecd8bf6266e8fb23394b33ad5db7f71ef2c54fe8984d39a24ebefa9578e2d29",
+      "bytes": 638,
+      "category": "donor-recipe-render-model",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md",
+      "sha256": "9931bcd29a7f7e21150434662fb41ad7893a9e67cb0c4f6b0b8fc01ff7f7b19e",
+      "bytes": 1958,
+      "category": "offline-package-blender",
+      "intake_state": "experimental-or-blocked"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EVIDENCE_INDEX_20260927.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/EVIDENCE_INDEX_20260927.md",
+      "sha256": "660d650503382e1e0486b79980e05a1b13a3b86a42335ce1e1cf4a52927c12fe",
+      "bytes": 10182,
+      "category": "evidence-and-runtime-boundary",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md",
+      "sha256": "71f8e6f027fe83c41291ff77bb355a81b0d5d6dfea5980b28219b9ed62f68ac4",
+      "bytes": 4514,
+      "category": "offline-package-blender",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md",
+      "sha256": "397755cd3f48f2fa7c305224e6dddb894a7d28218bfb67154250d5311b941bf5",
+      "bytes": 1864,
+      "category": "evidence-and-runtime-boundary",
+      "intake_state": "experimental-or-blocked"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_CUSTOMIZATION_EVIDENCE_20260928.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/RECIPE_CUSTOMIZATION_EVIDENCE_20260928.md",
+      "sha256": "6f0c76544a1eaad315fee90063076f5858d1dfdfb4a4b10548261edebbe1f8a3",
+      "bytes": 845,
+      "category": "donor-recipe-render-model",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_KNOWLEDGE_REQUIREMENT_EVIDENCE_20260928.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/RECIPE_KNOWLEDGE_REQUIREMENT_EVIDENCE_20260928.md",
+      "sha256": "124304531bca850ed7322530becffd4bd8ef1768a17d1c43f5d1c5d0b157e250",
+      "bytes": 810,
+      "category": "donor-recipe-render-model",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_SCHEMA_DISCOVERY_20260928.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/RECIPE_SCHEMA_DISCOVERY_20260928.md",
+      "sha256": "b2afa8f2532eb363f0e2d580dd44e87861acc185ba0700f8573d37e9fe31fe6f",
+      "bytes": 1050,
+      "category": "donor-recipe-render-model",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_WORKSHOP_REQUIREMENTS_EVIDENCE_20260928.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/RECIPE_WORKSHOP_REQUIREMENTS_EVIDENCE_20260928.md",
+      "sha256": "9e3e82a01e7a82be8206c0a65e97c782dd53dab32151e039092f8cc7bf1885b7",
+      "bytes": 555,
+      "category": "donor-recipe-render-model",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDER_MODEL_GUID_EVIDENCE_20260927.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/RENDER_MODEL_GUID_EVIDENCE_20260927.md",
+      "sha256": "88b6f6100630579fd789e4007354bc3e5f2d3b20f7b62243240b11fd4e5eb148",
+      "bytes": 1049,
+      "category": "donor-recipe-render-model",
+      "intake_state": "triaged"
+    },
+    {
+      "promoted_path": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md",
+      "source_path": "Enshrouded_Mod_Research/research/source/mods-drive/Control_Center/research/RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md",
+      "sha256": "a38bf297f9e0c035b2281f5514360d5e5611eebbb6ed4c09b0e9777f89c0b067",
+      "bytes": 1168,
+      "category": "donor-recipe-render-model",
+      "intake_state": "triaged"
+    }
+  ]
+}
