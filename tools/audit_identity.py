@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from src.catalog_store import CatalogStore
-from src.identity import duplicate_groups
+from src.identity import duplicate_groups, near_duplicate_pairs
 
 
 def main() -> int:
@@ -25,7 +25,8 @@ def main() -> int:
         store.close()
     report = {"schema_version": 1, "record_count": len(records),
               "exact_duplicate_groups": duplicate_groups(records),
-              "cross_build_identity_groups": duplicate_groups(records, include_build=False)}
+              "cross_build_identity_groups": duplicate_groups(records, include_build=False),
+              "near_duplicate_pairs": near_duplicate_pairs(records)}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"audited {len(records)} records; exact={len(report['exact_duplicate_groups'])}, cross_build={len(report['cross_build_identity_groups'])}")

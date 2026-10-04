@@ -1,6 +1,7 @@
 {
   "cross_build_identity_groups": [],
   "exact_duplicate_groups": [],
+  "near_duplicate_pairs": [],
   "record_count": 19,
   "schema_version": 1
 }

@@ -1,6 +1,6 @@
 import unittest
 
-from src.identity import duplicate_groups, identity_key
+from src.identity import duplicate_groups, identity_key, near_duplicate_pairs
 
 
 class IdentityTests(unittest.TestCase):
@@ -15,6 +15,13 @@ class IdentityTests(unittest.TestCase):
         right = {"id": "b", "kind": "donor", "identity": {"name": "bed"}, "build_scope": ["2"]}
         self.assertEqual(duplicate_groups([left, right]), [])
         self.assertEqual(duplicate_groups([left, right], include_build=False), [["a", "b"]])
+
+    def test_near_duplicates_are_review_flags_not_merges(self):
+        left = {"id": "a", "kind": "recipe", "identity": {"name": "wooden bed"}, "build_scope": ["1"]}
+        right = {"id": "b", "kind": "recipe", "identity": {"name": "wooden beds"}, "build_scope": ["2"]}
+        pairs = near_duplicate_pairs([left, right], threshold=0.8)
+        self.assertEqual([pair["left"] for pair in pairs], ["a"])
+        self.assertEqual(pairs[0]["builds"], ["1", "2"])
 
 
 if __name__ == "__main__":
