@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "record_schema_version": 1,
+      "id": "finding.rendermodel.full-icon-bed-probe.20260927",
+      "kind": "rendermodel-donor-probe",
+      "identity": {"finding": "full-icon-model-bed-probe"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded-runtime-session",
+      "supported_claims": ["A recorded full-route probe reached item cloning and retained the requested iconModel assignment path."],
+      "unsupported_claims": ["The run did not prove visible icon or placed-model substitution and did not complete the recipe or UI route because donor recipe lookup was blocked."],
+      "open_questions": ["Which load-order and registry-readiness conditions are required for the donor recipe and UI phase to complete?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"]
+    }
+  ]
+}

@@ -56,6 +56,14 @@ class CatalogStoreTests(unittest.TestCase):
             self.assertEqual(len(store.records(kind="recipe-workshop-requirements")), 1)
             store.close()
 
+    def test_full_icon_probe_import_is_distinct(self):
+        imported = __import__("json").loads((Path(__file__).parents[1] / "research/catalog_records_import_20261004_c.json").read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            store = CatalogStore(Path(directory) / "catalog.sqlite")
+            self.assertEqual(store.import_records(imported["records"]), 1)
+            self.assertEqual(store.records(kind="rendermodel-donor-probe")[0]["state"], "partially-verified")
+            store.close()
+
     def test_contradiction_requires_explicit_resolution(self):
         with tempfile.TemporaryDirectory() as directory:
             store = CatalogStore(Path(directory) / "catalog.sqlite")
