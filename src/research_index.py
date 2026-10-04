@@ -58,7 +58,8 @@ def validate_record(record: dict[str, Any]) -> None:
 
 
 def search(records: Iterable[dict[str, Any]], query: str = "", *, state: str | None = None,
-           build: str | None = None, kind: str | None = None) -> list[dict[str, Any]]:
+           build: str | None = None, kind: str | None = None, confidence: str | None = None,
+           has_open_questions: bool | None = None) -> list[dict[str, Any]]:
     """Return deterministic, read-only matches across searchable record text."""
     if state is not None and state not in ALLOWED_STATES:
         raise ValueError(f"invalid state: {state}")
@@ -70,6 +71,10 @@ def search(records: Iterable[dict[str, Any]], query: str = "", *, state: str | N
         if kind and record["kind"] != kind:
             continue
         if build and build not in record.get("build_scope", []):
+            continue
+        if confidence and record.get("confidence") != confidence:
+            continue
+        if has_open_questions is not None and bool(record.get("open_questions")) != has_open_questions:
             continue
         haystack = json.dumps(record, sort_keys=True).casefold()
         if needle and needle not in haystack:

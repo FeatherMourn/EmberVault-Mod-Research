@@ -27,6 +27,10 @@ class ResearchIndexTests(unittest.TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["identity"]["guid"], "1ac410c2-c85e-4172-95eb-19b5b593118d")
 
+    def test_search_filters_confidence_and_evidence_gaps(self):
+        results = search(self.records, confidence="high-for-recorded-inputs", has_open_questions=True)
+        self.assertEqual([record["kind"] for record in results], ["offline-catalog"])
+
     def test_rejects_duplicate_ids(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "duplicate.json"
