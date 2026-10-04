@@ -29,6 +29,29 @@
       "build_scope": [
         "1076226"
       ],
+      "confidence": "bounded-external-review",
+      "evidence_count": 1,
+      "id": "finding.blender.external-tool-capability-map.20260928",
+      "identity": {
+        "finding": "external-blender-kfc3-rendermodel-workflow"
+      },
+      "kind": "blender-capability-map",
+      "limitations": [
+        "The workflow does not prove fresh-session success, arbitrary component support, custom icon registration, or unrestricted generated-asset behavior."
+      ],
+      "open_questions": [
+        "Which build-target, texture-slot, topology, and inherited-recipe checks should be mandatory before package handoff?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "The reviewed external Blender workflow documents offline KFC3 RenderModel search, mesh/material import, topology-preserving export, and generated EML package structure."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
       "confidence": "bounded",
       "evidence_count": 1,
       "id": "finding.blender.handoff.20260928",
@@ -46,6 +69,52 @@
       "status": "partially-verified",
       "summary": [
         "The external Blender workflow can provide RenderModel, entity-template, ItemInfo, recipe, and localization package output for offline review."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-procedure",
+      "evidence_count": 1,
+      "id": "finding.content-donor.probe-contract.20260928",
+      "identity": {
+        "finding": "vanilla-content-donor-probe-contract"
+      },
+      "kind": "donor-probe-contract",
+      "limitations": [
+        "The procedure does not identify a universal donor or prove that captured fields are sufficient for safe cloning."
+      ],
+      "open_questions": [
+        "Which captured donor fields are stable across builds and sufficient for Content Creator handoff?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "The documented donor probe captures item identity, GUID, debug name, equipment, and voxel-object fields without creating items or changing registries or saves."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-for-recorded-session",
+      "evidence_count": 1,
+      "id": "finding.eml.resource-registration.discovery.20260926",
+      "identity": {
+        "finding": "eml-live-resource-registration-discovery"
+      },
+      "kind": "resource-registration",
+      "limitations": [
+        "Resource discovery alone does not establish valid UI arrays, recipe registries, knowledge gates, or general game-side compatibility."
+      ],
+      "open_questions": [
+        "Which typed descriptors and registries must be validated before a newly registered resource is a Content Creator candidate?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "The recorded loader change exposed newly registered resources to resource enumeration and direct lookup while suppressing duplicates."
       ]
     },
     {
@@ -75,6 +144,29 @@
       "build_scope": [
         "1076226"
       ],
+      "confidence": "bounded-runtime-session",
+      "evidence_count": 1,
+      "id": "finding.recipe.knowledge-requirement-assignment.20260928",
+      "identity": {
+        "finding": "recipe-knowledge-requirement-assignment"
+      },
+      "kind": "recipe-knowledge-requirement",
+      "limitations": [
+        "Assignment acceptance does not prove catalog unlock behavior, craftability, completion, or persistence."
+      ],
+      "open_questions": [
+        "Which knowledge registry and consumer checks govern actual unlock and crafting behavior?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "A recorded isolated session accepted guarded clearing and replacement of a cloned recipe knowledge requirement without panic or registration failure."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
       "confidence": "bounded",
       "evidence_count": 2,
       "id": "finding.recipe.schema.discovery.20260928",
@@ -92,6 +184,75 @@
       "status": "partially-verified",
       "summary": [
         "The research identifies recipe structures and separates schema discovery from runtime UI consumption."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-runtime-session",
+      "evidence_count": 1,
+      "id": "finding.recipe.workshop-requirement-assignment.20260928",
+      "identity": {
+        "finding": "recipe-workshop-and-required-properties-assignment"
+      },
+      "kind": "recipe-workshop-requirements",
+      "limitations": [
+        "Registration without loader error does not prove catalog display, crafting completion, save persistence, or multiplayer behavior."
+      ],
+      "open_questions": [
+        "Which workstation and required-property combinations are accepted by the target build's crafting consumer?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "A recorded isolated session accepted typed workshop replacement and required-property clearing on an independent cloned recipe."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-runtime-session",
+      "evidence_count": 1,
+      "id": "finding.rendermodel.external-publication.20260929",
+      "identity": {
+        "finding": "external-rendermodel-publication-route"
+      },
+      "kind": "rendermodel-package-experiment",
+      "limitations": [
+        "The experiment does not prove catalog display, placed-object rendering, persistence, multiplayer behavior, or client_rendering_verified status."
+      ],
+      "open_questions": [
+        "Which package and runtime evidence fields are mandatory before Content Creator can treat this as a donor-preserving design candidate?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "A recorded disposable-copy experiment accepted a replacement iconModel GUID and completed item, registry, recipe, knowledge, UI-link, recipe-GUID, and archive checks before transactional cleanup."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-for-recorded-session",
+      "evidence_count": 1,
+      "id": "finding.rendermodel.guid-resolution.20260927",
+      "identity": {
+        "finding": "rendermodel-guid-to-resource-family-resolution"
+      },
+      "kind": "rendermodel-runtime-evidence",
+      "limitations": [
+        "The evidence does not prove that assigning another RenderModel changes a cloned item's placed appearance."
+      ],
+      "open_questions": [
+        "Can a donor-preserving RenderModel substitution be verified with controlled screenshots without promoting it to runtime capability?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "A recorded session resolved a concrete GUID to a keen::RenderModel resource on the specified EML/game build."
       ]
     }
   ],
