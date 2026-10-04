@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "resources": [
+    {"id": "bed-001", "resource_type": "keen::RenderModel", "build": "1076226", "guid": "guid-bed", "debug_name": "Bed", "unresolved_references": ["iconTexture"]},
+    {"id": "recipe-001", "resource_type": "keen::Recipe", "build": "1076226", "debug_name": "Bed Recipe"}
+  ]
+}
