@@ -18,6 +18,8 @@ class ResearchWorkerTests(unittest.TestCase):
         payload = json.loads(process.stdout)
         self.assertEqual(process.returncode, 0)
         self.assertFalse(payload["data"]["mutates_workspace"])
+        self.assertEqual(payload["contract_version"], 1)
+        self.assertEqual(payload["data"]["recovery"]["backup_required"], False)
 
 
 if __name__ == "__main__":

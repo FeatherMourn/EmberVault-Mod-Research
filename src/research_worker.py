@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 
+from embervault_sdk import ModuleResult
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -14,12 +16,16 @@ def main() -> int:
     parser.add_argument("--backup", default="")
     parser.add_argument("--settings-manifest", default="")
     args = parser.parse_args()
-    payload = {"contract_version": 1,
-        "status": "ready" if args.profile == "research" else "blocked",
-        "message": "Research worker prepared a read-only evidence session." if args.profile == "research" else "Research requires the isolated research profile.",
-        "data": {"profile_id": args.profile, "operation_id": args.operation, "application_state": "read-only", "mutates_workspace": False}}
-    print(json.dumps(payload))
-    return 0 if payload["status"] == "ready" else 2
+    ready = args.profile == "research"
+    result = ModuleResult(
+        "ready" if ready else "blocked",
+        "Research worker prepared a read-only evidence session." if ready else "Research requires the isolated research profile.",
+        {"profile_id": args.profile, "operation_id": args.operation, "application_state": "read-only", "mutates_workspace": False,
+         "evidence": [],
+         "recovery": {"expectation": "Read-only research worker", "rollback": "Terminate the worker", "verification": "Confirm no game or save files changed", "backup_required": False}},
+    )
+    print(json.dumps(result.to_dict()))
+    return 0 if ready else 2
 
 
 if __name__ == "__main__":
