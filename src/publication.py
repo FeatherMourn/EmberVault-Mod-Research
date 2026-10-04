@@ -1,7 +1,10 @@
 """Sanitized Web Catalog publication records."""
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Iterable
+
+from .catalog_store import CatalogStore
 
 
 def build_web_publication(records: Iterable[dict[str, Any]], *, reviewed_ids: set[str] | None = None) -> dict[str, Any]:
@@ -25,3 +28,14 @@ def build_web_publication(records: Iterable[dict[str, Any]], *, reviewed_ids: se
             "reviewed": record["id"] in reviewed_ids,
         })
     return {"schema_version": 1, "publication": "web-catalog", "records": published}
+
+
+def build_web_publication_from_catalog(catalog_path: Path, *, reviewed_ids: set[str], generated_at: str) -> dict[str, Any]:
+    """Build the public snapshot from the durable catalog without mutating it."""
+    store = CatalogStore(catalog_path)
+    try:
+        publication = build_web_publication(store.records(), reviewed_ids=reviewed_ids)
+    finally:
+        store.close()
+    publication["generated_at"] = generated_at
+    return publication
