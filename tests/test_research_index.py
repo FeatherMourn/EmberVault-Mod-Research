@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.research_index import load_candidates, load_manifest, missing_evidence, search
+from src.research_index import content_creator_handoff, load_candidates, load_manifest, missing_evidence, search
 
 
 class ResearchIndexTests(unittest.TestCase):
@@ -30,6 +30,13 @@ class ResearchIndexTests(unittest.TestCase):
     def test_search_filters_confidence_and_evidence_gaps(self):
         results = search(self.records, confidence="high-for-recorded-inputs", has_open_questions=True)
         self.assertEqual([record["kind"] for record in results], ["offline-catalog"])
+
+    def test_content_creator_handoff_is_design_only_and_scoped(self):
+        handoff = content_creator_handoff(self.records, ["candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d"])
+        self.assertEqual(handoff["application_state"], "design-only")
+        self.assertFalse(handoff["live_game_files_touched"])
+        self.assertEqual(len(handoff["records"]), 1)
+        self.assertIn("unsupported_claims", handoff["records"][0])
 
     def test_rejects_duplicate_ids(self):
         with tempfile.TemporaryDirectory() as directory:

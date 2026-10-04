@@ -46,6 +46,31 @@ def missing_evidence(records: Iterable[dict[str, Any]], manifest: dict[str, dict
     return sorted(missing)
 
 
+def content_creator_handoff(records: Iterable[dict[str, Any]], ids: Iterable[str] | None = None) -> dict[str, Any]:
+    """Build a sanitized, read-only handoff for design-only Content Creator work."""
+    selected = list(records) if ids is None else [record for record in records if record["id"] in set(ids)]
+    return {
+        "schema_version": 1,
+        "application_state": "design-only",
+        "live_game_files_touched": False,
+        "records": [
+            {
+                "id": record["id"],
+                "kind": record["kind"],
+                "identity": record["identity"],
+                "build_scope": record.get("build_scope", []),
+                "state": record["state"],
+                "confidence": record.get("confidence"),
+                "supported_claims": record.get("supported_claims", []),
+                "evidence": record["evidence"],
+                "unsupported_claims": record.get("unsupported_claims", []),
+                "open_questions": record.get("open_questions", []),
+            }
+            for record in sorted(selected, key=lambda item: item["id"])
+        ],
+    }
+
+
 def validate_record(record: dict[str, Any]) -> None:
     required = {"id", "kind", "identity", "build_scope", "state", "evidence", "open_questions"}
     missing = required.difference(record)
