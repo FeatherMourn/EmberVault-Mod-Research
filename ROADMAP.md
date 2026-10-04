@@ -35,9 +35,67 @@ The read-only catalog slice now includes a durable SQLite store, 19 imported
 records, provenance-checked evidence references, deterministic search filters,
 explicit contradiction records/resolution states, a design-only Content Creator
 handoff, and a deterministic, review-scoped Web Catalog publication generator.
-Twenty-two tests pass.
-Migration/recovery/package hardening and wider source ingestion remain active
-work; runtime claims remain gated by direct evidence.
+Twenty-six tests pass. Identity normalization, broader intake, and the
+Research Lab interface remain planned; runtime claims remain gated by direct
+evidence.
+
+## Research Lab evolution
+
+The long-term product is an offline-first evidence-engineering platform, not
+only a record catalog. The advanced capabilities below are intentionally phased
+after the integrity foundation so the system remains useful at every stage.
+
+### Phase A — Integrity and identity hardening
+
+- [ ] Normalize canonical identities for donors, recipes, RenderModels, KFC3
+  resources, Blender outputs, packages, and experiments.
+- [ ] Detect duplicates and near-duplicates across files, records, and builds
+  without merging distinct provenance or evidence boundaries.
+- [ ] Add migration, corruption, recovery, clean-install, and export fixtures.
+- [ ] Resolve or explicitly accept the open RenderModel evidence tension.
+
+### Phase B — Provenance and relationship intelligence
+
+- [ ] Add a provenance graph linking sources, hashes, records, claims,
+  experiments, tools, builds, and generated outputs.
+- [ ] Add a resource graph connecting donors, recipes, RenderModels, registries,
+  packages, Blender outputs, and evidence records.
+- [ ] Add evidence scoring, contradiction detection, evidence-gap prioritization,
+  and human review states.
+- [ ] Add build-aware diffs for KFC3 metadata, records, packages, and findings.
+
+### Phase C — Offline research tooling platform
+
+- [ ] Define pluggable parser and analyzer interfaces for KFC3, RenderModels,
+  recipes, archives, Blender exports, and logs.
+- [ ] Add reproducible pipelines recording inputs, tool versions, output hashes,
+  transformations, and limitations.
+- [ ] Add sandboxed offline tool execution with explicit filesystem boundaries
+  and no live-game or network mutation.
+- [ ] Add versioned research bundles that can be recovered and shared offline.
+
+### Phase D — Research Lab application
+
+- [ ] Build an offline-first Lab browser over the authoritative catalog rather
+  than creating a second store in the UI.
+- [ ] Add faceted search, relationship views, build comparisons, evidence review,
+  contradiction workflows, and capability matrices.
+- [ ] Add research notebooks combining structured records, notes, comparisons,
+  experiment outputs, and generated reports.
+- [ ] Add a plugin API so new research tools can be introduced independently
+  from the catalog core.
+
+### Phase E — Ember Vault integration and publication
+
+- [ ] Connect the Lab to Control Center for profiles, permissions, and recovery
+  context while preserving Mod Research ownership of evidence.
+- [ ] Provide reviewed donor and recipe metadata to Content Creator.
+- [ ] Generate sanitized, reproducible Web Catalog publication records.
+- [ ] Add cross-repository contract fixtures and CI for every handoff path.
+
+Every advanced feature must preserve the same rule: conclusions are traceable,
+reproducible, comparable across builds, and never promoted beyond their
+evidence.
 
 ## Dependencies and exclusions
 
