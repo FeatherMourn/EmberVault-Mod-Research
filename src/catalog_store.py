@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sqlite3
 from pathlib import Path
 from typing import Any, Iterable
@@ -82,6 +83,20 @@ class CatalogStore:
 
     def close(self) -> None:
         self.connection.close()
+
+    def backup_to(self, destination: Path) -> None:
+        """Create a recoverable SQLite backup without changing the live catalog."""
+        self.connection.commit()
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        temporary = destination.with_suffix(destination.suffix + ".tmp")
+        backup_connection = sqlite3.connect(temporary)
+        try:
+            self.connection.backup(backup_connection)
+        finally:
+            backup_connection.close()
+        if not temporary.exists():
+            raise IOError("catalog backup was not created")
+        temporary.replace(destination)
 
     def add_contradiction(self, contradiction: dict[str, str]) -> None:
         if contradiction.get("status") not in {"open", "resolved", "accepted-uncertainty"}:

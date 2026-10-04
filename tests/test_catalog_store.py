@@ -52,6 +52,18 @@ class CatalogStoreTests(unittest.TestCase):
             self.assertEqual(store.unresolved_contradictions(), [])
             store.close()
 
+    def test_catalog_backup_can_be_reopened(self):
+        source = load_candidates(Path(__file__).parents[1] / "research/candidates/INITIAL_CATALOG_CANDIDATES_20261004.json")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            store = CatalogStore(root / "catalog.sqlite")
+            store.import_records(source)
+            store.backup_to(root / "recovery/catalog.sqlite")
+            store.close()
+            recovered = CatalogStore(root / "recovery/catalog.sqlite")
+            self.assertEqual(len(recovered.records()), 8)
+            recovered.close()
+
 
 if __name__ == "__main__":
     unittest.main()
