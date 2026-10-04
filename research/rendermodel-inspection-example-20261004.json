@@ -1,0 +1,58 @@
+{
+  "analysis": {
+    "analyzer_id": "rendermodel-metadata-inspector",
+    "analyzer_version": "1",
+    "build_scope": [
+      "1076226"
+    ],
+    "evidence_type": "offline-static",
+    "input_hashes": [
+      "tests\\fixtures\\rendermodel_metadata_v1.json:e16d15be9ec605030674ea692143dfeb0acc43334de7f18c6657e6f8a4f1486c"
+    ],
+    "limitations": [
+      "No visual or runtime behavior is established."
+    ],
+    "output_record_ids": [
+      "rendermodel:1076226:bed-model"
+    ],
+    "reproducible": true
+  },
+  "records": [
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "offline-fixture",
+      "contradictions": [],
+      "evidence": [
+        "tests\\fixtures\\rendermodel_metadata_v1.json"
+      ],
+      "id": "rendermodel:1076226:bed-model",
+      "identity": {
+        "debug_name": "Bed",
+        "guid": "guid-bed"
+      },
+      "kind": "rendermodel-metadata",
+      "metadata": {
+        "lod_count": 3,
+        "material_count": 2,
+        "mesh_count": 1,
+        "texture_slots": [
+          "albedo",
+          "normal"
+        ],
+        "vertex_count": 1200
+      },
+      "open_questions": [
+        "visual substitution remains unverified"
+      ],
+      "state": "partially-verified",
+      "supported_claims": [
+        "The normalized fixture records the supplied RenderModel metadata."
+      ],
+      "unsupported_claims": [
+        "Offline model metadata does not prove visual substitution, placement, persistence, or multiplayer behavior."
+      ]
+    }
+  ]
+}

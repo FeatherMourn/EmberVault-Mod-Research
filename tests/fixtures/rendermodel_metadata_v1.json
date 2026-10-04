@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "models": [
+    {"id": "bed-model", "build": "1076226", "guid": "guid-bed", "debug_name": "Bed", "mesh_count": 1, "material_count": 2, "lod_count": 3, "vertex_count": 1200, "texture_slots": ["albedo", "normal"], "warnings": ["visual substitution remains unverified"]}
+  ]
+}
