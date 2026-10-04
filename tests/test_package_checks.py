@@ -17,6 +17,9 @@ class PackageChecksTests(unittest.TestCase):
         self.assertEqual(publication["schema_version"], 1)
         self.assertEqual(publication["publication"], "web-catalog")
 
+    def test_publication_snapshot_verifier_is_available(self):
+        self.assertTrue((Path(__file__).parents[1] / "tools/verify_publication_snapshot.py").is_file())
+
 
 if __name__ == "__main__":
     unittest.main()

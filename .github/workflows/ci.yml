@@ -1,0 +1,22 @@
+name: Mod Research CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run research tests
+        run: python -m unittest discover -s tests -v
+      - name: Verify package contents
+        run: python -c "from pathlib import Path; from src.package_checks import verify_package_contents; assert verify_package_contents(Path('.')) == []"
+      - name: Verify publication reproducibility
+        run: python tools/verify_publication_snapshot.py
+      - name: Verify read-only catalog integrity
+        run: python -c "import sqlite3; c=sqlite3.connect('file:research/catalog.sqlite?mode=ro', uri=True); assert c.execute('pragma integrity_check').fetchone()[0] == 'ok'"
