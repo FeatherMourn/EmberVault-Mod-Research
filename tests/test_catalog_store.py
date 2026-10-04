@@ -84,7 +84,8 @@ class CatalogStoreTests(unittest.TestCase):
 
     def test_full_catalog_backup_preserves_records_and_contradictions(self):
         root = Path(__file__).parents[1]
-        source = __import__("json").loads((root / "research/catalog_records_20261004.json").read_text())["records"]
+        source = load_candidates(root / "research/candidates/INITIAL_CATALOG_CANDIDATES_20261004.json")
+        source += __import__("json").loads((root / "research/catalog_records_20261004.json").read_text())["records"]
         extra = __import__("json").loads((root / "research/catalog_records_import_20261004.json").read_text())["records"]
         extra_b = __import__("json").loads((root / "research/catalog_records_import_20261004_b.json").read_text())["records"]
         with tempfile.TemporaryDirectory() as directory:
@@ -96,10 +97,13 @@ class CatalogStoreTests(unittest.TestCase):
             store.backup_to(base / "recovery/catalog.sqlite")
             store.close()
             recovered = CatalogStore(base / "recovery/catalog.sqlite")
-            self.assertTrue(recovered.integrity_check())
-            self.assertEqual(len(recovered.records()), 19)
-            self.assertEqual(len(recovered.unresolved_contradictions()), 1)
+            integrity = recovered.integrity_check()
+            record_count = len(recovered.records())
+            contradiction_count = len(recovered.unresolved_contradictions())
             recovered.close()
+            self.assertTrue(integrity)
+            self.assertEqual(record_count, 19)
+            self.assertEqual(contradiction_count, 1)
 
 
 if __name__ == "__main__":
