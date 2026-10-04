@@ -30,6 +30,11 @@ class CatalogStore:
             record_id TEXT NOT NULL REFERENCES records(id) ON DELETE CASCADE,
             path TEXT NOT NULL, PRIMARY KEY(record_id, path)
         );
+        CREATE TABLE IF NOT EXISTS contradictions (
+            id TEXT PRIMARY KEY, record_id TEXT NOT NULL REFERENCES records(id) ON DELETE CASCADE,
+            claim_a TEXT NOT NULL, claim_b TEXT NOT NULL, status TEXT NOT NULL,
+            resolution TEXT NOT NULL DEFAULT ''
+        );
         CREATE INDEX IF NOT EXISTS idx_records_kind_state ON records(kind, state);
         CREATE INDEX IF NOT EXISTS idx_evidence_path ON evidence(path);
         INSERT OR REPLACE INTO catalog_meta(key, value) VALUES ('schema_version', '1');
@@ -77,3 +82,24 @@ class CatalogStore:
 
     def close(self) -> None:
         self.connection.close()
+
+    def add_contradiction(self, contradiction: dict[str, str]) -> None:
+        if contradiction.get("status") not in {"open", "resolved", "accepted-uncertainty"}:
+            raise ValueError("invalid contradiction status")
+        with self.connection:
+            self.connection.execute("INSERT OR REPLACE INTO contradictions VALUES (?, ?, ?, ?, ?, ?)",
+                                    (contradiction["id"], contradiction["record_id"], contradiction["claim_a"],
+                                     contradiction["claim_b"], contradiction["status"], contradiction.get("resolution", "")))
+
+    def resolve_contradiction(self, contradiction_id: str, status: str, resolution: str) -> None:
+        if status not in {"resolved", "accepted-uncertainty"} or not resolution.strip():
+            raise ValueError("a contradiction resolution needs a terminal status and explanation")
+        with self.connection:
+            updated = self.connection.execute("UPDATE contradictions SET status = ?, resolution = ? WHERE id = ?",
+                                              (status, resolution, contradiction_id)).rowcount
+        if not updated:
+            raise KeyError(contradiction_id)
+
+    def unresolved_contradictions(self) -> list[dict[str, str]]:
+        rows = self.connection.execute("SELECT * FROM contradictions WHERE status = 'open' ORDER BY id").fetchall()
+        return [dict(row) for row in rows]

@@ -38,6 +38,20 @@ class CatalogStoreTests(unittest.TestCase):
             self.assertEqual(len(store.records(kind="package-validation")), 1)
             store.close()
 
+    def test_contradiction_requires_explicit_resolution(self):
+        with tempfile.TemporaryDirectory() as directory:
+            store = CatalogStore(Path(directory) / "catalog.sqlite")
+            source = load_candidates(Path(__file__).parents[1] / "research/candidates/INITIAL_CATALOG_CANDIDATES_20261004.json")
+            store.import_records(source[:1])
+            contradiction = {"id": "contra-1", "record_id": source[0]["id"], "claim_a": "A", "claim_b": "B", "status": "open"}
+            store.add_contradiction(contradiction)
+            self.assertEqual(len(store.unresolved_contradictions()), 1)
+            with self.assertRaises(ValueError):
+                store.resolve_contradiction("contra-1", "resolved", "")
+            store.resolve_contradiction("contra-1", "accepted-uncertainty", "Both claims remain build-scoped and unresolved.")
+            self.assertEqual(store.unresolved_contradictions(), [])
+            store.close()
+
 
 if __name__ == "__main__":
     unittest.main()
