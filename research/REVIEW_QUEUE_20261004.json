@@ -1,0 +1,243 @@
+{
+  "open_contradictions": [
+    {
+      "claim_a": "External publication and startup smoke evidence passed on the disposable copy.",
+      "claim_b": "Client rendering and placed-object appearance remain unverified.",
+      "id": "contra.rendermodel.route-vs-render.20261004",
+      "record_id": "finding.rendermodel.external-publication.20260929",
+      "resolution": "",
+      "status": "open"
+    }
+  ],
+  "records": [
+    {
+      "confidence": "bounded",
+      "evidence_count": 1,
+      "id": "candidate.item.2940001508",
+      "open_questions": [
+        "Which donor recipe and UI path are valid in the target build?"
+      ],
+      "state": "experimental",
+      "unsupported_claims": [
+        "This record does not establish universal donor suitability, recipe availability, or stable runtime behavior."
+      ]
+    },
+    {
+      "confidence": "high-for-recorded-inputs",
+      "evidence_count": 1,
+      "id": "candidate.kfc.bundle.1076226",
+      "open_questions": [
+        "Can the normalized catalog be imported into the Research index with reproducible source hashes?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "The recorded counts are not universal game totals and do not prove runtime mutation or compatibility with later builds."
+      ]
+    },
+    {
+      "confidence": "bounded",
+      "evidence_count": 1,
+      "id": "candidate.recipe.3531872774",
+      "open_questions": [
+        "Can the donor recipe be resolved from the same-build catalog before UI registration?"
+      ],
+      "state": "blocked",
+      "unsupported_claims": [
+        "The probe did not successfully resolve the donor recipe, so this is not evidence of a working recipe/UI route."
+      ]
+    },
+    {
+      "confidence": "bounded",
+      "evidence_count": 2,
+      "id": "candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "open_questions": [
+        "Which metadata fields and dependencies are required for a complete visual record?"
+      ],
+      "state": "experimental",
+      "unsupported_claims": [
+        "The record does not establish complete visual presentation, catalog preview behavior, placement, persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "confidence": "bounded-external-review",
+      "evidence_count": 1,
+      "id": "finding.blender.external-tool-capability-map.20260928",
+      "open_questions": [
+        "Which build-target, texture-slot, topology, and inherited-recipe checks should be mandatory before package handoff?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "The workflow does not prove fresh-session success, arbitrary component support, custom icon registration, or unrestricted generated-asset behavior."
+      ]
+    },
+    {
+      "confidence": "bounded",
+      "evidence_count": 1,
+      "id": "finding.blender.handoff.20260928",
+      "open_questions": [
+        "Can the handoff metadata be imported without copying or modifying the original Blender export?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "Generated package success does not establish in-game rendering, placement, persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "confidence": "medium-high-static",
+      "evidence_count": 1,
+      "id": "finding.building-placement.1076226",
+      "open_questions": [
+        "Which runtime record is authoritative for selected blueprint identity?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "The mapping does not establish a safe runtime hook or prove that a local event argument controls committed geometry."
+      ]
+    },
+    {
+      "confidence": "bounded-procedure",
+      "evidence_count": 1,
+      "id": "finding.content-donor.probe-contract.20260928",
+      "open_questions": [
+        "Which captured donor fields are stable across builds and sufficient for Content Creator handoff?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "The procedure does not identify a universal donor or prove that captured fields are sufficient for safe cloning."
+      ]
+    },
+    {
+      "confidence": "high-for-recorded-session",
+      "evidence_count": 1,
+      "id": "finding.eml.resource-registration.discovery.20260926",
+      "open_questions": [
+        "Which typed descriptors and registries must be validated before a newly registered resource is a Content Creator candidate?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "Resource discovery alone does not establish valid UI arrays, recipe registries, knowledge gates, or general game-side compatibility."
+      ]
+    },
+    {
+      "confidence": "high-static-low-runtime",
+      "evidence_count": 1,
+      "id": "finding.entities-observers.1076226",
+      "open_questions": [
+        "Can a later build expose a supported observer boundary?"
+      ],
+      "state": "blocked",
+      "unsupported_claims": [
+        "No safe typed ECS observer, live component boundary, or stable target-publication path was established."
+      ]
+    },
+    {
+      "confidence": "bounded-offline",
+      "evidence_count": 1,
+      "id": "finding.package-validation.blender.20260928",
+      "open_questions": [
+        "Which package metadata fields should be mandatory for Content Creator handoff?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "Offline package validation does not prove in-game rendering or behavior."
+      ]
+    },
+    {
+      "confidence": "bounded-runtime-session",
+      "evidence_count": 1,
+      "id": "finding.recipe.knowledge-requirement-assignment.20260928",
+      "open_questions": [
+        "Which knowledge registry and consumer checks govern actual unlock and crafting behavior?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "Assignment acceptance does not prove catalog unlock behavior, craftability, completion, or persistence."
+      ]
+    },
+    {
+      "confidence": "bounded",
+      "evidence_count": 2,
+      "id": "finding.recipe.schema.discovery.20260928",
+      "open_questions": [
+        "Which recipe registry and knowledge gates are authoritative for the target build?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "Schema fields alone do not prove that a custom recipe will appear, craft, persist, or work in multiplayer."
+      ]
+    },
+    {
+      "confidence": "bounded-runtime-session",
+      "evidence_count": 1,
+      "id": "finding.recipe.workshop-requirement-assignment.20260928",
+      "open_questions": [
+        "Which workstation and required-property combinations are accepted by the target build's crafting consumer?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "Registration without loader error does not prove catalog display, crafting completion, save persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "confidence": "bounded-runtime-session",
+      "evidence_count": 1,
+      "id": "finding.rendermodel.external-publication.20260929",
+      "open_questions": [
+        "Which package and runtime evidence fields are mandatory before Content Creator can treat this as a donor-preserving design candidate?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "The experiment does not prove catalog display, placed-object rendering, persistence, multiplayer behavior, or client_rendering_verified status."
+      ]
+    },
+    {
+      "confidence": "high-for-recorded-session",
+      "evidence_count": 1,
+      "id": "finding.rendermodel.guid-resolution.20260927",
+      "open_questions": [
+        "Can a donor-preserving RenderModel substitution be verified with controlled screenshots without promoting it to runtime capability?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "The evidence does not prove that assigning another RenderModel changes a cloned item's placed appearance."
+      ]
+    },
+    {
+      "confidence": "bounded",
+      "evidence_count": 1,
+      "id": "finding.resource-registration.20260926",
+      "open_questions": [
+        "Which typed descriptors and downstream registries are required for a complete content route?"
+      ],
+      "state": "experimental",
+      "unsupported_claims": [
+        "Resource visibility does not prove complete UI, recipe, dependency, persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "confidence": "high-for-recorded-safety-review",
+      "evidence_count": 1,
+      "id": "finding.runtime.hook-safety.1076226",
+      "open_questions": [
+        "Can a future build expose a supported observer boundary without native detouring?"
+      ],
+      "state": "blocked",
+      "unsupported_claims": [
+        "Static candidate maps are not runtime authorization and do not establish a safe production hook."
+      ]
+    },
+    {
+      "confidence": "high-static-low-runtime",
+      "evidence_count": 1,
+      "id": "finding.settings-multiplayer.1076226",
+      "open_questions": [
+        "Which capabilities remain stable across later builds and dedicated-server environments?"
+      ],
+      "state": "partially-verified",
+      "unsupported_claims": [
+        "Authority, persistence, readback, and safe mutation were not established."
+      ]
+    }
+  ],
+  "schema_version": 1
+}
