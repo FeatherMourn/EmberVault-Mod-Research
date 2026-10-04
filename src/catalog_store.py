@@ -84,6 +84,10 @@ class CatalogStore:
     def close(self) -> None:
         self.connection.close()
 
+    def integrity_check(self) -> bool:
+        """Verify SQLite integrity without changing catalog data."""
+        return self.connection.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
+
     def backup_to(self, destination: Path) -> None:
         """Create a recoverable SQLite backup without changing the live catalog."""
         self.connection.commit()
