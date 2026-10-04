@@ -37,6 +37,8 @@ class ResearchIndexTests(unittest.TestCase):
         self.assertFalse(handoff["live_game_files_touched"])
         self.assertEqual(len(handoff["records"]), 1)
         self.assertIn("unsupported_claims", handoff["records"][0])
+        self.assertFalse(handoff["records"][0]["runtime_approval"])
+        self.assertEqual(handoff["records"][0]["evidence_count"], len(handoff["records"][0]["evidence"]))
 
     def test_rejects_duplicate_ids(self):
         with tempfile.TemporaryDirectory() as directory:

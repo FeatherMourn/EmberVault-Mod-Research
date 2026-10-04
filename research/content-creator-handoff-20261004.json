@@ -1,0 +1,530 @@
+{
+  "application_state": "design-only",
+  "live_game_files_touched": false,
+  "records": [
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+      ],
+      "evidence_count": 1,
+      "id": "candidate.item.2940001508",
+      "identity": {
+        "item_id": "2940001508"
+      },
+      "kind": "donor-item",
+      "open_questions": [
+        "Which donor recipe and UI path are valid in the target build?"
+      ],
+      "runtime_approval": false,
+      "state": "experimental",
+      "supported_claims": [
+        "The recorded probe used this item as a donor for a furniture visual-reference experiment."
+      ],
+      "unsupported_claims": [
+        "This record does not establish universal donor suitability, recipe availability, or stable runtime behavior."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-for-recorded-inputs",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__records__DATA_INGESTION_1076226.md"
+      ],
+      "evidence_count": 1,
+      "id": "candidate.kfc.bundle.1076226",
+      "identity": {
+        "build": "1076226"
+      },
+      "kind": "offline-catalog",
+      "open_questions": [
+        "Can the normalized catalog be imported into the Research index with reproducible source hashes?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "The recorded rebuild normalized ItemInfo, ItemRegistry, recipe, blueprint, terrain, building, material, feedback, and snap-rule relationships for its named input bundle."
+      ],
+      "unsupported_claims": [
+        "The recorded counts are not universal game totals and do not prove runtime mutation or compatibility with later builds."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+      ],
+      "evidence_count": 1,
+      "id": "candidate.recipe.3531872774",
+      "identity": {
+        "recipe_id": "3531872774"
+      },
+      "kind": "donor-recipe",
+      "open_questions": [
+        "Can the donor recipe be resolved from the same-build catalog before UI registration?"
+      ],
+      "runtime_approval": false,
+      "state": "blocked",
+      "supported_claims": [
+        "The recipe ID was recorded as the intended donor recipe in the probe setup."
+      ],
+      "unsupported_claims": [
+        "The probe did not successfully resolve the donor recipe, so this is not evidence of a working recipe/UI route."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md",
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
+      ],
+      "evidence_count": 2,
+      "id": "candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "identity": {
+        "guid": "1ac410c2-c85e-4172-95eb-19b5b593118d"
+      },
+      "kind": "render-model",
+      "open_questions": [
+        "Which metadata fields and dependencies are required for a complete visual record?"
+      ],
+      "runtime_approval": false,
+      "state": "experimental",
+      "supported_claims": [
+        "The GUID was used as a replacement RenderModel reference in the recorded furniture probe."
+      ],
+      "unsupported_claims": [
+        "The record does not establish complete visual presentation, catalog preview behavior, placement, persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-external-review",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.blender.external-tool-capability-map.20260928",
+      "identity": {
+        "finding": "external-blender-kfc3-rendermodel-workflow"
+      },
+      "kind": "blender-capability-map",
+      "open_questions": [
+        "Which build-target, texture-slot, topology, and inherited-recipe checks should be mandatory before package handoff?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "The reviewed external Blender workflow documents offline KFC3 RenderModel search, mesh/material import, topology-preserving export, and generated EML package structure."
+      ],
+      "unsupported_claims": [
+        "The workflow does not prove fresh-session success, arbitrary component support, custom icon registration, or unrestricted generated-asset behavior."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.blender.handoff.20260928",
+      "identity": {
+        "finding": "external-blender-tools-comparison"
+      },
+      "kind": "blender-handoff",
+      "open_questions": [
+        "Can the handoff metadata be imported without copying or modifying the original Blender export?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "The external Blender workflow can provide RenderModel, entity-template, ItemInfo, recipe, and localization package output for offline review."
+      ],
+      "unsupported_claims": [
+        "Generated package success does not establish in-game rendering, placement, persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "medium-high-static",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__records__BUILDING_PLACEMENT_1076226.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.building-placement.1076226",
+      "identity": {
+        "finding": "building-placement-pipeline"
+      },
+      "kind": "building-placement",
+      "open_questions": [
+        "Which runtime record is authoritative for selected blueprint identity?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "Static mapping establishes the researched placement data flow and identifies candidate identity and transform fields."
+      ],
+      "unsupported_claims": [
+        "The mapping does not establish a safe runtime hook or prove that a local event argument controls committed geometry."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-procedure",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__CONTENT_DONOR_PROBE_QUICKSTART.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.content-donor.probe-contract.20260928",
+      "identity": {
+        "finding": "vanilla-content-donor-probe-contract"
+      },
+      "kind": "donor-probe-contract",
+      "open_questions": [
+        "Which captured donor fields are stable across builds and sufficient for Content Creator handoff?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "The documented donor probe captures item identity, GUID, debug name, equipment, and voxel-object fields without creating items or changing registries or saves."
+      ],
+      "unsupported_claims": [
+        "The procedure does not identify a universal donor or prove that captured fields are sufficient for safe cloning."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-for-recorded-session",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.eml.resource-registration.discovery.20260926",
+      "identity": {
+        "finding": "eml-live-resource-registration-discovery"
+      },
+      "kind": "resource-registration",
+      "open_questions": [
+        "Which typed descriptors and registries must be validated before a newly registered resource is a Content Creator candidate?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "The recorded loader change exposed newly registered resources to resource enumeration and direct lookup while suppressing duplicates."
+      ],
+      "unsupported_claims": [
+        "Resource discovery alone does not establish valid UI arrays, recipe registries, knowledge gates, or general game-side compatibility."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-static-low-runtime",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__records__ENTITIES_OBSERVERS_1076226.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.entities-observers.1076226",
+      "identity": {
+        "finding": "entities-observers-inventory-flow"
+      },
+      "kind": "entity-observer",
+      "open_questions": [
+        "Can a later build expose a supported observer boundary?"
+      ],
+      "runtime_approval": false,
+      "state": "blocked",
+      "supported_claims": [
+        "Reflection and static analysis establish action-shaped layouts and field flow for the recorded build."
+      ],
+      "unsupported_claims": [
+        "No safe typed ECS observer, live component boundary, or stable target-publication path was established."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-offline",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.package-validation.blender.20260928",
+      "identity": {
+        "finding": "blender-package-offline-validation"
+      },
+      "kind": "package-validation",
+      "open_questions": [
+        "Which package metadata fields should be mandatory for Content Creator handoff?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "Blender and generated package outputs can be reviewed for expected metadata, paths, hashes, and validation results without installing them."
+      ],
+      "unsupported_claims": [
+        "Offline package validation does not prove in-game rendering or behavior."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-runtime-session",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_KNOWLEDGE_REQUIREMENT_EVIDENCE_20260928.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.recipe.knowledge-requirement-assignment.20260928",
+      "identity": {
+        "finding": "recipe-knowledge-requirement-assignment"
+      },
+      "kind": "recipe-knowledge-requirement",
+      "open_questions": [
+        "Which knowledge registry and consumer checks govern actual unlock and crafting behavior?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "A recorded isolated session accepted guarded clearing and replacement of a cloned recipe knowledge requirement without panic or registration failure."
+      ],
+      "unsupported_claims": [
+        "Assignment acceptance does not prove catalog unlock behavior, craftability, completion, or persistence."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_CUSTOMIZATION_EVIDENCE_20260928.md",
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_SCHEMA_DISCOVERY_20260928.md"
+      ],
+      "evidence_count": 2,
+      "id": "finding.recipe.schema.discovery.20260928",
+      "identity": {
+        "finding": "recipe-schema-discovery"
+      },
+      "kind": "recipe-schema",
+      "open_questions": [
+        "Which recipe registry and knowledge gates are authoritative for the target build?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "The research identifies recipe structures and separates schema discovery from runtime UI consumption."
+      ],
+      "unsupported_claims": [
+        "Schema fields alone do not prove that a custom recipe will appear, craft, persist, or work in multiplayer."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-runtime-session",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_WORKSHOP_REQUIREMENTS_EVIDENCE_20260928.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.recipe.workshop-requirement-assignment.20260928",
+      "identity": {
+        "finding": "recipe-workshop-and-required-properties-assignment"
+      },
+      "kind": "recipe-workshop-requirements",
+      "open_questions": [
+        "Which workstation and required-property combinations are accepted by the target build's crafting consumer?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "A recorded isolated session accepted typed workshop replacement and required-property clearing on an independent cloned recipe."
+      ],
+      "unsupported_claims": [
+        "Registration without loader error does not prove catalog display, crafting completion, save persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-runtime-session",
+      "contradictions": [
+        {
+          "claim_a": "External publication and startup smoke evidence passed on the disposable copy.",
+          "claim_b": "Client rendering and placed-object appearance remain unverified.",
+          "id": "contra.rendermodel.route-vs-render.20261004",
+          "resolution": "",
+          "status": "open"
+        }
+      ],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.rendermodel.external-publication.20260929",
+      "identity": {
+        "finding": "external-rendermodel-publication-route"
+      },
+      "kind": "rendermodel-package-experiment",
+      "open_questions": [
+        "Which package and runtime evidence fields are mandatory before Content Creator can treat this as a donor-preserving design candidate?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "A recorded disposable-copy experiment accepted a replacement iconModel GUID and completed item, registry, recipe, knowledge, UI-link, recipe-GUID, and archive checks before transactional cleanup."
+      ],
+      "unsupported_claims": [
+        "The experiment does not prove catalog display, placed-object rendering, persistence, multiplayer behavior, or client_rendering_verified status."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-for-recorded-session",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDER_MODEL_GUID_EVIDENCE_20260927.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.rendermodel.guid-resolution.20260927",
+      "identity": {
+        "finding": "rendermodel-guid-to-resource-family-resolution"
+      },
+      "kind": "rendermodel-runtime-evidence",
+      "open_questions": [
+        "Can a donor-preserving RenderModel substitution be verified with controlled screenshots without promoting it to runtime capability?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "A recorded session resolved a concrete GUID to a keen::RenderModel resource on the specified EML/game build."
+      ],
+      "unsupported_claims": [
+        "The evidence does not prove that assigning another RenderModel changes a cloned item's placed appearance."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.resource-registration.20260926",
+      "identity": {
+        "finding": "eml-resource-registration-upgrade"
+      },
+      "kind": "resource-registration",
+      "open_questions": [
+        "Which typed descriptors and downstream registries are required for a complete content route?"
+      ],
+      "runtime_approval": false,
+      "state": "experimental",
+      "supported_claims": [
+        "The recorded upgrade made newly created resource descriptors visible to the researched EML resource index path."
+      ],
+      "unsupported_claims": [
+        "Resource visibility does not prove complete UI, recipe, dependency, persistence, or multiplayer behavior."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-for-recorded-safety-review",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__records__RUNTIME_PROBING_AND_HOOK_SAFETY_1076226.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.runtime.hook-safety.1076226",
+      "identity": {
+        "finding": "runtime-probing-and-hook-safety"
+      },
+      "kind": "runtime-safety-boundary",
+      "open_questions": [
+        "Can a future build expose a supported observer boundary without native detouring?"
+      ],
+      "runtime_approval": false,
+      "state": "blocked",
+      "supported_claims": [
+        "The reviewed native observer candidates lack sufficient relocation, ABI, lifetime, unwind, or bounded-capture proof for installation."
+      ],
+      "unsupported_claims": [
+        "Static candidate maps are not runtime authorization and do not establish a safe production hook."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-static-low-runtime",
+      "contradictions": [],
+      "evidence": [
+        "research/promoted/2026-10-04/research__records__SETTINGS_ADMIN_MULTIPLAYER_1076226.md"
+      ],
+      "evidence_count": 1,
+      "id": "finding.settings-multiplayer.1076226",
+      "identity": {
+        "finding": "settings-admin-multiplayer-boundary"
+      },
+      "kind": "settings-multiplayer",
+      "open_questions": [
+        "Which capabilities remain stable across later builds and dedicated-server environments?"
+      ],
+      "runtime_approval": false,
+      "state": "partially-verified",
+      "supported_claims": [
+        "The recorded build exposes reflected settings models, named admin actions, and related event/resource structures."
+      ],
+      "unsupported_claims": [
+        "Authority, persistence, readback, and safe mutation were not established."
+      ]
+    }
+  ],
+  "schema_version": 1
+}

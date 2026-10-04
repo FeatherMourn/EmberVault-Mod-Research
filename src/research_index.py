@@ -46,9 +46,17 @@ def missing_evidence(records: Iterable[dict[str, Any]], manifest: dict[str, dict
     return sorted(missing)
 
 
-def content_creator_handoff(records: Iterable[dict[str, Any]], ids: Iterable[str] | None = None) -> dict[str, Any]:
+def content_creator_handoff(records: Iterable[dict[str, Any]], ids: Iterable[str] | None = None,
+                            contradictions: Iterable[dict[str, Any]] | None = None) -> dict[str, Any]:
     """Build a sanitized, read-only handoff for design-only Content Creator work."""
     selected = list(records) if ids is None else [record for record in records if record["id"] in set(ids)]
+    contradiction_map: dict[str, list[dict[str, Any]]] = {}
+    for contradiction in contradictions or []:
+        contradiction_map.setdefault(contradiction["record_id"], []).append({
+            "id": contradiction["id"], "status": contradiction["status"],
+            "claim_a": contradiction["claim_a"], "claim_b": contradiction["claim_b"],
+            "resolution": contradiction.get("resolution", ""),
+        })
     return {
         "schema_version": 1,
         "application_state": "design-only",
@@ -63,8 +71,11 @@ def content_creator_handoff(records: Iterable[dict[str, Any]], ids: Iterable[str
                 "confidence": record.get("confidence"),
                 "supported_claims": record.get("supported_claims", []),
                 "evidence": record["evidence"],
+                "evidence_count": len(record["evidence"]),
                 "unsupported_claims": record.get("unsupported_claims", []),
                 "open_questions": record.get("open_questions", []),
+                "contradictions": sorted(contradiction_map.get(record["id"], []), key=lambda item: item["id"]),
+                "runtime_approval": False,
             }
             for record in sorted(selected, key=lambda item: item["id"])
         ],
