@@ -12,7 +12,7 @@ class RenderModelInspectorTests(unittest.TestCase):
         self.assertEqual(result["analysis"]["evidence_type"], "offline-static")
         self.assertEqual(record["metadata"]["vertex_count"], 1200)
         self.assertIn("unverified", record["open_questions"][0])
-        self.assertIn("runtime", record["unsupported_claims"][0])
+        self.assertIn("visual substitution", record["unsupported_claims"][0])
 
 
 if __name__ == "__main__":
