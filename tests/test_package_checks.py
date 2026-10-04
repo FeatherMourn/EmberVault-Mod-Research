@@ -1,5 +1,6 @@
 import unittest
 import json
+from embervault_sdk import validate_manifest
 from pathlib import Path
 
 from src.package_checks import verify_package_contents
@@ -19,6 +20,13 @@ class PackageChecksTests(unittest.TestCase):
 
     def test_publication_snapshot_verifier_is_available(self):
         self.assertTrue((Path(__file__).parents[1] / "tools/verify_publication_snapshot.py").is_file())
+
+    def test_manifest_matches_shared_sdk_contract(self):
+        root = Path(__file__).parents[1]
+        manifest = json.loads((root / "module.json").read_text())
+        self.assertEqual(validate_manifest(manifest), [])
+        self.assertTrue(manifest["safety"]["read_only"])
+        self.assertEqual(manifest["safety"]["allowed_profiles"], ["research"])
 
 
 if __name__ == "__main__":
