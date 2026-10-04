@@ -1,14 +1,5 @@
 {
-  "open_contradictions": [
-    {
-      "claim_a": "External publication and startup smoke evidence passed on the disposable copy.",
-      "claim_b": "Client rendering and placed-object appearance remain unverified.",
-      "id": "contra.rendermodel.route-vs-render.20261004",
-      "record_id": "finding.rendermodel.external-publication.20260929",
-      "resolution": "",
-      "status": "open"
-    }
-  ],
+  "open_contradictions": [],
   "records": [
     {
       "confidence": "bounded",

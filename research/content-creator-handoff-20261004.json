@@ -387,15 +387,7 @@
         "1076226"
       ],
       "confidence": "bounded-runtime-session",
-      "contradictions": [
-        {
-          "claim_a": "External publication and startup smoke evidence passed on the disposable copy.",
-          "claim_b": "Client rendering and placed-object appearance remain unverified.",
-          "id": "contra.rendermodel.route-vs-render.20261004",
-          "resolution": "",
-          "status": "open"
-        }
-      ],
+      "contradictions": [],
       "evidence": [
         "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
       ],
