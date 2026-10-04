@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://embervault.dev/research/research-record.schema.json",
+  "title": "EmberVault Research Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["record_schema_version", "id", "kind", "identity", "build_scope", "state", "confidence", "evidence", "supported_claims", "unsupported_claims", "open_questions", "contradictions"],
+  "properties": {
+    "record_schema_version": {"const": 1},
+    "id": {"type": "string", "minLength": 1},
+    "kind": {"type": "string", "minLength": 1},
+    "identity": {"type": "object"},
+    "build_scope": {"type": "array", "items": {"type": "string"}},
+    "state": {"enum": ["triaged", "partially-verified", "experimental", "verified", "blocked", "unsupported"]},
+    "confidence": {"type": "string", "minLength": 1},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "supported_claims": {"type": "array", "items": {"type": "string"}},
+    "unsupported_claims": {"type": "array", "items": {"type": "string"}},
+    "open_questions": {"type": "array", "items": {"type": "string"}},
+    "contradictions": {"type": "array", "items": {"type": "object"}}
+  }
+}
