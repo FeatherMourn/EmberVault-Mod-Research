@@ -27,6 +27,17 @@ class CatalogStoreTests(unittest.TestCase):
             self.assertEqual(len(store.records()[0]["evidence"]), len(source[0]["evidence"]))
             store.close()
 
+    def test_supplemental_canonical_findings_import(self):
+        source = load_candidates(Path(__file__).parents[1] / "research/candidates/INITIAL_CATALOG_CANDIDATES_20261004.json")
+        supplemental = __import__("json").loads((Path(__file__).parents[1] / "research/catalog_records_20261004.json").read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            store = CatalogStore(Path(directory) / "catalog.sqlite")
+            store.import_records(source)
+            store.import_records(supplemental["records"])
+            self.assertEqual(len(store.records()), 12)
+            self.assertEqual(len(store.records(kind="package-validation")), 1)
+            store.close()
+
 
 if __name__ == "__main__":
     unittest.main()

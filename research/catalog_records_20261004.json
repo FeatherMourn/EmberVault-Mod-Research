@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "record_schema_version": 1,
+      "id": "finding.building-placement.1076226",
+      "kind": "building-placement",
+      "identity": {"finding": "building-placement-pipeline"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "medium-high-static",
+      "supported_claims": ["Static mapping establishes the researched placement data flow and identifies candidate identity and transform fields."],
+      "unsupported_claims": ["The mapping does not establish a safe runtime hook or prove that a local event argument controls committed geometry."],
+      "open_questions": ["Which runtime record is authoritative for selected blueprint identity?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__records__BUILDING_PLACEMENT_1076226.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.entities-observers.1076226",
+      "kind": "entity-observer",
+      "identity": {"finding": "entities-observers-inventory-flow"},
+      "build_scope": ["1076226"],
+      "state": "blocked",
+      "confidence": "high-static-low-runtime",
+      "supported_claims": ["Reflection and static analysis establish action-shaped layouts and field flow for the recorded build."],
+      "unsupported_claims": ["No safe typed ECS observer, live component boundary, or stable target-publication path was established."],
+      "open_questions": ["Can a later build expose a supported observer boundary?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__records__ENTITIES_OBSERVERS_1076226.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.settings-multiplayer.1076226",
+      "kind": "settings-multiplayer",
+      "identity": {"finding": "settings-admin-multiplayer-boundary"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "high-static-low-runtime",
+      "supported_claims": ["The recorded build exposes reflected settings models, named admin actions, and related event/resource structures."],
+      "unsupported_claims": ["Authority, persistence, readback, and safe mutation were not established."],
+      "open_questions": ["Which capabilities remain stable across later builds and dedicated-server environments?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__records__SETTINGS_ADMIN_MULTIPLAYER_1076226.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.package-validation.blender.20260928",
+      "kind": "package-validation",
+      "identity": {"finding": "blender-package-offline-validation"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded-offline",
+      "supported_claims": ["Blender and generated package outputs can be reviewed for expected metadata, paths, hashes, and validation results without installing them."],
+      "unsupported_claims": ["Offline package validation does not prove in-game rendering or behavior."],
+      "open_questions": ["Which package metadata fields should be mandatory for Content Creator handoff?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"]
+    }
+  ]
+}
