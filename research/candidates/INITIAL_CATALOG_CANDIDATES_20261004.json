@@ -74,6 +74,57 @@
         "research/promoted/2026-10-04/research__records__DATA_INGESTION_1076226.md"
       ],
       "open_questions": ["Can the normalized catalog be imported into the Research index with reproducible source hashes?"]
+    },
+    {
+      "id": "finding.recipe.schema.discovery.20260928",
+      "kind": "recipe-schema",
+      "identity": {"finding": "recipe-schema-discovery"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded",
+      "supported_claims": ["The research identifies recipe structures and separates schema discovery from runtime UI consumption."],
+      "unsupported_claims": ["Schema fields alone do not prove that a custom recipe will appear, craft, persist, or work in multiplayer."],
+      "evidence": [
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_SCHEMA_DISCOVERY_20260928.md",
+        "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_CUSTOMIZATION_EVIDENCE_20260928.md"
+      ],
+      "open_questions": ["Which recipe registry and knowledge gates are authoritative for the target build?"]
+    },
+    {
+      "id": "finding.blender.handoff.20260928",
+      "kind": "blender-handoff",
+      "identity": {"finding": "external-blender-tools-comparison"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded",
+      "supported_claims": ["The external Blender workflow can provide RenderModel, entity-template, ItemInfo, recipe, and localization package output for offline review."],
+      "unsupported_claims": ["Generated package success does not establish in-game rendering, placement, persistence, or multiplayer behavior."],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"],
+      "open_questions": ["Can the handoff metadata be imported without copying or modifying the original Blender export?"]
+    },
+    {
+      "id": "finding.runtime.hook-safety.1076226",
+      "kind": "runtime-safety-boundary",
+      "identity": {"finding": "runtime-probing-and-hook-safety"},
+      "build_scope": ["1076226"],
+      "state": "blocked",
+      "confidence": "high-for-recorded-safety-review",
+      "supported_claims": ["The reviewed native observer candidates lack sufficient relocation, ABI, lifetime, unwind, or bounded-capture proof for installation."],
+      "unsupported_claims": ["Static candidate maps are not runtime authorization and do not establish a safe production hook."],
+      "evidence": ["research/promoted/2026-10-04/research__records__RUNTIME_PROBING_AND_HOOK_SAFETY_1076226.md"],
+      "open_questions": ["Can a future build expose a supported observer boundary without native detouring?"]
+    },
+    {
+      "id": "finding.resource-registration.20260926",
+      "kind": "resource-registration",
+      "identity": {"finding": "eml-resource-registration-upgrade"},
+      "build_scope": ["1076226"],
+      "state": "experimental",
+      "confidence": "bounded",
+      "supported_claims": ["The recorded upgrade made newly created resource descriptors visible to the researched EML resource index path."],
+      "unsupported_claims": ["Resource visibility does not prove complete UI, recipe, dependency, persistence, or multiplayer behavior."],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md"],
+      "open_questions": ["Which typed descriptors and downstream registries are required for a complete content route?"]
     }
   ]
 }

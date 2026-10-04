@@ -13,8 +13,8 @@ class ResearchIndexTests(unittest.TestCase):
         self.manifest = load_manifest(Path(__file__).parents[1] / "research" / "INTAKE_MANIFEST_20261004.json")
 
     def test_loads_unique_candidate_records(self):
-        self.assertEqual(len(self.records), 4)
-        self.assertEqual(len({record["id"] for record in self.records}), 4)
+        self.assertEqual(len(self.records), 8)
+        self.assertEqual(len({record["id"] for record in self.records}), 8)
 
     def test_search_filters_without_mutation(self):
         before = json.dumps(self.records, sort_keys=True)
