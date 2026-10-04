@@ -31,11 +31,11 @@ small verified slices. Broader normalization and recovery hardening remain.
 
 ### Updated implementation snapshot
 
-The read-only catalog slice now includes a durable SQLite store, 12 imported
+The read-only catalog slice now includes a durable SQLite store, 19 imported
 records, provenance-checked evidence references, deterministic search filters,
 explicit contradiction records/resolution states, a design-only Content Creator
 handoff, and a deterministic, review-scoped Web Catalog publication generator.
-Twenty tests pass.
+Twenty-two tests pass.
 Migration/recovery/package hardening and wider source ingestion remain active
 work; runtime claims remain gated by direct evidence.
 
