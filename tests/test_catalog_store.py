@@ -38,6 +38,15 @@ class CatalogStoreTests(unittest.TestCase):
             self.assertEqual(len(store.records(kind="package-validation")), 1)
             store.close()
 
+    def test_broader_render_model_and_donor_import(self):
+        imported = __import__("json").loads((Path(__file__).parents[1] / "research/catalog_records_import_20261004.json").read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            store = CatalogStore(Path(directory) / "catalog.sqlite")
+            self.assertEqual(store.import_records(imported["records"]), 3)
+            self.assertEqual(len(store.records(kind="rendermodel-runtime-evidence")), 1)
+            self.assertEqual(len(store.records(kind="donor-probe-contract")), 1)
+            store.close()
+
     def test_contradiction_requires_explicit_resolution(self):
         with tempfile.TemporaryDirectory() as directory:
             store = CatalogStore(Path(directory) / "catalog.sqlite")

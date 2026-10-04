@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "record_schema_version": 1,
+      "id": "finding.content-donor.probe-contract.20260928",
+      "kind": "donor-probe-contract",
+      "identity": {"finding": "vanilla-content-donor-probe-contract"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded-procedure",
+      "supported_claims": ["The documented donor probe captures item identity, GUID, debug name, equipment, and voxel-object fields without creating items or changing registries or saves."],
+      "unsupported_claims": ["The procedure does not identify a universal donor or prove that captured fields are sufficient for safe cloning."],
+      "open_questions": ["Which captured donor fields are stable across builds and sufficient for Content Creator handoff?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__CONTENT_DONOR_PROBE_QUICKSTART.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.rendermodel.guid-resolution.20260927",
+      "kind": "rendermodel-runtime-evidence",
+      "identity": {"finding": "rendermodel-guid-to-resource-family-resolution"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "high-for-recorded-session",
+      "supported_claims": ["A recorded session resolved a concrete GUID to a keen::RenderModel resource on the specified EML/game build."],
+      "unsupported_claims": ["The evidence does not prove that assigning another RenderModel changes a cloned item's placed appearance."],
+      "open_questions": ["Can a donor-preserving RenderModel substitution be verified with controlled screenshots without promoting it to runtime capability?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDER_MODEL_GUID_EVIDENCE_20260927.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.rendermodel.external-publication.20260929",
+      "kind": "rendermodel-package-experiment",
+      "identity": {"finding": "external-rendermodel-publication-route"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded-runtime-session",
+      "supported_claims": ["A recorded disposable-copy experiment accepted a replacement iconModel GUID and completed item, registry, recipe, knowledge, UI-link, recipe-GUID, and archive checks before transactional cleanup."],
+      "unsupported_claims": ["The experiment does not prove catalog display, placed-object rendering, persistence, multiplayer behavior, or client_rendering_verified status."],
+      "open_questions": ["Which package and runtime evidence fields are mandatory before Content Creator can treat this as a donor-preserving design candidate?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"]
+    }
+  ]
+}
