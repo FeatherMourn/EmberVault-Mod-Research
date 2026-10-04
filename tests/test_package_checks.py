@@ -28,6 +28,9 @@ class PackageChecksTests(unittest.TestCase):
         self.assertTrue(manifest["safety"]["read_only"])
         self.assertEqual(manifest["safety"]["allowed_profiles"], ["research"])
 
+    def test_analyzer_contract_is_packaged(self):
+        self.assertTrue((Path(__file__).parents[1] / "src/analyzers.py").is_file())
+
 
 if __name__ == "__main__":
     unittest.main()
