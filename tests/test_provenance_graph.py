@@ -10,7 +10,7 @@ class ProvenanceGraphTests(unittest.TestCase):
         graph = build_provenance_graph([record])
         self.assertEqual(graph, build_provenance_graph([record]))
         self.assertIn({"source": "record:r-1", "relation": "supported-by", "target": "evidence:source.md"}, graph["edges"])
-        self.assertTrue(any(node["kind"] == "question" for node in graph["nodes"]))
+        self.assertTrue(any(node["kind"] == "open_question" for node in graph["nodes"]))
 
 
 if __name__ == "__main__":
