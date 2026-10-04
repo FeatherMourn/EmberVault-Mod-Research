@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-10-04",
+  "publication": "web-catalog",
+  "records": [
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "high-for-recorded-inputs",
+      "evidence_count": 1,
+      "id": "candidate.kfc.bundle.1076226",
+      "identity": {
+        "build": "1076226"
+      },
+      "kind": "offline-catalog",
+      "limitations": [
+        "The recorded counts are not universal game totals and do not prove runtime mutation or compatibility with later builds."
+      ],
+      "open_questions": [
+        "Can the normalized catalog be imported into the Research index with reproducible source hashes?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "The recorded rebuild normalized ItemInfo, ItemRegistry, recipe, blueprint, terrain, building, material, feedback, and snap-rule relationships for its named input bundle."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "evidence_count": 1,
+      "id": "finding.blender.handoff.20260928",
+      "identity": {
+        "finding": "external-blender-tools-comparison"
+      },
+      "kind": "blender-handoff",
+      "limitations": [
+        "Generated package success does not establish in-game rendering, placement, persistence, or multiplayer behavior."
+      ],
+      "open_questions": [
+        "Can the handoff metadata be imported without copying or modifying the original Blender export?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "The external Blender workflow can provide RenderModel, entity-template, ItemInfo, recipe, and localization package output for offline review."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded-offline",
+      "evidence_count": 1,
+      "id": "finding.package-validation.blender.20260928",
+      "identity": {
+        "finding": "blender-package-offline-validation"
+      },
+      "kind": "package-validation",
+      "limitations": [
+        "Offline package validation does not prove in-game rendering or behavior."
+      ],
+      "open_questions": [
+        "Which package metadata fields should be mandatory for Content Creator handoff?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "Blender and generated package outputs can be reviewed for expected metadata, paths, hashes, and validation results without installing them."
+      ]
+    },
+    {
+      "build_scope": [
+        "1076226"
+      ],
+      "confidence": "bounded",
+      "evidence_count": 2,
+      "id": "finding.recipe.schema.discovery.20260928",
+      "identity": {
+        "finding": "recipe-schema-discovery"
+      },
+      "kind": "recipe-schema",
+      "limitations": [
+        "Schema fields alone do not prove that a custom recipe will appear, craft, persist, or work in multiplayer."
+      ],
+      "open_questions": [
+        "Which recipe registry and knowledge gates are authoritative for the target build?"
+      ],
+      "reviewed": true,
+      "status": "partially-verified",
+      "summary": [
+        "The research identifies recipe structures and separates schema discovery from runtime UI consumption."
+      ]
+    }
+  ],
+  "schema_version": 1
+}
