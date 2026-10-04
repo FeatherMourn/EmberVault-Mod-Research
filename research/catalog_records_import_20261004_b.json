@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "record_schema_version": 1,
+      "id": "finding.eml.resource-registration.discovery.20260926",
+      "kind": "resource-registration",
+      "identity": {"finding": "eml-live-resource-registration-discovery"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "high-for-recorded-session",
+      "supported_claims": ["The recorded loader change exposed newly registered resources to resource enumeration and direct lookup while suppressing duplicates."],
+      "unsupported_claims": ["Resource discovery alone does not establish valid UI arrays, recipe registries, knowledge gates, or general game-side compatibility."],
+      "open_questions": ["Which typed descriptors and registries must be validated before a newly registered resource is a Content Creator candidate?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.blender.external-tool-capability-map.20260928",
+      "kind": "blender-capability-map",
+      "identity": {"finding": "external-blender-kfc3-rendermodel-workflow"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded-external-review",
+      "supported_claims": ["The reviewed external Blender workflow documents offline KFC3 RenderModel search, mesh/material import, topology-preserving export, and generated EML package structure."],
+      "unsupported_claims": ["The workflow does not prove fresh-session success, arbitrary component support, custom icon registration, or unrestricted generated-asset behavior."],
+      "open_questions": ["Which build-target, texture-slot, topology, and inherited-recipe checks should be mandatory before package handoff?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.recipe.knowledge-requirement-assignment.20260928",
+      "kind": "recipe-knowledge-requirement",
+      "identity": {"finding": "recipe-knowledge-requirement-assignment"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded-runtime-session",
+      "supported_claims": ["A recorded isolated session accepted guarded clearing and replacement of a cloned recipe knowledge requirement without panic or registration failure."],
+      "unsupported_claims": ["Assignment acceptance does not prove catalog unlock behavior, craftability, completion, or persistence."],
+      "open_questions": ["Which knowledge registry and consumer checks govern actual unlock and crafting behavior?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_KNOWLEDGE_REQUIREMENT_EVIDENCE_20260928.md"]
+    },
+    {
+      "record_schema_version": 1,
+      "id": "finding.recipe.workshop-requirement-assignment.20260928",
+      "kind": "recipe-workshop-requirements",
+      "identity": {"finding": "recipe-workshop-and-required-properties-assignment"},
+      "build_scope": ["1076226"],
+      "state": "partially-verified",
+      "confidence": "bounded-runtime-session",
+      "supported_claims": ["A recorded isolated session accepted typed workshop replacement and required-property clearing on an independent cloned recipe."],
+      "unsupported_claims": ["Registration without loader error does not prove catalog display, crafting completion, save persistence, or multiplayer behavior."],
+      "open_questions": ["Which workstation and required-property combinations are accepted by the target build's crafting consumer?"],
+      "contradictions": [],
+      "evidence": ["research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_WORKSHOP_REQUIREMENTS_EVIDENCE_20260928.md"]
+    }
+  ]
+}

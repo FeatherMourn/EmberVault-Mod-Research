@@ -47,6 +47,15 @@ class CatalogStoreTests(unittest.TestCase):
             self.assertEqual(len(store.records(kind="donor-probe-contract")), 1)
             store.close()
 
+    def test_kfc_blender_and_recipe_followup_import(self):
+        imported = __import__("json").loads((Path(__file__).parents[1] / "research/catalog_records_import_20261004_b.json").read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            store = CatalogStore(Path(directory) / "catalog.sqlite")
+            self.assertEqual(store.import_records(imported["records"]), 4)
+            self.assertEqual(len(store.records(kind="blender-capability-map")), 1)
+            self.assertEqual(len(store.records(kind="recipe-workshop-requirements")), 1)
+            store.close()
+
     def test_contradiction_requires_explicit_resolution(self):
         with tempfile.TemporaryDirectory() as directory:
             store = CatalogStore(Path(directory) / "catalog.sqlite")
