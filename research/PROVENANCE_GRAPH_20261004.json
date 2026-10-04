@@ -1,0 +1,1192 @@
+{
+  "edges": [
+    {
+      "relation": "classified-as",
+      "source": "record:candidate.item.2940001508",
+      "target": "kind:donor-item"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:candidate.item.2940001508",
+      "target": "claim:ed992294a4ae2f36"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:candidate.item.2940001508",
+      "target": "claim:8850d6e9a8fff5aa"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:candidate.item.2940001508",
+      "target": "claim:f507f049074cdf59"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:candidate.item.2940001508",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:candidate.item.2940001508",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:candidate.kfc.bundle.1076226",
+      "target": "kind:offline-catalog"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:candidate.kfc.bundle.1076226",
+      "target": "claim:4153224a936843c2"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:candidate.kfc.bundle.1076226",
+      "target": "claim:c206141e7fe10444"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:candidate.kfc.bundle.1076226",
+      "target": "claim:d97265180c2dc673"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:candidate.kfc.bundle.1076226",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:candidate.kfc.bundle.1076226",
+      "target": "evidence:research/promoted/2026-10-04/research__records__DATA_INGESTION_1076226.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:candidate.recipe.3531872774",
+      "target": "kind:donor-recipe"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:candidate.recipe.3531872774",
+      "target": "claim:a16062c9fbba5654"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:candidate.recipe.3531872774",
+      "target": "claim:2d736bb12165a2df"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:candidate.recipe.3531872774",
+      "target": "claim:1036d4f89a268442"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:candidate.recipe.3531872774",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:candidate.recipe.3531872774",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "target": "kind:render-model"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "target": "claim:132e4aa5885a5eaf"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "target": "claim:dfd68c1650a27f84"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "target": "claim:a7e5adf95ecc60a8"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.blender.external-tool-capability-map.20260928",
+      "target": "kind:blender-capability-map"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.blender.external-tool-capability-map.20260928",
+      "target": "claim:94031913d638fbcd"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.blender.external-tool-capability-map.20260928",
+      "target": "claim:70781e35dbaf8de8"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.blender.external-tool-capability-map.20260928",
+      "target": "claim:6bb76ab4740bb599"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.blender.external-tool-capability-map.20260928",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.blender.external-tool-capability-map.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.blender.handoff.20260928",
+      "target": "kind:blender-handoff"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.blender.handoff.20260928",
+      "target": "claim:10a59e2ea914b073"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.blender.handoff.20260928",
+      "target": "claim:8bf80913b774fceb"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.blender.handoff.20260928",
+      "target": "claim:5aefc1f8d241bb78"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.blender.handoff.20260928",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.blender.handoff.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.building-placement.1076226",
+      "target": "kind:building-placement"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.building-placement.1076226",
+      "target": "claim:4dcf52b17c3b828e"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.building-placement.1076226",
+      "target": "claim:4e35cce0d492a5cb"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.building-placement.1076226",
+      "target": "claim:025e25f59c7618ca"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.building-placement.1076226",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.building-placement.1076226",
+      "target": "evidence:research/promoted/2026-10-04/research__records__BUILDING_PLACEMENT_1076226.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.content-donor.probe-contract.20260928",
+      "target": "kind:donor-probe-contract"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.content-donor.probe-contract.20260928",
+      "target": "claim:8e4c3d1cf79c3aa2"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.content-donor.probe-contract.20260928",
+      "target": "claim:ea90597d7bfce25e"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.content-donor.probe-contract.20260928",
+      "target": "claim:4a5bd7cc7943024a"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.content-donor.probe-contract.20260928",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.content-donor.probe-contract.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__CONTENT_DONOR_PROBE_QUICKSTART.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.eml.resource-registration.discovery.20260926",
+      "target": "kind:resource-registration"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.eml.resource-registration.discovery.20260926",
+      "target": "claim:1fae8bb8de77ad2f"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.eml.resource-registration.discovery.20260926",
+      "target": "claim:60378ee3f5a75e47"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.eml.resource-registration.discovery.20260926",
+      "target": "claim:84b7a75c3272ba8b"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.eml.resource-registration.discovery.20260926",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.eml.resource-registration.discovery.20260926",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.entities-observers.1076226",
+      "target": "kind:entity-observer"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.entities-observers.1076226",
+      "target": "claim:82778a9f6461596c"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.entities-observers.1076226",
+      "target": "claim:4f03d861b9b80820"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.entities-observers.1076226",
+      "target": "claim:16539282e7f29ace"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.entities-observers.1076226",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.entities-observers.1076226",
+      "target": "evidence:research/promoted/2026-10-04/research__records__ENTITIES_OBSERVERS_1076226.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.package-validation.blender.20260928",
+      "target": "kind:package-validation"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.package-validation.blender.20260928",
+      "target": "claim:3ed7df6fdb1b608e"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.package-validation.blender.20260928",
+      "target": "claim:9fff2d94f933c7ee"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.package-validation.blender.20260928",
+      "target": "claim:0a518f3153b09b9e"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.package-validation.blender.20260928",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.package-validation.blender.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.recipe.knowledge-requirement-assignment.20260928",
+      "target": "kind:recipe-knowledge-requirement"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.recipe.knowledge-requirement-assignment.20260928",
+      "target": "claim:b113265cf5a10d78"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.recipe.knowledge-requirement-assignment.20260928",
+      "target": "claim:3299afab29e853f0"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.recipe.knowledge-requirement-assignment.20260928",
+      "target": "claim:1e4b19a999b9c29c"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.recipe.knowledge-requirement-assignment.20260928",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.recipe.knowledge-requirement-assignment.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_KNOWLEDGE_REQUIREMENT_EVIDENCE_20260928.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.recipe.schema.discovery.20260928",
+      "target": "kind:recipe-schema"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.recipe.schema.discovery.20260928",
+      "target": "claim:74597bf0945bd2cf"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.recipe.schema.discovery.20260928",
+      "target": "claim:06ba91007dd90dc8"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.recipe.schema.discovery.20260928",
+      "target": "claim:be4988d2f5bb830e"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.recipe.schema.discovery.20260928",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.recipe.schema.discovery.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_CUSTOMIZATION_EVIDENCE_20260928.md"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.recipe.schema.discovery.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_SCHEMA_DISCOVERY_20260928.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.recipe.workshop-requirement-assignment.20260928",
+      "target": "kind:recipe-workshop-requirements"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.recipe.workshop-requirement-assignment.20260928",
+      "target": "claim:3a20f6011b20cf44"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.recipe.workshop-requirement-assignment.20260928",
+      "target": "claim:f6e18cfedc140fa2"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.recipe.workshop-requirement-assignment.20260928",
+      "target": "claim:40276d462c124d42"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.recipe.workshop-requirement-assignment.20260928",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.recipe.workshop-requirement-assignment.20260928",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_WORKSHOP_REQUIREMENTS_EVIDENCE_20260928.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.rendermodel.external-publication.20260929",
+      "target": "kind:rendermodel-package-experiment"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.rendermodel.external-publication.20260929",
+      "target": "claim:5890918a29a6a885"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.rendermodel.external-publication.20260929",
+      "target": "claim:c9544ddd05519d43"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.rendermodel.external-publication.20260929",
+      "target": "claim:3dece89d9477bcf1"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.rendermodel.external-publication.20260929",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.rendermodel.external-publication.20260929",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.rendermodel.full-icon-bed-probe.20260927",
+      "target": "kind:rendermodel-donor-probe"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.rendermodel.full-icon-bed-probe.20260927",
+      "target": "claim:ff62e28eeee4f1b7"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.rendermodel.full-icon-bed-probe.20260927",
+      "target": "claim:60382ffab6e621d0"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.rendermodel.full-icon-bed-probe.20260927",
+      "target": "claim:54e74cee916a58b3"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.rendermodel.full-icon-bed-probe.20260927",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.rendermodel.full-icon-bed-probe.20260927",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.rendermodel.guid-resolution.20260927",
+      "target": "kind:rendermodel-runtime-evidence"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.rendermodel.guid-resolution.20260927",
+      "target": "claim:d716debd4d26c0e5"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.rendermodel.guid-resolution.20260927",
+      "target": "claim:21503a14246f60b2"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.rendermodel.guid-resolution.20260927",
+      "target": "claim:28d6d3ad852dbd7d"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.rendermodel.guid-resolution.20260927",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.rendermodel.guid-resolution.20260927",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDER_MODEL_GUID_EVIDENCE_20260927.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.resource-registration.20260926",
+      "target": "kind:resource-registration"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.resource-registration.20260926",
+      "target": "claim:bb8a25e0ed3a9ebd"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.resource-registration.20260926",
+      "target": "claim:65a741c6d13d7cae"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.resource-registration.20260926",
+      "target": "claim:ea460f9afadb1f4c"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.resource-registration.20260926",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.resource-registration.20260926",
+      "target": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.runtime.hook-safety.1076226",
+      "target": "kind:runtime-safety-boundary"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.runtime.hook-safety.1076226",
+      "target": "claim:5bf93547d294c0e1"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.runtime.hook-safety.1076226",
+      "target": "claim:03b200c976dc132c"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.runtime.hook-safety.1076226",
+      "target": "claim:d23b289fcab02252"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.runtime.hook-safety.1076226",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.runtime.hook-safety.1076226",
+      "target": "evidence:research/promoted/2026-10-04/research__records__RUNTIME_PROBING_AND_HOOK_SAFETY_1076226.md"
+    },
+    {
+      "relation": "classified-as",
+      "source": "record:finding.settings-multiplayer.1076226",
+      "target": "kind:settings-multiplayer"
+    },
+    {
+      "relation": "has-open_question",
+      "source": "record:finding.settings-multiplayer.1076226",
+      "target": "claim:195f10b88af527ba"
+    },
+    {
+      "relation": "has-supported_claim",
+      "source": "record:finding.settings-multiplayer.1076226",
+      "target": "claim:d5624eda13a542e6"
+    },
+    {
+      "relation": "has-unsupported_claim",
+      "source": "record:finding.settings-multiplayer.1076226",
+      "target": "claim:6349d079db125015"
+    },
+    {
+      "relation": "scoped-to",
+      "source": "record:finding.settings-multiplayer.1076226",
+      "target": "build:1076226"
+    },
+    {
+      "relation": "supported-by",
+      "source": "record:finding.settings-multiplayer.1076226",
+      "target": "evidence:research/promoted/2026-10-04/research__records__SETTINGS_ADMIN_MULTIPLAYER_1076226.md"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "build:1076226",
+      "kind": "build",
+      "label": "1076226"
+    },
+    {
+      "id": "claim:025e25f59c7618ca",
+      "kind": "unsupported_claim",
+      "label": "The mapping does not establish a safe runtime hook or prove that a local event argument controls committed geometry."
+    },
+    {
+      "id": "claim:03b200c976dc132c",
+      "kind": "supported_claim",
+      "label": "The reviewed native observer candidates lack sufficient relocation, ABI, lifetime, unwind, or bounded-capture proof for installation."
+    },
+    {
+      "id": "claim:06ba91007dd90dc8",
+      "kind": "supported_claim",
+      "label": "The research identifies recipe structures and separates schema discovery from runtime UI consumption."
+    },
+    {
+      "id": "claim:0a518f3153b09b9e",
+      "kind": "unsupported_claim",
+      "label": "Offline package validation does not prove in-game rendering or behavior."
+    },
+    {
+      "id": "claim:1036d4f89a268442",
+      "kind": "unsupported_claim",
+      "label": "The probe did not successfully resolve the donor recipe, so this is not evidence of a working recipe/UI route."
+    },
+    {
+      "id": "claim:10a59e2ea914b073",
+      "kind": "open_question",
+      "label": "Can the handoff metadata be imported without copying or modifying the original Blender export?"
+    },
+    {
+      "id": "claim:132e4aa5885a5eaf",
+      "kind": "open_question",
+      "label": "Which metadata fields and dependencies are required for a complete visual record?"
+    },
+    {
+      "id": "claim:16539282e7f29ace",
+      "kind": "unsupported_claim",
+      "label": "No safe typed ECS observer, live component boundary, or stable target-publication path was established."
+    },
+    {
+      "id": "claim:195f10b88af527ba",
+      "kind": "open_question",
+      "label": "Which capabilities remain stable across later builds and dedicated-server environments?"
+    },
+    {
+      "id": "claim:1e4b19a999b9c29c",
+      "kind": "unsupported_claim",
+      "label": "Assignment acceptance does not prove catalog unlock behavior, craftability, completion, or persistence."
+    },
+    {
+      "id": "claim:1fae8bb8de77ad2f",
+      "kind": "open_question",
+      "label": "Which typed descriptors and registries must be validated before a newly registered resource is a Content Creator candidate?"
+    },
+    {
+      "id": "claim:21503a14246f60b2",
+      "kind": "supported_claim",
+      "label": "A recorded session resolved a concrete GUID to a keen::RenderModel resource on the specified EML/game build."
+    },
+    {
+      "id": "claim:28d6d3ad852dbd7d",
+      "kind": "unsupported_claim",
+      "label": "The evidence does not prove that assigning another RenderModel changes a cloned item's placed appearance."
+    },
+    {
+      "id": "claim:2d736bb12165a2df",
+      "kind": "supported_claim",
+      "label": "The recipe ID was recorded as the intended donor recipe in the probe setup."
+    },
+    {
+      "id": "claim:3299afab29e853f0",
+      "kind": "supported_claim",
+      "label": "A recorded isolated session accepted guarded clearing and replacement of a cloned recipe knowledge requirement without panic or registration failure."
+    },
+    {
+      "id": "claim:3a20f6011b20cf44",
+      "kind": "open_question",
+      "label": "Which workstation and required-property combinations are accepted by the target build's crafting consumer?"
+    },
+    {
+      "id": "claim:3dece89d9477bcf1",
+      "kind": "unsupported_claim",
+      "label": "The experiment does not prove catalog display, placed-object rendering, persistence, multiplayer behavior, or client_rendering_verified status."
+    },
+    {
+      "id": "claim:3ed7df6fdb1b608e",
+      "kind": "open_question",
+      "label": "Which package metadata fields should be mandatory for Content Creator handoff?"
+    },
+    {
+      "id": "claim:40276d462c124d42",
+      "kind": "unsupported_claim",
+      "label": "Registration without loader error does not prove catalog display, crafting completion, save persistence, or multiplayer behavior."
+    },
+    {
+      "id": "claim:4153224a936843c2",
+      "kind": "open_question",
+      "label": "Can the normalized catalog be imported into the Research index with reproducible source hashes?"
+    },
+    {
+      "id": "claim:4a5bd7cc7943024a",
+      "kind": "unsupported_claim",
+      "label": "The procedure does not identify a universal donor or prove that captured fields are sufficient for safe cloning."
+    },
+    {
+      "id": "claim:4dcf52b17c3b828e",
+      "kind": "open_question",
+      "label": "Which runtime record is authoritative for selected blueprint identity?"
+    },
+    {
+      "id": "claim:4e35cce0d492a5cb",
+      "kind": "supported_claim",
+      "label": "Static mapping establishes the researched placement data flow and identifies candidate identity and transform fields."
+    },
+    {
+      "id": "claim:4f03d861b9b80820",
+      "kind": "supported_claim",
+      "label": "Reflection and static analysis establish action-shaped layouts and field flow for the recorded build."
+    },
+    {
+      "id": "claim:54e74cee916a58b3",
+      "kind": "unsupported_claim",
+      "label": "The run did not prove visible icon or placed-model substitution and did not complete the recipe or UI route because donor recipe lookup was blocked."
+    },
+    {
+      "id": "claim:5890918a29a6a885",
+      "kind": "open_question",
+      "label": "Which package and runtime evidence fields are mandatory before Content Creator can treat this as a donor-preserving design candidate?"
+    },
+    {
+      "id": "claim:5aefc1f8d241bb78",
+      "kind": "unsupported_claim",
+      "label": "Generated package success does not establish in-game rendering, placement, persistence, or multiplayer behavior."
+    },
+    {
+      "id": "claim:5bf93547d294c0e1",
+      "kind": "open_question",
+      "label": "Can a future build expose a supported observer boundary without native detouring?"
+    },
+    {
+      "id": "claim:60378ee3f5a75e47",
+      "kind": "supported_claim",
+      "label": "The recorded loader change exposed newly registered resources to resource enumeration and direct lookup while suppressing duplicates."
+    },
+    {
+      "id": "claim:60382ffab6e621d0",
+      "kind": "supported_claim",
+      "label": "A recorded full-route probe reached item cloning and retained the requested iconModel assignment path."
+    },
+    {
+      "id": "claim:6349d079db125015",
+      "kind": "unsupported_claim",
+      "label": "Authority, persistence, readback, and safe mutation were not established."
+    },
+    {
+      "id": "claim:65a741c6d13d7cae",
+      "kind": "supported_claim",
+      "label": "The recorded upgrade made newly created resource descriptors visible to the researched EML resource index path."
+    },
+    {
+      "id": "claim:6bb76ab4740bb599",
+      "kind": "unsupported_claim",
+      "label": "The workflow does not prove fresh-session success, arbitrary component support, custom icon registration, or unrestricted generated-asset behavior."
+    },
+    {
+      "id": "claim:70781e35dbaf8de8",
+      "kind": "supported_claim",
+      "label": "The reviewed external Blender workflow documents offline KFC3 RenderModel search, mesh/material import, topology-preserving export, and generated EML package structure."
+    },
+    {
+      "id": "claim:74597bf0945bd2cf",
+      "kind": "open_question",
+      "label": "Which recipe registry and knowledge gates are authoritative for the target build?"
+    },
+    {
+      "id": "claim:82778a9f6461596c",
+      "kind": "open_question",
+      "label": "Can a later build expose a supported observer boundary?"
+    },
+    {
+      "id": "claim:84b7a75c3272ba8b",
+      "kind": "unsupported_claim",
+      "label": "Resource discovery alone does not establish valid UI arrays, recipe registries, knowledge gates, or general game-side compatibility."
+    },
+    {
+      "id": "claim:8850d6e9a8fff5aa",
+      "kind": "supported_claim",
+      "label": "The recorded probe used this item as a donor for a furniture visual-reference experiment."
+    },
+    {
+      "id": "claim:8bf80913b774fceb",
+      "kind": "supported_claim",
+      "label": "The external Blender workflow can provide RenderModel, entity-template, ItemInfo, recipe, and localization package output for offline review."
+    },
+    {
+      "id": "claim:8e4c3d1cf79c3aa2",
+      "kind": "open_question",
+      "label": "Which captured donor fields are stable across builds and sufficient for Content Creator handoff?"
+    },
+    {
+      "id": "claim:94031913d638fbcd",
+      "kind": "open_question",
+      "label": "Which build-target, texture-slot, topology, and inherited-recipe checks should be mandatory before package handoff?"
+    },
+    {
+      "id": "claim:9fff2d94f933c7ee",
+      "kind": "supported_claim",
+      "label": "Blender and generated package outputs can be reviewed for expected metadata, paths, hashes, and validation results without installing them."
+    },
+    {
+      "id": "claim:a16062c9fbba5654",
+      "kind": "open_question",
+      "label": "Can the donor recipe be resolved from the same-build catalog before UI registration?"
+    },
+    {
+      "id": "claim:a7e5adf95ecc60a8",
+      "kind": "unsupported_claim",
+      "label": "The record does not establish complete visual presentation, catalog preview behavior, placement, persistence, or multiplayer behavior."
+    },
+    {
+      "id": "claim:b113265cf5a10d78",
+      "kind": "open_question",
+      "label": "Which knowledge registry and consumer checks govern actual unlock and crafting behavior?"
+    },
+    {
+      "id": "claim:bb8a25e0ed3a9ebd",
+      "kind": "open_question",
+      "label": "Which typed descriptors and downstream registries are required for a complete content route?"
+    },
+    {
+      "id": "claim:be4988d2f5bb830e",
+      "kind": "unsupported_claim",
+      "label": "Schema fields alone do not prove that a custom recipe will appear, craft, persist, or work in multiplayer."
+    },
+    {
+      "id": "claim:c206141e7fe10444",
+      "kind": "supported_claim",
+      "label": "The recorded rebuild normalized ItemInfo, ItemRegistry, recipe, blueprint, terrain, building, material, feedback, and snap-rule relationships for its named input bundle."
+    },
+    {
+      "id": "claim:c9544ddd05519d43",
+      "kind": "supported_claim",
+      "label": "A recorded disposable-copy experiment accepted a replacement iconModel GUID and completed item, registry, recipe, knowledge, UI-link, recipe-GUID, and archive checks before transactional cleanup."
+    },
+    {
+      "id": "claim:d23b289fcab02252",
+      "kind": "unsupported_claim",
+      "label": "Static candidate maps are not runtime authorization and do not establish a safe production hook."
+    },
+    {
+      "id": "claim:d5624eda13a542e6",
+      "kind": "supported_claim",
+      "label": "The recorded build exposes reflected settings models, named admin actions, and related event/resource structures."
+    },
+    {
+      "id": "claim:d716debd4d26c0e5",
+      "kind": "open_question",
+      "label": "Can a donor-preserving RenderModel substitution be verified with controlled screenshots without promoting it to runtime capability?"
+    },
+    {
+      "id": "claim:d97265180c2dc673",
+      "kind": "unsupported_claim",
+      "label": "The recorded counts are not universal game totals and do not prove runtime mutation or compatibility with later builds."
+    },
+    {
+      "id": "claim:dfd68c1650a27f84",
+      "kind": "supported_claim",
+      "label": "The GUID was used as a replacement RenderModel reference in the recorded furniture probe."
+    },
+    {
+      "id": "claim:ea460f9afadb1f4c",
+      "kind": "unsupported_claim",
+      "label": "Resource visibility does not prove complete UI, recipe, dependency, persistence, or multiplayer behavior."
+    },
+    {
+      "id": "claim:ea90597d7bfce25e",
+      "kind": "supported_claim",
+      "label": "The documented donor probe captures item identity, GUID, debug name, equipment, and voxel-object fields without creating items or changing registries or saves."
+    },
+    {
+      "id": "claim:ed992294a4ae2f36",
+      "kind": "open_question",
+      "label": "Which donor recipe and UI path are valid in the target build?"
+    },
+    {
+      "id": "claim:f507f049074cdf59",
+      "kind": "unsupported_claim",
+      "label": "This record does not establish universal donor suitability, recipe availability, or stable runtime behavior."
+    },
+    {
+      "id": "claim:f6e18cfedc140fa2",
+      "kind": "supported_claim",
+      "label": "A recorded isolated session accepted typed workshop replacement and required-property clearing on an independent cloned recipe."
+    },
+    {
+      "id": "claim:ff62e28eeee4f1b7",
+      "kind": "open_question",
+      "label": "Which load-order and registry-readiness conditions are required for the donor recipe and UI phase to complete?"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__records__BUILDING_PLACEMENT_1076226.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__records__BUILDING_PLACEMENT_1076226.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__records__DATA_INGESTION_1076226.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__records__DATA_INGESTION_1076226.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__records__ENTITIES_OBSERVERS_1076226.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__records__ENTITIES_OBSERVERS_1076226.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__records__RUNTIME_PROBING_AND_HOOK_SAFETY_1076226.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__records__RUNTIME_PROBING_AND_HOOK_SAFETY_1076226.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__records__SETTINGS_ADMIN_MULTIPLAYER_1076226.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__records__SETTINGS_ADMIN_MULTIPLAYER_1076226.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__CONTENT_DONOR_PROBE_QUICKSTART.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__CONTENT_DONOR_PROBE_QUICKSTART.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EML_RESOURCE_REGISTRATION_UPGRADE_20260926.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__EXTERNAL_BLENDER_TOOLS_COMPARISON_20260928.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__FULL_ICON_MODEL_BED_PROBE_EVIDENCE_20260927.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_CUSTOMIZATION_EVIDENCE_20260928.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_CUSTOMIZATION_EVIDENCE_20260928.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_KNOWLEDGE_REQUIREMENT_EVIDENCE_20260928.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_KNOWLEDGE_REQUIREMENT_EVIDENCE_20260928.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_SCHEMA_DISCOVERY_20260928.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_SCHEMA_DISCOVERY_20260928.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_WORKSHOP_REQUIREMENTS_EVIDENCE_20260928.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RECIPE_WORKSHOP_REQUIREMENTS_EVIDENCE_20260928.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDERMODEL_EXTERNAL_PUBLICATION_EVIDENCE_20260929.md"
+    },
+    {
+      "id": "evidence:research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDER_MODEL_GUID_EVIDENCE_20260927.md",
+      "kind": "evidence",
+      "label": "research/promoted/2026-10-04/research__source__mods-drive__Control_Center__research__RENDER_MODEL_GUID_EVIDENCE_20260927.md"
+    },
+    {
+      "id": "kind:blender-capability-map",
+      "kind": "kind",
+      "label": "blender-capability-map"
+    },
+    {
+      "id": "kind:blender-handoff",
+      "kind": "kind",
+      "label": "blender-handoff"
+    },
+    {
+      "id": "kind:building-placement",
+      "kind": "kind",
+      "label": "building-placement"
+    },
+    {
+      "id": "kind:donor-item",
+      "kind": "kind",
+      "label": "donor-item"
+    },
+    {
+      "id": "kind:donor-probe-contract",
+      "kind": "kind",
+      "label": "donor-probe-contract"
+    },
+    {
+      "id": "kind:donor-recipe",
+      "kind": "kind",
+      "label": "donor-recipe"
+    },
+    {
+      "id": "kind:entity-observer",
+      "kind": "kind",
+      "label": "entity-observer"
+    },
+    {
+      "id": "kind:offline-catalog",
+      "kind": "kind",
+      "label": "offline-catalog"
+    },
+    {
+      "id": "kind:package-validation",
+      "kind": "kind",
+      "label": "package-validation"
+    },
+    {
+      "id": "kind:recipe-knowledge-requirement",
+      "kind": "kind",
+      "label": "recipe-knowledge-requirement"
+    },
+    {
+      "id": "kind:recipe-schema",
+      "kind": "kind",
+      "label": "recipe-schema"
+    },
+    {
+      "id": "kind:recipe-workshop-requirements",
+      "kind": "kind",
+      "label": "recipe-workshop-requirements"
+    },
+    {
+      "id": "kind:render-model",
+      "kind": "kind",
+      "label": "render-model"
+    },
+    {
+      "id": "kind:rendermodel-donor-probe",
+      "kind": "kind",
+      "label": "rendermodel-donor-probe"
+    },
+    {
+      "id": "kind:rendermodel-package-experiment",
+      "kind": "kind",
+      "label": "rendermodel-package-experiment"
+    },
+    {
+      "id": "kind:rendermodel-runtime-evidence",
+      "kind": "kind",
+      "label": "rendermodel-runtime-evidence"
+    },
+    {
+      "id": "kind:resource-registration",
+      "kind": "kind",
+      "label": "resource-registration"
+    },
+    {
+      "id": "kind:runtime-safety-boundary",
+      "kind": "kind",
+      "label": "runtime-safety-boundary"
+    },
+    {
+      "id": "kind:settings-multiplayer",
+      "kind": "kind",
+      "label": "settings-multiplayer"
+    },
+    {
+      "id": "record:candidate.item.2940001508",
+      "kind": "record",
+      "label": "candidate.item.2940001508"
+    },
+    {
+      "id": "record:candidate.kfc.bundle.1076226",
+      "kind": "record",
+      "label": "candidate.kfc.bundle.1076226"
+    },
+    {
+      "id": "record:candidate.recipe.3531872774",
+      "kind": "record",
+      "label": "candidate.recipe.3531872774"
+    },
+    {
+      "id": "record:candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d",
+      "kind": "record",
+      "label": "candidate.rendermodel.1ac410c2-c85e-4172-95eb-19b5b593118d"
+    },
+    {
+      "id": "record:finding.blender.external-tool-capability-map.20260928",
+      "kind": "record",
+      "label": "finding.blender.external-tool-capability-map.20260928"
+    },
+    {
+      "id": "record:finding.blender.handoff.20260928",
+      "kind": "record",
+      "label": "finding.blender.handoff.20260928"
+    },
+    {
+      "id": "record:finding.building-placement.1076226",
+      "kind": "record",
+      "label": "finding.building-placement.1076226"
+    },
+    {
+      "id": "record:finding.content-donor.probe-contract.20260928",
+      "kind": "record",
+      "label": "finding.content-donor.probe-contract.20260928"
+    },
+    {
+      "id": "record:finding.eml.resource-registration.discovery.20260926",
+      "kind": "record",
+      "label": "finding.eml.resource-registration.discovery.20260926"
+    },
+    {
+      "id": "record:finding.entities-observers.1076226",
+      "kind": "record",
+      "label": "finding.entities-observers.1076226"
+    },
+    {
+      "id": "record:finding.package-validation.blender.20260928",
+      "kind": "record",
+      "label": "finding.package-validation.blender.20260928"
+    },
+    {
+      "id": "record:finding.recipe.knowledge-requirement-assignment.20260928",
+      "kind": "record",
+      "label": "finding.recipe.knowledge-requirement-assignment.20260928"
+    },
+    {
+      "id": "record:finding.recipe.schema.discovery.20260928",
+      "kind": "record",
+      "label": "finding.recipe.schema.discovery.20260928"
+    },
+    {
+      "id": "record:finding.recipe.workshop-requirement-assignment.20260928",
+      "kind": "record",
+      "label": "finding.recipe.workshop-requirement-assignment.20260928"
+    },
+    {
+      "id": "record:finding.rendermodel.external-publication.20260929",
+      "kind": "record",
+      "label": "finding.rendermodel.external-publication.20260929"
+    },
+    {
+      "id": "record:finding.rendermodel.full-icon-bed-probe.20260927",
+      "kind": "record",
+      "label": "finding.rendermodel.full-icon-bed-probe.20260927"
+    },
+    {
+      "id": "record:finding.rendermodel.guid-resolution.20260927",
+      "kind": "record",
+      "label": "finding.rendermodel.guid-resolution.20260927"
+    },
+    {
+      "id": "record:finding.resource-registration.20260926",
+      "kind": "record",
+      "label": "finding.resource-registration.20260926"
+    },
+    {
+      "id": "record:finding.runtime.hook-safety.1076226",
+      "kind": "record",
+      "label": "finding.runtime.hook-safety.1076226"
+    },
+    {
+      "id": "record:finding.settings-multiplayer.1076226",
+      "kind": "record",
+      "label": "finding.settings-multiplayer.1076226"
+    }
+  ],
+  "schema_version": 1
+}
