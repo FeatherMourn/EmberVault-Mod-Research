@@ -23,6 +23,29 @@ def load_candidates(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def load_manifest(path: Path) -> dict[str, dict[str, Any]]:
+    """Load the hashed intake manifest keyed by promoted relative path."""
+    payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    if payload.get("schema_version") != 1 or not isinstance(payload.get("records"), list):
+        raise ValueError("unsupported intake manifest schema")
+    manifest: dict[str, dict[str, Any]] = {}
+    for record in payload["records"]:
+        promoted_path = record.get("promoted_path")
+        digest = record.get("sha256")
+        if not isinstance(promoted_path, str) or not isinstance(digest, str) or len(digest) != 64:
+            raise ValueError("invalid intake manifest record")
+        if promoted_path in manifest:
+            raise ValueError(f"duplicate manifest path: {promoted_path}")
+        manifest[promoted_path] = record
+    return manifest
+
+
+def missing_evidence(records: Iterable[dict[str, Any]], manifest: dict[str, dict[str, Any]]) -> list[str]:
+    """Return evidence paths referenced by records but absent from the intake manifest."""
+    missing = {path for record in records for path in record["evidence"] if path not in manifest}
+    return sorted(missing)
+
+
 def validate_record(record: dict[str, Any]) -> None:
     required = {"id", "kind", "identity", "build_scope", "state", "evidence", "open_questions"}
     missing = required.difference(record)
