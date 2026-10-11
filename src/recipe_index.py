@@ -39,3 +39,18 @@ def lookup_recipe(records: list[dict[str, Any]], recipe_id: int | str, build: st
                 "reason": "No normalized same-build donor-recipe record was found."}
     return {"state": "resolved", "recipe_id": target, "build": str(build),
             "matches": matches, "runtime_behavior": "unverified", "read_only": True}
+
+
+def export_recipe_handoff(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Create sanitized Content Creator handoff records from indexed recipes."""
+    return [{
+        "id": record["id"], "kind": "donor-recipe",
+        "identity": {"recipe_id": record["recipe_id"]},
+        "build_scope": list(record["build_scope"]),
+        "status": record["state"], "confidence": record["confidence"],
+        "summary": ["Recipe identity is present in the normalized offline index."],
+        "limitations": ["Runtime recipe resolution and crafting behavior remain unverified."],
+        "open_questions": list(record["open_questions"]),
+        "evidence_count": len(record["evidence"]), "reviewed": False,
+        "runtime_approval": False,
+    } for record in records]

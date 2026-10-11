@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.recipe_index import load_recipe_index, lookup_recipe
+from src.recipe_index import export_recipe_handoff, load_recipe_index, lookup_recipe
 
 
 class RecipeIndexTests(unittest.TestCase):
@@ -26,6 +26,15 @@ class RecipeIndexTests(unittest.TestCase):
         self.assertEqual(result["state"], "unresolved")
         self.assertEqual(result["matches"], [])
         self.assertIn("normalized same-build", result["reason"])
+
+    def test_recipe_handoff_is_sanitized_and_runtime_bounded(self):
+        records = [{"id": "recipe-1", "recipe_id": "3531872774", "build_scope": ["1076226"],
+                    "state": "blocked", "confidence": "bounded", "evidence": ["offline"],
+                    "open_questions": ["resolve same-build recipe"]}]
+        handoff = export_recipe_handoff(records)[0]
+        self.assertEqual(handoff["kind"], "donor-recipe")
+        self.assertFalse(handoff["runtime_approval"])
+        self.assertNotIn("evidence", handoff)
 
 
 if __name__ == "__main__":
