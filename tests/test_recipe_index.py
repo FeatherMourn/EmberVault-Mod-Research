@@ -1,6 +1,8 @@
 import json
 import tempfile
 import unittest
+import subprocess
+import sys
 from pathlib import Path
 
 from src.recipe_index import export_recipe_handoff, load_recipe_index, lookup_recipe
@@ -35,6 +37,16 @@ class RecipeIndexTests(unittest.TestCase):
         self.assertEqual(handoff["kind"], "donor-recipe")
         self.assertFalse(handoff["runtime_approval"])
         self.assertNotIn("evidence", handoff)
+
+    def test_lookup_command_reports_unresolved_recipe_without_mutation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "records.json"
+            path.write_text(json.dumps({"records": []}), encoding="utf-8")
+            command = [sys.executable, str(Path(__file__).parents[1] / "tools/lookup_recipe.py"), str(path), "3531872774", "--build", "1076226"]
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["state"], "unresolved")
+        self.assertTrue(payload["read_only"])
 
 
 if __name__ == "__main__":
