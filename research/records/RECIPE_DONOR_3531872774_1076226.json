@@ -1,0 +1,32 @@
+{
+  "record_schema_version": 1,
+  "id": "candidate.recipe.3531872774",
+  "kind": "donor-recipe",
+  "identity": {
+    "recipe_id": "3531872774",
+    "recipe_guid": "314aa32d-0e61-43b1-9e13-03ae66dba3c1",
+    "debug_name": "Prop_Decoration_Comfort2_T1_Bed",
+    "output_item_id": "2940001508",
+    "workshop_id": "3185407206"
+  },
+  "build_scope": ["1076226"],
+  "state": "partially-verified",
+  "confidence": "high-for-offline-recorded-inputs",
+  "supported_claims": [
+    "The offline RecipeRegistryResource export contains recipe 3531872774 in build 1076226.",
+    "The recorded recipe output item is 2940001508.",
+    "The recorded recipe has six input stacks and a same-build recipe GUID."
+  ],
+  "unsupported_claims": [
+    "Offline metadata does not prove UI visibility, unlock behavior, crafting completion, persistence, or multiplayer behavior."
+  ],
+  "open_questions": [
+    "Which runtime consumer resolves the recipe knowledge requirement and catalog presentation?"
+  ],
+  "contradictions": [],
+  "evidence": [{
+    "source_path": "I:/My Drive/Enshrouded Mods/Architect_Mod/Code_History/CODE-0044A/candidate/data/kfc_sources/building_1076226/RecipeRegistryResource/RecipeRegistryResource/5e57de0f-280c-4559-8191-f02c1ba656e2_5f5382cf_0.json",
+    "sha256": "097c7ddca2e82a44678d8ff7b229c4cbf3243e44182cee215ea0a5cd20517293",
+    "evidence_type": "offline-kfc3-metadata"
+  }]
+}
