@@ -48,6 +48,12 @@ class RecipeIndexTests(unittest.TestCase):
         self.assertEqual(payload["state"], "unresolved")
         self.assertTrue(payload["read_only"])
 
+    def test_authoritative_catalog_keeps_bed_recipe_unresolved(self):
+        catalog = Path(__file__).parents[1] / "research" / "catalog_records_20261004.json"
+        result = lookup_recipe(load_recipe_index(catalog), 3531872774, "1076226")
+        self.assertEqual(result["state"], "unresolved")
+        self.assertEqual(result["matches"], [])
+
 
 if __name__ == "__main__":
     unittest.main()
