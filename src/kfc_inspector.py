@@ -6,12 +6,13 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .analyzers import AnalysisResult, hash_inputs
+from .analyzers import AnalysisResult, hash_inputs, validate_offline_inputs
 
 
-def inspect_kfc_metadata(path: Path, *, analyzer_version: str = "1") -> dict[str, Any]:
+def inspect_kfc_metadata(path: Path, *, approved_root: Path, analyzer_version: str = "1") -> dict[str, Any]:
     """Read normalized metadata only; do not open packages or contact the game."""
-    payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    validated_path = validate_offline_inputs([path], approved_root)[0]
+    payload = json.loads(validated_path.read_text(encoding="utf-8-sig"))
     if payload.get("schema_version") != 1 or not isinstance(payload.get("resources"), list):
         raise ValueError("unsupported KFC metadata fixture")
     records = []
@@ -32,9 +33,9 @@ def inspect_kfc_metadata(path: Path, *, analyzer_version: str = "1") -> dict[str
             "unsupported_claims": ["Offline metadata does not prove runtime registration, rendering, persistence, or compatibility."],
             "open_questions": list(resource.get("unresolved_references", [])),
             "contradictions": [],
-            "evidence": [str(path)],
+            "evidence": [str(validated_path)],
         })
-    result = AnalysisResult("kfc-metadata-inspector", analyzer_version, hash_inputs([path]),
+    result = AnalysisResult("kfc-metadata-inspector", analyzer_version, hash_inputs([validated_path]),
                             tuple(record["id"] for record in records),
                             tuple(sorted({str(item["build"]) for item in payload["resources"]})),
                             "offline-static", ("No runtime behavior is established.",), True)
