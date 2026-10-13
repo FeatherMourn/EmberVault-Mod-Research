@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source": "external.shroudforge.1.6.6",
+  "read_only": true,
+  "runtime_approval": false,
+  "capabilities": [
+    {"area": "build-profiles", "external_state": "proven", "embervault_use": ["Mod Research", "Content Creator", "Troubleshooter"], "evidence_boundary": "External profile documentation; Ember Vault compatibility remains build-scoped and unverified."},
+    {"area": "mod-manifests", "external_state": "proven", "embervault_use": ["Mod Research", "Content Creator", "Mod Manager"], "evidence_boundary": "Synthetic metadata validation only; no package execution."},
+    {"area": "settings-schemas", "external_state": "proven", "embervault_use": ["Content Creator", "Game Tuning"], "evidence_boundary": "Design and preview metadata; no runtime settings mutation."},
+    {"area": "mod-discovery", "external_state": "beta", "embervault_use": ["Mod Manager", "Troubleshooter"], "evidence_boundary": "Discovery and diagnostics only; Control Center owns installation."},
+    {"area": "update-staging", "external_state": "beta", "embervault_use": ["Mod Manager", "Save Manager", "Control Center"], "evidence_boundary": "Plan-only until backup, approval, and recovery evidence exist."},
+    {"area": "runtime-hooks", "external_state": "beta", "embervault_use": ["Mod Research", "Troubleshooter"], "evidence_boundary": "External research only; no Ember Vault runtime claim."},
+    {"area": "world-editor", "external_state": "beta/open", "embervault_use": ["Mod Research", "Content Creator"], "evidence_boundary": "Separate placement, persistence, multiplayer, and undo findings."},
+    {"area": "multiplayer-routing", "external_state": "beta", "embervault_use": ["Troubleshooter", "Mod Manager"], "evidence_boundary": "Target declarations are not end-to-end gameplay proof."},
+    {"area": "eml-support", "external_state": "beta", "embervault_use": ["Mod Research", "Content Creator", "Mod Manager"], "evidence_boundary": "Compatibility comparison only until independently reproduced."}
+  ]
+}

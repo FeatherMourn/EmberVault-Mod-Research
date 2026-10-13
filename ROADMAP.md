@@ -74,6 +74,11 @@ Synthetic failure-and-recovery scenarios now cover missing files, version
 mismatches, interrupted updates, and rollback failure. They emit recovery
 evidence and Control Center approval requirements without performing mutation.
 
+The ShroudForge capability matrix now maps documented external areas to Ember
+Vault consumers and evidence boundaries. It covers build profiles, manifests,
+settings, discovery, update staging, runtime hooks, world editing,
+multiplayer routing, and EML support without promoting external runtime claims.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not
