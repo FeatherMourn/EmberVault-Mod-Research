@@ -33,6 +33,9 @@ class ResearchLabExportTests(unittest.TestCase):
             self.assertEqual(len(manifest["analyzer_runs_sha256"]), 64)
             with zipfile.ZipFile(bundle) as archive:
                 self.assertIn("kfc-inspector", archive.read("analyzer-runs.json").decode("utf-8"))
+            recovered = Path(directory) / "recovered.json"
+            result = recover_snapshot_bundle(bundle, recovered)
+            self.assertTrue(Path(result["analyzer_runs_destination"]).is_file())
 
     def test_bundle_rejects_runtime_approved_snapshot(self):
         with self.assertRaises(ValueError):

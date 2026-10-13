@@ -76,8 +76,14 @@ def recover_snapshot_bundle(bundle: Path, destination: Path) -> dict[str, Any]:
         temporary.replace(target)
     finally:
         temporary.unlink(missing_ok=True)
-    return {"destination": str(target), "snapshot_sha256": manifest["snapshot_sha256"],
-            "read_only": True, "runtime_approval": False}
+    result = {"destination": str(target), "snapshot_sha256": manifest["snapshot_sha256"],
+              "read_only": True, "runtime_approval": False}
+    if runs_payload is not None:
+        runs_target = target.with_name(target.stem + ".analyzer-runs.json")
+        runs_target.write_bytes(runs_payload)
+        result["analyzer_runs_destination"] = str(runs_target)
+        result["analyzer_runs_sha256"] = manifest["analyzer_runs_sha256"]
+    return result
 
 
 def prune_snapshot_bundles(directory: Path, *, keep: int = 5) -> dict[str, Any]:

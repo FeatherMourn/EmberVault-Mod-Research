@@ -127,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
                                       has_open_questions=True if args.open_questions else None,
                                       high_priority_only=args.high_priority_review)
     if args.create_bundle:
-        create_snapshot_bundle(snapshot, args.create_bundle)
+        create_snapshot_bundle(snapshot, args.create_bundle, analyzer_runs=analyzer_runs)
         print(json.dumps({"bundle": str(args.create_bundle), "created": True,
                           "read_only": True, "runtime_approval": False}, sort_keys=True))
         return 0
