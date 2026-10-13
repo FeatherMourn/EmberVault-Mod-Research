@@ -19,10 +19,15 @@ def create_snapshot_bundle(snapshot: dict[str, Any], destination: Path,
     if snapshot.get("read_only") is not True or snapshot.get("runtime_approval") is not False:
         raise ValueError("Lab snapshot must be read-only and runtime-unapproved")
     payload = _canonical(snapshot)
-    runs_payload = _canonical({"schema_version": 1, "runs": list(analyzer_runs),
+    runs = list(analyzer_runs)
+    runs_payload = _canonical({"schema_version": 1, "runs": runs,
                                "read_only": True, "runtime_approval": False})
+    analyzer_names = sorted({str(run.get("analyzer", {}).get("analyzer_id", run.get("analyzer_id", "unknown")))
+                             for run in runs})
+    builds = sorted({str(build) for run in runs for build in run.get("result", {}).get("build_scope", [])})
     manifest = {"schema_version": 1, "snapshot_sha256": hashlib.sha256(payload).hexdigest(),
                 "analyzer_runs_sha256": hashlib.sha256(runs_payload).hexdigest(),
+                "analyzer_run_summary": {"count": len(runs), "analyzers": analyzer_names, "builds": builds},
                 "read_only": True, "runtime_approval": False, "recovery": "verify-before-extract"}
     target = Path(destination)
     target.parent.mkdir(parents=True, exist_ok=True)

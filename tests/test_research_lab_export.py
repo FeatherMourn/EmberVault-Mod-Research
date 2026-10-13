@@ -31,6 +31,8 @@ class ResearchLabExportTests(unittest.TestCase):
             create_snapshot_bundle(snapshot, bundle, analyzer_runs=runs)
             manifest = verify_snapshot_bundle(bundle)
             self.assertEqual(len(manifest["analyzer_runs_sha256"]), 64)
+            self.assertEqual(manifest["analyzer_run_summary"]["count"], 1)
+            self.assertEqual(manifest["analyzer_run_summary"]["analyzers"], ["kfc-inspector"])
             with zipfile.ZipFile(bundle) as archive:
                 self.assertIn("kfc-inspector", archive.read("analyzer-runs.json").decode("utf-8"))
             recovered = Path(directory) / "recovered.json"
