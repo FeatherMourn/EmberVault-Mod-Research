@@ -1,0 +1,15 @@
+{
+  "id": "sf.example",
+  "version": "1.6.6",
+  "builds": ["1076226"],
+  "targets": ["client", "dedicated-server"],
+  "files": [{"path": "mod.json", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],
+  "dependencies": [],
+  "settings_schema": "extended.mod.json",
+  "evidence": [{"source": "external.shroudforge.1.6.6", "state": "external-documentation"}],
+  "runtime_limitations": ["Runtime behavior is not independently verified."],
+  "backup_required": true,
+  "recovery_plan": "Control Center approval and Save Manager backup required.",
+  "read_only": true,
+  "runtime_approval": false
+}

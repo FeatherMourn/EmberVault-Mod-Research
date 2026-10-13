@@ -79,6 +79,10 @@ Vault consumers and evidence boundaries. It covers build profiles, manifests,
 settings, discovery, update staging, runtime hooks, world editing,
 multiplayer routing, and EML support without promoting external runtime claims.
 
+The first Mod Package Passport schema is now defined with identity, builds,
+targets, files and hashes, dependencies, settings, evidence, limitations,
+backup requirements, recovery planning, and explicit read-only/runtime gates.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not
