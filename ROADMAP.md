@@ -70,6 +70,10 @@ the supplied description, compares installed and available versions, creates
 an update plan, and exposes interruption/rollback/recovery states without
 executing installation.
 
+Synthetic failure-and-recovery scenarios now cover missing files, version
+mismatches, interrupted updates, and rollback failure. They emit recovery
+evidence and Control Center approval requirements without performing mutation.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not

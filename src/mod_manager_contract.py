@@ -60,3 +60,27 @@ def discover_package_metadata(package: dict[str, Any], installed: dict[str, Any]
         "requires_backup": state == "update-available",
         "recovery_states": ["not-started", "interrupted", "rolled-back", "verified"],
     }
+
+
+def simulate_update_recovery(discovery: dict[str, Any], failure: str = "interrupted") -> dict[str, Any]:
+    """Create synthetic update failure evidence without changing any package."""
+    allowed = {"missing-file", "version-mismatch", "interrupted", "rollback-failed"}
+    if failure not in allowed:
+        raise ValueError("unsupported synthetic failure")
+    issues = list(discovery.get("missing", []))
+    if failure == "missing-file" and "required-file" not in issues:
+        issues.append("required-file")
+    if failure == "version-mismatch":
+        issues.append("target build or version differs from installed metadata")
+    rollback = "blocked" if failure == "rollback-failed" else "planned"
+    return {
+        "kind": "synthetic-mod-update-recovery",
+        "failure": failure,
+        "state": "blocked" if failure in {"missing-file", "rollback-failed"} else "review-required",
+        "issues": sorted(set(issues)),
+        "rollback": rollback,
+        "recovery_evidence": {"source": "synthetic-fixture", "mutation_performed": False},
+        "read_only": True,
+        "executes_installation": False,
+        "requires_control_center_approval": True,
+    }
