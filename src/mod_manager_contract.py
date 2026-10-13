@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from typing import Any
+import hashlib
+import json
 
 
 def review_mod_manager_request(request: dict[str, Any]) -> dict[str, Any]:
@@ -29,4 +31,32 @@ def review_mod_manager_request(request: dict[str, Any]) -> dict[str, Any]:
         "executes_installation": False,
         "control_center_authority": True,
         "save_manager_backup_authority": operation == "stage-update",
+    }
+
+
+def discover_package_metadata(package: dict[str, Any], installed: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Inspect supplied package metadata and produce a non-executing update plan."""
+    installed = installed or {}
+    required = ("id", "version", "build", "files")
+    missing = [key for key in required if key not in package]
+    files = package.get("files", [])
+    if not isinstance(files, list):
+        missing.append("files-list")
+        files = []
+    digest = hashlib.sha256(json.dumps(package, sort_keys=True).encode("utf-8")).hexdigest()
+    same_version = bool(installed) and installed.get("version") == package.get("version")
+    state = "blocked" if missing else ("current" if same_version else "update-available")
+    return {
+        "package_id": package.get("id", ""),
+        "version": package.get("version", ""),
+        "build": package.get("build", ""),
+        "file_count": len(files),
+        "metadata_sha256": digest,
+        "state": state,
+        "missing": missing,
+        "update_plan": None if state in {"blocked", "current"} else {"from": installed.get("version"), "to": package.get("version")},
+        "read_only": True,
+        "executes_installation": False,
+        "requires_backup": state == "update-available",
+        "recovery_states": ["not-started", "interrupted", "rolled-back", "verified"],
     }

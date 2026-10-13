@@ -65,6 +65,11 @@ updates, and recovery review. Updates require approval and a verified Save
 Manager backup; all results remain read-only and installation execution is
 explicitly false.
 
+The synthetic package-discovery slice now validates required metadata, hashes
+the supplied description, compares installed and available versions, creates
+an update plan, and exposes interruption/rollback/recovery states without
+executing installation.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not
