@@ -6,7 +6,7 @@ from typing import Any, Iterable
 from .research_index import search
 from .provenance_graph import build_provenance_graph
 from .build_diff import diff_builds
-from .review_queue import build_review_queue, evidence_score
+from .review_queue import build_review_queue, evidence_score, review_priority_summary
 from .research_index import content_creator_handoff
 from .publication import build_web_publication
 
@@ -191,6 +191,7 @@ def unified_review_snapshot(records: Iterable[dict[str, Any]], *,
         "runtime_approval": False,
         "actions": [],
         "facets": facet_summary(records),
+        "review_priority": review_priority_summary(records),
         "review": contradiction_review_view(records, contradictions),
         "handoff": content_creator_view(records, contradictions=contradictions),
         "publication": web_publication_preview(records, reviewed_ids or set()),

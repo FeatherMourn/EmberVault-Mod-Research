@@ -85,6 +85,8 @@ class ResearchLabTests(unittest.TestCase):
                                                                           "status": "open", "claim_a": "A", "claim_b": "B"}],
                                            from_build="1", to_build="2", reviewed_ids={"donor-a"})
         self.assertEqual(snapshot["facets"]["record_count"], 2)
+        self.assertIn("review_priority", snapshot)
+        self.assertEqual(snapshot["review_priority"]["by_kind"]["recipe"]["contradictions"], 1)
         self.assertIn("build_comparison", snapshot)
         self.assertIn("handoff", snapshot)
         self.assertFalse(snapshot["publication"]["public"])
