@@ -18,5 +18,24 @@ jobs:
         run: python -c "from pathlib import Path; from src.package_checks import verify_package_contents; assert verify_package_contents(Path('.')) == []"
       - name: Verify publication reproducibility
         run: python tools/verify_publication_snapshot.py
+      - name: Verify Lab snapshot bundle lifecycle
+        run: |
+          python - <<'PY'
+          import tempfile
+          from pathlib import Path
+          from src.research_lab_export import create_snapshot_bundle, prune_snapshot_bundles, recover_snapshot_bundle, verify_snapshot_bundle
+
+          snapshot = {"schema_version": 1, "read_only": True, "runtime_approval": False, "records": []}
+          with tempfile.TemporaryDirectory() as directory:
+              root = Path(directory)
+              bundle = root / "lab.zip"
+              create_snapshot_bundle(snapshot, bundle)
+              assert verify_snapshot_bundle(bundle)["recovery"] == "verify-before-extract"
+              recovered = root / "recovered.json"
+              assert recover_snapshot_bundle(bundle, recovered)["read_only"] is True
+              second = root / "second.zip"
+              create_snapshot_bundle(snapshot, second)
+              assert len(prune_snapshot_bundles(root, keep=1)["removed"]) == 1
+          PY
       - name: Verify read-only catalog integrity
         run: python -c "import sqlite3; c=sqlite3.connect('file:research/catalog.sqlite?mode=ro', uri=True); assert c.execute('pragma integrity_check').fetchone()[0] == 'ok'"
