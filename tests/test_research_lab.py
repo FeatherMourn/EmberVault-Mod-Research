@@ -43,6 +43,7 @@ class ResearchLabTests(unittest.TestCase):
         self.assertEqual(facets["by_build"], {"1": 1, "2": 1})
         self.assertEqual(facets["evidence_gaps"], ["recipe-b"])
         self.assertEqual(facets["contradiction_records"], ["recipe-b"])
+        self.assertEqual(facets["high_priority_review"], ["donor-a", "recipe-b"])
         self.assertEqual(facets["actions"], [])
 
     def test_build_and_contradiction_views_preserve_review_boundaries(self):

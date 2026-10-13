@@ -6,7 +6,7 @@ from typing import Any, Iterable
 from .research_index import search
 from .provenance_graph import build_provenance_graph
 from .build_diff import diff_builds
-from .review_queue import build_review_queue
+from .review_queue import build_review_queue, evidence_score
 from .research_index import content_creator_handoff
 from .publication import build_web_publication
 
@@ -35,6 +35,8 @@ def build_lab_snapshot(records: Iterable[dict[str, Any]], *, query: str = "",
                 "evidence_count": len(record.get("evidence", [])),
                 "open_question_count": len(record.get("open_questions", [])),
                 "contradiction_count": len(record.get("contradictions", [])),
+                "evidence_score": evidence_score(record, contradiction_count=len(record.get("contradictions", []))),
+                "review_priority": "high" if record.get("contradictions") or evidence_score(record) <= 3 else "normal",
                 "runtime_approval": False,
             }
             for record in matches
@@ -105,6 +107,8 @@ def facet_summary(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
         "by_build": counts(build for record in records for build in record.get("build_scope", [])),
         "evidence_gaps": sorted(record["id"] for record in records if record.get("open_questions")),
         "contradiction_records": sorted(record["id"] for record in records if record.get("contradictions")),
+        "high_priority_review": sorted(record["id"] for record in records
+                                        if record.get("contradictions") or evidence_score(record) <= 3),
     }
 
 
