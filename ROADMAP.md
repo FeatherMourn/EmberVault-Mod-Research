@@ -138,9 +138,9 @@ after the integrity foundation so the system remains useful at every stage.
 - [ ] Add sandboxed offline tool execution with explicit filesystem boundaries
   and no live-game or network mutation.
 - [x] Add versioned research bundles that can be recovered and shared offline.
-- [ ] Compare ShroudForge manifest, profile, settings, and package conventions
+- [x] Compare ShroudForge manifest, profile, settings, and package conventions
   against Ember Vault Contracts using synthetic fixtures only.
-- [ ] Define a read-only Mod Manager metadata and approval contract informed
+- [x] Define a read-only Mod Manager metadata and approval contract informed
   by ShroudForge, with synthetic failure and recovery fixtures.
 
 ### Phase D — Research Lab application
