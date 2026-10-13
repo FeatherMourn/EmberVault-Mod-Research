@@ -83,6 +83,12 @@ The first Mod Package Passport schema is now defined with identity, builds,
 targets, files and hashes, dependencies, settings, evidence, limitations,
 backup requirements, recovery planning, and explicit read-only/runtime gates.
 
+Passport integration status: Control Center has a plan-only approval boundary
+and isolated review surface; Content Creator and Troubleshooter consume the
+Passport; Control Center CI runs a cross-repository smoke test; and Web Catalog
+has a sanitized internal review export. Public publication remains pending
+explicit approval and is not part of the current catalog.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not
