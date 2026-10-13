@@ -92,3 +92,19 @@ def validate_offline_inputs(paths: Iterable[Path], approved_root: Path) -> tuple
             raise ValueError("offline analyzer input must be an existing file")
         validated.append(resolved)
     return tuple(sorted(validated, key=str))
+
+
+def validate_offline_execution(*, approved_root: Path, working_directory: Path,
+                               read_only: bool = True, network_allowed: bool = False) -> Path:
+    """Validate a future offline execution request without launching anything."""
+    if not read_only or network_allowed:
+        raise ValueError("offline execution must be read-only and network-disabled")
+    root = approved_root.resolve()
+    working = working_directory.resolve()
+    try:
+        working.relative_to(root)
+    except ValueError as error:
+        raise ValueError("offline execution directory escapes the approved root") from error
+    if not working.is_dir():
+        raise ValueError("offline execution directory must exist")
+    return working

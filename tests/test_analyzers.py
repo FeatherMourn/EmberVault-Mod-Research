@@ -2,7 +2,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.analyzers import AnalysisResult, AnalyzerSpec, PipelineRun, hash_inputs, validate_offline_inputs
+from src.analyzers import (AnalysisResult, AnalyzerSpec, PipelineRun, hash_inputs,
+                           validate_offline_execution, validate_offline_inputs)
 
 
 class AnalyzerTests(unittest.TestCase):
@@ -43,6 +44,17 @@ class AnalyzerTests(unittest.TestCase):
                 validate_offline_inputs([root.parent / "outside.json"], root)
             with self.assertRaises(ValueError):
                 validate_offline_inputs([root / "missing.json"], root)
+
+    def test_execution_gate_is_plan_only_and_root_bound(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            work = root / "work"
+            work.mkdir()
+            self.assertEqual(validate_offline_execution(approved_root=root, working_directory=work), work.resolve())
+            with self.assertRaises(ValueError):
+                validate_offline_execution(approved_root=root, working_directory=root.parent)
+            with self.assertRaises(ValueError):
+                validate_offline_execution(approved_root=root, working_directory=work, network_allowed=True)
 
 
 if __name__ == "__main__":
