@@ -8,7 +8,8 @@ from typing import Any
 
 from .catalog_store import CatalogStore
 from .research_index import search
-from .research_lab import build_lab_snapshot
+from .research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
+                           relationship_view, web_publication_preview)
 
 
 def load_records(path: str | Path) -> list[dict[str, Any]]:
@@ -35,11 +36,29 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--kind")
     parser.add_argument("--confidence")
     parser.add_argument("--open-questions", action="store_true")
+    parser.add_argument("--report", choices=("snapshot", "relationships", "contradictions", "diff", "publication"), default="snapshot")
+    parser.add_argument("--record-id")
+    parser.add_argument("--from-build")
+    parser.add_argument("--to-build")
+    parser.add_argument("--reviewed-id", action="append", default=[])
     args = parser.parse_args(argv)
     records = load_records(args.input)
-    snapshot = build_lab_snapshot(records, query=args.query, state=args.state, build=args.build,
-                                  kind=args.kind, confidence=args.confidence,
-                                  has_open_questions=True if args.open_questions else None)
+    if args.report == "relationships":
+        if not args.record_id:
+            parser.error("--record-id is required for relationships")
+        snapshot = relationship_view(records, args.record_id)
+    elif args.report == "contradictions":
+        snapshot = contradiction_review_view(records, [])
+    elif args.report == "diff":
+        if not args.from_build or not args.to_build:
+            parser.error("--from-build and --to-build are required for diff")
+        snapshot = build_comparison_view(records, args.from_build, args.to_build)
+    elif args.report == "publication":
+        snapshot = web_publication_preview(records, set(args.reviewed_id))
+    else:
+        snapshot = build_lab_snapshot(records, query=args.query, state=args.state, build=args.build,
+                                      kind=args.kind, confidence=args.confidence,
+                                      has_open_questions=True if args.open_questions else None)
     print(json.dumps(snapshot, indent=2, sort_keys=True))
     return 0
 

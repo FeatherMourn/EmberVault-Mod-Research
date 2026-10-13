@@ -46,8 +46,9 @@ contradiction review views, the first linked research notebook model, and
 notebook-aware research bundle recovery, notebook comparison,
 evidence-linked experiment summaries, a sanitized Content Creator handoff
 view, a non-public Web Catalog publication preview, a plan-only Control Center
-handoff preview, a unified Lab review snapshot, and a dependency-free
-command-line viewer. Seventy-four tests pass. A full desktop
+handoff preview, a unified Lab review snapshot, a dependency-free command-line
+viewer, and read-only relationship, contradiction, diff, and publication
+reports. Seventy-five tests pass. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
 
