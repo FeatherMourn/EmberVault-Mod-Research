@@ -166,3 +166,28 @@ def control_center_handoff_preview(records: Iterable[dict[str, Any]], ids: Itera
         "actions": [],
         "records": handoff["records"],
     }
+
+
+def unified_review_snapshot(records: Iterable[dict[str, Any]], *,
+                            contradictions: Iterable[dict[str, Any]] = (),
+                            from_build: str | None = None, to_build: str | None = None,
+                            notebook: dict[str, Any] | None = None,
+                            reviewed_ids: set[str] | None = None) -> dict[str, Any]:
+    """Assemble one deterministic, read-only Lab review snapshot."""
+    records = list(records)
+    contradictions = list(contradictions)
+    snapshot: dict[str, Any] = {
+        "schema_version": 1,
+        "application_state": "research-only",
+        "read_only": True,
+        "runtime_approval": False,
+        "actions": [],
+        "facets": facet_summary(records),
+        "review": contradiction_review_view(records, contradictions),
+        "handoff": content_creator_view(records, contradictions=contradictions),
+        "publication": web_publication_preview(records, reviewed_ids or set()),
+        "notebook": notebook or {"entries": [], "read_only": True},
+    }
+    if from_build is not None and to_build is not None:
+        snapshot["build_comparison"] = build_comparison_view(records, from_build, to_build)
+    return snapshot

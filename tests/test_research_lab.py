@@ -2,7 +2,7 @@ import unittest
 
 from src.research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
                                content_creator_view, evidence_navigation, facet_summary, record_detail, relationship_view,
-                               web_publication_preview, control_center_handoff_preview)
+                               web_publication_preview, control_center_handoff_preview, unified_review_snapshot)
 
 
 class ResearchLabTests(unittest.TestCase):
@@ -78,6 +78,17 @@ class ResearchLabTests(unittest.TestCase):
         self.assertFalse(handoff["approval_granted"])
         self.assertFalse(handoff["execution"])
         self.assertEqual(handoff["actions"], [])
+
+    def test_unified_snapshot_combines_review_surfaces_without_actions(self):
+        snapshot = unified_review_snapshot(self.records, contradictions=[{"id": "c1", "record_id": "recipe-b",
+                                                                          "status": "open", "claim_a": "A", "claim_b": "B"}],
+                                           from_build="1", to_build="2", reviewed_ids={"donor-a"})
+        self.assertEqual(snapshot["facets"]["record_count"], 2)
+        self.assertIn("build_comparison", snapshot)
+        self.assertIn("handoff", snapshot)
+        self.assertFalse(snapshot["publication"]["public"])
+        self.assertFalse(snapshot["runtime_approval"])
+        self.assertEqual(snapshot["actions"], [])
 
 
 if __name__ == "__main__":
