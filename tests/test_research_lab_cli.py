@@ -50,6 +50,19 @@ class ResearchLabCliTests(unittest.TestCase):
             self.assertEqual(snapshot["count"], 1)
             self.assertEqual(snapshot["records"][0]["id"], "urgent")
 
+    def test_cli_review_priority_report_is_read_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "records.json"
+            path.write_text(json.dumps({"records": [{"id": "r1", "kind": "donor", "identity": {},
+                "state": "blocked", "build_scope": ["1"], "evidence": [], "open_questions": ["q"],
+                "contradictions": []}]}), encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main([str(path), "--report", "review-priority"]), 0)
+            report = json.loads(output.getvalue())
+            self.assertTrue(report["read_only"])
+            self.assertEqual(report["by_build"]["1"]["evidence_gaps"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

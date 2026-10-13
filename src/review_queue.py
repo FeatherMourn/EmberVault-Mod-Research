@@ -38,3 +38,23 @@ def build_review_queue(records: Iterable[dict[str, Any]], contradictions: Iterab
     gaps.sort(key=lambda item: (item["priority"] != "high", item["evidence_score"], item["id"]))
     return {"schema_version": 1, "records": gaps,
             "open_contradictions": sorted(contradictions, key=lambda item: item["id"])}
+
+
+def review_priority_summary(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
+    """Summarize review pressure without changing or resolving records."""
+    by_build: dict[str, dict[str, int]] = {}
+    by_kind: dict[str, dict[str, int]] = {}
+    for record in records:
+        contradiction_count = len(record.get("contradictions", []))
+        priority = "high" if contradiction_count or evidence_score(record) <= 3 else "normal"
+        build = ",".join(str(value) for value in record.get("build_scope", [])) or "unscoped"
+        kind = str(record.get("kind", "unknown"))
+        for group, key in ((by_build, build), (by_kind, kind)):
+            bucket = group.setdefault(key, {"records": 0, "high_priority": 0, "evidence_gaps": 0, "contradictions": 0})
+            bucket["records"] += 1
+            bucket["high_priority"] += priority == "high"
+            bucket["evidence_gaps"] += bool(record.get("open_questions"))
+            bucket["contradictions"] += contradiction_count > 0
+    return {"schema_version": 1, "read_only": True, "runtime_approval": False,
+            "actions": [], "by_build": dict(sorted(by_build.items())),
+            "by_kind": dict(sorted(by_kind.items()))}
