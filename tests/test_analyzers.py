@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.analyzers import AnalysisResult, AnalyzerSpec, hash_inputs
+from src.analyzers import AnalysisResult, AnalyzerSpec, PipelineRun, hash_inputs
 
 
 class AnalyzerTests(unittest.TestCase):
@@ -22,6 +22,16 @@ class AnalyzerTests(unittest.TestCase):
             first.write_bytes(b"a")
             second.write_bytes(b"b")
             self.assertEqual(hash_inputs([second, first]), hash_inputs([first, second]))
+
+    def test_pipeline_run_requires_reproducibility_metadata(self):
+        spec = AnalyzerSpec("kfc-inspector", "1", ("kfc3",), ("record",))
+        result = AnalysisResult("kfc-inspector", "1", ("input:hash",), ("record-1",), ("1076226",),
+                                "offline-static", ("No runtime behavior is established.",), True)
+        run = PipelineRun(spec, result, ("record:hash",), ("parse-json",))
+        self.assertTrue(run.to_dict()["read_only"])
+        self.assertFalse(run.to_dict()["network_allowed"])
+        with self.assertRaises(ValueError):
+            PipelineRun(spec, result, (), ("parse-json",))
 
 
 if __name__ == "__main__":

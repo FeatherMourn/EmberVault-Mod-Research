@@ -48,7 +48,7 @@ evidence-linked experiment summaries, a sanitized Content Creator handoff
 view, a non-public Web Catalog publication preview, a plan-only Control Center
 handoff preview, a unified Lab review snapshot, a dependency-free command-line
 viewer, and read-only relationship, contradiction, diff, publication,
-notebook, and unified-review reports. Seventy-six tests pass. A full desktop
+notebook, and unified-review reports. Seventy-seven tests pass. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
 
@@ -131,7 +131,7 @@ after the integrity foundation so the system remains useful at every stage.
 
 - [x] Define pluggable parser and analyzer interfaces for KFC3, RenderModels,
   recipes, archives, Blender exports, and logs.
-- [ ] Add reproducible pipelines recording inputs, tool versions, output hashes,
+- [x] Add reproducible pipelines recording inputs, tool versions, output hashes,
   transformations, and limitations.
 - [ ] Add sandboxed offline tool execution with explicit filesystem boundaries
   and no live-game or network mutation.

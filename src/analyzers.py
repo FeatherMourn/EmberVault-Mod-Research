@@ -44,6 +44,30 @@ class AnalysisResult:
         return asdict(self)
 
 
+@dataclass(frozen=True)
+class PipelineRun:
+    """Reproducibility record for an externally executed offline analyzer."""
+    analyzer: AnalyzerSpec
+    result: AnalysisResult
+    output_hashes: tuple[str, ...]
+    transformations: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        if not self.analyzer.read_only or self.analyzer.network_allowed:
+            raise ValueError("pipeline analyzers must be read-only and offline")
+        if self.result.analyzer_id != self.analyzer.analyzer_id or self.result.analyzer_version != self.analyzer.version:
+            raise ValueError("pipeline analyzer and result metadata do not match")
+        if not self.output_hashes:
+            raise ValueError("pipeline results must declare output hashes")
+        if not self.transformations:
+            raise ValueError("pipeline results must declare transformations")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"analyzer": self.analyzer.to_dict(), "result": self.result.to_dict(),
+                "output_hashes": self.output_hashes, "transformations": self.transformations,
+                "read_only": True, "network_allowed": False}
+
+
 def hash_inputs(paths: Iterable[Path]) -> tuple[str, ...]:
     """Hash offline inputs without modifying or executing them."""
     hashes = []
