@@ -148,3 +148,21 @@ def web_publication_preview(records: Iterable[dict[str, Any]], reviewed_ids: set
         "actions": [],
         "publication": publication,
     }
+
+
+def control_center_handoff_preview(records: Iterable[dict[str, Any]], ids: Iterable[str] | None = None,
+                                   contradictions: Iterable[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """Build a plan-only Control Center handoff preview."""
+    handoff = content_creator_handoff(records, ids=ids, contradictions=contradictions)
+    return {
+        "schema_version": 1,
+        "application_state": handoff["application_state"],
+        "control_center_authority": True,
+        "approval_required": True,
+        "approval_granted": False,
+        "execution": False,
+        "read_only": True,
+        "runtime_approval": False,
+        "actions": [],
+        "records": handoff["records"],
+    }

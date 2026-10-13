@@ -2,7 +2,7 @@ import unittest
 
 from src.research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
                                content_creator_view, evidence_navigation, facet_summary, record_detail, relationship_view,
-                               web_publication_preview)
+                               web_publication_preview, control_center_handoff_preview)
 
 
 class ResearchLabTests(unittest.TestCase):
@@ -70,6 +70,14 @@ class ResearchLabTests(unittest.TestCase):
         item = preview["publication"]["records"][0]
         self.assertEqual(item["id"], "donor-a")
         self.assertNotIn("evidence", item)
+
+    def test_control_center_handoff_is_plan_only_and_unapproved(self):
+        handoff = control_center_handoff_preview(self.records, ids=["donor-a"])
+        self.assertTrue(handoff["control_center_authority"])
+        self.assertTrue(handoff["approval_required"])
+        self.assertFalse(handoff["approval_granted"])
+        self.assertFalse(handoff["execution"])
+        self.assertEqual(handoff["actions"], [])
 
 
 if __name__ == "__main__":
