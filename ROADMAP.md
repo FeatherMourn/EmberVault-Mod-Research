@@ -38,9 +38,10 @@ records, provenance-checked evidence references, deterministic search filters,
 explicit contradiction records/resolution states, identity and near-duplicate
 review helpers, a provenance graph, build-aware comparison, offline analyzer
 contracts, a design-only Content Creator handoff, and a deterministic,
-review-scoped Web Catalog publication generator. Fifty-eight tests pass. The
-Research Lab interface and broader source normalization remain planned; runtime
-claims remain gated by direct evidence.
+review-scoped Web Catalog publication generator, and a hash-verified versioned
+offline research bundle. Sixty tests pass. The Research Lab interface and
+broader source normalization remain planned; runtime claims remain gated by
+direct evidence.
 
 ### External research integration
 
@@ -125,7 +126,7 @@ after the integrity foundation so the system remains useful at every stage.
   transformations, and limitations.
 - [ ] Add sandboxed offline tool execution with explicit filesystem boundaries
   and no live-game or network mutation.
-- [ ] Add versioned research bundles that can be recovered and shared offline.
+- [x] Add versioned research bundles that can be recovered and shared offline.
 - [ ] Compare ShroudForge manifest, profile, settings, and package conventions
   against Ember Vault Contracts using synthetic fixtures only.
 - [ ] Define a read-only Mod Manager metadata and approval contract informed

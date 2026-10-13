@@ -1,0 +1,83 @@
+"""Versioned, hash-verified offline research bundles."""
+from __future__ import annotations
+
+import hashlib
+import json
+import sqlite3
+import tempfile
+import zipfile
+from pathlib import Path
+from typing import Any
+
+BUNDLE_VERSION = 1
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _check_sqlite(path: Path) -> None:
+    connection = sqlite3.connect(path)
+    try:
+        if connection.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
+            raise ValueError("research catalog integrity check failed")
+    finally:
+        connection.close()
+
+
+def create_bundle(catalog: str | Path, destination: str | Path) -> dict[str, Any]:
+    """Create a deterministic local bundle without changing the catalog."""
+    source = Path(catalog)
+    target = Path(destination)
+    if not source.is_file():
+        raise FileNotFoundError(source)
+    _check_sqlite(source)
+    manifest = {
+        "bundle_version": BUNDLE_VERSION,
+        "catalog_name": "catalog.sqlite",
+        "catalog_sha256": _sha256(source),
+        "read_only": True,
+        "runtime_approval": False,
+    }
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as directory:
+        manifest_path = Path(directory) / "manifest.json"
+        manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        with zipfile.ZipFile(target, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+            for path in (manifest_path, source):
+                info = zipfile.ZipInfo(path.name, date_time=(2020, 1, 1, 0, 0, 0))
+                info.compress_type = zipfile.ZIP_DEFLATED
+                bundle.writestr(info, path.read_bytes())
+    return manifest
+
+
+def verify_bundle(bundle: str | Path) -> dict[str, Any]:
+    """Verify bundle structure, catalog hash, and SQLite integrity."""
+    path = Path(bundle)
+    with zipfile.ZipFile(path) as archive:
+        names = set(archive.namelist())
+        if names != {"manifest.json", "catalog.sqlite"}:
+            raise ValueError("research bundle contains unexpected files")
+        manifest = json.loads(archive.read("manifest.json"))
+        if manifest.get("bundle_version") != BUNDLE_VERSION or manifest.get("read_only") is not True:
+            raise ValueError("unsupported or unsafe research bundle")
+        with tempfile.TemporaryDirectory() as directory:
+            catalog = Path(directory) / "catalog.sqlite"
+            catalog.write_bytes(archive.read("catalog.sqlite"))
+            if _sha256(catalog) != manifest.get("catalog_sha256"):
+                raise ValueError("research bundle catalog hash mismatch")
+            _check_sqlite(catalog)
+    return manifest
+
+
+def recover_bundle(bundle: str | Path, destination: str | Path) -> dict[str, Any]:
+    """Recover a verified catalog to a caller-selected local destination."""
+    manifest = verify_bundle(bundle)
+    target = Path(destination)
+    if target.exists():
+        raise FileExistsError(target)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(bundle) as archive:
+        target.write_bytes(archive.read("catalog.sqlite"))
+    _check_sqlite(target)
+    return manifest
