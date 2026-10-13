@@ -161,9 +161,11 @@ after the integrity foundation so the system remains useful at every stage.
 
 - [ ] Connect the Lab to Control Center for profiles, permissions, and recovery
   context while preserving Mod Research ownership of evidence.
-- [ ] Provide reviewed donor and recipe metadata to Content Creator.
-- [ ] Generate sanitized, reproducible Web Catalog publication records.
-- [ ] Add cross-repository contract fixtures and CI for every handoff path.
+- [x] Provide reviewed donor and recipe metadata to Content Creator through the
+  read-only handoff boundary.
+- [x] Generate sanitized, reproducible Web Catalog publication records.
+- [x] Add cross-repository contract fixtures and CI for the implemented handoff
+  paths. Control Center Lab profile/permission integration remains pending.
 
 Every advanced feature must preserve the same rule: conclusions are traceable,
 reproducible, comparable across builds, and never promoted beyond their
