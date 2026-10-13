@@ -1,7 +1,8 @@
 import unittest
 
 from src.research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
-                               content_creator_view, evidence_navigation, facet_summary, record_detail, relationship_view)
+                               content_creator_view, evidence_navigation, facet_summary, record_detail, relationship_view,
+                               web_publication_preview)
 
 
 class ResearchLabTests(unittest.TestCase):
@@ -60,6 +61,15 @@ class ResearchLabTests(unittest.TestCase):
         self.assertEqual(handoff["application_state"], "design-only")
         self.assertFalse(handoff["runtime_approval"])
         self.assertEqual(handoff["actions"], [])
+
+    def test_web_publication_preview_is_sanitized_and_not_public(self):
+        preview = web_publication_preview(self.records, {"donor-a"})
+        self.assertFalse(preview["public"])
+        self.assertFalse(preview["publication_approval"])
+        self.assertEqual(preview["actions"], [])
+        item = preview["publication"]["records"][0]
+        self.assertEqual(item["id"], "donor-a")
+        self.assertNotIn("evidence", item)
 
 
 if __name__ == "__main__":

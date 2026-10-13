@@ -44,8 +44,9 @@ model over the authoritative catalog, including provenance and evidence
 navigation, deterministic facet/review summaries, build comparisons,
 contradiction review views, the first linked research notebook model, and
 notebook-aware research bundle recovery, notebook comparison,
-evidence-linked experiment summaries, and a sanitized Content Creator handoff
-view. Seventy tests pass. A full desktop
+evidence-linked experiment summaries, a sanitized Content Creator handoff
+view, and a non-public Web Catalog publication preview. Seventy-one tests
+pass. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
 

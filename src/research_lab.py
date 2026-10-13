@@ -8,6 +8,7 @@ from .provenance_graph import build_provenance_graph
 from .build_diff import diff_builds
 from .review_queue import build_review_queue
 from .research_index import content_creator_handoff
+from .publication import build_web_publication
 
 
 def build_lab_snapshot(records: Iterable[dict[str, Any]], *, query: str = "",
@@ -133,3 +134,17 @@ def content_creator_view(records: Iterable[dict[str, Any]], ids: Iterable[str] |
     handoff = content_creator_handoff(records, ids=ids, contradictions=contradictions)
     handoff.update({"read_only": True, "actions": [], "runtime_approval": False})
     return handoff
+
+
+def web_publication_preview(records: Iterable[dict[str, Any]], reviewed_ids: set[str]) -> dict[str, Any]:
+    """Preview sanitized Web Catalog output without publishing it."""
+    publication = build_web_publication(records, reviewed_ids=reviewed_ids)
+    return {
+        "schema_version": 1,
+        "application_state": "research-only",
+        "read_only": True,
+        "public": False,
+        "publication_approval": False,
+        "actions": [],
+        "publication": publication,
+    }
