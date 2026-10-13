@@ -11,6 +11,7 @@ from .research_index import search
 from .research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
                            relationship_view, unified_review_snapshot, web_publication_preview)
 from .review_queue import compare_review_priority, review_priority_summary
+from .research_lab_export import create_snapshot_bundle, verify_snapshot_bundle
 
 
 def load_records(path: str | Path) -> list[dict[str, Any]]:
@@ -44,7 +45,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--to-build")
     parser.add_argument("--reviewed-id", action="append", default=[])
     parser.add_argument("--notebook", type=Path)
+    parser.add_argument("--create-bundle", type=Path)
+    parser.add_argument("--verify-bundle", type=Path)
     args = parser.parse_args(argv)
+    if args.create_bundle and args.verify_bundle:
+        parser.error("choose only one bundle operation")
+    if args.verify_bundle:
+        print(json.dumps(verify_snapshot_bundle(args.verify_bundle), indent=2, sort_keys=True))
+        return 0
     records = load_records(args.input)
     notebook = None
     if args.notebook:
@@ -77,6 +85,11 @@ def main(argv: list[str] | None = None) -> int:
                                       kind=args.kind, confidence=args.confidence,
                                       has_open_questions=True if args.open_questions else None,
                                       high_priority_only=args.high_priority_review)
+    if args.create_bundle:
+        create_snapshot_bundle(snapshot, args.create_bundle)
+        print(json.dumps({"bundle": str(args.create_bundle), "created": True,
+                          "read_only": True, "runtime_approval": False}, sort_keys=True))
+        return 0
     print(json.dumps(snapshot, indent=2, sort_keys=True))
     return 0
 

@@ -77,6 +77,20 @@ class ResearchLabCliTests(unittest.TestCase):
                 self.assertEqual(main([str(path), "--report", "review-diff", "--from-build", "1", "--to-build", "2"]), 0)
             self.assertEqual(json.loads(output.getvalue())["changed"][0]["id"], "r1")
 
+    def test_cli_creates_and_verifies_snapshot_bundle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            records = root / "records.json"
+            records.write_text(json.dumps({"records": [{"id": "r1", "kind": "donor", "identity": {},
+                "state": "verified", "build_scope": ["1"], "evidence": [], "open_questions": []}]}), encoding="utf-8")
+            bundle = root / "lab.zip"
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main([str(records), "--create-bundle", str(bundle)]), 0)
+                self.assertEqual(main([str(records), "--verify-bundle", str(bundle)]), 0)
+            self.assertTrue(bundle.is_file())
+            self.assertIn('"recovery": "verify-before-extract"', output.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()

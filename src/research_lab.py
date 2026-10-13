@@ -26,6 +26,7 @@ def build_lab_snapshot(records: Iterable[dict[str, Any]], *, query: str = "",
         "schema_version": 1,
         "application_state": "research-only",
         "read_only": True,
+        "runtime_approval": False,
         "actions": [],
         "count": len(matches),
         "records": [
