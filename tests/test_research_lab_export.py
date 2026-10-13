@@ -1,6 +1,7 @@
 import json
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 from src.research_lab_export import create_snapshot_bundle, recover_snapshot_bundle, verify_snapshot_bundle
@@ -24,6 +25,34 @@ class ResearchLabExportTests(unittest.TestCase):
     def test_bundle_rejects_runtime_approved_snapshot(self):
         with self.assertRaises(ValueError):
             create_snapshot_bundle({"read_only": True, "runtime_approval": True}, Path("ignored.zip"))
+
+    def test_corrupt_bundle_fails_before_overwriting_destination(self):
+        snapshot = {"schema_version": 1, "read_only": True, "runtime_approval": False, "records": []}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "lab.zip"
+            destination = root / "recovered.json"
+            destination.write_text("original", encoding="utf-8")
+            create_snapshot_bundle(snapshot, bundle)
+            corrupt = root / "corrupt.zip"
+            with zipfile.ZipFile(bundle) as source, zipfile.ZipFile(corrupt, "w") as target:
+                target.writestr("manifest.json", source.read("manifest.json"))
+                target.writestr("snapshot.json", b"tampered")
+            with self.assertRaises(ValueError):
+                recover_snapshot_bundle(corrupt, destination)
+            self.assertEqual(destination.read_text(encoding="utf-8"), "original")
+
+    def test_abandoned_temp_output_does_not_count_as_recovery(self):
+        snapshot = {"schema_version": 1, "read_only": True, "runtime_approval": False, "records": []}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "lab.zip"
+            create_snapshot_bundle(snapshot, bundle)
+            (root / "recovered.json.tmp-abandoned").write_text("incomplete", encoding="utf-8")
+            destination = root / "recovered.json"
+            recover_snapshot_bundle(bundle, destination)
+            self.assertTrue(destination.is_file())
+            self.assertFalse(destination.read_text(encoding="utf-8") == "incomplete")
 
 
 if __name__ == "__main__":
