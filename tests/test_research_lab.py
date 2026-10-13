@@ -83,13 +83,16 @@ class ResearchLabTests(unittest.TestCase):
     def test_unified_snapshot_combines_review_surfaces_without_actions(self):
         snapshot = unified_review_snapshot(self.records, contradictions=[{"id": "c1", "record_id": "recipe-b",
                                                                           "status": "open", "claim_a": "A", "claim_b": "B"}],
-                                           from_build="1", to_build="2", reviewed_ids={"donor-a"})
+                                           from_build="1", to_build="2", reviewed_ids={"donor-a"},
+                                           analyzer_runs=[{"analyzer_id": "kfc-inspector", "version": "1"}])
         self.assertEqual(snapshot["facets"]["record_count"], 2)
         self.assertIn("review_priority", snapshot)
         self.assertEqual(snapshot["review_priority"]["by_kind"]["recipe"]["contradictions"], 1)
         self.assertIn("build_comparison", snapshot)
         self.assertIn("review_priority_comparison", snapshot)
         self.assertTrue(snapshot["review_priority_comparison"]["read_only"])
+        self.assertTrue(snapshot["analyzer_history"]["read_only"])
+        self.assertEqual(snapshot["analyzer_history"]["runs"][0]["analyzer_id"], "kfc-inspector")
         self.assertIn("handoff", snapshot)
         self.assertFalse(snapshot["publication"]["public"])
         self.assertFalse(snapshot["runtime_approval"])

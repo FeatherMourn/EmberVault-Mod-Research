@@ -181,7 +181,8 @@ def unified_review_snapshot(records: Iterable[dict[str, Any]], *,
                             contradictions: Iterable[dict[str, Any]] = (),
                             from_build: str | None = None, to_build: str | None = None,
                             notebook: dict[str, Any] | None = None,
-                            reviewed_ids: set[str] | None = None) -> dict[str, Any]:
+                            reviewed_ids: set[str] | None = None,
+                            analyzer_runs: Iterable[dict[str, Any]] = ()) -> dict[str, Any]:
     """Assemble one deterministic, read-only Lab review snapshot."""
     records = list(records)
     contradictions = list(contradictions)
@@ -193,6 +194,8 @@ def unified_review_snapshot(records: Iterable[dict[str, Any]], *,
         "actions": [],
         "facets": facet_summary(records),
         "review_priority": review_priority_summary(records),
+        "analyzer_history": {"schema_version": 1, "read_only": True, "runtime_approval": False,
+                             "runs": [dict(run) for run in analyzer_runs]},
         "review": contradiction_review_view(records, contradictions),
         "handoff": content_creator_view(records, contradictions=contradictions),
         "publication": web_publication_preview(records, reviewed_ids or set()),
