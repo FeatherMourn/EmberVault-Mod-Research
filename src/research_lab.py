@@ -7,6 +7,7 @@ from .research_index import search
 from .provenance_graph import build_provenance_graph
 from .build_diff import diff_builds
 from .review_queue import build_review_queue
+from .research_index import content_creator_handoff
 
 
 def build_lab_snapshot(records: Iterable[dict[str, Any]], *, query: str = "",
@@ -124,3 +125,11 @@ def contradiction_review_view(records: Iterable[dict[str, Any]], contradictions:
         "evidence_gap_records": queue["records"],
         "open_contradictions": queue["open_contradictions"],
     }
+
+
+def content_creator_view(records: Iterable[dict[str, Any]], ids: Iterable[str] | None = None,
+                         contradictions: Iterable[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """Expose the existing sanitized Content Creator handoff in the Lab."""
+    handoff = content_creator_handoff(records, ids=ids, contradictions=contradictions)
+    handoff.update({"read_only": True, "actions": [], "runtime_approval": False})
+    return handoff

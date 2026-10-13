@@ -1,7 +1,7 @@
 import unittest
 
 from src.research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
-                               evidence_navigation, facet_summary, record_detail, relationship_view)
+                               content_creator_view, evidence_navigation, facet_summary, record_detail, relationship_view)
 
 
 class ResearchLabTests(unittest.TestCase):
@@ -51,6 +51,15 @@ class ResearchLabTests(unittest.TestCase):
         review = contradiction_review_view(self.records, [{"id": "c1", "status": "open"}])
         self.assertEqual(review["open_contradictions"][0]["id"], "c1")
         self.assertEqual(review["actions"], [])
+
+    def test_content_creator_view_preserves_limits_and_no_runtime_approval(self):
+        handoff = content_creator_view(self.records, ids=["recipe-b"], contradictions=[
+            {"id": "c1", "record_id": "recipe-b", "status": "open", "claim_a": "A", "claim_b": "B"}
+        ])
+        self.assertEqual(handoff["records"][0]["id"], "recipe-b")
+        self.assertEqual(handoff["application_state"], "design-only")
+        self.assertFalse(handoff["runtime_approval"])
+        self.assertEqual(handoff["actions"], [])
 
 
 if __name__ == "__main__":
