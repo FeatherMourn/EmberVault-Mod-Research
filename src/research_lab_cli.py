@@ -13,6 +13,7 @@ from .research_lab import (build_comparison_view, build_lab_snapshot, contradict
 from .review_queue import compare_review_priority, review_priority_summary
 from .research_lab_export import (create_snapshot_bundle, prune_snapshot_bundles,
                                   recover_snapshot_bundle, verify_snapshot_bundle)
+from .analyzer_history import compare_runs, filter_runs
 
 
 def load_records(path: str | Path) -> list[dict[str, Any]]:
@@ -40,7 +41,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--confidence")
     parser.add_argument("--open-questions", action="store_true")
     parser.add_argument("--high-priority-review", action="store_true")
-    parser.add_argument("--report", choices=("snapshot", "relationships", "contradictions", "review-priority", "review-diff", "diff", "publication", "notebook", "unified"), default="snapshot")
+    parser.add_argument("--report", choices=("snapshot", "relationships", "contradictions", "review-priority", "review-diff", "analyzer-history", "analyzer-diff", "diff", "publication", "notebook", "unified"), default="snapshot")
     parser.add_argument("--record-id")
     parser.add_argument("--from-build")
     parser.add_argument("--to-build")
@@ -52,6 +53,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--recovery-output", type=Path)
     parser.add_argument("--prune-bundles", type=Path)
     parser.add_argument("--keep", type=int, default=5)
+    parser.add_argument("--analyzer-runs", type=Path)
+    parser.add_argument("--before-analyzer-runs", type=Path)
+    parser.add_argument("--analyzer-id")
+    parser.add_argument("--analyzer-version")
+    parser.add_argument("--analyzer-build")
     args = parser.parse_args(argv)
     if sum(bool(value) for value in (args.create_bundle, args.verify_bundle, args.recover_bundle, args.prune_bundles)) > 1:
         parser.error("choose only one bundle operation")
@@ -72,6 +78,23 @@ def main(argv: list[str] | None = None) -> int:
     notebook = None
     if args.notebook:
         notebook = json.loads(args.notebook.read_text(encoding="utf-8"))
+    analyzer_runs = []
+    if args.analyzer_runs:
+        analyzer_runs = json.loads(args.analyzer_runs.read_text(encoding="utf-8"))
+    if args.report == "analyzer-history":
+        print(json.dumps({"schema_version": 1, "read_only": True, "runtime_approval": False,
+                          "runs": filter_runs(analyzer_runs, analyzer_id=args.analyzer_id,
+                                               version=args.analyzer_version, build=args.analyzer_build)},
+                         indent=2, sort_keys=True))
+        return 0
+    if args.report == "analyzer-diff":
+        if not args.before_analyzer_runs or not args.analyzer_runs:
+            parser.error("--before-analyzer-runs and --analyzer-runs are required for analyzer-diff")
+        before = json.loads(args.before_analyzer_runs.read_text(encoding="utf-8"))
+        after = filter_runs(analyzer_runs, analyzer_id=args.analyzer_id,
+                            version=args.analyzer_version, build=args.analyzer_build)
+        print(json.dumps(compare_runs(before, after), indent=2, sort_keys=True))
+        return 0
     if args.report == "relationships":
         if not args.record_id:
             parser.error("--record-id is required for relationships")
@@ -94,7 +117,10 @@ def main(argv: list[str] | None = None) -> int:
         snapshot = notebook or {"schema_version": 1, "entries": [], "read_only": True, "actions": []}
     elif args.report == "unified":
         snapshot = unified_review_snapshot(records, notebook=notebook, reviewed_ids=set(args.reviewed_id),
-                                           from_build=args.from_build, to_build=args.to_build)
+                                           from_build=args.from_build, to_build=args.to_build,
+                                           analyzer_runs=analyzer_runs, analyzer_id=args.analyzer_id,
+                                           analyzer_version=args.analyzer_version,
+                                           analyzer_build=args.analyzer_build)
     else:
         snapshot = build_lab_snapshot(records, query=args.query, state=args.state, build=args.build,
                                       kind=args.kind, confidence=args.confidence,

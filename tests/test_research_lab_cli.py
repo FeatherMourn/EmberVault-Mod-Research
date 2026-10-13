@@ -102,6 +102,20 @@ class ResearchLabCliTests(unittest.TestCase):
             result = json.loads(output.getvalue())
             self.assertEqual(len(result["removed"]), 1)
 
+    def test_cli_analyzer_history_filters_runs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            records = root / "records.json"
+            records.write_text(json.dumps({"records": []}), encoding="utf-8")
+            runs = root / "runs.json"
+            runs.write_text(json.dumps([{"analyzer": {"analyzer_id": "kfc", "version": "1"},
+                "result": {"build_scope": ["1"]}}]), encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main([str(records), "--report", "analyzer-history", "--analyzer-runs", str(runs),
+                                       "--analyzer-id", "kfc"]), 0)
+            self.assertEqual(len(json.loads(output.getvalue())["runs"]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,6 +7,7 @@ from .research_index import search
 from .provenance_graph import build_provenance_graph
 from .build_diff import diff_builds
 from .review_queue import build_review_queue, compare_review_priority, evidence_score, review_priority_summary
+from .analyzer_history import compare_runs, filter_runs
 from .research_index import content_creator_handoff
 from .publication import build_web_publication
 
@@ -182,10 +183,15 @@ def unified_review_snapshot(records: Iterable[dict[str, Any]], *,
                             from_build: str | None = None, to_build: str | None = None,
                             notebook: dict[str, Any] | None = None,
                             reviewed_ids: set[str] | None = None,
-                            analyzer_runs: Iterable[dict[str, Any]] = ()) -> dict[str, Any]:
+                            analyzer_runs: Iterable[dict[str, Any]] = (),
+                            analyzer_id: str | None = None, analyzer_version: str | None = None,
+                            analyzer_build: str | None = None,
+                            previous_analyzer_runs: Iterable[dict[str, Any]] | None = None) -> dict[str, Any]:
     """Assemble one deterministic, read-only Lab review snapshot."""
     records = list(records)
     contradictions = list(contradictions)
+    filtered_runs = filter_runs(list(analyzer_runs), analyzer_id=analyzer_id,
+                                version=analyzer_version, build=analyzer_build)
     snapshot: dict[str, Any] = {
         "schema_version": 1,
         "application_state": "research-only",
@@ -195,12 +201,14 @@ def unified_review_snapshot(records: Iterable[dict[str, Any]], *,
         "facets": facet_summary(records),
         "review_priority": review_priority_summary(records),
         "analyzer_history": {"schema_version": 1, "read_only": True, "runtime_approval": False,
-                             "runs": [dict(run) for run in analyzer_runs]},
+                             "runs": [dict(run) for run in filtered_runs]},
         "review": contradiction_review_view(records, contradictions),
         "handoff": content_creator_view(records, contradictions=contradictions),
         "publication": web_publication_preview(records, reviewed_ids or set()),
         "notebook": notebook or {"entries": [], "read_only": True},
     }
+    if previous_analyzer_runs is not None:
+        snapshot["analyzer_history_comparison"] = compare_runs(previous_analyzer_runs, filtered_runs)
     if from_build is not None and to_build is not None:
         snapshot["build_comparison"] = build_comparison_view(records, from_build, to_build)
         snapshot["review_priority_comparison"] = compare_review_priority(records, from_build, to_build)
