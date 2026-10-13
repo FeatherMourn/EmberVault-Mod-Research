@@ -22,6 +22,16 @@ class ResearchLabCliTests(unittest.TestCase):
                 "state": "verified", "build_scope": ["1"], "evidence": ["a.md"], "open_questions": []}]}), encoding="utf-8")
             self.assertEqual(main([str(path), "--report", "relationships", "--record-id", "r1"]), 0)
 
+    def test_cli_unified_report_accepts_local_notebook(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            records = root / "records.json"
+            records.write_text(json.dumps({"records": [{"id": "r1", "kind": "donor", "identity": {},
+                "state": "verified", "build_scope": ["1"], "evidence": [], "open_questions": []}]}), encoding="utf-8")
+            notebook = root / "notebook.json"
+            notebook.write_text(json.dumps({"entries": [], "read_only": True, "runtime_approval": False}), encoding="utf-8")
+            self.assertEqual(main([str(records), "--report", "unified", "--notebook", str(notebook)]), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
