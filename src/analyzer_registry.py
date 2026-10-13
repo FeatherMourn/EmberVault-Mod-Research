@@ -1,7 +1,7 @@
 """Read-only registry for independently supplied offline analyzer contracts."""
 from __future__ import annotations
 
-from .analyzers import AnalyzerSpec
+from .analyzers import AnalyzerSpec, PipelineRun
 
 
 class AnalyzerRegistry:
@@ -26,3 +26,11 @@ class AnalyzerRegistry:
 
     def manifest(self) -> list[dict[str, object]]:
         return [self._specs[key].to_dict() for key in sorted(self._specs)]
+
+    def record_pipeline_run(self, run: PipelineRun) -> dict[str, object]:
+        """Attach a registered analyzer contract to a reproducibility record."""
+        registered = self.get(run.analyzer.analyzer_id, run.analyzer.version)
+        if registered != run.analyzer:
+            raise ValueError("pipeline analyzer does not match its registered contract")
+        return {"schema_version": 1, "read_only": True, "runtime_approval": False,
+                "analyzer_contract": registered.to_dict(), "pipeline": run.to_dict()}
