@@ -23,6 +23,17 @@ class ResearchLabExportTests(unittest.TestCase):
             self.assertEqual(json.loads(recovered.read_text())["records"][0]["id"], "r1")
             self.assertTrue(result["read_only"])
 
+    def test_bundle_persists_hashed_analyzer_runs(self):
+        snapshot = {"schema_version": 1, "read_only": True, "runtime_approval": False, "records": []}
+        runs = [{"analyzer_id": "kfc-inspector", "version": "1", "read_only": True}]
+        with tempfile.TemporaryDirectory() as directory:
+            bundle = Path(directory) / "lab.zip"
+            create_snapshot_bundle(snapshot, bundle, analyzer_runs=runs)
+            manifest = verify_snapshot_bundle(bundle)
+            self.assertEqual(len(manifest["analyzer_runs_sha256"]), 64)
+            with zipfile.ZipFile(bundle) as archive:
+                self.assertIn("kfc-inspector", archive.read("analyzer-runs.json").decode("utf-8"))
+
     def test_bundle_rejects_runtime_approved_snapshot(self):
         with self.assertRaises(ValueError):
             create_snapshot_bundle({"read_only": True, "runtime_approval": True}, Path("ignored.zip"))

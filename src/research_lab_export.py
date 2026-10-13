@@ -13,12 +13,16 @@ def _canonical(value: Any) -> bytes:
     return (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
 
 
-def create_snapshot_bundle(snapshot: dict[str, Any], destination: Path) -> None:
+def create_snapshot_bundle(snapshot: dict[str, Any], destination: Path,
+                          analyzer_runs: list[dict[str, Any]] | tuple[dict[str, Any], ...] = ()) -> None:
     """Write a recoverable snapshot bundle without changing the source snapshot."""
     if snapshot.get("read_only") is not True or snapshot.get("runtime_approval") is not False:
         raise ValueError("Lab snapshot must be read-only and runtime-unapproved")
     payload = _canonical(snapshot)
+    runs_payload = _canonical({"schema_version": 1, "runs": list(analyzer_runs),
+                               "read_only": True, "runtime_approval": False})
     manifest = {"schema_version": 1, "snapshot_sha256": hashlib.sha256(payload).hexdigest(),
+                "analyzer_runs_sha256": hashlib.sha256(runs_payload).hexdigest(),
                 "read_only": True, "runtime_approval": False, "recovery": "verify-before-extract"}
     target = Path(destination)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -28,6 +32,8 @@ def create_snapshot_bundle(snapshot: dict[str, Any], destination: Path) -> None:
         with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED) as archive:
             archive.writestr("manifest.json", _canonical(manifest))
             archive.writestr("snapshot.json", payload)
+            if analyzer_runs:
+                archive.writestr("analyzer-runs.json", runs_payload)
         temporary.replace(target)
     finally:
         temporary.unlink(missing_ok=True)
@@ -38,8 +44,11 @@ def verify_snapshot_bundle(bundle: Path) -> dict[str, Any]:
     with zipfile.ZipFile(bundle) as archive:
         manifest = json.loads(archive.read("manifest.json"))
         payload = archive.read("snapshot.json")
+        runs_payload = archive.read("analyzer-runs.json") if "analyzer-runs.json" in archive.namelist() else None
     if manifest.get("snapshot_sha256") != hashlib.sha256(payload).hexdigest():
         raise ValueError("snapshot bundle hash mismatch")
+    if runs_payload is not None and manifest.get("analyzer_runs_sha256") != hashlib.sha256(runs_payload).hexdigest():
+        raise ValueError("analyzer run report hash mismatch")
     if manifest.get("read_only") is not True or manifest.get("runtime_approval") is not False:
         raise ValueError("snapshot bundle safety metadata is invalid")
     return manifest
@@ -50,8 +59,11 @@ def recover_snapshot_bundle(bundle: Path, destination: Path) -> dict[str, Any]:
     with zipfile.ZipFile(bundle) as archive:
         manifest = json.loads(archive.read("manifest.json"))
         payload = archive.read("snapshot.json")
+        runs_payload = archive.read("analyzer-runs.json") if "analyzer-runs.json" in archive.namelist() else None
     if manifest.get("snapshot_sha256") != hashlib.sha256(payload).hexdigest():
         raise ValueError("snapshot bundle hash mismatch")
+    if runs_payload is not None and manifest.get("analyzer_runs_sha256") != hashlib.sha256(runs_payload).hexdigest():
+        raise ValueError("analyzer run report hash mismatch")
     snapshot = json.loads(payload)
     if snapshot.get("read_only") is not True or snapshot.get("runtime_approval") is not False:
         raise ValueError("recovered snapshot safety metadata is invalid")
