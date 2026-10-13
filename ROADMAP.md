@@ -8,7 +8,7 @@ RenderModels, KFC3 resources, Blender tooling, package experiments, and runtime
 observations without modifying live game files or claiming behavior that has
 not been directly observed.
 
-## Current state — 2026-10-04
+## Current state — 2026-10-13
 
 The repository intake is complete and the research corpus is present. The
 module manifest declares an experimental, research-profile-only, read-only
@@ -38,6 +38,17 @@ handoff, and a deterministic, review-scoped Web Catalog publication generator.
 Twenty-six tests pass. Identity normalization, broader intake, and the
 Research Lab interface remain planned; runtime claims remain gated by direct
 evidence.
+
+### External research integration
+
+ShroudForge 1.6.6 is recorded as a bounded external reference. Its build
+profiles, manifest validation, package conventions, settings model, API
+documentation, loader workflows, and documented runtime limits are useful
+comparison material for Mod Research, Content Creator, Mod Manager, Game
+Tuning, and Troubleshooter. It is not an Ember Vault capability source;
+runtime behavior remains unverified and no installation or live-game work was
+performed. Follow-up comparison work uses synthetic fixtures and shared
+Contracts/Module SDK review.
 
 ## Research Lab evolution
 
@@ -73,6 +84,8 @@ after the integrity foundation so the system remains useful at every stage.
 - [ ] Add sandboxed offline tool execution with explicit filesystem boundaries
   and no live-game or network mutation.
 - [ ] Add versioned research bundles that can be recovered and shared offline.
+- [ ] Compare ShroudForge manifest, profile, settings, and package conventions
+  against Ember Vault Contracts using synthetic fixtures only.
 
 ### Phase D — Research Lab application
 

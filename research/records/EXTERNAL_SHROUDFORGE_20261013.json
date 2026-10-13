@@ -1,0 +1,26 @@
+{
+  "record_schema_version": 1,
+  "id": "external.shroudforge.1.6.6",
+  "kind": "external-mod-loader-reference",
+  "identity": {"repository": "bonsaibauer/shroudforge", "reference": "1.6.6", "license": "MIT"},
+  "build_scope": ["1076226", "external-reference"],
+  "state": "partially-verified",
+  "confidence": "bounded-public-documentation",
+  "supported_claims": [
+    "The public repository documents build-scoped profiles, mod validation, package conventions, settings, API reference material, and loader workflows.",
+    "The repository explicitly separates proven, beta, and open capabilities.",
+    "The repository documents runtime, multiplayer, KFC/ECS, and world-editor limitations useful for comparison research."
+  ],
+  "unsupported_claims": [
+    "External documentation does not prove equivalent Ember Vault capability.",
+    "The audit does not prove current-build compatibility beyond the documented scope.",
+    "No runtime hooks, mod installation, live-game behavior, persistence, or multiplayer behavior was tested by Ember Vault."
+  ],
+  "open_questions": [
+    "Which manifest, profile, and settings concepts map cleanly to shared Ember Vault Contracts and the Module SDK?",
+    "Which documented APIs or package conventions require independent evidence before reuse?",
+    "Which Mod Manager workflow ideas can be implemented without transferring mutation authority from Control Center?"
+  ],
+  "contradictions": [],
+  "evidence": [{"source_path": "research/external/SHROUDFORGE_AUDIT_20261013.md", "evidence_type": "external-public-documentation", "source_url": "https://github.com/bonsaibauer/shroudforge"}]
+}
