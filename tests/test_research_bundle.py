@@ -35,6 +35,22 @@ class ResearchBundleTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 verify_bundle(bundle)
 
+    def test_bundle_round_trip_preserves_local_notebook(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            catalog = root / "catalog.sqlite"
+            store = CatalogStore(catalog); store.close()
+            notebook = {"schema_version": 1, "read_only": True, "runtime_approval": False,
+                        "actions": [], "entries": [{"id": "n1", "kind": "note", "text": "offline", "record_ids": []}]}
+            bundle = root / "research.bundle.zip"
+            manifest = create_bundle(catalog, bundle, notebook)
+            self.assertIn("notebook_sha256", manifest)
+            verify_bundle(bundle)
+            recovered = root / "recovered.sqlite"
+            recovered_notebook = root / "recovered-notebook.json"
+            recover_bundle(bundle, recovered, recovered_notebook)
+            self.assertIn("offline", recovered_notebook.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()

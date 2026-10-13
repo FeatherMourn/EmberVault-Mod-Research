@@ -42,8 +42,8 @@ review-scoped Web Catalog publication generator, a hash-verified versioned
 offline research bundle, and the first read-only Research Lab browser view
 model over the authoritative catalog, including provenance and evidence
 navigation, deterministic facet/review summaries, build comparisons,
-contradiction review views, and the first linked research notebook model.
-Sixty-seven tests pass. A full desktop
+contradiction review views, the first linked research notebook model, and
+notebook-aware research bundle recovery. Sixty-eight tests pass. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
 
