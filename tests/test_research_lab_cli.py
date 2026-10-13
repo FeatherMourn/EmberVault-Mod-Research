@@ -63,6 +63,20 @@ class ResearchLabCliTests(unittest.TestCase):
             self.assertTrue(report["read_only"])
             self.assertEqual(report["by_build"]["1"]["evidence_gaps"], 1)
 
+    def test_cli_review_diff_requires_and_uses_builds(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "records.json"
+            path.write_text(json.dumps({"records": [
+                {"id": "r1", "kind": "recipe", "identity": {}, "state": "blocked",
+                 "build_scope": ["1"], "evidence": [], "open_questions": ["q"], "contradictions": []},
+                {"id": "r1", "kind": "recipe", "identity": {}, "state": "verified",
+                 "build_scope": ["2"], "evidence": ["x"], "open_questions": [], "contradictions": []},
+            ]}), encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main([str(path), "--report", "review-diff", "--from-build", "1", "--to-build", "2"]), 0)
+            self.assertEqual(json.loads(output.getvalue())["changed"][0]["id"], "r1")
+
 
 if __name__ == "__main__":
     unittest.main()

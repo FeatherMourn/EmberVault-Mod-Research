@@ -10,7 +10,7 @@ from .catalog_store import CatalogStore
 from .research_index import search
 from .research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
                            relationship_view, unified_review_snapshot, web_publication_preview)
-from .review_queue import review_priority_summary
+from .review_queue import compare_review_priority, review_priority_summary
 
 
 def load_records(path: str | Path) -> list[dict[str, Any]]:
@@ -38,7 +38,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--confidence")
     parser.add_argument("--open-questions", action="store_true")
     parser.add_argument("--high-priority-review", action="store_true")
-    parser.add_argument("--report", choices=("snapshot", "relationships", "contradictions", "review-priority", "diff", "publication", "notebook", "unified"), default="snapshot")
+    parser.add_argument("--report", choices=("snapshot", "relationships", "contradictions", "review-priority", "review-diff", "diff", "publication", "notebook", "unified"), default="snapshot")
     parser.add_argument("--record-id")
     parser.add_argument("--from-build")
     parser.add_argument("--to-build")
@@ -57,6 +57,10 @@ def main(argv: list[str] | None = None) -> int:
         snapshot = contradiction_review_view(records, [])
     elif args.report == "review-priority":
         snapshot = review_priority_summary(records)
+    elif args.report == "review-diff":
+        if not args.from_build or not args.to_build:
+            parser.error("--from-build and --to-build are required for review-diff")
+        snapshot = compare_review_priority(records, args.from_build, args.to_build)
     elif args.report == "diff":
         if not args.from_build or not args.to_build:
             parser.error("--from-build and --to-build are required for diff")

@@ -58,3 +58,30 @@ def review_priority_summary(records: Iterable[dict[str, Any]]) -> dict[str, Any]
     return {"schema_version": 1, "read_only": True, "runtime_approval": False,
             "actions": [], "by_build": dict(sorted(by_build.items())),
             "by_kind": dict(sorted(by_kind.items()))}
+
+
+def compare_review_priority(records: Iterable[dict[str, Any]], from_build: str, to_build: str) -> dict[str, Any]:
+    """Compare review pressure for two build scopes without merging records."""
+    records = list(records)
+
+    def project(build: str) -> dict[str, dict[str, Any]]:
+        result = {}
+        for record in records:
+            if build in {str(value) for value in record.get("build_scope", [])}:
+                contradictions = len(record.get("contradictions", []))
+                score = evidence_score(record, contradiction_count=contradictions)
+                result[record["id"]] = {"evidence_score": score,
+                                        "priority": "high" if contradictions or score <= 3 else "normal",
+                                        "evidence_gaps": len(record.get("open_questions", [])),
+                                        "contradictions": contradictions}
+        return result
+
+    before, after = project(from_build), project(to_build)
+    changed = []
+    for record_id in sorted(set(before) & set(after)):
+        if before[record_id] != after[record_id]:
+            changed.append({"id": record_id, "from": before[record_id], "to": after[record_id]})
+    return {"schema_version": 1, "read_only": True, "runtime_approval": False, "actions": [],
+            "from_build": from_build, "to_build": to_build,
+            "added": sorted(set(after) - set(before)), "removed": sorted(set(before) - set(after)),
+            "changed": changed}

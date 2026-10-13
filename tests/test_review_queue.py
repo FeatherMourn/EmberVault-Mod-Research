@@ -1,6 +1,6 @@
 import unittest
 
-from src.review_queue import build_review_queue, evidence_score, review_priority_summary
+from src.review_queue import build_review_queue, compare_review_priority, evidence_score, review_priority_summary
 
 
 class ReviewQueueTests(unittest.TestCase):
@@ -30,6 +30,16 @@ class ReviewQueueTests(unittest.TestCase):
         self.assertEqual(summary["by_build"]["1"]["records"], 2)
         self.assertEqual(summary["by_build"]["1"]["high_priority"], 1)
         self.assertEqual(summary["by_kind"]["recipe"]["contradictions"], 1)
+
+    def test_priority_comparison_is_read_only_and_build_scoped(self):
+        result = compare_review_priority([
+            {"id": "r1", "kind": "recipe", "build_scope": ["1"], "confidence": "low",
+             "evidence": [], "open_questions": ["q"], "contradictions": []},
+            {"id": "r1", "kind": "recipe", "build_scope": ["2"], "confidence": "high",
+             "evidence": ["x", "y"], "open_questions": [], "contradictions": []},
+        ], "1", "2")
+        self.assertTrue(result["read_only"])
+        self.assertEqual(result["changed"][0]["id"], "r1")
 
 
 if __name__ == "__main__":
