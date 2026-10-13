@@ -5,6 +5,8 @@ from typing import Any, Iterable
 
 from .research_index import search
 from .provenance_graph import build_provenance_graph
+from .build_diff import diff_builds
+from .review_queue import build_review_queue
 
 
 def build_lab_snapshot(records: Iterable[dict[str, Any]], *, query: str = "",
@@ -101,4 +103,24 @@ def facet_summary(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
         "by_build": counts(build for record in records for build in record.get("build_scope", [])),
         "evidence_gaps": sorted(record["id"] for record in records if record.get("open_questions")),
         "contradiction_records": sorted(record["id"] for record in records if record.get("contradictions")),
+    }
+
+
+def build_comparison_view(records: Iterable[dict[str, Any]], from_build: str, to_build: str) -> dict[str, Any]:
+    """Expose a build diff as a read-only Lab view."""
+    comparison = diff_builds(records, from_build, to_build)
+    comparison.update({"read_only": True, "actions": [], "runtime_approval": False})
+    return comparison
+
+
+def contradiction_review_view(records: Iterable[dict[str, Any]], contradictions: Iterable[dict[str, Any]]) -> dict[str, Any]:
+    """Expose evidence gaps and contradiction history without resolving anything."""
+    queue = build_review_queue(records, contradictions)
+    return {
+        "schema_version": queue["schema_version"],
+        "read_only": True,
+        "actions": [],
+        "runtime_approval": False,
+        "evidence_gap_records": queue["records"],
+        "open_contradictions": queue["open_contradictions"],
     }

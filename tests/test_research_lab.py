@@ -1,6 +1,7 @@
 import unittest
 
-from src.research_lab import build_lab_snapshot, evidence_navigation, facet_summary, record_detail, relationship_view
+from src.research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
+                               evidence_navigation, facet_summary, record_detail, relationship_view)
 
 
 class ResearchLabTests(unittest.TestCase):
@@ -42,6 +43,14 @@ class ResearchLabTests(unittest.TestCase):
         self.assertEqual(facets["evidence_gaps"], ["recipe-b"])
         self.assertEqual(facets["contradiction_records"], ["recipe-b"])
         self.assertEqual(facets["actions"], [])
+
+    def test_build_and_contradiction_views_preserve_review_boundaries(self):
+        comparison = build_comparison_view(self.records, "1", "2")
+        self.assertEqual(comparison["from_build"], "1")
+        self.assertTrue(comparison["read_only"])
+        review = contradiction_review_view(self.records, [{"id": "c1", "status": "open"}])
+        self.assertEqual(review["open_contradictions"][0]["id"], "c1")
+        self.assertEqual(review["actions"], [])
 
 
 if __name__ == "__main__":

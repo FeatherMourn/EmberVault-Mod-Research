@@ -41,7 +41,8 @@ contracts, a design-only Content Creator handoff, and a deterministic,
 review-scoped Web Catalog publication generator, a hash-verified versioned
 offline research bundle, and the first read-only Research Lab browser view
 model over the authoritative catalog, including provenance and evidence
-navigation and deterministic facet/review summaries. Sixty-four tests pass. A full desktop
+navigation, deterministic facet/review summaries, build comparisons, and
+contradiction review views. Sixty-five tests pass. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
 
