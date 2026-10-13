@@ -4,7 +4,8 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from src.research_lab_export import create_snapshot_bundle, recover_snapshot_bundle, verify_snapshot_bundle
+from src.research_lab_export import (create_snapshot_bundle, prune_snapshot_bundles,
+                                     recover_snapshot_bundle, verify_snapshot_bundle)
 
 
 class ResearchLabExportTests(unittest.TestCase):
@@ -53,6 +54,19 @@ class ResearchLabExportTests(unittest.TestCase):
             recover_snapshot_bundle(bundle, destination)
             self.assertTrue(destination.is_file())
             self.assertFalse(destination.read_text(encoding="utf-8") == "incomplete")
+
+    def test_retention_prunes_only_oldest_bundles(self):
+        snapshot = {"schema_version": 1, "read_only": True, "runtime_approval": False, "records": []}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "keep.txt").write_text("untouched", encoding="utf-8")
+            for index in range(3):
+                create_snapshot_bundle(snapshot, root / f"lab-{index}.zip")
+                (root / f"lab-{index}.zip").touch()
+            result = prune_snapshot_bundles(root, keep=2)
+            self.assertEqual(len(result["removed"]), 1)
+            self.assertTrue((root / "keep.txt").is_file())
+            self.assertEqual(len(list(root.glob("*.zip"))), 2)
 
 
 if __name__ == "__main__":

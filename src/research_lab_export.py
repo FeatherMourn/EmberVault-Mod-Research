@@ -66,3 +66,18 @@ def recover_snapshot_bundle(bundle: Path, destination: Path) -> dict[str, Any]:
         temporary.unlink(missing_ok=True)
     return {"destination": str(target), "snapshot_sha256": manifest["snapshot_sha256"],
             "read_only": True, "runtime_approval": False}
+
+
+def prune_snapshot_bundles(directory: Path, *, keep: int = 5) -> dict[str, Any]:
+    """Retain the newest Lab zip bundles and ignore unrelated files."""
+    if keep < 1:
+        raise ValueError("keep must be positive")
+    root = Path(directory)
+    bundles = sorted((path for path in root.glob("*.zip") if path.is_file()),
+                     key=lambda path: (path.stat().st_mtime_ns, path.name), reverse=True)
+    removed = []
+    for path in bundles[keep:]:
+        path.unlink()
+        removed.append(path.name)
+    return {"directory": str(root), "kept": [path.name for path in bundles[:keep]],
+            "removed": sorted(removed), "read_only": True, "runtime_approval": False}
