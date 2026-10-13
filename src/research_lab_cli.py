@@ -11,7 +11,8 @@ from .research_index import search
 from .research_lab import (build_comparison_view, build_lab_snapshot, contradiction_review_view,
                            relationship_view, unified_review_snapshot, web_publication_preview)
 from .review_queue import compare_review_priority, review_priority_summary
-from .research_lab_export import create_snapshot_bundle, recover_snapshot_bundle, verify_snapshot_bundle
+from .research_lab_export import (create_snapshot_bundle, prune_snapshot_bundles,
+                                  recover_snapshot_bundle, verify_snapshot_bundle)
 
 
 def load_records(path: str | Path) -> list[dict[str, Any]]:
@@ -31,7 +32,7 @@ def load_records(path: str | Path) -> list[dict[str, Any]]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("input", type=Path, help="SQLite catalog or JSON records file")
+    parser.add_argument("input", type=Path, nargs="?", help="SQLite catalog or JSON records file")
     parser.add_argument("--query", default="")
     parser.add_argument("--state")
     parser.add_argument("--build")
@@ -49,9 +50,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--verify-bundle", type=Path)
     parser.add_argument("--recover-bundle", type=Path)
     parser.add_argument("--recovery-output", type=Path)
+    parser.add_argument("--prune-bundles", type=Path)
+    parser.add_argument("--keep", type=int, default=5)
     args = parser.parse_args(argv)
-    if sum(bool(value) for value in (args.create_bundle, args.verify_bundle, args.recover_bundle)) > 1:
+    if sum(bool(value) for value in (args.create_bundle, args.verify_bundle, args.recover_bundle, args.prune_bundles)) > 1:
         parser.error("choose only one bundle operation")
+    if args.prune_bundles:
+        print(json.dumps(prune_snapshot_bundles(args.prune_bundles, keep=args.keep), indent=2, sort_keys=True))
+        return 0
     if args.recover_bundle:
         if not args.recovery_output:
             parser.error("--recovery-output is required for --recover-bundle")
@@ -60,6 +66,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.verify_bundle:
         print(json.dumps(verify_snapshot_bundle(args.verify_bundle), indent=2, sort_keys=True))
         return 0
+    if not args.input:
+        parser.error("input is required for this report")
     records = load_records(args.input)
     notebook = None
     if args.notebook:

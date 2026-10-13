@@ -91,6 +91,17 @@ class ResearchLabCliTests(unittest.TestCase):
             self.assertTrue(bundle.is_file())
             self.assertIn('"recovery": "verify-before-extract"', output.getvalue())
 
+    def test_cli_prunes_bundle_directory_without_catalog_input(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "a.zip").write_bytes(b"a")
+            (root / "b.zip").write_bytes(b"b")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main(["--prune-bundles", str(root), "--keep", "1"]), 0)
+            result = json.loads(output.getvalue())
+            self.assertEqual(len(result["removed"]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
