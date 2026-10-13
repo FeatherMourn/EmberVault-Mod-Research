@@ -60,6 +60,11 @@ discovery, queued updates, staged updates, backups, client/server targeting,
 and recovery gaps. It does not authorize installation or move mutation and
 recovery authority away from Control Center and Save Manager.
 
+The first synthetic Mod Manager contract now classifies discovery, staged
+updates, and recovery review. Updates require approval and a verified Save
+Manager backup; all results remain read-only and installation execution is
+explicitly false.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not

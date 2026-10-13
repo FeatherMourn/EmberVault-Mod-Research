@@ -1,0 +1,7 @@
+{
+  "fixtures": [
+    {"name": "discovery", "request": {"operation": "discover", "package": {"id": "sf.example", "version": "1.0.0"}}},
+    {"name": "update-without-backup", "request": {"operation": "stage-update", "package": {"id": "sf.example", "version": "1.1.0"}}},
+    {"name": "recovery-with-evidence", "request": {"operation": "recovery-review", "package": {"id": "sf.example"}, "recovery_evidence": {"status": "partial"}}}
+  ]
+}
