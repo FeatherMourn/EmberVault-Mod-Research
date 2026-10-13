@@ -124,7 +124,7 @@ after the integrity foundation so the system remains useful at every stage.
   experiments, tools, builds, and generated outputs.
 - [x] Add a resource graph connecting donors, recipes, RenderModels, registries,
   packages, Blender outputs, and evidence records.
-- [ ] Add evidence scoring, contradiction detection, evidence-gap prioritization,
+- [x] Add evidence scoring, contradiction detection, evidence-gap prioritization,
   and human review states.
 - [x] Add build-aware diffs for KFC3 metadata, records, packages, and findings.
 
