@@ -137,6 +137,8 @@ after the integrity foundation so the system remains useful at every stage.
   transformations, and limitations.
 - [ ] Add sandboxed offline tool execution with explicit filesystem boundaries
   and no live-game or network mutation.
+- [x] Define plan-only execution requests with approved roots, input hashes,
+  transformations, and an explicit non-executed state.
 - [x] Add versioned research bundles that can be recovered and shared offline.
 - [x] Compare ShroudForge manifest, profile, settings, and package conventions
   against Ember Vault Contracts using synthetic fixtures only.
