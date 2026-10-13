@@ -55,6 +55,11 @@ profile, settings, and package metadata against Ember Vault expectations. It
 reports compatible fields and explicit gaps while keeping runtime approval
 false.
 
+The Mod Manager follow-up is also recorded as external design evidence for
+discovery, queued updates, staged updates, backups, client/server targeting,
+and recovery gaps. It does not authorize installation or move mutation and
+recovery authority away from Control Center and Save Manager.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not
@@ -91,6 +96,8 @@ after the integrity foundation so the system remains useful at every stage.
 - [ ] Add versioned research bundles that can be recovered and shared offline.
 - [ ] Compare ShroudForge manifest, profile, settings, and package conventions
   against Ember Vault Contracts using synthetic fixtures only.
+- [ ] Define a read-only Mod Manager metadata and approval contract informed
+  by ShroudForge, with synthetic failure and recovery fixtures.
 
 ### Phase D — Research Lab application
 

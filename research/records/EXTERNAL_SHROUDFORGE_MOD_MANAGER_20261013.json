@@ -1,0 +1,37 @@
+{
+  "record_schema_version": 1,
+  "id": "external.shroudforge.mod-manager.1.6.6",
+  "kind": "external-mod-manager-reference",
+  "identity": {
+    "repository": "bonsaibauer/shroudforge",
+    "reference": "1.6.6",
+    "license": "MIT",
+    "workflow": "discovery-update-staging-backup"
+  },
+  "build_scope": ["1076226", "external-reference"],
+  "state": "partially-verified",
+  "confidence": "bounded-public-documentation",
+  "supported_claims": [
+    "The public documentation describes mod discovery and installation through a loader catalog.",
+    "The documented workflow includes queued mod updates and staged ShroudForge updates with backups.",
+    "The documentation identifies broader recovery scenarios as requiring additional validation.",
+    "The documented multiplayer workflow requires matching client and server preparation for relevant changes."
+  ],
+  "unsupported_claims": [
+    "Documentation does not prove Ember Vault installation or update behavior.",
+    "The audit does not prove backup completeness, rollback correctness, or recovery under interruption.",
+    "Declared multiplayer support does not prove every gameplay effect or persistence path."
+  ],
+  "open_questions": [
+    "Which discovery metadata should Mod Manager accept without executing package code?",
+    "Which update operations require Control Center approval and a verified Save Manager backup?",
+    "What recovery evidence is required after a staged update fails or is interrupted?",
+    "Which client/server target declarations should be surfaced as warnings rather than compatibility guarantees?"
+  ],
+  "contradictions": [],
+  "evidence": [{
+    "source_path": "research/external/SHROUDFORGE_AUDIT_20261013.md",
+    "evidence_type": "external-public-documentation",
+    "source_url": "https://github.com/bonsaibauer/shroudforge"
+  }]
+}
