@@ -1,6 +1,6 @@
 import unittest
 
-from src.research_lab import build_lab_snapshot, record_detail
+from src.research_lab import build_lab_snapshot, evidence_navigation, record_detail, relationship_view
 
 
 class ResearchLabTests(unittest.TestCase):
@@ -26,6 +26,14 @@ class ResearchLabTests(unittest.TestCase):
         self.assertTrue(detail["read_only"])
         self.assertEqual(detail["actions"], [])
         self.assertFalse(detail["runtime_approval"])
+
+    def test_relationship_and_evidence_views_are_read_only(self):
+        relationships = relationship_view(self.records, "recipe-b")
+        self.assertTrue(any(node["kind"] == "evidence" for node in relationships["nodes"]))
+        self.assertEqual(relationships["actions"], [])
+        evidence = evidence_navigation(self.records, "b.md")
+        self.assertEqual(evidence["records"][0]["id"], "recipe-b")
+        self.assertEqual(evidence["actions"], [])
 
 
 if __name__ == "__main__":
