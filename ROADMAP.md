@@ -48,7 +48,7 @@ evidence-linked experiment summaries, a sanitized Content Creator handoff
 view, a non-public Web Catalog publication preview, a plan-only Control Center
 handoff preview, a unified Lab review snapshot, a dependency-free command-line
 viewer, and read-only relationship, contradiction, diff, publication,
-notebook, unified-review reports, and hash-verified Lab snapshot bundles. Ninety-four tests pass. Offline analyzer
+notebook, unified-review reports, and hash-verified Lab snapshot bundles. Ninety-six tests pass. Offline analyzer
 inputs now require existing files inside an approved research root. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
@@ -150,7 +150,7 @@ after the integrity foundation so the system remains useful at every stage.
   contradiction workflows, and capability matrices.
 - [ ] Add research notebooks combining structured records, notes, comparisons,
   experiment outputs, and generated reports.
-- [ ] Add a plugin API so new research tools can be introduced independently
+- [x] Add a plugin API so new research tools can be introduced independently
   from the catalog core.
 
 ### Phase E — Ember Vault integration and publication
