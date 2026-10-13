@@ -78,3 +78,27 @@ def evidence_navigation(records: Iterable[dict[str, Any]], evidence_path: str) -
         "records": [{"id": record["id"], "kind": record["kind"], "state": record["state"]}
                     for record in sorted(matches, key=lambda item: item["id"])],
     }
+
+
+def facet_summary(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
+    """Return deterministic counts for browsing and review prioritization."""
+    records = list(records)
+
+    def counts(values):
+        result: dict[str, int] = {}
+        for value in values:
+            result[str(value)] = result.get(str(value), 0) + 1
+        return dict(sorted(result.items()))
+
+    return {
+        "schema_version": 1,
+        "read_only": True,
+        "actions": [],
+        "record_count": len(records),
+        "by_kind": counts(record.get("kind", "unknown") for record in records),
+        "by_state": counts(record.get("state", "unknown") for record in records),
+        "by_confidence": counts(record.get("confidence", "unknown") for record in records),
+        "by_build": counts(build for record in records for build in record.get("build_scope", [])),
+        "evidence_gaps": sorted(record["id"] for record in records if record.get("open_questions")),
+        "contradiction_records": sorted(record["id"] for record in records if record.get("contradictions")),
+    }

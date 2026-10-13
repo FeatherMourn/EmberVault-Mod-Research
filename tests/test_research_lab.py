@@ -1,6 +1,6 @@
 import unittest
 
-from src.research_lab import build_lab_snapshot, evidence_navigation, record_detail, relationship_view
+from src.research_lab import build_lab_snapshot, evidence_navigation, facet_summary, record_detail, relationship_view
 
 
 class ResearchLabTests(unittest.TestCase):
@@ -34,6 +34,14 @@ class ResearchLabTests(unittest.TestCase):
         evidence = evidence_navigation(self.records, "b.md")
         self.assertEqual(evidence["records"][0]["id"], "recipe-b")
         self.assertEqual(evidence["actions"], [])
+
+    def test_facets_surface_review_gaps_without_actions(self):
+        facets = facet_summary(self.records)
+        self.assertEqual(facets["by_kind"], {"donor": 1, "recipe": 1})
+        self.assertEqual(facets["by_build"], {"1": 1, "2": 1})
+        self.assertEqual(facets["evidence_gaps"], ["recipe-b"])
+        self.assertEqual(facets["contradiction_records"], ["recipe-b"])
+        self.assertEqual(facets["actions"], [])
 
 
 if __name__ == "__main__":
