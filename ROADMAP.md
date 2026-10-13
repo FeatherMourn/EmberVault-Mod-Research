@@ -38,10 +38,11 @@ records, provenance-checked evidence references, deterministic search filters,
 explicit contradiction records/resolution states, identity and near-duplicate
 review helpers, a provenance graph, build-aware comparison, offline analyzer
 contracts, a design-only Content Creator handoff, and a deterministic,
-review-scoped Web Catalog publication generator, and a hash-verified versioned
-offline research bundle. Sixty tests pass. The Research Lab interface and
-broader source normalization remain planned; runtime claims remain gated by
-direct evidence.
+review-scoped Web Catalog publication generator, a hash-verified versioned
+offline research bundle, and the first read-only Research Lab browser view
+model over the authoritative catalog. Sixty-two tests pass. A full desktop
+Lab interface and broader source normalization remain planned; runtime claims
+remain gated by direct evidence.
 
 ### External research integration
 
