@@ -1,0 +1,14 @@
+{
+  "external": {
+    "manifest": {"id": "example.mod", "entry_point": "main.lua"},
+    "profile": {"build": "1076226", "target": "client"},
+    "settings": {"schema": "extended.mod.json"},
+    "package": {"root": "mods/example.mod", "validation": "manifest-lua"}
+  },
+  "contract": {
+    "manifest": {"id": true, "entry_point": true},
+    "profile": {"build": true, "target": true},
+    "settings": {"schema": true, "read_only": true},
+    "package": {"root": true, "validation": true, "hash": true}
+  }
+}

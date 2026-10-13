@@ -50,6 +50,11 @@ runtime behavior remains unverified and no installation or live-game work was
 performed. Follow-up comparison work uses synthetic fixtures and shared
 Contracts/Module SDK review.
 
+The first synthetic comparison fixture now checks ShroudForge-style manifest,
+profile, settings, and package metadata against Ember Vault expectations. It
+reports compatible fields and explicit gaps while keeping runtime approval
+false.
+
 ## Research Lab evolution
 
 The long-term product is an offline-first evidence-engineering platform, not
