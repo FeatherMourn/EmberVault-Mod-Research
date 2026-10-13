@@ -43,7 +43,8 @@ offline research bundle, and the first read-only Research Lab browser view
 model over the authoritative catalog, including provenance and evidence
 navigation, deterministic facet/review summaries, build comparisons,
 contradiction review views, the first linked research notebook model, and
-notebook-aware research bundle recovery. Sixty-eight tests pass. A full desktop
+notebook-aware research bundle recovery, notebook comparison, and
+evidence-linked experiment summaries. Sixty-nine tests pass. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
 

@@ -35,3 +35,35 @@ def build_notebook(entries: Iterable[dict[str, Any]], record_ids: Iterable[str])
         "actions": [],
         "entries": normalized,
     }
+
+
+def compare_notebooks(previous: dict[str, Any], current: dict[str, Any]) -> dict[str, Any]:
+    """Compare two validated notebook views without merging or mutating entries."""
+    old = {entry["id"]: entry for entry in previous.get("entries", [])}
+    new = {entry["id"]: entry for entry in current.get("entries", [])}
+    added = sorted(set(new) - set(old))
+    removed = sorted(set(old) - set(new))
+    changed = sorted(entry_id for entry_id in set(old) & set(new) if old[entry_id] != new[entry_id])
+    return {
+        "schema_version": 1,
+        "read_only": True,
+        "runtime_approval": False,
+        "actions": [],
+        "added": added,
+        "removed": removed,
+        "changed": changed,
+    }
+
+
+def experiment_summary(notebook: dict[str, Any], record_id: str) -> dict[str, Any]:
+    """Return notebook experiment references linked to one catalog record."""
+    entries = [entry for entry in notebook.get("entries", [])
+               if entry.get("kind") == "experiment-reference" and record_id in entry.get("record_ids", [])]
+    return {
+        "schema_version": 1,
+        "read_only": True,
+        "runtime_approval": False,
+        "actions": [],
+        "record_id": record_id,
+        "experiments": sorted(entries, key=lambda entry: entry["id"]),
+    }

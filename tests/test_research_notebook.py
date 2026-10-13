@@ -1,6 +1,6 @@
 import unittest
 
-from src.research_notebook import build_notebook
+from src.research_notebook import build_notebook, compare_notebooks, experiment_summary
 
 
 class ResearchNotebookTests(unittest.TestCase):
@@ -20,6 +20,19 @@ class ResearchNotebookTests(unittest.TestCase):
         entry = {"id": "n", "kind": "note", "text": "x", "record_ids": []}
         with self.assertRaises(ValueError):
             build_notebook([entry, entry], [])
+
+    def test_notebook_comparison_and_experiment_summary_are_read_only(self):
+        previous = build_notebook([{ "id": "n1", "kind": "note", "text": "old", "record_ids": ["a"] }], ["a"])
+        current = build_notebook([
+            {"id": "n1", "kind": "note", "text": "new", "record_ids": ["a"]},
+            {"id": "e1", "kind": "experiment-reference", "text": "offline package check", "record_ids": ["a"]},
+        ], ["a"])
+        comparison = compare_notebooks(previous, current)
+        self.assertEqual(comparison["added"], ["e1"])
+        self.assertEqual(comparison["changed"], ["n1"])
+        summary = experiment_summary(current, "a")
+        self.assertEqual(summary["experiments"][0]["id"], "e1")
+        self.assertEqual(summary["actions"], [])
 
 
 if __name__ == "__main__":
