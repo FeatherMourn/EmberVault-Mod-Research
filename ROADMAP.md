@@ -14,8 +14,10 @@ The repository intake is complete and the research corpus is present. The
 module manifest declares an experimental, research-profile-only, read-only
 worker boundary. Existing source material is valuable but is not yet a
 first-class EmberVault research service: the durable catalog, indexes, schemas,
-search, handoffs, migrations, and publication boundary are now implemented in
-small verified slices. Broader normalization and recovery hardening remain.
+search, handoffs, migrations, identity normalization, provenance graph,
+build comparison, analyzer contracts, and publication boundary are now
+implemented in small verified slices. Broader source normalization and
+recovery hardening remain.
 
 | Capability | State | Current evidence / limitation |
 |---|---|---|
@@ -33,11 +35,12 @@ small verified slices. Broader normalization and recovery hardening remain.
 
 The read-only catalog slice now includes a durable SQLite store, 19 imported
 records, provenance-checked evidence references, deterministic search filters,
-explicit contradiction records/resolution states, a design-only Content Creator
-handoff, and a deterministic, review-scoped Web Catalog publication generator.
-Twenty-six tests pass. Identity normalization, broader intake, and the
-Research Lab interface remain planned; runtime claims remain gated by direct
-evidence.
+explicit contradiction records/resolution states, identity and near-duplicate
+review helpers, a provenance graph, build-aware comparison, offline analyzer
+contracts, a design-only Content Creator handoff, and a deterministic,
+review-scoped Web Catalog publication generator. Fifty-eight tests pass. The
+Research Lab interface and broader source normalization remain planned; runtime
+claims remain gated by direct evidence.
 
 ### External research integration
 
@@ -97,26 +100,26 @@ after the integrity foundation so the system remains useful at every stage.
 
 ### Phase A — Integrity and identity hardening
 
-- [ ] Normalize canonical identities for donors, recipes, RenderModels, KFC3
+- [x] Normalize canonical identities for donors, recipes, RenderModels, KFC3
   resources, Blender outputs, packages, and experiments.
-- [ ] Detect duplicates and near-duplicates across files, records, and builds
+- [x] Detect duplicates and near-duplicates across files, records, and builds
   without merging distinct provenance or evidence boundaries.
-- [ ] Add migration, corruption, recovery, clean-install, and export fixtures.
-- [ ] Resolve or explicitly accept the open RenderModel evidence tension.
+- [x] Add migration, corruption, recovery, clean-install, and export fixtures.
+- [x] Resolve or explicitly accept the open RenderModel evidence tension.
 
 ### Phase B — Provenance and relationship intelligence
 
-- [ ] Add a provenance graph linking sources, hashes, records, claims,
+- [x] Add a provenance graph linking sources, hashes, records, claims,
   experiments, tools, builds, and generated outputs.
 - [ ] Add a resource graph connecting donors, recipes, RenderModels, registries,
   packages, Blender outputs, and evidence records.
 - [ ] Add evidence scoring, contradiction detection, evidence-gap prioritization,
   and human review states.
-- [ ] Add build-aware diffs for KFC3 metadata, records, packages, and findings.
+- [x] Add build-aware diffs for KFC3 metadata, records, packages, and findings.
 
 ### Phase C — Offline research tooling platform
 
-- [ ] Define pluggable parser and analyzer interfaces for KFC3, RenderModels,
+- [x] Define pluggable parser and analyzer interfaces for KFC3, RenderModels,
   recipes, archives, Blender exports, and logs.
 - [ ] Add reproducible pipelines recording inputs, tool versions, output hashes,
   transformations, and limitations.
