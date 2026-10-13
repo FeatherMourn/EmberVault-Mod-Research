@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.research_lab_export import create_snapshot_bundle, verify_snapshot_bundle
+from src.research_lab_export import create_snapshot_bundle, recover_snapshot_bundle, verify_snapshot_bundle
 
 
 class ResearchLabExportTests(unittest.TestCase):
@@ -16,6 +16,10 @@ class ResearchLabExportTests(unittest.TestCase):
             manifest = verify_snapshot_bundle(bundle)
             self.assertEqual(manifest["schema_version"], 1)
             self.assertEqual(manifest["recovery"], "verify-before-extract")
+            recovered = Path(directory) / "recovered.json"
+            result = recover_snapshot_bundle(bundle, recovered)
+            self.assertEqual(json.loads(recovered.read_text())["records"][0]["id"], "r1")
+            self.assertTrue(result["read_only"])
 
     def test_bundle_rejects_runtime_approved_snapshot(self):
         with self.assertRaises(ValueError):

@@ -43,3 +43,26 @@ def verify_snapshot_bundle(bundle: Path) -> dict[str, Any]:
     if manifest.get("read_only") is not True or manifest.get("runtime_approval") is not False:
         raise ValueError("snapshot bundle safety metadata is invalid")
     return manifest
+
+
+def recover_snapshot_bundle(bundle: Path, destination: Path) -> dict[str, Any]:
+    """Verify then atomically recover a snapshot JSON file."""
+    with zipfile.ZipFile(bundle) as archive:
+        manifest = json.loads(archive.read("manifest.json"))
+        payload = archive.read("snapshot.json")
+    if manifest.get("snapshot_sha256") != hashlib.sha256(payload).hexdigest():
+        raise ValueError("snapshot bundle hash mismatch")
+    snapshot = json.loads(payload)
+    if snapshot.get("read_only") is not True or snapshot.get("runtime_approval") is not False:
+        raise ValueError("recovered snapshot safety metadata is invalid")
+    target = Path(destination)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=target.parent, suffix=".tmp", delete=False, mode="wb") as handle:
+        temporary = Path(handle.name)
+        handle.write(payload)
+    try:
+        temporary.replace(target)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return {"destination": str(target), "snapshot_sha256": manifest["snapshot_sha256"],
+            "read_only": True, "runtime_approval": False}
