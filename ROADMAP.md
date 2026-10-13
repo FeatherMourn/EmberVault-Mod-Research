@@ -122,7 +122,7 @@ after the integrity foundation so the system remains useful at every stage.
 
 - [x] Add a provenance graph linking sources, hashes, records, claims,
   experiments, tools, builds, and generated outputs.
-- [ ] Add a resource graph connecting donors, recipes, RenderModels, registries,
+- [x] Add a resource graph connecting donors, recipes, RenderModels, registries,
   packages, Blender outputs, and evidence records.
 - [ ] Add evidence scoring, contradiction detection, evidence-gap prioritization,
   and human review states.
