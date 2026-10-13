@@ -3,7 +3,8 @@ import unittest
 from pathlib import Path
 
 from src.analyzers import (AnalysisResult, AnalyzerSpec, PipelineRun, hash_inputs,
-                           build_execution_plan, validate_offline_execution, validate_offline_inputs)
+                           build_execution_plan, validate_execution_plan, validate_offline_execution,
+                           validate_offline_inputs)
 
 
 class AnalyzerTests(unittest.TestCase):
@@ -69,6 +70,11 @@ class AnalyzerTests(unittest.TestCase):
             self.assertFalse(plan["executed"])
             self.assertEqual(plan["analyzer"]["analyzer_id"], "kfc")
             self.assertEqual(len(plan["input_hashes"]), 1)
+            accepted = validate_execution_plan(plan, spec)
+            self.assertTrue(accepted["accepted"])
+            invalid = {**plan, "executed": True}
+            with self.assertRaises(ValueError):
+                validate_execution_plan(invalid, spec)
 
 
 if __name__ == "__main__":

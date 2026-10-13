@@ -124,3 +124,19 @@ def build_execution_plan(spec: AnalyzerSpec, inputs: Iterable[Path], *, approved
             "input_hashes": list(hash_inputs(validated)), "working_directory": str(working),
             "transformations": list(steps), "read_only": True, "network_allowed": False,
             "executed": False, "runtime_approval": False}
+
+
+def validate_execution_plan(plan: dict[str, Any], spec: AnalyzerSpec) -> dict[str, Any]:
+    """Validate a future runner request without executing the plan."""
+    analyzer = plan.get("analyzer", {})
+    if analyzer.get("analyzer_id") != spec.analyzer_id or analyzer.get("version") != spec.version:
+        raise ValueError("execution plan analyzer does not match the supplied contract")
+    if plan.get("read_only") is not True or plan.get("network_allowed") is not False:
+        raise ValueError("execution plan safety flags are invalid")
+    if plan.get("executed") is not False or plan.get("runtime_approval") is not False:
+        raise ValueError("execution plan must remain unexecuted and runtime-unapproved")
+    if not plan.get("inputs") or not plan.get("transformations"):
+        raise ValueError("execution plan requires inputs and transformations")
+    return {"schema_version": 1, "accepted": True, "read_only": True,
+            "network_allowed": False, "executed": False, "runtime_approval": False,
+            "analyzer_id": spec.analyzer_id, "analyzer_version": spec.version}
