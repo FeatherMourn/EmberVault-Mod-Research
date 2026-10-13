@@ -144,11 +144,12 @@ after the integrity foundation so the system remains useful at every stage.
 
 ### Phase D — Research Lab application
 
-- [ ] Build an offline-first Lab browser over the authoritative catalog rather
-  than creating a second store in the UI.
-- [ ] Add faceted search, relationship views, build comparisons, evidence review,
-  contradiction workflows, and capability matrices.
-- [ ] Add research notebooks combining structured records, notes, comparisons,
+- [x] Build a read-only offline-first Lab browser model over the authoritative
+  catalog rather than creating a second store in the UI. A desktop UI remains
+  future work.
+- [x] Add faceted search, relationship views, build comparisons, evidence review,
+  contradiction workflows, and capability matrices as read-only reports.
+- [x] Add research notebooks combining structured records, notes, comparisons,
   experiment outputs, and generated reports.
 - [x] Add a plugin API so new research tools can be introduced independently
   from the catalog core.
