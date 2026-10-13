@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 from src.analyzers import (AnalysisResult, AnalyzerSpec, PipelineRun, hash_inputs,
-                           validate_offline_execution, validate_offline_inputs)
+                           build_execution_plan, validate_offline_execution, validate_offline_inputs)
 
 
 class AnalyzerTests(unittest.TestCase):
@@ -55,6 +55,20 @@ class AnalyzerTests(unittest.TestCase):
                 validate_offline_execution(approved_root=root, working_directory=root.parent)
             with self.assertRaises(ValueError):
                 validate_offline_execution(approved_root=root, working_directory=work, network_allowed=True)
+
+    def test_execution_plan_is_reproducible_and_not_executed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            work = root / "work"
+            work.mkdir()
+            source = root / "input.json"
+            source.write_text("{}", encoding="utf-8")
+            spec = AnalyzerSpec("kfc", "1", ("json",), ("record",))
+            plan = build_execution_plan(spec, [source], approved_root=root,
+                                        working_directory=work, transformations=["parse-json"])
+            self.assertFalse(plan["executed"])
+            self.assertEqual(plan["analyzer"]["analyzer_id"], "kfc")
+            self.assertEqual(len(plan["input_hashes"]), 1)
 
 
 if __name__ == "__main__":

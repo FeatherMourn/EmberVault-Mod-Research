@@ -108,3 +108,19 @@ def validate_offline_execution(*, approved_root: Path, working_directory: Path,
     if not working.is_dir():
         raise ValueError("offline execution directory must exist")
     return working
+
+
+def build_execution_plan(spec: AnalyzerSpec, inputs: Iterable[Path], *, approved_root: Path,
+                         working_directory: Path, transformations: Iterable[str]) -> dict[str, Any]:
+    """Create a reproducible, plan-only analyzer request."""
+    if not spec.read_only or spec.network_allowed:
+        raise ValueError("execution plans must be read-only and network-disabled")
+    validated = validate_offline_inputs(inputs, approved_root)
+    working = validate_offline_execution(approved_root=approved_root, working_directory=working_directory)
+    steps = tuple(str(step) for step in transformations if str(step))
+    if not steps:
+        raise ValueError("execution plans require transformations")
+    return {"schema_version": 1, "analyzer": spec.to_dict(), "inputs": [str(path) for path in validated],
+            "input_hashes": list(hash_inputs(validated)), "working_directory": str(working),
+            "transformations": list(steps), "read_only": True, "network_allowed": False,
+            "executed": False, "runtime_approval": False}
