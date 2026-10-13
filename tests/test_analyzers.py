@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.analyzers import AnalysisResult, AnalyzerSpec, PipelineRun, hash_inputs
+from src.analyzers import AnalysisResult, AnalyzerSpec, PipelineRun, hash_inputs, validate_offline_inputs
 
 
 class AnalyzerTests(unittest.TestCase):
@@ -32,6 +32,17 @@ class AnalyzerTests(unittest.TestCase):
         self.assertFalse(run.to_dict()["network_allowed"])
         with self.assertRaises(ValueError):
             PipelineRun(spec, result, (), ("parse-json",))
+
+    def test_offline_input_validation_rejects_escape_and_missing_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.json"
+            source.write_text("{}", encoding="utf-8")
+            self.assertEqual(validate_offline_inputs([source], root), (source.resolve(),))
+            with self.assertRaises(ValueError):
+                validate_offline_inputs([root.parent / "outside.json"], root)
+            with self.assertRaises(ValueError):
+                validate_offline_inputs([root / "missing.json"], root)
 
 
 if __name__ == "__main__":

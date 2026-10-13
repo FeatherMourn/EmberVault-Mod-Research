@@ -48,7 +48,8 @@ evidence-linked experiment summaries, a sanitized Content Creator handoff
 view, a non-public Web Catalog publication preview, a plan-only Control Center
 handoff preview, a unified Lab review snapshot, a dependency-free command-line
 viewer, and read-only relationship, contradiction, diff, publication,
-notebook, and unified-review reports. Seventy-seven tests pass. A full desktop
+notebook, and unified-review reports. Seventy-eight tests pass. Offline analyzer
+inputs now require existing files inside an approved research root. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
 remain gated by direct evidence.
 

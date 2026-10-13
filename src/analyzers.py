@@ -75,3 +75,20 @@ def hash_inputs(paths: Iterable[Path]) -> tuple[str, ...]:
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         hashes.append(f"{path}:{digest}")
     return tuple(hashes)
+
+
+def validate_offline_inputs(paths: Iterable[Path], approved_root: Path) -> tuple[Path, ...]:
+    """Validate input files stay inside an approved offline research root."""
+    root = approved_root.resolve()
+    validated = []
+    for raw_path in paths:
+        path = Path(raw_path)
+        resolved = path.resolve()
+        try:
+            resolved.relative_to(root)
+        except ValueError as error:
+            raise ValueError("offline analyzer input escapes the approved root") from error
+        if not resolved.is_file():
+            raise ValueError("offline analyzer input must be an existing file")
+        validated.append(resolved)
+    return tuple(sorted(validated, key=str))
