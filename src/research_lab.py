@@ -6,7 +6,7 @@ from typing import Any, Iterable
 from .research_index import search
 from .provenance_graph import build_provenance_graph
 from .build_diff import diff_builds
-from .review_queue import build_review_queue, evidence_score, review_priority_summary
+from .review_queue import build_review_queue, compare_review_priority, evidence_score, review_priority_summary
 from .research_index import content_creator_handoff
 from .publication import build_web_publication
 
@@ -199,4 +199,5 @@ def unified_review_snapshot(records: Iterable[dict[str, Any]], *,
     }
     if from_build is not None and to_build is not None:
         snapshot["build_comparison"] = build_comparison_view(records, from_build, to_build)
+        snapshot["review_priority_comparison"] = compare_review_priority(records, from_build, to_build)
     return snapshot

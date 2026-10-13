@@ -88,6 +88,8 @@ class ResearchLabTests(unittest.TestCase):
         self.assertIn("review_priority", snapshot)
         self.assertEqual(snapshot["review_priority"]["by_kind"]["recipe"]["contradictions"], 1)
         self.assertIn("build_comparison", snapshot)
+        self.assertIn("review_priority_comparison", snapshot)
+        self.assertTrue(snapshot["review_priority_comparison"]["read_only"])
         self.assertIn("handoff", snapshot)
         self.assertFalse(snapshot["publication"]["public"])
         self.assertFalse(snapshot["runtime_approval"])
