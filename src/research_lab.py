@@ -14,10 +14,14 @@ from .publication import build_web_publication
 def build_lab_snapshot(records: Iterable[dict[str, Any]], *, query: str = "",
                        state: str | None = None, build: str | None = None,
                        kind: str | None = None, confidence: str | None = None,
-                       has_open_questions: bool | None = None) -> dict[str, Any]:
+                       has_open_questions: bool | None = None,
+                       high_priority_only: bool = False) -> dict[str, Any]:
     """Build a deterministic browser snapshot without copying or mutating records."""
     matches = search(records, query, state=state, build=build, kind=kind,
                      confidence=confidence, has_open_questions=has_open_questions)
+    if high_priority_only:
+        matches = [record for record in matches
+                   if record.get("contradictions") or evidence_score(record) <= 3]
     return {
         "schema_version": 1,
         "application_state": "research-only",

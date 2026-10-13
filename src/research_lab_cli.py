@@ -36,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--kind")
     parser.add_argument("--confidence")
     parser.add_argument("--open-questions", action="store_true")
+    parser.add_argument("--high-priority-review", action="store_true")
     parser.add_argument("--report", choices=("snapshot", "relationships", "contradictions", "diff", "publication", "notebook", "unified"), default="snapshot")
     parser.add_argument("--record-id")
     parser.add_argument("--from-build")
@@ -67,7 +68,8 @@ def main(argv: list[str] | None = None) -> int:
     else:
         snapshot = build_lab_snapshot(records, query=args.query, state=args.state, build=args.build,
                                       kind=args.kind, confidence=args.confidence,
-                                      has_open_questions=True if args.open_questions else None)
+                                      has_open_questions=True if args.open_questions else None,
+                                      high_priority_only=args.high_priority_review)
     print(json.dumps(snapshot, indent=2, sort_keys=True))
     return 0
 

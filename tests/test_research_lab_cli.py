@@ -1,4 +1,6 @@
 import json
+import contextlib
+import io
 import tempfile
 import unittest
 from pathlib import Path
@@ -31,6 +33,22 @@ class ResearchLabCliTests(unittest.TestCase):
             notebook = root / "notebook.json"
             notebook.write_text(json.dumps({"entries": [], "read_only": True, "runtime_approval": False}), encoding="utf-8")
             self.assertEqual(main([str(records), "--report", "unified", "--notebook", str(notebook)]), 0)
+
+    def test_cli_filters_high_priority_review_records(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "records.json"
+            path.write_text(json.dumps({"records": [
+                {"id": "normal", "kind": "donor", "identity": {}, "state": "verified",
+                 "confidence": "high", "build_scope": ["1"], "evidence": ["a", "b", "c"], "open_questions": []},
+                {"id": "urgent", "kind": "recipe", "identity": {}, "state": "blocked",
+                 "confidence": "low", "build_scope": ["1"], "evidence": [], "open_questions": ["same-build"]},
+            ]}), encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main([str(path), "--high-priority-review"]), 0)
+            snapshot = json.loads(output.getvalue())
+            self.assertEqual(snapshot["count"], 1)
+            self.assertEqual(snapshot["records"][0]["id"], "urgent")
 
 
 if __name__ == "__main__":
