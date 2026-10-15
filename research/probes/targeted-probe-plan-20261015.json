@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "targeted-eml-probe-plan",
+  "read_only": true,
+  "runtime_approval": false,
+  "probes": [
+    {"id": "mod-research", "inputs": ["observed resource types", "GUIDs", "part indices"], "outputs": ["KFC4 resource records", "RenderModels", "recipes", "content hashes", "relationships"], "boundary": "offline observation; no resource mutation", "open_questions": ["native KFC4 field mappings", "semantic meaning of unknown types"]},
+    {"id": "content-creator", "inputs": ["items", "recipes", "RenderModels", "provenance"], "outputs": ["donor candidates", "recipe candidates", "compatibility metadata", "evidence links"], "boundary": "design-only authoring evidence", "open_questions": ["runtime visual behavior", "crafting and persistence behavior"]},
+    {"id": "game-tuning", "inputs": ["balancing and progression resource types"], "outputs": ["field inventories", "value observations", "relationship candidates"], "boundary": "read-only values; no edits", "open_questions": ["effective runtime application", "multiplayer effects"]},
+    {"id": "character-tools", "inputs": ["character, equipment, skill, appearance types"], "outputs": ["field inventories", "restriction references", "progression relationships"], "boundary": "read-only metadata; no character writes", "open_questions": ["save compatibility", "server authority"]},
+    {"id": "mod-manager", "inputs": ["module manifests", "loader output", "resource type inventory"], "outputs": ["capabilities", "dependencies", "ordering and conflict candidates"], "boundary": "read-only package analysis", "open_questions": ["actual load order under all conditions"]},
+    {"id": "save-manager", "inputs": ["documented save-related types only"], "outputs": ["format indicators", "migration signals", "compatibility evidence"], "boundary": "no save access or mutation", "open_questions": ["private fixture validation", "migration behavior"]},
+    {"id": "troubleshooter", "inputs": ["EML logs", "probe errors", "module health metadata"], "outputs": ["diagnostic findings", "evidence gaps", "reproducible error summaries"], "boundary": "read-only diagnostics", "open_questions": ["repair ownership remains Control Center"]},
+    {"id": "control-center", "inputs": ["module manifests", "permissions", "probe summaries"], "outputs": ["health records", "permission compatibility", "handoff readiness"], "boundary": "no automatic actions", "open_questions": ["final profile/permission integration"]}
+  ]
+}

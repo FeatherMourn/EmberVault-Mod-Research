@@ -33,6 +33,9 @@ not contain a launcher and does not authorize runtime execution.
 The broad inventory must complete before targeted probes are authored so probe
 queries are based on observed types rather than guesses.
 
+`targeted-probe-plan-20261015.json` defines the downstream module probes and
+their evidence boundaries. These are plans, not runtime claims.
+
 `platform_inventory_probe.lua` is the first documented probe template. It uses
 only the documented EML resource-type and resource-list APIs and exports a
 bounded text inventory under the configured EML export directory. It is not
