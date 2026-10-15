@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "external-parser-passport",
+  "name": "Shirenz0 kfc-parser Enshrouded Release",
+  "repository": "https://github.com/Shirenz0/kfc-parser-Enschrouded-Release",
+  "source_repository": "https://github.com/Shirenz0/kfc-parser",
+  "source_commit": "f9d45d8b7da06ed9314429fba8cbf555bcaf15e4",
+  "source_branch": "compat/1.0",
+  "license": "GPL-3.0",
+  "game_version": "1.0",
+  "game_build": "25936191",
+  "format": "KFC4",
+  "state": "externally-reported-and-pinned",
+  "supported_findings": ["KFC4 container support", "24-bit resource sizes for resources 16 MiB and larger", "unknown and duplicate type robustness"],
+  "unsupported_claims": ["This passport does not establish EmberVault catalog schema mappings.", "This passport does not establish mod runtime behavior.", "No binary was executed or installed during this audit."],
+  "integration_boundary": {"mode": "offline-analyzer-input", "read_only": true, "network_allowed": false, "runtime_approval": false, "requires_hash_manifest": true, "requires_supplied_output": true},
+  "open_questions": ["Obtain a parser-produced KFC4 metadata export or synthetic fixture.", "Map native KFC4 fields into the EmberVault normalized record schema.", "Confirm whether the upstream pull requests changed the pinned commit."]
+}
