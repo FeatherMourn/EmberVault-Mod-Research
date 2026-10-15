@@ -15,28 +15,22 @@ Before running, confirm:
 
 ## Staging commands
 
+The reviewed mod package is in:
+
+`research/probes/embervault_platform_inventory/`
+
+It contains `mod.json` and `src/mod.lua`. Copy the entire package directory
+into the game `mods` directory; do not rename the inner folder.
+
 ```powershell
 $Game = "H:\SteamLibrary\steamapps\common\Enshrouded"
-$ProbeSource = "I:\My Drive\Enshrouded Mods\EmberVault-Suites\EmberVault-Mod-Research\research\probes\platform_inventory_probe.lua"
+$ProbeSource = "I:\My Drive\Enshrouded Mods\EmberVault-Suites\EmberVault-Mod-Research\research\probes\embervault_platform_inventory"
 $ProbeRoot = Join-Path $Game "mods\embervault_platform_inventory"
 
-New-Item -ItemType Directory -Force -Path (Join-Path $ProbeRoot "src") | Out-Null
-Copy-Item $ProbeSource (Join-Path $ProbeRoot "src\mod.lua") -Force
+Copy-Item $ProbeSource $ProbeRoot -Recurse -Force
 ```
 
-Create `$ProbeRoot\mod.json` with this export-only manifest, then launch
-Enshrouded normally through Steam:
-
-```json
-{
-  "id": "embervault_platform_inventory",
-  "name": "EmberVault Platform Inventory",
-  "version": "1.0.0",
-  "capabilities": ["export"]
-}
-```
-
-After the game closes, inspect:
+After launching Enshrouded normally through Steam and closing it, inspect:
 
 ```powershell
 $Export = Join-Path $Game "export\embervault\platform-inventory-v1.tsv"

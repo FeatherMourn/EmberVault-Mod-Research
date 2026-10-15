@@ -1,0 +1,9 @@
+{
+  "id": "embervault_platform_inventory",
+  "name": "EmberVault Platform Inventory",
+  "version": "1.0.0",
+  "capabilities": ["export"],
+  "description": "Read-only Enshrouded 1.0/KFC4 resource inventory probe.",
+  "authors": ["EmberVault"],
+  "license": "MIT"
+}
