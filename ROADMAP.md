@@ -34,7 +34,7 @@ recovery hardening remain.
 | Evidence vocabulary and safety boundary | partially verified | Existing records distinguish offline/static, synthetic/staging, and live/runtime; shared contracts provide evidence references and promotion gates. |
 | Donor and recipe catalog | partially verified | Durable SQLite catalog contains donor and recipe candidates plus recipe-schema findings; broader source import and identity normalization remain. |
 | KFC3 / KFC4 / RenderModel metadata | migration started | KFC3 records remain historical. A pinned GPL-3.0 external parser source supports KFC4 for 1.0 build 25936191; the normalized inspector accepts explicitly labeled KFC4 fixtures, but native field mapping remains pending parser-produced output. |
-| EML/KFC4 probe program | planned, read-only | Broad platform/type/API inventory comes before module-specific probes; collection manifest and safety gates are defined, but no new runtime collection has been executed. |
+| EML/KFC4 probe program | infrastructure ready, collection pending | Broad platform/type/API probe template, collection manifest, evidence validator, TSV importer, relationship builder, module probe plan, export audit, and user-gated runbook are implemented. No fresh runtime collection has been executed. |
 | Blender/package research | partially verified | Offline package validation and Blender handoff findings are cataloged; runtime rendering is explicitly separate. |
 | Runtime evidence | blocked for this slice | No new runtime work is authorized; historical runtime records must retain exact build, setup, artifacts, and limitations. |
 | Content Creator handoff | implemented, design-only | Read-only handoff carries donor, recipe, resource, evidence, provenance, confidence, limitations, and open questions without runtime approval. |
@@ -58,7 +58,9 @@ evidence-linked experiment summaries, a sanitized Content Creator handoff
 view, a non-public Web Catalog publication preview, a plan-only Control Center
 handoff preview, a unified Lab review snapshot, a dependency-free command-line
 viewer, and read-only relationship, contradiction, diff, publication,
-notebook, unified-review reports, and hash-verified Lab snapshot bundles. One hundred-three tests pass. Offline analyzer
+notebook, unified-review reports, hash-verified Lab snapshot bundles, and
+read-only EML/KFC4 probe validation/import infrastructure. One hundred-eight tests
+pass. Offline analyzer
 execution now has a plan-only approved-root gate; no tools are launched.
 inputs now require existing files inside an approved research root. A full desktop
 Lab interface and broader source normalization remain planned; runtime claims
