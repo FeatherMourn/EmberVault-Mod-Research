@@ -59,7 +59,7 @@ view, a non-public Web Catalog publication preview, a plan-only Control Center
 handoff preview, a unified Lab review snapshot, a dependency-free command-line
 viewer, and read-only relationship, contradiction, diff, publication,
 notebook, unified-review reports, hash-verified Lab snapshot bundles, and
-read-only EML/KFC4 probe validation/import infrastructure. One hundred-eight tests
+read-only EML/KFC4 probe validation/import infrastructure. One hundred-fourteen tests
 pass. Offline analyzer
 execution now has a plan-only approved-root gate; no tools are launched.
 inputs now require existing files inside an approved research root. A full desktop
