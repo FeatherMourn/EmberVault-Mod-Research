@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "kind": "external-parser-build-record",
+  "source_repository": "https://github.com/Shirenz0/kfc-parser",
+  "source_commit": "f9d45d8b7da06ed9314429fba8cbf555bcaf15e4",
+  "build_command": "cargo build --release --target x86_64-pc-windows-msvc -p dbghelp-proxy -p dinput8-proxy -p mod-manager-cli",
+  "rustc": "rustc 1.98.1",
+  "cargo": "cargo 1.98.1",
+  "rustflags": "-C target-feature=+crt-static",
+  "target": "x86_64-pc-windows-msvc",
+  "result": "succeeded",
+  "warnings_present": true,
+  "artifacts": [
+    {"name": "dbghelp.dll", "sha256": "06B3AC7446DC61DE49F28E64F2CE0F343A5DAAD8E46C2F5DAF58072109DE45D2"},
+    {"name": "dinput8.dll", "sha256": "F33E00056D21A9690AD496A53B4F852130776093D3A5BE4861B145F90024C6CF"},
+    {"name": "emm.exe", "sha256": "57783651F6B0BF103C9A91737A244C4FE02DE1B00E0219D6981DE08E4334B9D2"}
+  ],
+  "safety_boundary": {
+    "built_in_isolated_checkout": true,
+    "installed_into_game": false,
+    "executed": false,
+    "game_files_touched": false,
+    "runtime_approval": false
+  }
+}
