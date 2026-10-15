@@ -1,0 +1,9 @@
+schema_version=1
+probe_id=platform-inventory
+evidence_state=observed-or-partial
+limitations=synthetic fixture; no runtime behavior claim
+type	keen::ItemInfo
+type	keen::Recipe
+resource	fixture-guid-1	keen::ItemInfo	0
+resource	fixture-guid-2	keen::Recipe	0
+error	get_resources_by_type:keen::Recipe	synthetic unresolved fixture error

@@ -6,6 +6,12 @@ from src.probe_import import import_platform_inventory
 
 
 class ProbeImportTests(unittest.TestCase):
+    def test_imports_checked_in_synthetic_fixture(self):
+        fixture = Path(__file__).parent / "fixtures/platform_inventory_v1.tsv"
+        result = import_platform_inventory(fixture, approved_root=fixture.parent, game_build="synthetic")
+        self.assertEqual(len(result["records"]), 4)
+        self.assertEqual(len(result["errors"]), 1)
+
     def test_imports_types_and_resources_with_hash(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
