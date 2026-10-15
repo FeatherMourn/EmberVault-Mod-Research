@@ -24,6 +24,13 @@ class KfcInspectorTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 inspect_kfc_metadata(fixture, approved_root=Path(directory))
 
+    def test_accepts_normalized_kfc4_fixture_without_claiming_native_schema(self):
+        fixture = Path(__file__).parent / "fixtures/kfc_metadata_v1.json"
+        result = inspect_kfc_metadata(fixture, approved_root=fixture.parent, kfc_format="KFC4")
+        self.assertEqual(result["analysis"]["analyzer_id"], "kfc4-metadata-inspector")
+        self.assertEqual(result["records"][0]["kind"], "kfc4-metadata")
+        self.assertIn("native KFC4 schema", result["records"][0]["unsupported_claims"][0])
+
 
 if __name__ == "__main__":
     unittest.main()

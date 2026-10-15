@@ -4,11 +4,20 @@
 
 Provide a read-only, evidence-backed research foundation for EmberVault. The
 module organizes findings and searchable metadata for donor items, recipes,
-RenderModels, KFC3 resources, Blender tooling, package experiments, and runtime
+RenderModels, KFC3/KFC4 resources, Blender tooling, package experiments, and runtime
 observations without modifying live game files or claiming behavior that has
 not been directly observed.
 
-## Current state — 2026-10-13
+## Current state — 2026-10-15
+
+### Upstream compatibility event
+
+Enshrouded 1.0 is now the current upstream release. Its official release
+notes document a new save-data format and migration behavior. The KFC4
+transition is currently user-reported and is not yet backed by an authoritative
+KFC4 schema or supplied native metadata in this repository. KFC3 evidence is
+therefore preserved as historical provenance; it must not be overwritten or
+silently relabeled as KFC4.
 
 The repository intake is complete and the research corpus is present. The
 module manifest declares an experimental, research-profile-only, read-only
@@ -24,7 +33,7 @@ recovery hardening remain.
 | Research corpus and source map | partially verified | Categorized archive, indexes, provenance policy, and version matrix exist; canonical records still need normalized module ownership. |
 | Evidence vocabulary and safety boundary | partially verified | Existing records distinguish offline/static, synthetic/staging, and live/runtime; shared contracts provide evidence references and promotion gates. |
 | Donor and recipe catalog | partially verified | Durable SQLite catalog contains donor and recipe candidates plus recipe-schema findings; broader source import and identity normalization remain. |
-| KFC3 / RenderModel metadata | partially verified | Durable catalog contains build-scoped offline KFC and RenderModel findings; decoder coverage and identity semantics remain source- and build-dependent. |
+| KFC3 / KFC4 / RenderModel metadata | migration started | KFC3 records remain historical. The normalized offline inspector accepts an explicitly labeled KFC4 research fixture, but does not claim native KFC4 schema support until authoritative metadata is available. Decoder coverage and identity semantics remain source- and build-dependent. |
 | Blender/package research | partially verified | Offline package validation and Blender handoff findings are cataloged; runtime rendering is explicitly separate. |
 | Runtime evidence | blocked for this slice | No new runtime work is authorized; historical runtime records must retain exact build, setup, artifacts, and limitations. |
 | Content Creator handoff | implemented, design-only | Read-only handoff carries donor, recipe, resource, evidence, provenance, confidence, limitations, and open questions without runtime approval. |
