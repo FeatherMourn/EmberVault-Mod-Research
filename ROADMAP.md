@@ -34,6 +34,7 @@ recovery hardening remain.
 | Evidence vocabulary and safety boundary | partially verified | Existing records distinguish offline/static, synthetic/staging, and live/runtime; shared contracts provide evidence references and promotion gates. |
 | Donor and recipe catalog | partially verified | Durable SQLite catalog contains donor and recipe candidates plus recipe-schema findings; broader source import and identity normalization remain. |
 | KFC3 / KFC4 / RenderModel metadata | migration started | KFC3 records remain historical. A pinned GPL-3.0 external parser source supports KFC4 for 1.0 build 25936191; the normalized inspector accepts explicitly labeled KFC4 fixtures, but native field mapping remains pending parser-produced output. |
+| EML/KFC4 probe program | planned, read-only | Broad platform/type/API inventory comes before module-specific probes; collection manifest and safety gates are defined, but no new runtime collection has been executed. |
 | Blender/package research | partially verified | Offline package validation and Blender handoff findings are cataloged; runtime rendering is explicitly separate. |
 | Runtime evidence | blocked for this slice | No new runtime work is authorized; historical runtime records must retain exact build, setup, artifacts, and limitations. |
 | Content Creator handoff | implemented, design-only | Read-only handoff carries donor, recipe, resource, evidence, provenance, confidence, limitations, and open questions without runtime approval. |

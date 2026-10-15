@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "eml-probe-collection-manifest",
+  "game": {"version": "1.0", "format": "KFC4", "build": null},
+  "state": "planned-no-runtime-execution",
+  "read_only": true,
+  "runtime_approval": false,
+  "network_allowed": false,
+  "stages": [
+    {"id": "platform-inventory", "priority": 1, "modules": ["mod-research", "control-center"], "outputs": ["types", "api-functions", "enums", "build-metadata", "errors"]},
+    {"id": "resource-sweep", "priority": 2, "modules": ["mod-research"], "outputs": ["resource-kinds", "ids", "guids", "debug-names", "field-presence"]},
+    {"id": "relationship-sweep", "priority": 3, "modules": ["mod-research", "content-creator"], "outputs": ["references", "recipes", "render-models", "packages", "provenance-links"]},
+    {"id": "module-deep-dives", "priority": 4, "modules": ["content-creator", "game-tuning", "character-tools", "mod-manager", "save-manager", "troubleshooter", "control-center"], "outputs": ["module-specific-evidence"]}
+  ],
+  "required_record_fields": ["probe_id", "probe_version", "game_build", "eml_version", "started_at", "completed_at", "input_hashes", "output_hashes", "evidence_state", "limitations", "errors"],
+  "evidence_states": ["observed", "partial", "blocked", "unsupported", "unverified"],
+  "safety_gates": ["approved_probe_root", "separate_export_root", "no_patch_capability", "no_save_capability", "no_installation", "manual_review_before_import"]
+}
